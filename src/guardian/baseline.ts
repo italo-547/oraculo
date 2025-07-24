@@ -1,6 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { BASELINE_PATH } from './constantes.js';
+import { BASELINE_PATH } from './constantes';
 /**
  * Lê o baseline atual do sistema de integridade.
  * Retorna null se o arquivo não existir ou estiver malformado.

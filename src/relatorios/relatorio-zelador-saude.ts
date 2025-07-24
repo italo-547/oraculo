@@ -1,5 +1,5 @@
-import { log } from '../nucleo/constelacao/log.js';
-import { globalCodeStats } from '../analista-padroes-uso.js';
+import { log } from '../nucleo/constelacao/log';
+import { globalCodeStats } from '../analista-padroes-uso';
 export function exibirRelatorioZeladorSaude(ocorrencias) {
     const constExcessivas = Object.entries(globalCodeStats.constCount).filter(([, n]) => n > 3);
     const requireRepetidos = Object.entries(globalCodeStats.reqCount).filter(([, n]) => n > 3);

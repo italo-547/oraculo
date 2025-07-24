@@ -1,11 +1,11 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { log } from '../nucleo/constelacao/log.js';
-import { gerarSnapshotDoConteudo } from './hash.js';
-import { carregarBaseline, salvarBaseline } from './baseline.js';
-import { diffSnapshots, verificarErros } from './diff.js';
-import { BASELINE_PATH } from './constantes.js';
-import { IntegridadeStatus, GuardianError } from '../tipos/tipos.js';
+import { log } from '../nucleo/constelacao/log';
+import { gerarSnapshotDoConteudo } from './hash';
+import { carregarBaseline, salvarBaseline } from './baseline';
+import { diffSnapshots, verificarErros } from './diff';
+import { BASELINE_PATH } from './constantes';
+import { IntegridadeStatus, GuardianError } from '../tipos/tipos';
 /**
  * Executa verificação de integridade dos arquivos analisados, comparando com baseline salvo.
  */

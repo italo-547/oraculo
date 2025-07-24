@@ -1,5 +1,5 @@
 import { parse as babelParse } from '@babel/parser';
-import { log } from './constelacao/log.js';
+import { log } from './constelacao/log';
 async function parseComBabel(codigo, plugins) {
     const options = {
         sourceType: 'unambiguous',

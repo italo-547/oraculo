@@ -1,5 +1,5 @@
-import { traverse } from '../nucleo/constelacao/traverse.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { traverse } from '../nucleo/constelacao/traverse';
+import config from '../nucleo/constelacao/cosmos';
 const LIMITE_LINHAS = config.ZELADOR_LINE_THRESHOLD ?? 30;
 export const analistaFuncoesLongas = {
     nome: 'analista-funcoes-longas',

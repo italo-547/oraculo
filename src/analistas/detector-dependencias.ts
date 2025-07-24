@@ -1,4 +1,4 @@
-import { traverse } from '../nucleo/constelacao/traverse.js';
+import { traverse } from '../nucleo/constelacao/traverse';
 import path from 'node:path';
 export const grafoDependencias = new Map();
 function extrairReferencias(ast) {

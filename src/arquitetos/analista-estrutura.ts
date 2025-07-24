@@ -1,6 +1,6 @@
 import path from 'node:path';
 import pLimit from 'p-limit';
-import config from '../nucleo/constelacao/cosmos.js';
+import config from '../nucleo/constelacao/cosmos';
 const CAMADAS = config.STRUCTURE_LAYERS;
 const CONCORRENCIA = config.STRUCTURE_CONCURRENCY ?? 5;
 export async function analisarEstrutura(fileEntries, _baseDir = process.cwd()) {

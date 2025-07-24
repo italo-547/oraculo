@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import config from './cosmos.js';
+import config from './cosmos';
 const icons = {
     info: '🥸',
     sucesso: '🥳',

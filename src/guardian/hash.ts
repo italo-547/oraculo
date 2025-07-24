@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { ALGORITMO_HASH } from './constantes.js';
+import { ALGORITMO_HASH } from './constantes';
 /**
  * Gera um hash hexadecimal a partir do conteúdo fornecido.
  */

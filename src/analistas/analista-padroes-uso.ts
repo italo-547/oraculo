@@ -1,7 +1,7 @@
 // src/analistas/analista-padroes-uso.ts
 import * as t from '@babel/types';
-import { traverse } from '../nucleo/constelacao/traverse.js';
-import type { Estatisticas } from '../tipos/tipos.js'
+import { traverse } from '../nucleo/constelacao/traverse';
+import type { Estatisticas } from '../tipos/tipos'
 // Objeto para armazenar as estatísticas acumuladas
 export const estatisticasUsoGlobal = {
     requires: {},

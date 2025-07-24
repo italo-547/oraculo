@@ -1,4 +1,4 @@
-import { log } from '../nucleo/constelacao/log.js';
+import { log } from '../nucleo/constelacao/log';
 /**
  * Emite um conselho gentil quando o contexto sugere que o(a) dev precisa respirar.
  */

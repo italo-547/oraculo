@@ -1,0 +1,59 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "removeComments": false,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "baseUrl": ".",
+    "paths": {
+      "@nucleo/*": [
+        "src/nucleo/*"
+      ],
+      "@analistas/*": [
+        "src/analistas/*"
+      ],
+      "@arquitetos/*": [
+        "src/arquitetos/*"
+      ],
+      "@zeladores/*": [
+        "src/zeladores/*"
+      ],
+      "@relatorios/*": [
+        "src/relatorios/*"
+      ],
+      "@*": [
+        "src/*"
+      ],
+      "@guardian/*": [
+        "src/guardian/*"
+      ],
+      "@tipos/*": [
+        "src/tipos/*"
+      ]
+    },
+    "moduleSuffixes": [
+      ".ts"
+    ],
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".oraculo"
+  ]
+}

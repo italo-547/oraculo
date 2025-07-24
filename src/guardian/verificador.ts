@@ -1,4 +1,4 @@
-import { gerarSnapshotDoConteudo } from './hash.js';
+import { gerarSnapshotDoConteudo } from './hash';
 /**
  * Compara os arquivos atuais com os registros de integridade salvos e detecta divergências.
  *
