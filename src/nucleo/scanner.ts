@@ -1,7 +1,7 @@
 // src/nucleo/scanner.ts
 import micromatch from 'micromatch';
 import { promises as fs } from 'fs'; // fs.promises
-import config from '../nucleo/constelacao/cosmos';
+import config from '../nucleo/constelacao/cosmos.js';
 import path from 'path';
 const UTF8 = 'utf-8';
 export async function scanRepository(baseDir, options = {}) {

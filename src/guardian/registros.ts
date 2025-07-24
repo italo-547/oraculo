@@ -1,8 +1,8 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { log } from '../nucleo/constelacao/log';
-import config from '../nucleo/constelacao/cosmos';
-import { gerarSnapshotDoConteudo } from './hash';
+import { log } from '../nucleo/constelacao/log.js';
+import config from '../nucleo/constelacao/cosmos.js';
+import { gerarSnapshotDoConteudo } from './hash.js';
 const DESTINO_PADRAO = path.join(config.STATE_DIR, 'integridade.json');
 /**
  * Salva os hashes dos arquivos fornecidos em um arquivo de integridade.

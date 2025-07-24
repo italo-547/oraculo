@@ -1,6 +1,6 @@
-import { traverse } from '../nucleo/constelacao/traverse';
+import { traverse } from '../nucleo/constelacao/traverse.js';
 import * as t from '@babel/types';
-import config from '../nucleo/constelacao/cosmos';
+import config from '../nucleo/constelacao/cosmos.js';
 function extractHandlerInfo(node) {
     if (node && t.isFunctionDeclaration(node) && t.isBlockStatement(node.body)) {
         return { func: node, bodyBlock: node.body };

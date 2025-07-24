@@ -1,4 +1,4 @@
-import config from '../nucleo/constelacao/cosmos';
+import config from '../nucleo/constelacao/cosmos.js';
 /**
  * Compara dois snapshots de integridade e retorna as diferenças encontradas.
  * - Arquivos removidos

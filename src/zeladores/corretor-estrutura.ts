@@ -1,8 +1,8 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import pLimit from 'p-limit';
-import config from '../nucleo/constelacao/cosmos';
-import { log } from '../nucleo/constelacao/log';
+import config from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
 const { STRUCTURE_PLUGINS: PLUGINS = [], STRUCTURE_AUTO_FIX: AUTO_FIX = false, STRUCTURE_CONCURRENCY: CONCORRENCIA = 5, STRUCTURE_LAYERS } = config;
 export async function corrigirEstrutura(mapa, fileEntries, baseDir = process.cwd()) {
     const limit = pLimit(CONCORRENCIA);

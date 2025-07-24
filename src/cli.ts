@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 // 🌌 MÓDULOS INTERNOS
-import { corrigirEstrutura } from './zeladores/corretor-estrutura';
-import { scanSystemIntegrity, acceptNewBaseline } from './guardian/sentinela'; // Adicionado acceptNewBaseline
-import { executarInquisicao, tecnicas, iniciarInquisicao } from './nucleo/inquisidor';
-import { sinaisDetectados } from './analistas/detector-estrutura';
-import { diagnosticarProjeto } from './arquitetos/diagnostico-projeto';
-import { alinhamentoEstrutural } from './arquitetos/analista-estrutura';
-import { removerArquivosOrfaos } from './zeladores/poda'; // Importado para o comando poda
-import { gerarRelatorioEstrutura } from './relatorios/relatorio-estrutura';
-import { exibirRelatorioZeladorSaude } from './relatorios/relatorio-zelador-saude';
-import { exibirRelatorioPadroesUso } from './relatorios/relatorio-padroes-uso';
-import { emitirConselhoOracular } from './relatorios/conselheiro-oracular';
-import { gerarRelatorioMarkdown } from './relatorios/gerador-relatorio';
-import config from './nucleo/constelacao/cosmos';
-import log from './nucleo/constelacao/log';
+import { corrigirEstrutura } from './zeladores/corretor-estrutura.js';
+import { scanSystemIntegrity, acceptNewBaseline } from './guardian/sentinela.js'; // Adicionado acceptNewBaseline
+import { executarInquisicao, tecnicas, iniciarInquisicao } from './nucleo/inquisidor.js';
+import { sinaisDetectados } from './analistas/detector-estrutura.js';
+import { diagnosticarProjeto } from './arquitetos/diagnostico-projeto.js';
+import { alinhamentoEstrutural } from './arquitetos/analista-estrutura.js';
+import { removerArquivosOrfaos } from './zeladores/poda.js'; // Importado para o comando poda
+import { gerarRelatorioEstrutura } from './relatorios/relatorio-estrutura.js';
+import { exibirRelatorioZeladorSaude } from './relatorios/relatorio-zelador-saude.js';
+import { exibirRelatorioPadroesUso } from './relatorios/relatorio-padroes-uso.js';
+import { emitirConselhoOracular } from './relatorios/conselheiro-oracular.js';
+import { gerarRelatorioMarkdown } from './relatorios/gerador-relatorio.js';
+import config from './nucleo/constelacao/cosmos.js';
+import log from './nucleo/constelacao/log.js';
 // 🧩 DEPENDÊNCIAS EXTERNAS
 import { Command } from 'commander';
 import chalk from 'chalk';

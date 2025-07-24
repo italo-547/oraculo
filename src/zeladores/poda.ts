@@ -1,9 +1,9 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import pLimit from 'p-limit';
-import { detectarFantasmas } from './fantasma';
-import config from '../nucleo/constelacao/cosmos';
-import { log } from '../nucleo/constelacao/log';
+import { detectarFantasmas } from './fantasma.js';
+import config from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
 const { AUTOANALISE_CONCURRENCY: CONCORRENCIA = 5, GHOST_FILE_INACTIVITY_DAYS: DIAS_INATIVOS = 30, DIR_ABANDONADOS = '.oraculo/abandonados', PATH_PENDENTES = '.oraculo/pendentes.json', PATH_REATIVAR = '.oraculo/reativar.json', PATH_HISTORICO = '.oraculo/historico.json', PATH_RELATORIO = '.oraculo/poda-oracular.md' } = config;
 const MILIS_DIA = 86_400_000;
 /** Entrada principal da poda */

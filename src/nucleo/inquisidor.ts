@@ -1,11 +1,11 @@
 import * as path from 'path';
-import { scanRepository } from './scanner';
-import { decifrarSintaxe } from './parser';
-import { executarInquisicao } from './executor';
-import { detectorEstrutura } from '../analistas/detector-estrutura';
-import { detectorDependencias } from '../analistas/detector-dependencias';
-import { log } from './constelacao/log';
-import config from './constelacao/cosmos';
+import { scanRepository } from './scanner.js';
+import { decifrarSintaxe } from './parser.js';
+import { executarInquisicao } from './executor.js';
+import { detectorEstrutura } from '../analistas/detector-estrutura.js';
+import { detectorDependencias } from '../analistas/detector-dependencias.js';
+import { log } from './constelacao/log.js';
+import config from './constelacao/cosmos.js';
 const EXTENSOES_COM_AST = new Set(config.SCANNER_EXTENSOES_COM_AST ?? ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs']);
 const tecnicas = [
     detectorDependencias,

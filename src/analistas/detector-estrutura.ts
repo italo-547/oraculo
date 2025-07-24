@@ -1,4 +1,4 @@
-import { grafoDependencias } from './detector-dependencias';
+import { grafoDependencias } from './detector-dependencias.js';
 // Estado global que pode ser lido após execução
 export const sinaisDetectados = {
     temPages: false,

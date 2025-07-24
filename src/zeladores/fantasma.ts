@@ -1,7 +1,7 @@
-import { scanRepository } from '../nucleo/scanner';
+import { scanRepository } from '../nucleo/scanner.js';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { grafoDependencias } from '../analistas/detector-dependencias';
+import { grafoDependencias } from '../analistas/detector-dependencias.js';
 const EXTENSOES_ALVO = ['.js', '.ts', '.jsx', '.tsx'];
 const IGNORAR_PADROES = ['test', 'mock', 'spec', 'stories'];
 const INATIVIDADE_DIAS = Number(process.env.GHOST_DAYS) || 30;

@@ -1,7 +1,7 @@
 //-----------------------------------
 // 🧠 TIPOS ESSENCIAIS
 // ----------------------------------
-import { log } from './constelacao/log';
+import { log } from './constelacao/log.js';
 export async function executarInquisicao(fileEntriesComAst, tecnicas, baseDir, guardianResultado) {
     log.info('🧪 Iniciando execução das técnicas...\n');
     const arquivosAnalisadosCount = fileEntriesComAst.length;
