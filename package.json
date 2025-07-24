@@ -23,8 +23,7 @@
     "diagnosticar": "node ./dist/cli.js diagnosticar",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts",
-    "format": "prettier . --check",
-    "prepare": "npm run build"
+    "format": "prettier . --check"
   },
   "keywords": [
     "cli",
