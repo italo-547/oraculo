@@ -1,4 +1,4 @@
-name: Verificar build do Oráculo
+name: Validação do Oráculo
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main, master]
 
 jobs:
-  build:
+  validação:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +22,21 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      - name: Verificar tipos TypeScript
+      - name: Instalar tipos necessários
+        run: |
+          npm install --save-dev \
+            @types/node \
+            @types/json-schema \
+            @types/estree \
+            @types/micromatch \
+            @types/braces \
+            @types/babel__traverse
+
+      - name: Verificar tipos (typecheck)
         run: npx tsc --noEmit
 
+      - name: Verificar lint (eslint)
+        run: npx eslint . --ext .ts
+
+      - name: Verificar formatação (prettier)
+        run: npx prettier . --check

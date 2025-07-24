@@ -16,12 +16,17 @@
   "engines": {
     "node": ">=22.17.1"
   },
-  "scripts": {
-    "prebuild": "rm -rf dist",
-    "build": "tsc",
-    "start": "node ./dist/cli.js",
-    "diagnosticar": "node ./dist/cli.js diagnosticar"
+"scripts": {
+  "prebuild": "rm -rf dist",
+  "build": "tsc",
+  "start": "node ./dist/cli.js",
+  "diagnosticar": "node ./dist/cli.js diagnosticar",
+  "typecheck": "tsc --noEmit",
+  "lint": "eslint . --ext .ts",
+  "format": "prettier . --check",
+  "prepare": "npm run build"
   },
+  
   "keywords": [
     "cli",
     "limpeza",
