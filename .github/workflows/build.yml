@@ -33,7 +33,7 @@ jobs:
             @types/babel__traverse
 
       - name: Verificar tipos (typecheck)
-        run: tsc --noEmit
+        run: npx tsc --noEmit
 
       - name: Verificar lint (eslint)
         run: npx eslint . --ext .ts
