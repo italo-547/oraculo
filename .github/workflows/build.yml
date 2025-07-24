@@ -28,16 +28,6 @@ jobs:
       - name: Instalar dependências
         run: npm install
 
-      - name: Instalar tipos necessários
-        run: |
-          npm install --save-dev \
-            @types/node \
-            @types/json-schema \
-            @types/estree \
-            @types/micromatch \
-            @types/braces \
-            @types/babel__traverse
-
       - name: Verificar tipos (typecheck)
         run: npx tsc --noEmit
 
