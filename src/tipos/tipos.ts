@@ -1,4 +1,27 @@
 //
+// 📂 AST e Arquivos
+//
+
+import type { Node, NodePath } from '@babel/types';
+
+export type OrigemArquivo = 'local' | 'remoto' | 'gerado';
+
+export interface FileEntry {
+  fullPath: string;
+  relPath: string;
+  content: string | null;
+  origem?: OrigemArquivo;
+  ultimaModificacao?: number;
+}
+
+export interface FileEntryWithAst<N extends NodePath<Node> = NodePath<Node>> extends FileEntry {
+  ast: N | null;
+}
+
+export type FileMap = Record<string, FileEntry>;
+export type FileMapWithAst<N extends NodePath<Node> = NodePath<Node>> = Record<string, FileEntryWithAst<N>>;
+
+//
 // 📂 Integridade e Erros
 //
 
@@ -17,29 +40,6 @@ export class GuardianError extends Error {
     this.detalhes = erros;
   }
 }
-
-//
-// 📂 AST e Arquivos
-//
-
-import type { NodePath } from '@babel/types'; // Se quiser usar NodePath, ajuste aqui
-
-export type OrigemArquivo = 'local' | 'remoto' | 'gerado';
-
-export interface FileEntry {
-  fullPath: string;
-  relPath: string;
-  content: string | null;
-  origem?: OrigemArquivo;
-  ultimaModificacao?: number;
-}
-
-export interface FileEntryWithAst<N extends NodePath = Node> extends FileEntry {
-  ast: N | null;
-}
-
-export type FileMap = Record<string, FileEntry>;
-export type FileMapWithAst<N extends NodePath = Node> = Record<string, FileEntryWithAst<N>>;
 
 //
 // 📂 Ocorrências e Técnicas
@@ -70,7 +70,7 @@ export interface Tecnica {
   aplicar: (
     src: string,
     relPath: string,
-    ast: NodePath | null,
+    ast: NodePath<Node> | null,
     fullPath?: string,
     contexto?: ContextoExecucao
   ) => TecnicaAplicarResultado | Promise<TecnicaAplicarResultado>;
