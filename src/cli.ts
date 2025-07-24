@@ -9,7 +9,7 @@ import { alinhamentoEstrutural } from './arquitetos/analista-estrutura';
 import { removerArquivosOrfaos } from './zeladores/poda'; // Importado para o comando poda
 import { gerarRelatorioEstrutura } from './relatorios/relatorio-estrutura';
 import { exibirRelatorioZeladorSaude } from './relatorios/relatorio-zelador-saude';
-import { exibirRelatorioPadroesUso } from './relatorios/relatorio-padroes-uso.js';
+import { exibirRelatorioPadroesUso } from './relatorios/relatorio-padroes-uso';
 import { emitirConselhoOracular } from './relatorios/conselheiro-oracular';
 import { gerarRelatorioMarkdown } from './relatorios/gerador-relatorio';
 import config from './nucleo/constelacao/cosmos';
