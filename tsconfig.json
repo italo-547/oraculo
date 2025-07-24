@@ -47,7 +47,7 @@
       ".ts"
     ],
     
-    "types": ["node"],
+    "types": ["node", "babel__traverse", "json-schema", "estree", "micromatch", "braces"],
     
     "allowImportingTsExtensions": true
   },
