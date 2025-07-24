@@ -27,7 +27,15 @@
       "@guardian/*": ["src/guardian/*"],
       "@tipos/*": ["src/tipos/*"]
     },
-    "moduleSuffixes": [".ts"]
+    "moduleSuffixes": [".ts"],
+    "types": [
+      "node",
+      "babel__traverse",
+      "braces",
+      "estree",
+      "json-schema",
+      "micromatch"
+    ]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", ".oraculo"]
