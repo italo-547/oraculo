@@ -46,6 +46,9 @@
     "moduleSuffixes": [
       ".ts"
     ],
+    
+    "types": ["node"],
+    
     "allowImportingTsExtensions": true
   },
   "include": [
