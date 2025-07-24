@@ -47,7 +47,7 @@
       ".ts"
     ],
     
-    "types": ["node"],
+    "types": [],
     
     "allowImportingTsExtensions": true
   },
