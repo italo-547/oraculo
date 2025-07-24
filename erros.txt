@@ -1,0 +1,18 @@
+error TS2688: Cannot find type definition file for 'babel__traverse'.
+  The file is in the program because:
+    Entry point for implicit type library 'babel__traverse'
+error TS2688: Cannot find type definition file for 'braces'.
+  The file is in the program because:
+    Entry point for implicit type library 'braces'
+error TS2688: Cannot find type definition file for 'estree'.
+  The file is in the program because:
+    Entry point for implicit type library 'estree'
+error TS2688: Cannot find type definition file for 'json-schema'.
+  The file is in the program because:
+    Entry point for implicit type library 'json-schema'
+error TS2688: Cannot find type definition file for 'micromatch'.
+  The file is in the program because:
+    Entry point for implicit type library 'micromatch'
+error TS2688: Cannot find type definition file for 'node'.
+  The file is in the program because:
+    Entry point for implicit type library 'node'
