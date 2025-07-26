@@ -1,79 +1,90 @@
-import { traverse } from '../nucleo/constelacao/traverse.js';
 import path from 'node:path';
-export const grafoDependencias = new Map();
-function extrairReferencias(ast) {
-    const refs = [];
-    traverse(ast, {
-        ImportDeclaration(path) {
-            refs.push(path.node.source.value);
-        },
-        CallExpression(path) {
-            const { callee, arguments: args } = path.node;
-            if (callee.type === 'Identifier' &&
-                callee.name === 'require' &&
-                args[0]?.type === 'StringLiteral') {
-                refs.push(args[0].value);
-            }
-        },
-        ExportAllDeclaration(path) {
-            if (path.node.source?.value)
-                refs.push(path.node.source.value);
-        },
-        ExportNamedDeclaration(path) {
-            if (path.node.source?.value)
-                refs.push(path.node.source.value);
-        }
-    });
-    return refs;
+import { traverse } from '../nucleo/constelacao/traverse.js';
+
+import type {
+  TecnicaAplicarResultado,
+  ContextoExecucao,
+  Ocorrencia
+} from '../tipos/tipos.js';
+import type {
+  NodePath,
+  Node,
+  ImportDeclaration,
+  CallExpression,
+  StringLiteral
+} from '@babel/types';
+
+export const grafoDependencias: Map<string, Set<string>> = new Map();
+
+/**
+ * Normaliza o caminho de import para uma chave consistente.
+ */
+function normalizarModulo(mod: string, relPath: string): string {
+  if (mod.startsWith('.')) {
+    const resolved = path
+      .normalize(path.join(path.dirname(relPath), mod))
+      .replace(/\\/g, '/');
+    return resolved;
+  }
+  return mod;
 }
-function tentarComExtensoes(caminhoBase, extPossiveis, arquivosValidos) {
-    for (const ext of extPossiveis) {
-        const tentativa = `${caminhoBase}${ext}`;
-        if (!arquivosValidos || arquivosValidos.has(tentativa))
-            return tentativa;
+
+/**
+ * Extrai referências de import/require do AST.
+ */
+function extrairReferencias(ast: NodePath<Node>): string[] {
+  const refs: string[] = [];
+
+  traverse(ast, {
+    ImportDeclaration(path: NodePath<ImportDeclaration>) {
+      refs.push(path.node.source.value);
+    },
+    CallExpression(path: NodePath<CallExpression>) {
+      const { callee, arguments: args } = path.node;
+      if (
+        callee.type === 'Identifier' &&
+        callee.name === 'require' &&
+        args[0]?.type === 'StringLiteral'
+      ) {
+        refs.push((args[0] as StringLiteral).value);
+      }
     }
-    const baseIndex = path.join(caminhoBase, 'index');
-    for (const ext of extPossiveis) {
-        const tentativa = `${baseIndex}${ext}`;
-        if (!arquivosValidos || arquivosValidos.has(tentativa))
-            return tentativa;
-    }
-    return null;
+  });
+
+  return refs;
 }
-function resolverReferencia(baseRelPath, ref, arquivosValidos) {
-    if (!ref.startsWith('.') && !ref.startsWith('/'))
-        return null;
-    const origem = path.dirname(baseRelPath);
-    const base = path.normalize(path.join(origem, ref));
-    if (!arquivosValidos)
-        return base;
-    if (arquivosValidos.has(base))
-        return base;
-    const EXTENSOES_TENTADAS = ['.ts', '.tsx', '.js', '.jsx', '.json'];
-    return tentarComExtensoes(base, EXTENSOES_TENTADAS, arquivosValidos);
-}
+
 export const detectorDependencias = {
-    nome: 'detectordependencias',
-    aplicar(src, relPath, ast, fullPath, contexto) {
-        if (!ast)
-            return [];
-        const arquivosValidosSet = contexto?.ambiente?.arquivosValidosSet;
-        const refs = extrairReferencias(ast);
-        const resolvidas = refs
-            .map(ref => resolverReferencia(relPath, ref, arquivosValidosSet))
-            .filter(Boolean);
-        const existentes = grafoDependencias.get(relPath) ?? new Set();
-        for (const ref of resolvidas)
-            existentes.add(ref);
-        grafoDependencias.set(relPath, existentes);
-        return resolvidas.map(destino => ({
-            tipo: 'dependencia',
-            mensagem: `Importa ou exporta módulo: ${destino}`,
-            arquivo: relPath,
-            origem: detectorDependencias.nome,
-            nivel: 'info',
-            relPath,
-            linha: 1
-        }));
+  nome: 'detector-dependencias',
+  test(relPath: string): boolean {
+    return relPath.endsWith('.ts') || relPath.endsWith('.js');
+  },
+
+  aplicar(
+    _src: string,
+    relPath: string,
+    ast: NodePath<Node> | null,
+    _fullPath: string,
+    _contexto?: ContextoExecucao
+  ): TecnicaAplicarResultado {
+    if (!ast) return [];
+
+    const ocorrencias: Ocorrencia[] = [];
+    const refs = extrairReferencias(ast);
+
+    for (const ref of refs) {
+      const dep = normalizarModulo(ref, relPath);
+      let set = grafoDependencias.get(relPath);
+      if (!set) {
+        set = new Set<string>();
+        grafoDependencias.set(relPath, set);
+      }
+      set.add(dep);
     }
+
+    // (Opcional) Você pode gerar ocorrências aqui se quiser validar algo
+    // como ciclos de dependência, requires relativos suspeitos etc.
+
+    return ocorrencias;
+  }
 };

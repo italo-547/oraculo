@@ -33,19 +33,17 @@
       "@relatorios/*": [
         "src/relatorios/*"
       ],
-      "@*": [
-        "src/*"
-      ],
       "@guardian/*": [
         "src/guardian/*"
       ],
       "@tipos/*": [
         "src/tipos/*"
+      ],
+      "@*": [
+        "src/*"
       ]
     },
-    "moduleSuffixes": [
-      ".ts"
-    ],
+    "moduleSuffixes": [".ts"],
     "allowImportingTsExtensions": true
   },
   "include": [

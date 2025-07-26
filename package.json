@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "♻️ ráculo: Análise, limpeza e organização de repositórios",
+  "description": "Oráculo: Análise, limpeza e organização de repositórios",
   "author": "Italo C Lopes",
   "license": "Restrita",
   "main": "./dist/cli.js",
@@ -14,7 +14,7 @@
     ".": "./dist/cli.js"
   },
   "engines": {
-    "node": ">=22.17.1"
+    "node": ">=20.11.0"
   },
   "scripts": {
     "prebuild": "rm -rf dist",

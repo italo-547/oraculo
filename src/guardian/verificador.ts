@@ -1,4 +1,12 @@
 import { gerarSnapshotDoConteudo } from './hash.js';
+import { FileEntry } from '../tipos/tipos.js';
+import { RegistroIntegridade } from './registros.js';
+
+export interface ResultadoVerificacao {
+  corrompidos: string[];
+  verificados: number;
+}
+
 /**
  * Compara os arquivos atuais com os registros de integridade salvos e detecta divergências.
  *
@@ -6,20 +14,24 @@ import { gerarSnapshotDoConteudo } from './hash.js';
  * @param registrosSalvos Registros prévios salvos (hashes de referência)
  * @returns Resultado contendo lista de arquivos corrompidos e total verificado
  */
-export async function verificarRegistros(fileEntries, registrosSalvos) {
-    const registrosMap = new Map(registrosSalvos.map(r => [r.arquivo, r.hash]));
-    const corrompidos = [];
-    for (const { relPath, content } of fileEntries) {
-        if (!relPath || !content?.trim())
-            continue;
-        const hashAtual = gerarSnapshotDoConteudo(content).hash;
-        const hashEsperado = registrosMap.get(relPath);
-        if (hashEsperado && hashAtual !== hashEsperado) {
-            corrompidos.push(relPath);
-        }
+export async function verificarRegistros(
+  fileEntries: FileEntry[],
+  registrosSalvos: RegistroIntegridade[]
+): Promise<ResultadoVerificacao> {
+  const registrosMap = new Map(registrosSalvos.map(r => [r.arquivo, r.hash]));
+  const corrompidos: string[] = [];
+
+  for (const { relPath, content } of fileEntries) {
+    if (!relPath || !content?.trim()) continue;
+    const hashAtual = gerarSnapshotDoConteudo(content); // retorna string
+    const hashEsperado = registrosMap.get(relPath);
+    if (hashEsperado && hashAtual !== hashEsperado) {
+      corrompidos.push(relPath);
     }
-    return {
-        corrompidos,
-        verificados: registrosSalvos.length
-    };
+  }
+
+  return {
+    corrompidos,
+    verificados: registrosSalvos.length
+  };
 }

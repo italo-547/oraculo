@@ -14,11 +14,18 @@ jobs:
       - name: Clonar repositório
         uses: actions/checkout@v4
 
-      - name: Mostrar conteúdo do tsconfig
-        run: cat tsconfig.json
+      - name: Configurar cache de dependências
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-      - name: Apagar possíveis caches antigos
-        run: rm -rf node_modules dist package-lock.json tsconfig.tsbuildinfo
+      - name: Apagar build antigo
+        run: rm -rf dist tsconfig.tsbuildinfo
 
       - name: Instalar Node.js
         uses: actions/setup-node@v4
@@ -26,13 +33,28 @@ jobs:
           node-version: '22.x'
 
       - name: Instalar dependências
-        run: npm install
+        run: npm ci
 
       - name: Verificar tipos (typecheck)
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
-      - name: Verificar lint (eslint)
-        run: npx eslint . --ext .ts || true
+      - name: Lint (sem ignorar erro)
+        run: npm run lint
 
-      - name: Verificar formatação (prettier)
-        run: npx prettier . --check || true
+      - name: Verificar formatação (Prettier)
+        run: npm run format
+
+      - name: Compilar projeto
+        run: npm run build
+
+      - name: Testar comandos principais do Oráculo
+        run: |
+          node dist/cli.js --help
+          node dist/cli.js diagnosticar --help
+          node dist/cli.js guardian --help
+          node dist/cli.js podar --help
+          node dist/cli.js reestruturar --help
+          node dist/cli.js atualizar --help
+   
+      - name: Rodar testes e cobertura
+        run: npm test && npx nyc report

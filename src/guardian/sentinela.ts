@@ -5,71 +5,76 @@ import { gerarSnapshotDoConteudo } from './hash.js';
 import { carregarBaseline, salvarBaseline } from './baseline.js';
 import { diffSnapshots, verificarErros } from './diff.js';
 import { BASELINE_PATH } from './constantes.js';
-import { IntegridadeStatus, GuardianError } from '../tipos/tipos.js';
-/**
- * Executa verificação de integridade dos arquivos analisados, comparando com baseline salvo.
- */
-export async function scanSystemIntegrity(fileEntries) {
-    const agora = new Date().toISOString();
-    await fs.mkdir(path.dirname(BASELINE_PATH), { recursive: true });
-    let baselineAnterior = null;
+import { IntegridadeStatus, GuardianError, FileEntry } from '../tipos/tipos.js';
+
+type Snapshot = Record<string, string>;
+
+function construirSnapshot(fileEntries: FileEntry[]): Snapshot {
+  const snapshot: Snapshot = {};
+  for (const { relPath, content } of fileEntries) {
+    if (!content?.trim()) continue;
     try {
-        baselineAnterior = await carregarBaseline();
+      snapshot[relPath] = gerarSnapshotDoConteudo(content);
+    } catch (err: any) {
+      log.aviso(`❌ Falha ao gerar hash de ${relPath}: ${err.message}`);
     }
-    catch (err) {
-        log.aviso(`⚠️ Baseline inválido ou corrompido: ${err.message}`);
-    }
-    const snapshotAtual = {};
-    for (const { relPath, content } of fileEntries) {
-        if (!content?.trim())
-            continue;
-        try {
-            snapshotAtual[relPath] = gerarSnapshotDoConteudo(content);
-        }
-        catch (err) {
-            log.aviso(`❌ Falha ao gerar hash de ${relPath}: ${err.message}`);
-        }
-    }
-    if (!baselineAnterior) {
-        log.info(`[Guardian] 🆕 ${agora} — Baseline inicial criado.`);
-        await salvarBaseline(snapshotAtual);
-        return { status: IntegridadeStatus.Criado, timestamp: agora };
-    }
-    const aceitandoViaCLI = process.argv.includes('--aceitar');
-    if (aceitandoViaCLI) {
-        log.info(`[Guardian] ✅ ${agora} — Baseline aceito manualmente (--aceitar).`);
-        await salvarBaseline(snapshotAtual);
-        return { status: IntegridadeStatus.Aceito, timestamp: agora };
-    }
-    const diffs = diffSnapshots(baselineAnterior, snapshotAtual);
-    const erros = verificarErros(diffs);
-    /**
-   * Aceita o snapshot atual como o novo baseline.
-   */
-    export async function acceptNewBaseline(fileEntries) {
-        const agora = new Date().toISOString();
-        const snapshotAtual = {};
-        for (const { relPath, content } of fileEntries) {
-            if (!content?.trim())
-                continue;
-            try {
-                snapshotAtual[relPath] = gerarSnapshotDoConteudo(content);
-            }
-            catch (err) {
-                log.aviso(`❌ Falha ao gerar hash de ${relPath}: ${err.message}`);
-            }
-        }
-        log.info(`[Guardian] ✅ ${agora} — Novo baseline aceito manualmente.`);
-        await salvarBaseline(snapshotAtual);
-    }
-    if (erros.length > 0) {
-        log.erro(`\n🛑 [Guardian] Quebra de integridade detectada em ${erros.length} arquivo(s):`);
-        for (const msg of erros) {
-            log.erro(`  - ${msg}`);
-        }
-        log.erro(`\n💡 Se as mudanças forem legítimas, execute: oraculo guard --aceitar\n`);
-        throw new GuardianError(erros);
-    }
-    log.info(`[Guardian] 🛡️ ${agora} — Nenhuma alteração crítica detectada. Integridade confirmada.`);
-    return { status: IntegridadeStatus.Ok, timestamp: agora };
+  }
+  return snapshot;
+}
+
+export async function scanSystemIntegrity(
+  fileEntries: FileEntry[],
+  options?: { justDiff?: boolean }
+): Promise<{
+  status: IntegridadeStatus;
+  timestamp: string;
+  detalhes?: string[];
+  baselineModificado?: boolean;
+}> {
+  const agora = new Date().toISOString();
+  await fs.mkdir(path.dirname(BASELINE_PATH), { recursive: true });
+
+  let baselineAnterior: Snapshot | null = null;
+  try {
+    baselineAnterior = await carregarBaseline();
+  } catch (err: any) {
+    log.aviso(`⚠️ Baseline inválido ou corrompido: ${err.message}`);
+  }
+
+  const snapshotAtual = construirSnapshot(fileEntries);
+
+  if (!baselineAnterior) {
+    log.info(`[Guardian] 🆕 ${agora} — Baseline inicial criado.`);
+    await salvarBaseline(snapshotAtual);
+    return { status: IntegridadeStatus.Criado, timestamp: agora };
+  }
+
+  if (process.argv.includes('--aceitar')) {
+    log.info(`[Guardian] ✅ ${agora} — Baseline aceito manualmente (--aceitar).`);
+    await salvarBaseline(snapshotAtual);
+    return { status: IntegridadeStatus.Aceito, timestamp: agora };
+  }
+
+  const diffs = diffSnapshots(baselineAnterior, snapshotAtual);
+  const erros = verificarErros(diffs);
+
+  if (options?.justDiff) {
+    return {
+      status: erros.length ? IntegridadeStatus.AlteracoesDetectadas : IntegridadeStatus.Ok,
+      timestamp: agora,
+      detalhes: erros
+    };
+  }
+
+  if (erros.length) {
+    throw new GuardianError(erros);
+  }
+
+  return { status: IntegridadeStatus.Ok, timestamp: agora };
+}
+
+export async function acceptNewBaseline(fileEntries: FileEntry[]): Promise<void> {
+  const snapshotAtual = construirSnapshot(fileEntries);
+  await fs.mkdir(path.dirname(BASELINE_PATH), { recursive: true });
+  await salvarBaseline(snapshotAtual);
 }
