@@ -33,18 +33,28 @@
       "@relatorios/*": [
         "src/relatorios/*"
       ],
+      "@*": [
+        "src/*"
+      ],
       "@guardian/*": [
         "src/guardian/*"
       ],
       "@tipos/*": [
         "src/tipos/*"
-      ],
-      "@*": [
-        "src/*"
       ]
     },
-    "moduleSuffixes": [".ts"],
-    "allowImportingTsExtensions": true
+    "moduleSuffixes": [
+      ".ts"
+    ],
+    "allowImportingTsExtensions": true,
+    "types": [
+      "node",
+      "babel__traverse",
+      "braces",
+      "estree",
+      "json-schema",
+      "micromatch"
+    ]
   },
   "include": [
     "src/**/*.ts"
