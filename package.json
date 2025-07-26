@@ -18,6 +18,7 @@
   },
   "scripts": {
     "prebuild": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
     "build": "tsc",
     "start": "node ./dist/cli.js",
     "diagnosticar": "node ./dist/cli.js diagnosticar"
