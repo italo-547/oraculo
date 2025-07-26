@@ -46,15 +46,7 @@
     "moduleSuffixes": [
       ".ts"
     ],
-    "allowImportingTsExtensions": true,
-    "types": [
-      "node",
-      "babel__traverse",
-      "braces",
-      "estree",
-      "json-schema",
-      "micromatch"
-    ]
+    "allowImportingTsExtensions": true
   },
   "include": [
     "src/**/*.ts"
