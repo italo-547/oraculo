@@ -35,9 +35,6 @@ jobs:
       - name: Instalar dependências
         run: npm ci
         
-      - name: List @types content (for debug)
-      run: ls -la node_modules/@types
-
       - name: Verificar tipos (typecheck)
         run: npm run typecheck
 
