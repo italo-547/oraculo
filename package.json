@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "♻️ ráculo: Análise, limpeza e organização de repositórios",
+  "description": "Oráculo: Análise, limpeza e organização de repositórios",
   "author": "Italo C Lopes",
   "license": "Restrita",
   "main": "./dist/cli.js",
@@ -14,10 +14,9 @@
     ".": "./dist/cli.js"
   },
   "engines": {
-    "node": ">=24.4.0"
+    "node": ">=24.0.4"
   },
   "scripts": {
-    "prebuild": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "start": "node ./dist/cli.js",
@@ -32,21 +31,21 @@
     "organização"
   ],
   "dependencies": {
-    "@babel/generator": "^7.23.0",
-    "@babel/parser": "^7.23.0",
-    "@babel/traverse": "^7.23.0",
-    "@babel/types": "^7.23.0",
+    "@babel/generator": "^7.24.8",
+    "@babel/parser": "^7.24.8",
+    "@babel/traverse": "^7.24.8",
+    "@babel/types": "^7.24.8",
     "chalk": "^5.3.0",
-    "commander": "^10.0.0",
+    "commander": "^12.1.0",
     "eslint": "^9.31.0",
-    "ignore": "^5.2.4",
+    "ignore": "^5.3.1",
     "micromatch": "^4.0.8",
     "p-limit": "^4.0.0"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.20.7",
     "@types/micromatch": "^4.0.9",
-    "@types/node": "^24.0.10",
-    "typescript": "^5.4.0"
+    "@types/node": "^20.14.13",
+    "typescript": "^5.5.4"
   }
 }

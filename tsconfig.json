@@ -46,6 +46,7 @@
     "moduleSuffixes": [
       ".ts"
     ],
+   "noEmit": true,
     "allowImportingTsExtensions": true
   },
   "include": [
