@@ -42,12 +42,7 @@
       "@tipos/*": [
         "src/tipos/*"
       ]
-    },
-    "moduleSuffixes": [
-      ".ts"
-    ],
-   "noEmit": true,
-    "allowImportingTsExtensions": true
+    }
   },
   "include": [
     "src/**/*.ts"
