@@ -47,7 +47,7 @@ export const analistaFuncoesLongas = {
       }
     }
 
-    traverse(ast, {
+    traverse(ast.node, {
       FunctionDeclaration(path) {
         analisar(path.node);
       },

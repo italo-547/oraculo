@@ -1,0 +1,1 @@
+{"version":3,"file":"executor.d.ts","sourceRoot":"","sources":["../../src/nucleo/executor.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EACV,gBAAgB,EAEhB,OAAO,EAEP,mBAAmB,EACpB,MAAM,mBAAmB,CAAC;AAE3B,wBAAsB,kBAAkB,CACtC,iBAAiB,EAAE,gBAAgB,EAAE,EACrC,QAAQ,EAAE,OAAO,EAAE,EACnB,OAAO,EAAE,MAAM,EACf,iBAAiB,EAAE,OAAO,GACzB,OAAO,CAAC,mBAAmB,CAAC,CAuF9B"}

@@ -1,0 +1,31 @@
+export declare const config: {
+    DEV_MODE: boolean;
+    AUTOANALISE_CONCURRENCY: number;
+    GUARDIAN_ENABLED: boolean;
+    GUARDIAN_ENFORCE_PROTECTION: boolean;
+    GUARDIAN_BASELINE: string;
+    GUARDIAN_ALLOW_ADDS: boolean;
+    GUARDIAN_ALLOW_CHG: boolean;
+    GUARDIAN_ALLOW_DELS: boolean;
+    REPORT_SILENCE_LOGS: boolean;
+    REPORT_EXPORT_ENABLED: boolean;
+    REPORT_OUTPUT_DIR: string;
+    ORACULO_STATE_DIR: string;
+    ZELADOR_ABANDONED_DIR: string;
+    ZELADOR_PENDING_PATH: string;
+    ZELADOR_REACTIVATE_PATH: string;
+    ZELADOR_HISTORY_PATH: string;
+    ZELADOR_REPORT_PATH: string;
+    ZELADOR_GHOST_INACTIVITY_DAYS: number;
+    ZELADOR_IGNORE_PATTERNS: string[];
+    ZELADOR_LINE_THRESHOLD: number;
+    SCANNER_EXTENSOES_COM_AST: string[];
+    VIGIA_TOP_N: number;
+    STRUCTURE_PLUGINS: never[];
+    STRUCTURE_AUTO_FIX: boolean;
+    STRUCTURE_CONCURRENCY: number;
+    STRUCTURE_LAYERS: {};
+    STATE_DIR: string;
+    ZELADOR_STATE_DIR: string;
+};
+//# sourceMappingURL=cosmos.d.ts.map
