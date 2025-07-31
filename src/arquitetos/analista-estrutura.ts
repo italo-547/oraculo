@@ -1,10 +1,11 @@
 import path from 'node:path';
 import pLimit from 'p-limit';
-import config from '../nucleo/constelacao/cosmos.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 
-const CAMADAS = config.STRUCTURE_LAYERS;
-const CONCORRENCIA = config.STRUCTURE_CONCURRENCY ?? 5;
+// TODO: Definir camadas de estrutura conforme necessidade do projeto
+const CAMADAS: Record<string, string> = {};
+const CONCORRENCIA = config.AUTOANALISE_CONCURRENCY ?? 5;
 
 interface ResultadoEstrutural {
   arquivo: string;

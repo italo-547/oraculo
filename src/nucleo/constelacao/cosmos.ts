@@ -10,10 +10,7 @@ const ZELADOR_ABANDONED = path.join(ORACULO_STATE, 'abandonados');
 // Configuração global do sistema Oráculo
 export const config = {
   // 🌱 Flags gerais
-  DEV_MODE:
-    process.env.NODE_ENV === 'development' ||
-    process.env.ORACULO_DEV === 'true',
-
+  DEV_MODE: process.env.NODE_ENV === 'development' || process.env.ORACULO_DEV === 'true',
   AUTOANALISE_CONCURRENCY: 5,
 
   // 🛡️ Guardian
@@ -47,7 +44,19 @@ export const config = {
     'package-lock.json',
     'yarn.lock'
   ],
-  ZELADOR_LINE_THRESHOLD: 20
+  ZELADOR_LINE_THRESHOLD: 20,
 
-  // 🔍 Analistas → poderia ter configurações específicas futuras aqui
+  // 🔍 Analistas
+  SCANNER_EXTENSOES_COM_AST: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs'],
+  VIGIA_TOP_N: 10,
+
+  // Estrutura (plugins, layers, auto-fix, concorrência)
+  STRUCTURE_PLUGINS: [],
+  STRUCTURE_AUTO_FIX: false,
+  STRUCTURE_CONCURRENCY: 5,
+  STRUCTURE_LAYERS: {},
+
+  // Compatibilidade/legado
+  STATE_DIR: ORACULO_STATE,
+  ZELADOR_STATE_DIR: ORACULO_STATE,
 };

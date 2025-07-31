@@ -1,13 +1,13 @@
 import { log } from '../nucleo/constelacao/log.js';
-import { globalCodeStats } from '../analistas/analista-padroes-uso.js';
+import { estatisticasUsoGlobal } from '../analistas/analista-padroes-uso.js';
 import { Ocorrencia } from '../tipos/tipos.js';
 
 /**
  * Emite um relatório sobre a saúde do código com base nas estatísticas gerais.
  */
 export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
-  const constExcessivas = Object.entries(globalCodeStats.constCount).filter(([, n]) => n > 3);
-  const requireRepetidos = Object.entries(globalCodeStats.reqCount).filter(([, n]) => n > 3);
+  const constExcessivas = Object.entries(estatisticasUsoGlobal.consts).filter(([, n]) => n > 3);
+  const requireRepetidos = Object.entries(estatisticasUsoGlobal.requires).filter(([, n]) => n > 3);
 
   log.info('\\n🧼 Relatório de Saúde do Código:\\n');
 

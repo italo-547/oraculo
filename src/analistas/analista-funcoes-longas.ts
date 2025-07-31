@@ -1,12 +1,13 @@
 import { traverse } from '../nucleo/constelacao/traverse.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
 import type {
   Ocorrencia,
   TecnicaAplicarResultado,
   ContextoExecucao
 } from '../tipos/tipos.js';
-import type { NodePath, Node, FunctionDeclaration, FunctionExpression, ArrowFunctionExpression } from '@babel/types';
+import type { Node, FunctionDeclaration, FunctionExpression, ArrowFunctionExpression } from '@babel/types';
+import type { NodePath } from '@babel/traverse';
 
 const LIMITE_LINHAS = config.ZELADOR_LINE_THRESHOLD ?? 30;
 

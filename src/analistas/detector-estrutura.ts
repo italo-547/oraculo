@@ -6,7 +6,8 @@ import type {
   Ocorrencia,
   SinaisProjeto
 } from '../tipos/tipos.js';
-import type { NodePath, Node } from '@babel/types';
+import type { Node } from '@babel/types';
+import type { NodePath } from '@babel/traverse';
 
 export const sinaisDetectados: SinaisProjeto = {};
 

@@ -1,6 +1,7 @@
 import { traverse } from '../nucleo/constelacao/traverse.js';
 import * as t from '@babel/types';
-import config from '../nucleo/constelacao/cosmos.js';
+import type { NodePath } from '@babel/traverse';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
 import type {
   ContextoExecucao,
@@ -32,7 +33,7 @@ export const ritualComando = {
   aplicar(
     conteudo: string,
     arquivo: string,
-    ast: t.NodePath | null,
+    ast: NodePath<Node> | null,
     fullPath: string,
     contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {
