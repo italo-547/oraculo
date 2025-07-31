@@ -8,13 +8,13 @@ import { scanSystemIntegrity, acceptNewBaseline } from '../guardian/sentinela.js
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 
-export function comandoGuardian(aplicarFlagsGlobais: (opts: any) => void) {
+export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('guardian')
     .description('Gerencia e verifica a integridade do ambiente do Oráculo.')
     .option('-a, --accept-baseline', 'Aceita o baseline atual como o novo baseline de integridade')
     .option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline')
-    .action(async function (this: Command, opts) {
-      aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
+    .action(async function (this: Command, opts: { acceptBaseline?: boolean; diff?: boolean }) {
+      aplicarFlagsGlobais((this.parent?.opts && typeof this.parent.opts === 'function') ? this.parent.opts() : {});
 
       const baseDir = process.cwd();
       let fileEntries: FileEntryWithAst[] = [];
@@ -33,7 +33,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: any) => void) {
 
           if (diffResult.status === 'alteracoes-detectadas' && diffResult.detalhes) {
             log.aviso('🚨 Diferenças detectadas:');
-            diffResult.detalhes.forEach((d: string) => log.info(`  - ${d}`));
+            diffResult.detalhes.forEach((d: string) => { log.info(`  - ${d}`); });
             log.aviso('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
             process.exit(1);
           } else {
@@ -58,8 +58,8 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: any) => void) {
               process.exit(1);
           }
         }
-      } catch (err: any) {
-        log.erro(`❌ Erro no Guardian: ${err.message}`);
+      } catch (err) {
+        log.erro(`❌ Erro no Guardian: ${(err as Error)?.message ?? String(err)}`);
         if (config.DEV_MODE) console.error(err);
         process.exit(1);
       }

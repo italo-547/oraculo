@@ -30,20 +30,31 @@ async function prepararComAst(
 ): Promise<FileEntryWithAst[]> {
   return Promise.all(
     entries.map(async (entry): Promise<FileEntryWithAst> => {
-      let ast = null;
+      let ast: import('@babel/traverse').NodePath<import('@babel/types').Node> | undefined = undefined;
       const ext = path.extname(entry.relPath);
 
       if (entry.content && EXTENSOES_COM_AST.has(ext)) {
         try {
-          ast = await decifrarSintaxe(entry.content, ext);
-        } catch (e: any) {
-          log.erro(`Falha ao gerar AST para ${entry.relPath}: ${e.message}`);
+          const parsed = await decifrarSintaxe(entry.content, ext);
+          if (
+            parsed &&
+            typeof parsed === 'object' &&
+            'node' in parsed &&
+            'parent' in parsed
+          ) {
+            ast = (parsed as unknown) as import('@babel/traverse').NodePath<import('@babel/types').Node>;
+          } else {
+            ast = undefined;
+          }
+        } catch (e) {
+          const err = e as Error;
+          log.erro(`Falha ao gerar AST para ${entry.relPath}: ${err.message}`);
         }
       }
 
       return {
         ...entry,
-        ast: ast as any, // garante compatibilidade
+        ast,
         fullPath: entry.fullPath ?? path.resolve(baseDir, entry.relPath)
       };
     })

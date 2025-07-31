@@ -13,8 +13,8 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: any) => void) {
   return new Command('atualizar')
     .description('Atualiza o Oráculo se a integridade estiver preservada')
     .option('--global', 'atualiza globalmente via npm i -g')
-    .action(async function (this: Command, opts) {
-      aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
+    .action(async function (this: Command, opts: { global?: boolean }) {
+      aplicarFlagsGlobais((this.parent?.opts && typeof this.parent.opts === 'function') ? this.parent.opts() : {});
       log.info(chalk.bold('\n🔄 Iniciando processo de atualização...\n'));
 
       const baseDir = process.cwd();
@@ -46,8 +46,8 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: any) => void) {
         log.sucesso('✅ Atualização concluída com sucesso!');
       } catch (err: any) {
         log.erro('🚨 Atualização abortada ou falhou.');
-        if (err?.detalhes && Array.isArray(err.detalhes)) {
-          err.detalhes.forEach((d: string) => log.aviso('❗ ' + d));
+        if (typeof err === 'object' && err && 'detalhes' in err && Array.isArray((err as { detalhes?: unknown }).detalhes)) {
+          (err as { detalhes: string[] }).detalhes.forEach((d: string) => { log.aviso('❗ ' + d); });
         }
         if (config.DEV_MODE) console.error(err);
         process.exit(1);

@@ -18,13 +18,13 @@ import { gerarRelatorioMarkdown } from '../relatorios/gerador-relatorio.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
 
-export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
+export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('diagnosticar')
     .alias('diag')
     .description('Executa uma análise completa do repositório')
     .option('-g, --guardian-check', 'Ativa a verificação de integridade do Guardian durante o diagnóstico')
-    .action(async (opts, command) => {
-      aplicarFlagsGlobais(command.parent?.opts?.() ?? {});
+    .action(async (opts: { guardianCheck?: boolean }, command: Command) => {
+      aplicarFlagsGlobais((command.parent?.opts && typeof command.parent.opts === 'function') ? command.parent.opts() : {});
       config.GUARDIAN_ENABLED = opts.guardianCheck ?? false;
 
       log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
@@ -58,10 +58,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
                 totalOcorrencias++;
                 break;
             }
-          } catch (err: any) {
+          } catch (err) {
             log.erro('🚨 Guardian bloqueou: alterações suspeitas ou erro fatal.');
-            if (config.GUARDIAN_ENFORCE_PROTECTION && err.detalhes) {
-              (err.detalhes as string[]).forEach((d) => log.aviso('❗ ' + d));
+            if (config.GUARDIAN_ENFORCE_PROTECTION && typeof err === 'object' && err && 'detalhes' in err && Array.isArray((err as { detalhes?: unknown }).detalhes)) {
+              (err as { detalhes: string[] }).detalhes.forEach((d) => { log.aviso('❗ ' + d); });
               process.exit(1);
             } else {
               log.aviso('⚠️ Modo permissivo: prosseguindo sob risco.');
@@ -88,13 +88,13 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
           arquivosParaCorrigir: resultadoFinal.ocorrencias.length,
           arquivosParaPodar: 0, // Não implementado
           totalOcorrenciasAnaliticas: resultadoFinal.ocorrencias.length,
-          integridadeGuardian: guardianResultado?.status || 'nao-verificado',
+          integridadeGuardian: guardianResultado?.status ?? 'nao-verificado',
         });
 
         if (config.REPORT_EXPORT_ENABLED) {
           log.info(chalk.bold('\n💾 Exportando relatórios detalhados...\n'));
           const ts = new Date().toISOString().replace(/[:.]/g, '-');
-          const dir = config.REPORT_OUTPUT_DIR || path.join(baseDir, 'oraculo-reports');
+          const dir = config.REPORT_OUTPUT_DIR ?? path.join(baseDir, 'oraculo-reports');
           const nome = `oraculo-relatorio-${ts}`;
           await fs.mkdir(dir, { recursive: true });
 
@@ -112,8 +112,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
                 ).sort(([, a], [, b]) => b - a)
               ),
               arquivosComProblemas: new Set(resultadoFinal.ocorrencias.map((o) => o.relPath)).size,
-              integridadeGuardian: guardianResultado?.status || 'nao-verificado',
-              baselineModificado: guardianResultado?.baselineModificado || false,
+              integridadeGuardian: guardianResultado?.status ?? 'nao-verificado',
+              baselineModificado: guardianResultado?.baselineModificado ?? false,
               arquivosOrfaosDetectados: 0, // Não implementado
             },
             detalhesOcorrencias: resultadoFinal.ocorrencias.map((occ: Ocorrencia) => ({
@@ -141,8 +141,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
           log.info('Revise os relatórios acima ou exportados para mais detalhes.');
           process.exit(1);
         }
-      } catch (error: any) {
-        log.erro(`❌ Erro fatal durante o diagnóstico: ${error.message}`);
+      } catch (error) {
+        log.erro(`❌ Erro fatal durante o diagnóstico: ${(error as Error)?.message ?? String(error)}`);
         if (config.DEV_MODE) console.error(error);
         process.exit(1);
       }

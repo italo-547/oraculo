@@ -33,7 +33,7 @@ export const ritualComando = {
   aplicar(
     conteudo: string,
     arquivo: string,
-    ast: NodePath<Node> | null,
+    ast: NodePath | null,
     fullPath: string,
     contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {

@@ -8,12 +8,12 @@ import { corrigirEstrutura } from '../zeladores/corretor-estrutura.js';
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 
-export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
+export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('reestruturar')
     .description('Aplica correções estruturais e otimizações ao repositório.')
     .option('-a, --auto', 'Aplica correções automaticamente sem confirmação (CUIDADO!)', false)
-    .action(async function (this: Command, opts) {
-      aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
+    .action(async function (this: Command, opts: { auto?: boolean }) {
+      aplicarFlagsGlobais((this.parent?.opts && typeof this.parent.opts === 'function') ? this.parent.opts() : {});
       log.info(chalk.bold('\n⚙️ Iniciando processo de reestruturação...\n'));
 
       const baseDir = process.cwd();
@@ -29,8 +29,7 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
         }
 
         log.aviso(`\n${analiseParaCorrecao.ocorrencias.length} problemas estruturais detectados para correção:`);
-        analiseParaCorrecao.ocorrencias.forEach((occ: Ocorrencia) =>
-          log.info(`- [${occ.tipo}] ${occ.relPath ?? occ.arquivo ?? 'arquivo desconhecido'}: ${occ.mensagem}`)
+        analiseParaCorrecao.ocorrencias.forEach((occ: Ocorrencia) => { log.info(`- [${occ.tipo}] ${occ.relPath ?? occ.arquivo ?? 'arquivo desconhecido'}: ${occ.mensagem}`); }
         );
 
         if (!opts.auto) {
@@ -57,8 +56,8 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
         }));
         await corrigirEstrutura(mapa, fileEntries, baseDir);
         log.sucesso(`✅ Reestruturação concluída: ${analiseParaCorrecao.ocorrencias.length} correções aplicadas.`);
-      } catch (error: any) {
-        log.erro(`❌ Erro durante a reestruturação: ${error.message}`);
+      } catch (error) {
+        log.erro(`❌ Erro durante a reestruturação: ${(error as Error)?.message ?? String(error)}`);
         if (config.DEV_MODE) console.error(error);
         process.exit(1);
       }

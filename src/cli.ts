@@ -17,10 +17,11 @@ program
   .option('-d, --dev', 'ativa modo de desenvolvimento (logs de debug)');
 
 // 🌐 Flags globais aplicáveis em todos os comandos
-function aplicarFlagsGlobais(opts: any) {
-  config.REPORT_SILENCE_LOGS = opts.silence ?? false;
-  config.REPORT_EXPORT_ENABLED = opts.export ?? false;
-  config.DEV_MODE = opts.dev ?? false;
+type OraculoGlobalFlags = { silence?: boolean; export?: boolean; dev?: boolean };
+function aplicarFlagsGlobais(opts: OraculoGlobalFlags) {
+  config.REPORT_SILENCE_LOGS = Boolean(opts.silence);
+  config.REPORT_EXPORT_ENABLED = Boolean(opts.export);
+  config.DEV_MODE = Boolean(opts.dev);
 }
 
 // 🔗 Registro de todos os comandos

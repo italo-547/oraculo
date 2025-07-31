@@ -39,13 +39,14 @@ export async function executarInquisicao(
         }
         const duracao = (performance.now() - inicio).toFixed(1);
         log.sucesso(`✅ Técnica global '${tecnica.nome}' executada em ${duracao}ms`);
-      } catch (error: any) {
-        log.erro(`❌ Erro na técnica global '${tecnica.nome}': ${error.message}`);
-        if (error.stack) log.info(error.stack);
+      } catch (error) {
+        const err = error as Error;
+        log.erro(`❌ Erro na técnica global '${tecnica.nome}': ${err.message}`);
+        if (err.stack) log.info(err.stack);
         ocorrencias.push({
           tipo: 'erro',
           nivel: 'aviso',
-          mensagem: `Falha na técnica global '${tecnica.nome}': ${error.message}`,
+          mensagem: `Falha na técnica global '${tecnica.nome}': ${err.message}`,
           relPath: '[execução global]',
           arquivo: '[execução global]',
           linha: 0
@@ -74,13 +75,14 @@ export async function executarInquisicao(
         }
         const duracao = (performance.now() - inicio).toFixed(1);
         log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${duracao}ms`);
-      } catch (error: any) {
-        log.erro(`❌ Erro em '${tecnica.nome}' para ${entry.relPath}: ${error.message}`);
-        if (error.stack) log.info(error.stack);
+      } catch (error) {
+        const err = error as Error;
+        log.erro(`❌ Erro em '${tecnica.nome}' para ${entry.relPath}: ${err.message}`);
+        if (err.stack) log.info(err.stack);
         ocorrencias.push({
           tipo: 'erro',
           nivel: 'erro',
-          mensagem: `Falha na técnica '${tecnica.nome}' para ${entry.relPath}: ${error.message}`,
+          mensagem: `Falha na técnica '${tecnica.nome}' para ${entry.relPath}: ${err.message}`,
           relPath: entry.relPath,
           arquivo: entry.relPath,
           linha: 0

@@ -10,11 +10,11 @@ const icons = {
 };
 
 function shouldSilence(): boolean {
-  return config.REPORT_SILENCE_LOGS === true;
+  return config.REPORT_SILENCE_LOGS;
 }
 
 function isDebugMode(): boolean {
-  return config.DEV_MODE === true || process.env.ORACULO_DEBUG === 'true';
+  return config.DEV_MODE || process.env.ORACULO_DEBUG === 'true';
 }
 
 function getTimestamp(): string {

@@ -14,7 +14,7 @@ import type {
 } from '@babel/types';
 import type { NodePath } from '@babel/traverse';
 
-export const grafoDependencias: Map<string, Set<string>> = new Map();
+export const grafoDependencias = new Map<string, Set<string>>();
 
 /**
  * Normaliza o caminho de import para uma chave consistente.
@@ -32,7 +32,7 @@ function normalizarModulo(mod: string, relPath: string): string {
 /**
  * Extrai referências de import/require do AST.
  */
-function extrairReferencias(ast: NodePath<Node>): string[] {
+function extrairReferencias(ast: NodePath): string[] {
   const refs: string[] = [];
 
   traverse(ast.node, {
@@ -46,7 +46,7 @@ function extrairReferencias(ast: NodePath<Node>): string[] {
         callee.name === 'require' &&
         args[0]?.type === 'StringLiteral'
       ) {
-        refs.push((args[0] as StringLiteral).value);
+        refs.push((args[0]).value);
       }
     }
   });
@@ -63,7 +63,7 @@ export const detectorDependencias = {
   aplicar(
     _src: string,
     relPath: string,
-    ast: NodePath<Node> | null,
+    ast: NodePath | null,
     _fullPath?: string,
     _contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {

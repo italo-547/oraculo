@@ -55,7 +55,7 @@ export interface Tecnica {
   aplicar: (
     src: string,
     relPath: string,
-    ast: NodePath<Node> | null,
+    ast: NodePath | null,
     fullPath?: string,
     contexto?: ContextoExecucao
   ) => TecnicaAplicarResultado | Promise<TecnicaAplicarResultado>;
@@ -99,7 +99,7 @@ export interface SinaisProjeto {
 
 export interface DiagnosticoProjeto {
   tipo: TipoProjeto;
-  sinais: Array<keyof SinaisProjeto>;
+  sinais: (keyof SinaisProjeto)[];
   confiabilidade: number;
 }
 

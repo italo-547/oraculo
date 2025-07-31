@@ -33,7 +33,7 @@ async function parseComXml(_codigo: string): Promise<null> {
   return null;
 }
 
-const PARSERS: Map<string, ParserFunc> = new Map([
+const PARSERS = new Map<string, ParserFunc>([
   ['.js', parseComBabel],
   ['.jsx', parseComBabel],
   ['.ts', parseComBabel],
@@ -74,7 +74,7 @@ export async function decifrarSintaxe(
       }, opts.timeoutMs);
     });
 
-    return Promise.race([parsePromise, timeoutPromise]) as Promise<BabelFile | null>;
+    return Promise.race([parsePromise, timeoutPromise]);
   }
 
   return parsePromise;

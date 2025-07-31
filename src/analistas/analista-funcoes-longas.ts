@@ -19,7 +19,7 @@ export const analistaFuncoesLongas = {
   aplicar(
     src: string,
     relPath: string,
-    ast: NodePath<Node> | null,
+    ast: NodePath | null,
     fullPath: string,
     contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {

@@ -4,7 +4,7 @@ export async function removerArquivosOrfaos(fileEntries: FileEntryWithAst[], exe
   // Detecta fantasmas usando a função já existente
   const { fantasmas } = await detectarFantasmas();
   // Se executarRealmente, pode-se mover os arquivos, mas CLI já faz isso
-  return { arquivosOrfaos: fantasmas as ArquivoFantasma[] };
+  return { arquivosOrfaos: fantasmas };
 }
 import { gerarRelatorioPodaMarkdown, gerarRelatorioPodaJson } from '../relatorios/relatorio-poda.js';
 // --- Funções utilitárias mínimas para // persistência e manipulação de pendênc
