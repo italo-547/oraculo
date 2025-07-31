@@ -1,3 +1,32 @@
+## Helpers Utilitários e Persistência de Estado
+
+Para facilitar a manutenção e evitar duplicidade de código, centralize funções auxiliares recorrentes (ex: helpers de persistência, manipulação de pendências, leitura/escrita de estado) em arquivos utilitários, preferencialmente em `src/zeladores/util/` ou similar.
+
+### Exemplos de Helpers Utilitários
+```ts
+// Persistência simples de estado (JSON)
+import { promises as fs } from 'node:fs';
+
+export async function lerEstado<T = any>(caminho: string): Promise<T> {
+  try {
+    const conteudo = await fs.readFile(caminho, 'utf-8');
+    return JSON.parse(conteudo);
+  } catch {
+    return [] as any;
+  }
+}
+
+export async function salvarEstado<T = any>(caminho: string, dados: T): Promise<void> {
+  await fs.writeFile(caminho, JSON.stringify(dados, null, 2), 'utf-8');
+}
+```
+
+### Dicas
+- Sempre que criar helpers para manipulação de pendências, relatórios ou persistência, documente-os e avalie se podem ser reaproveitados em outros domínios.
+- Prefira helpers puros e sem efeitos colaterais, facilitando testes e manutenção.
+- Se helpers crescerem, mova para um módulo utilitário dedicado e registre o padrão neste arquivo.
+
+---
 # Copilot Instructions for Oráculo CLI
 
 ## Visão Geral

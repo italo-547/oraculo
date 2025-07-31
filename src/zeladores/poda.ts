@@ -1,3 +1,47 @@
+import { gerarRelatorioPodaMarkdown, gerarRelatorioPodaJson } from '../relatorios/relatorio-poda.js';
+// --- Funções utilitárias mínimas para // persistência e manipulação de pendênc
+async function lerEstado<T = any>(caminho: string): Promise<T> {
+  try {
+    const conteudo = await fs.readFile(caminho, 'utf-8');
+    return JSON.parse(conteudo);
+  } catch {
+    return [] as any;
+  }
+}
+
+async function salvarEstado<T = any>(caminho: string, dados: T): Promise<void> {
+  await fs.writeFile(caminho, JSON.stringify(dados, null, 2), 'utf-8');
+}
+
+function gerarPendencias(fantasmas: any[], agora: number): Pendencia[] {
+  return fantasmas.map(f => ({
+    arquivo: f.arquivo,
+    motivo: f.referenciado ? 'inativo' : 'órfão',
+    detectedAt: agora,
+    scheduleAt: agora
+  }));
+}
+
+function mesclarPendencias(anteriores: Pendencia[], novos: Pendencia[]): Pendencia[] {
+  const mapa = new Map<string, Pendencia>();
+  for (const p of anteriores) mapa.set(p.arquivo, p);
+  for (const p of novos) mapa.set(p.arquivo, p);
+  return Array.from(mapa.values());
+}
+
+function dividirPendencias(pendencias: Pendencia[], reativar: string[], agora: number): [Pendencia[], Pendencia[]] {
+  const aManter: Pendencia[] = [];
+  const aPodar: Pendencia[] = [];
+  const reativarSet = new Set(reativar);
+  for (const p of pendencias) {
+    if (reativarSet.has(p.arquivo)) {
+      aManter.push(p);
+    } else {
+      aPodar.push(p);
+    }
+  }
+  return [aManter, aPodar];
+}
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import pLimit from 'p-limit';
@@ -45,7 +89,8 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
 
   if (!aPodar.length) {
     log.sucesso('✅ Nenhum arquivo para podar neste ciclo.\n');
-    await gerarRelatorio(PATH_RELATORIO, aPodar, aManter);
+    await gerarRelatorioPodaMarkdown(PATH_RELATORIO.replace(/\.json$/, '.md'), aPodar, aManter, { simulado: !executarRealmente });
+    await gerarRelatorioPodaJson(PATH_RELATORIO, aPodar, aManter);
     return;
   }
 
@@ -59,8 +104,7 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
     await moverArquivosSimulado(aPodar, base);
   }
 
-  await gerarRelatorio(PATH_RELATORIO, aPodar, aManter);
-  log.sucesso(`📄 Relatório salvo em: ${path.relative(base, PATH_RELATORIO)}\n`);
+  // Relatórios já gerados acima
 }
 
 // Funções auxiliares — você pode mover para util/poda.ts depois
