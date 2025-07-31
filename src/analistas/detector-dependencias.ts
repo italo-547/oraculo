@@ -36,10 +36,10 @@ function extrairReferencias(ast: NodePath<Node>): string[] {
   const refs: string[] = [];
 
   traverse(ast, {
-    ImportDeclaration(path: NodePath<ImportDeclaration>) {
+    ImportDeclaration(path) {
       refs.push(path.node.source.value);
     },
-    CallExpression(path: NodePath<CallExpression>) {
+    CallExpression(path) {
       const { callee, arguments: args } = path.node;
       if (
         callee.type === 'Identifier' &&
@@ -64,7 +64,7 @@ export const detectorDependencias = {
     _src: string,
     relPath: string,
     ast: NodePath<Node> | null,
-    _fullPath: string,
+    _fullPath?: string,
     _contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {
     if (!ast) return [];

@@ -36,7 +36,6 @@ export const analistaFuncoesLongas = {
       if (linhas > LIMITE_LINHAS) {
         ocorrencias.push({
           tipo: 'FUNCAO_LONGA',
-          codigo: 'FUNCAO_LONGA',
           severidade: 2,
           nivel: 'aviso',
           relPath,

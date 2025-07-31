@@ -12,7 +12,7 @@ import type {
   FileEntry,
   InquisicaoOptions,
   Tecnica,
-  ResultadoInquisicao
+  ResultadoInquisicaoCompleto
 } from '../tipos/tipos.js';
 
 const EXTENSOES_COM_AST = new Set(
@@ -43,7 +43,7 @@ async function prepararComAst(
 
       return {
         ...entry,
-        ast,
+        ast: ast as any, // garante compatibilidade
         fullPath: entry.fullPath ?? path.resolve(baseDir, entry.relPath)
       };
     })
@@ -53,23 +53,25 @@ async function prepararComAst(
 export async function iniciarInquisicao(
   baseDir: string = process.cwd(),
   options: InquisicaoOptions = {}
-): Promise<ResultadoInquisicao> {
+): Promise<ResultadoInquisicaoCompleto> {
   const { includeContent = true, incluirMetadados = true } = options;
   log.info(`🔍 Iniciando a Inquisição do Oráculo em: ${baseDir}`);
 
+
   const fileMap = await scanRepository(baseDir, { includeContent });
-  let fileEntries = Object.values(fileMap);
+  let fileEntries: FileEntryWithAst[];
 
   if (incluirMetadados) {
-    fileEntries = await prepararComAst(fileEntries, baseDir);
+    fileEntries = await prepararComAst(Object.values(fileMap), baseDir);
   } else {
-    fileEntries = fileEntries.map((entry) => ({
+    fileEntries = Object.values(fileMap).map((entry) => ({
       ...entry,
-      ast: null,
+      ast: undefined,
       fullPath: entry.fullPath ?? path.resolve(baseDir, entry.relPath)
     }));
   }
 
+  // Agora fileEntries é FileEntryWithAst[]
   const { totalArquivos, ocorrencias } = await executarExecucao(
     fileEntries,
     tecnicas,
@@ -79,7 +81,15 @@ export async function iniciarInquisicao(
 
   log.sucesso(`🔮 Inquisição concluída. Total de ocorrências: ${ocorrencias.length}`);
 
-  return { totalArquivos, ocorrencias, fileEntries };
+  return {
+    totalArquivos,
+    ocorrencias,
+    arquivosAnalisados: fileEntries.map(f => f.relPath),
+    timestamp: Date.now(),
+    duracaoMs: 0,
+    fileEntries,
+    guardian: undefined
+  };
 }
 
 export { executarExecucao as executarInquisicao };

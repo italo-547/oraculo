@@ -23,7 +23,7 @@ export const detectorEstrutura = {
     _src: string,
     _relPath: string,
     _ast: NodePath<Node> | null,
-    _fullPath: string,
+    _fullPath?: string,
     contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {
     if (!contexto) return [];

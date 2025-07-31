@@ -39,20 +39,21 @@ export const analistaPadroesUso = {
       const ast = file.ast;
       if (!ast) continue;
 
-      traverse(ast, {
+      traverse('node' in ast ? ast.node : ast, {
         enter(path) {
-          if (t.isVariableDeclaration(path.node) && path.node.kind === 'const') {
-            incrementar(estatisticasUsoGlobal.consts, path.node.kind);
+          const node = path.node;
+          if (t.isVariableDeclaration(node) && node.kind === 'const') {
+            incrementar(estatisticasUsoGlobal.consts, node.kind);
           }
 
-          if (t.isCallExpression(path.node) && t.isIdentifier(path.node.callee)) {
-            const nome = path.node.callee.name;
+          if (t.isCallExpression(node) && t.isIdentifier(node.callee)) {
+            const nome = node.callee.name;
             if (nome === 'require') {
               incrementar(estatisticasUsoGlobal.requires, nome);
             }
           }
 
-          if (t.isExportNamedDeclaration(path.node) || t.isExportDefaultDeclaration(path.node)) {
+          if (t.isExportNamedDeclaration(node) || t.isExportDefaultDeclaration(node)) {
             incrementar(estatisticasUsoGlobal.exports, 'export');
           }
         }
