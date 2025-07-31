@@ -55,7 +55,7 @@ export const ritualComando = {
       ];
     }
 
-    traverse(ast, {
+    traverse(ast.node, {
       enter(path) {
         const node = path.node;
         if (t.isCallExpression(node) && t.isIdentifier(node.callee)) {

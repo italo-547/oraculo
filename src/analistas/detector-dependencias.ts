@@ -35,7 +35,7 @@ function normalizarModulo(mod: string, relPath: string): string {
 function extrairReferencias(ast: NodePath<Node>): string[] {
   const refs: string[] = [];
 
-  traverse(ast, {
+  traverse(ast.node, {
     ImportDeclaration(path) {
       refs.push(path.node.source.value);
     },
