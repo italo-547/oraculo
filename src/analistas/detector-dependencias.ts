@@ -7,12 +7,12 @@ import type {
   Ocorrencia
 } from '../tipos/tipos.js';
 import type {
-  NodePath,
   Node,
   ImportDeclaration,
   CallExpression,
   StringLiteral
 } from '@babel/types';
+import type { NodePath } from '@babel/traverse';
 
 export const grafoDependencias: Map<string, Set<string>> = new Map();
 
