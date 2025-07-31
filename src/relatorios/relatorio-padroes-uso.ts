@@ -1,6 +1,6 @@
 import { log } from '../nucleo/constelacao/log.js';
 import { globalUsageStats } from '../analistas/analista-padroes-uso.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
 const TOP_N = config.VIGIA_TOP_N ?? 10;
 

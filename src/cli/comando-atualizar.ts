@@ -6,8 +6,8 @@ import type { FileEntryWithAst, IntegridadeStatus } from '../tipos/tipos.js';
 
 import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 import { scanSystemIntegrity } from '../guardian/sentinela.js';
-import log from '../nucleo/constelacao/log.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
 export function comandoAtualizar(aplicarFlagsGlobais: (opts: any) => void) {
   return new Command('atualizar')

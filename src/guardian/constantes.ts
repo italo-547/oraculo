@@ -1,5 +1,5 @@
 import path from 'node:path';
-import config from '../nucleo/constelacao/cosmos.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 /**
  * 📌 Caminho absoluto para o arquivo de baseline principal (usado pelo Sentinela).
  */

@@ -5,8 +5,8 @@ import type { Ocorrencia, FileEntryWithAst } from '../tipos/tipos.js';
 
 import { iniciarInquisicao, executarInquisicao, tecnicas } from '../nucleo/inquisidor.js';
 import { corrigirEstrutura } from '../zeladores/corretor-estrutura.js';
-import log from '../nucleo/constelacao/log.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
 export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
   return new Command('reestruturar')
@@ -48,8 +48,8 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
           }
         }
 
-const resultadoCorrecao: ResultadoCorrecao = await corrigirEstrutura(analiseParaCorrecao.ocorrencias);
-log.sucesso(`✅ Reestruturação concluída: ${resultadoCorrecao.correcoesAplicadas} correções aplicadas.`);
+        const resultadoCorrecao: ResultadoCorrecao = await corrigirEstrutura(analiseParaCorrecao.ocorrencias);
+        log.sucesso(`✅ Reestruturação concluída: ${resultadoCorrecao.correcoesAplicadas} correções aplicadas.`);
       } catch (error: any) {
         log.erro(`❌ Erro durante a reestruturação: ${error.message}`);
         if (config.DEV_MODE) console.error(error);

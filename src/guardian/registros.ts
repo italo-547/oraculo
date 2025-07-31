@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { log } from '../nucleo/constelacao/log.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 import { gerarSnapshotDoConteudo } from './hash.js';
 import { FileEntry } from '../tipos/tipos.js';
 

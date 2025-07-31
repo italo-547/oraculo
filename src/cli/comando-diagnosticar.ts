@@ -15,10 +15,11 @@ import { exibirRelatorioZeladorSaude } from '../relatorios/relatorio-zelador-sau
 import { exibirRelatorioPadroesUso } from '../relatorios/relatorio-padroes-uso.js';
 import { emitirConselhoOracular } from '../relatorios/conselheiro-oracular.js';
 import { gerarRelatorioMarkdown } from '../relatorios/gerador-relatorio.js';
-import config from '../nucleo/constelacao/cosmos.js';
-import log from '../nucleo/constelacao/log.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
 
-export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {  return new Command('diagnosticar')
+export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
+  return new Command('diagnosticar')
     .alias('diag')
     .description('Executa uma análise completa do repositório')
     .option('-g, --guardian-check', 'Ativa a verificação de integridade do Guardian durante o diagnóstico')
@@ -29,9 +30,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) { 
       log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
 
       const baseDir = process.cwd();
-let guardianResultado: ResultadoGuardian | undefined;
+      let guardianResultado: ResultadoGuardian | undefined;
 
-let fileEntries: FileEntryWithAst[] = [];
+      let fileEntries: FileEntryWithAst[] = [];
       let totalOcorrencias = 0;
 
       try {

@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 
 import { registrarComandos } from './cli/comandos.js';
-import config from './nucleo/constelacao/cosmos.js';
+import { config } from './nucleo/constelacao/cosmos.js';
 
 // 🛠️ Configuração principal do CLI
 const program = new Command();

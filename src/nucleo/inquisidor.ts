@@ -5,7 +5,7 @@ import { executarInquisicao as executarExecucao } from './executor.js';
 import { detectorEstrutura } from '../analistas/detector-estrutura.js';
 import { detectorDependencias } from '../analistas/detector-dependencias.js';
 import { log } from './constelacao/log.js';
-import config from './constelacao/cosmos.js';
+import { config } from './constelacao/cosmos.js';
 
 import type {
   FileEntryWithAst,

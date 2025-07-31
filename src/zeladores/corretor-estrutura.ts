@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import pLimit from 'p-limit';
-import config from '../nucleo/constelacao/cosmos.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 

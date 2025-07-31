@@ -2,18 +2,18 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import pLimit from 'p-limit';
 import { detectarFantasmas } from './fantasma.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
 import type { Pendencia, HistoricoItem } from '../tipos/tipos.js';
 
 const {
   AUTOANALISE_CONCURRENCY: CONCORRENCIA = 5,
-  GHOST_FILE_INACTIVITY_DAYS: DIAS_INATIVOS = 30,
-  DIR_ABANDONADOS = '.oraculo/abandonados',
-  PATH_PENDENTES = '.oraculo/pendentes.json',
-  PATH_REATIVAR = '.oraculo/reativar.json',
-  PATH_HISTORICO = '.oraculo/historico.json',
-  PATH_RELATORIO = '.oraculo/poda-oracular.md'
+  ZELADOR_GHOST_INACTIVITY_DAYS: DIAS_INATIVOS = 30,
+  ZELADOR_ABANDONED_DIR: DIR_ABANDONADOS,
+  ZELADOR_PENDING_PATH: PATH_PENDENTES,
+  ZELADOR_REACTIVATE_PATH: PATH_REATIVAR,
+  ZELADOR_HISTORY_PATH: PATH_HISTORICO,
+  ZELADOR_REPORT_PATH: PATH_RELATORIO
 } = config;
 
 const MILIS_DIA = 86_400_000;

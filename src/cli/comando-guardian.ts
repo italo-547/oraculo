@@ -5,8 +5,8 @@ import type { FileEntryWithAst, IntegridadeStatus } from '../tipos/tipos.js';
 
 import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 import { scanSystemIntegrity, acceptNewBaseline } from '../guardian/sentinela.js';
-import log from '../nucleo/constelacao/log.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
 export function comandoGuardian(aplicarFlagsGlobais: (opts: any) => void) {
   return new Command('guardian')
@@ -41,7 +41,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: any) => void) {
           }
         } else {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
-       const guardianResultado: ResultadoGuardian = await scanSystemIntegrity(fileEntries);
+          const guardianResultado: ResultadoGuardian = await scanSystemIntegrity(fileEntries);
           switch (guardianResultado.status as IntegridadeStatus) {
             case 'ok':
               log.sucesso('🔒 Guardian: integridade preservada.');

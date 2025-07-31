@@ -5,10 +5,10 @@ import type { FileEntryWithAst, ArquivoFantasma } from '../tipos/tipos.js';
 
 import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 import { removerArquivosOrfaos } from '../zeladores/poda.js';
-import log from '../nucleo/constelacao/log.js';
-import config from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
-export function comandoPodar(aplicarFlagsGlobais: (opts: any) => void)  {
+export function comandoPodar(aplicarFlagsGlobais: (opts: any) => void) {
   return new Command('podar')
     .description('Remove arquivos órfãos e lixo do repositório.')
     .option('-f, --force', 'Remove arquivos sem confirmação (CUIDADO!)', false)
@@ -20,7 +20,7 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: any) => void)  {
 
       try {
         const { fileEntries } = await iniciarInquisicao(baseDir, { incluirMetadados: false });
-const resultadoPoda: ResultadoPoda = await removerArquivosOrfaos(fileEntries);
+        const resultadoPoda: ResultadoPoda = await removerArquivosOrfaos(fileEntries);
         if (resultadoPoda.arquivosOrfaos.length === 0) {
           log.sucesso('🎉 Nenhuma sujeira detectada. Repositório limpo!');
           return;
