@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 
-import type { FileEntryWithAst, ArquivoFantasma } from '../tipos/tipos.js';
+import type { FileEntryWithAst, ArquivoFantasma, ResultadoPoda } from '../tipos/tipos.js';
 
 import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 import { removerArquivosOrfaos } from '../zeladores/poda.js';
@@ -12,7 +12,7 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: any) => void) {
   return new Command('podar')
     .description('Remove arquivos órfãos e lixo do repositório.')
     .option('-f, --force', 'Remove arquivos sem confirmação (CUIDADO!)', false)
-    .action(async (opts) => {
+    .action(async function (this: Command, opts) {
       aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
       log.info(chalk.bold('\n🌳 Iniciando processo de poda...\n'));
 
@@ -27,7 +27,7 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: any) => void) {
         }
 
         log.aviso(`\n${resultadoPoda.arquivosOrfaos.length} arquivos órfãos detectados:`);
-        resultadoPoda.arquivosOrfaos.forEach((file) => log.info(`- ${file.arquivo}`));
+        resultadoPoda.arquivosOrfaos.forEach((file: ArquivoFantasma) => log.info(`- ${file.arquivo}`));
 
         if (!opts.force) {
           const readline = await import('node:readline/promises');

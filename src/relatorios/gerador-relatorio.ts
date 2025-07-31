@@ -25,9 +25,9 @@ export async function gerarRelatorioMarkdown(
 
 ## 🛡️ Verificação de Integridade (Guardian)
 
-- **Status:** ${guardian?.status ?? 'não executada'}  
-- **Timestamp:** ${guardian?.timestamp ?? '—'}  
-- **Total de arquivos protegidos:** ${guardian?.totalArquivos ?? '—'}  
+  - **Status:** ${(guardian && typeof guardian === 'object' && 'status' in guardian) ? (guardian as any).status : 'não executada'}
+  - **Timestamp:** ${(guardian && typeof guardian === 'object' && 'timestamp' in guardian) ? (guardian as any).timestamp : '—'}
+  - **Total de arquivos protegidos:** ${(guardian && typeof guardian === 'object' && 'totalArquivos' in guardian) ? (guardian as any).totalArquivos : '—'}
 
 ---
 
@@ -36,11 +36,11 @@ export async function gerarRelatorioMarkdown(
 | Arquivo | Linha | Nível  | Mensagem |
 | ------- | ----- | ------ | -------- |
 ${ocorrenciasOrdenadas
-  .map(
-    (o) =>
-      `| ${o.relPath} | ${o.linha ?? ''} | ${o.nivel ?? ''} | ${o.mensagem.replace(/\|/g, '\\|')} |`
-  )
-  .join('\\n')}
+      .map(
+        (o) =>
+          `| ${o.relPath} | ${o.linha ?? ''} | ${o.nivel ?? ''} | ${o.mensagem.replace(/\|/g, '\\|')} |`
+      )
+      .join('\\n')}
 `;
 
   await fs.writeFile(outputPath, header, 'utf-8');

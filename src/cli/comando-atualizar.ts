@@ -13,7 +13,7 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: any) => void) {
   return new Command('atualizar')
     .description('Atualiza o Oráculo se a integridade estiver preservada')
     .option('--global', 'atualiza globalmente via npm i -g')
-    .action(async (opts) => {
+    .action(async function (this: Command, opts) {
       aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
       log.info(chalk.bold('\n🔄 Iniciando processo de atualização...\n'));
 

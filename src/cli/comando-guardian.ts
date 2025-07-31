@@ -13,7 +13,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: any) => void) {
     .description('Gerencia e verifica a integridade do ambiente do Oráculo.')
     .option('-a, --accept-baseline', 'Aceita o baseline atual como o novo baseline de integridade')
     .option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline')
-    .action(async (opts) => {
+    .action(async function (this: Command, opts) {
       aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
 
       const baseDir = process.cwd();
@@ -34,15 +34,15 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: any) => void) {
           if (diffResult.status === 'alteracoes-detectadas' && diffResult.detalhes) {
             log.aviso('🚨 Diferenças detectadas:');
             diffResult.detalhes.forEach((d: string) => log.info(`  - ${d}`));
-            log.alerta('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
+            log.aviso('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
             process.exit(1);
           } else {
             log.sucesso('✅ Nenhuma diferença detectada. Integridade preservada.');
           }
         } else {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
-          const guardianResultado: ResultadoGuardian = await scanSystemIntegrity(fileEntries);
-          switch (guardianResultado.status as IntegridadeStatus) {
+          const guardianResultado = await scanSystemIntegrity(fileEntries);
+          switch (guardianResultado.status) {
             case 'ok':
               log.sucesso('🔒 Guardian: integridade preservada.');
               break;
@@ -54,7 +54,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: any) => void) {
               log.sucesso('🌀 Guardian: baseline atualizado e aceito.');
               break;
             case 'alteracoes-detectadas':
-              log.alerta('🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.');
+              log.aviso('🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.');
               process.exit(1);
           }
         }

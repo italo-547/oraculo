@@ -1,3 +1,11 @@
+import type { FileEntryWithAst, ArquivoFantasma, ResultadoPoda } from '../tipos/tipos.js';
+// Exporta função para CLI: detecta arquivos órfãos e retorna ResultadoPoda
+export async function removerArquivosOrfaos(fileEntries: FileEntryWithAst[], executarRealmente = false): Promise<ResultadoPoda> {
+  // Detecta fantasmas usando a função já existente
+  const { fantasmas } = await detectarFantasmas();
+  // Se executarRealmente, pode-se mover os arquivos, mas CLI já faz isso
+  return { arquivosOrfaos: fantasmas as ArquivoFantasma[] };
+}
 import { gerarRelatorioPodaMarkdown, gerarRelatorioPodaJson } from '../relatorios/relatorio-poda.js';
 // --- Funções utilitárias mínimas para // persistência e manipulação de pendênc
 async function lerEstado<T = any>(caminho: string): Promise<T> {

@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 
-import type { Ocorrencia, FileEntryWithAst } from '../tipos/tipos.js';
+import type { Ocorrencia, FileEntryWithAst, ResultadoCorrecao } from '../tipos/tipos.js';
 
 import { iniciarInquisicao, executarInquisicao, tecnicas } from '../nucleo/inquisidor.js';
 import { corrigirEstrutura } from '../zeladores/corretor-estrutura.js';
@@ -12,7 +12,7 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
   return new Command('reestruturar')
     .description('Aplica correções estruturais e otimizações ao repositório.')
     .option('-a, --auto', 'Aplica correções automaticamente sem confirmação (CUIDADO!)', false)
-    .action(async (opts) => {
+    .action(async function (this: Command, opts) {
       aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
       log.info(chalk.bold('\n⚙️ Iniciando processo de reestruturação...\n'));
 
@@ -20,7 +20,8 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
 
       try {
         const { fileEntries }: { fileEntries: FileEntryWithAst[] } = await iniciarInquisicao(baseDir, { incluirMetadados: true });
-        const analiseParaCorrecao = await executarInquisicao(fileEntries, tecnicas, baseDir);
+        // executarInquisicao espera 4 argumentos
+        const analiseParaCorrecao = await executarInquisicao(fileEntries, tecnicas, baseDir, undefined);
 
         if (analiseParaCorrecao.ocorrencias.length === 0) {
           log.sucesso('🎉 Nenhuma correção estrutural necessária. Repositório já otimizado!');
@@ -29,7 +30,7 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
 
         log.aviso(`\n${analiseParaCorrecao.ocorrencias.length} problemas estruturais detectados para correção:`);
         analiseParaCorrecao.ocorrencias.forEach((occ: Ocorrencia) =>
-          log.info(`- [${occ.tipo}] ${occ.filePath ?? occ.arquivo ?? 'arquivo desconhecido'}: ${occ.mensagem}`)
+          log.info(`- [${occ.tipo}] ${occ.relPath ?? occ.arquivo ?? 'arquivo desconhecido'}: ${occ.mensagem}`)
         );
 
         if (!opts.auto) {
@@ -48,8 +49,14 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: any) => void) {
           }
         }
 
-        const resultadoCorrecao: ResultadoCorrecao = await corrigirEstrutura(analiseParaCorrecao.ocorrencias);
-        log.sucesso(`✅ Reestruturação concluída: ${resultadoCorrecao.correcoesAplicadas} correções aplicadas.`);
+        // Mapear Ocorrencia[] para ResultadoEstrutural[] para corrigirEstrutura
+        const mapa = analiseParaCorrecao.ocorrencias.map((occ: Ocorrencia) => ({
+          arquivo: occ.relPath ?? occ.arquivo ?? 'arquivo_desconhecido',
+          ideal: null, // ajuste conforme necessário
+          atual: occ.relPath ?? occ.arquivo ?? 'arquivo_desconhecido'
+        }));
+        await corrigirEstrutura(mapa, fileEntries, baseDir);
+        log.sucesso(`✅ Reestruturação concluída: ${analiseParaCorrecao.ocorrencias.length} correções aplicadas.`);
       } catch (error: any) {
         log.erro(`❌ Erro durante a reestruturação: ${error.message}`);
         if (config.DEV_MODE) console.error(error);

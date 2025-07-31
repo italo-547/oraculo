@@ -23,8 +23,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
     .alias('diag')
     .description('Executa uma análise completa do repositório')
     .option('-g, --guardian-check', 'Ativa a verificação de integridade do Guardian durante o diagnóstico')
-    .action(async (opts) => {
-      aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
+    .action(async (opts, command) => {
+      aplicarFlagsGlobais(command.parent?.opts?.() ?? {});
       config.GUARDIAN_ENABLED = opts.guardianCheck ?? false;
 
       log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
@@ -54,7 +54,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
                 log.aviso('🌀 Guardian: novo baseline aceito — execute novamente.');
                 break;
               case 'alteracoes-detectadas':
-                log.alerta('🚨 Guardian: alterações suspeitas detectadas! Considere executar `oraculo guardian --diff`.');
+                log.aviso('🚨 Guardian: alterações suspeitas detectadas! Considere executar `oraculo guardian --diff`.');
                 totalOcorrencias++;
                 break;
             }
@@ -76,7 +76,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
 
         log.info(chalk.bold('\n📊 Gerando relatórios analíticos...\n'));
         const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
-        await gerarRelatorioEstrutura(alinhamentos);
+        // Garante que ideal nunca é null
+        const alinhamentosValidos = alinhamentos.map(a => ({ ...a, ideal: a.ideal ?? '' }));
+        await gerarRelatorioEstrutura(alinhamentosValidos);
         await exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
         await exibirRelatorioPadroesUso();
         await diagnosticarProjeto(sinaisDetectados);
@@ -84,7 +86,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
         await emitirConselhoOracular({
           hora: new Date().getHours(),
           arquivosParaCorrigir: resultadoFinal.ocorrencias.length,
-          arquivosParaPodar: resultadoFinal.arquivosOrfaosDetectados?.length || 0,
+          arquivosParaPodar: 0, // Não implementado
           totalOcorrenciasAnaliticas: resultadoFinal.ocorrencias.length,
           integridadeGuardian: guardianResultado?.status || 'nao-verificado',
         });
@@ -109,21 +111,25 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
                   }, {})
                 ).sort(([, a], [, b]) => b - a)
               ),
-              arquivosComProblemas: new Set(resultadoFinal.ocorrencias.map((o) => o.filePath)).size,
+              arquivosComProblemas: new Set(resultadoFinal.ocorrencias.map((o) => o.relPath)).size,
               integridadeGuardian: guardianResultado?.status || 'nao-verificado',
               baselineModificado: guardianResultado?.baselineModificado || false,
-              arquivosOrfaosDetectados: resultadoFinal.arquivosOrfaosDetectados?.length || 0,
+              arquivosOrfaosDetectados: 0, // Não implementado
             },
             detalhesOcorrencias: resultadoFinal.ocorrencias.map((occ: Ocorrencia) => ({
-              filePath: occ.filePath,
-              tipoOcorrencia: occ.tipoOcorrencia,
+              filePath: occ.relPath,
+              tipoOcorrencia: occ.tipo,
               mensagem: occ.mensagem,
               linha: occ.linha,
               coluna: occ.coluna,
             })),
           };
 
-          await gerarRelatorioMarkdown(resultadoFinal, path.join(dir, `${nome}.md`));
+          await gerarRelatorioMarkdown({
+            ...resultadoFinal,
+            fileEntries: fileEntriesComAst,
+            guardian: guardianResultado
+          }, path.join(dir, `${nome}.md`));
           await fs.writeFile(path.join(dir, `${nome}.json`), JSON.stringify(relatorioCompacto, null, 2));
           log.sucesso(`Relatórios exportados para: ${dir}`);
         }
@@ -131,7 +137,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: any) => void) {
         if (totalOcorrencias === 0) {
           log.sucesso(chalk.bold('\n✨ Oráculo: Repositório impecável! Nenhum problema detectado.\n'));
         } else {
-          log.alerta(chalk.bold(`\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`));
+          log.aviso(chalk.bold(`\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`));
           log.info('Revise os relatórios acima ou exportados para mais detalhes.');
           process.exit(1);
         }

@@ -7,7 +7,7 @@ type ParserFunc = (codigo: string, plugins?: string[]) => Promise<BabelFile | nu
 async function parseComBabel(codigo: string, plugins?: string[]): Promise<BabelFile | null> {
   const options: ParserOptions = {
     sourceType: 'unambiguous',
-    plugins: plugins ?? ['typescript', 'jsx', 'decorators-legacy']
+    plugins: (plugins ?? ['typescript', 'jsx', 'decorators-legacy']) as any
   };
 
   try {

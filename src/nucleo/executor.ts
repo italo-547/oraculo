@@ -65,7 +65,7 @@ export async function executarInquisicao(
         const resultado = await tecnica.aplicar(
           entry.content ?? '',
           entry.relPath,
-          entry.ast,
+          entry.ast ?? null,
           entry.fullPath,
           contextoGlobal
         );
