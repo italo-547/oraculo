@@ -4,6 +4,7 @@ import { log } from './constelacao/log.js';
 
 type ParserFunc = (codigo: string, plugins?: string[]) => Promise<BabelFile | null>;
 
+<<<<<<< HEAD
 function parseComBabel(codigo: string, plugins?: string[]): Promise<BabelFile | null> {
   const defaultPlugins = ['typescript', 'jsx', 'decorators-legacy'];
   const options: ParserOptions = {
@@ -32,6 +33,35 @@ function parseComJava(_codigo: string): Promise<null> {
 function parseComXml(_codigo: string): Promise<null> {
   log.debug('🔧 Parser XML ainda não implementado.');
   return Promise.resolve(null);
+=======
+async function parseComBabel(codigo: string, plugins?: string[]): Promise<BabelFile | null> {
+  const options: ParserOptions = {
+    sourceType: 'unambiguous',
+    plugins: (plugins ?? ['typescript', 'jsx', 'decorators-legacy']) as any
+  };
+
+  try {
+    return babelParse(codigo, options);
+  } catch (err: any) {
+    log.debug(`⚠️ Falha no parser Babel: ${err.message}`);
+    return null;
+  }
+}
+
+async function parseComKotlin(_codigo: string): Promise<null> {
+  log.debug('🔧 Parser Kotlin ainda não implementado.');
+  return null;
+}
+
+async function parseComJava(_codigo: string): Promise<null> {
+  log.debug('🔧 Parser Java ainda não implementado.');
+  return null;
+}
+
+async function parseComXml(_codigo: string): Promise<null> {
+  log.debug('🔧 Parser XML ainda não implementado.');
+  return null;
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 }
 
 const PARSERS = new Map<string, ParserFunc>([

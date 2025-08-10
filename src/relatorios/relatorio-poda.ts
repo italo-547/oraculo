@@ -26,9 +26,13 @@ export async function gerarRelatorioPodaMarkdown(
         md += '| Arquivo | Motivo | Dias Inativo | Detectado em |\n';
         md += '|---------|--------|--------------|--------------|\n';
         for (const p of podados) {
+<<<<<<< HEAD
             const pendenciaObj = p as unknown as Record<string, unknown>;
             const diasInativo = typeof pendenciaObj.diasInativo === 'number' ? String(pendenciaObj.diasInativo) : '-';
             md += `| ${p.arquivo} | ${p.motivo} | ${diasInativo} | ${p.detectedAt ? new Date(p.detectedAt).toISOString().slice(0, 10) : '-'} |\n`;
+=======
+            md += `| ${p.arquivo} | ${p.motivo} | ${'diasInativo' in p ? (p as any).diasInativo ?? '-' : '-'} | ${p.detectedAt ? new Date(p.detectedAt).toISOString().slice(0, 10) : '-'} |\n`;
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         }
     }
     md += '\n---\n';
@@ -53,6 +57,7 @@ export async function gerarRelatorioPodaJson(
     mantidos: Pendencia[]
 ): Promise<void> {
     const json = {
+<<<<<<< HEAD
         podados: podados.map(p => {
             const pendenciaObj = p as unknown as Record<string, unknown>;
             return {
@@ -61,6 +66,9 @@ export async function gerarRelatorioPodaJson(
                 diasInativo: typeof pendenciaObj.diasInativo === 'number' ? pendenciaObj.diasInativo : undefined
             };
         }),
+=======
+        podados: podados.map(p => ({ arquivo: p.arquivo, motivo: p.motivo, diasInativo: 'diasInativo' in p ? (p as any).diasInativo : undefined })),
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         mantidos: mantidos.map(p => ({ arquivo: p.arquivo, motivo: p.motivo })),
         totalPodados: podados.length,
         totalMantidos: mantidos.length,

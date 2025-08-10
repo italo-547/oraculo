@@ -16,7 +16,11 @@ import type {
 } from '../tipos/tipos.js';
 
 const EXTENSOES_COM_AST = new Set(
+<<<<<<< HEAD
   Array.isArray(config.SCANNER_EXTENSOES_COM_AST) ? config.SCANNER_EXTENSOES_COM_AST : ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs']
+=======
+  config.SCANNER_EXTENSOES_COM_AST ?? ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs']
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 );
 
 export const tecnicas: Tecnica[] = [
@@ -55,7 +59,11 @@ async function prepararComAst(
       return {
         ...entry,
         ast,
+<<<<<<< HEAD
         fullPath: typeof entry.fullPath === 'string' ? entry.fullPath : path.resolve(baseDir, entry.relPath)
+=======
+        fullPath: entry.fullPath ?? path.resolve(baseDir, entry.relPath)
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
       };
     })
   );
@@ -78,7 +86,11 @@ export async function iniciarInquisicao(
     fileEntries = Object.values(fileMap).map((entry) => ({
       ...entry,
       ast: undefined,
+<<<<<<< HEAD
       fullPath: typeof entry.fullPath === 'string' ? entry.fullPath : path.resolve(baseDir, entry.relPath)
+=======
+      fullPath: entry.fullPath ?? path.resolve(baseDir, entry.relPath)
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
     }));
   }
 

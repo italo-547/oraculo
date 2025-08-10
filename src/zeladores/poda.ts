@@ -8,6 +8,7 @@ export async function removerArquivosOrfaos(fileEntries: FileEntryWithAst[], exe
 }
 import { gerarRelatorioPodaMarkdown, gerarRelatorioPodaJson } from '../relatorios/relatorio-poda.js';
 // --- Funções utilitárias mínimas para // persistência e manipulação de pendênc
+<<<<<<< HEAD
 
 async function lerEstado<T = unknown>(caminho: string): Promise<T> {
   try {
@@ -26,6 +27,22 @@ async function salvarEstado<T>(caminho: string, dados: T): Promise<void> {
 
 
 function gerarPendencias(fantasmas: Array<{ arquivo: string; referenciado?: boolean }>, agora: number): Pendencia[] {
+=======
+async function lerEstado<T = any>(caminho: string): Promise<T> {
+  try {
+    const conteudo = await fs.readFile(caminho, 'utf-8');
+    return JSON.parse(conteudo);
+  } catch {
+    return [] as any;
+  }
+}
+
+async function salvarEstado<T = any>(caminho: string, dados: T): Promise<void> {
+  await fs.writeFile(caminho, JSON.stringify(dados, null, 2), 'utf-8');
+}
+
+function gerarPendencias(fantasmas: any[], agora: number): Pendencia[] {
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
   return fantasmas.map(f => ({
     arquivo: f.arquivo,
     motivo: f.referenciado ? 'inativo' : 'órfão',
@@ -87,11 +104,20 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
   const base = process.cwd();
   const agora = Date.now();
 
+<<<<<<< HEAD
   const [anteriores, reativar, historico] = await Promise.all([
     lerEstado<Pendencia[]>(PATH_PENDENTES),
     lerEstado<string[]>(PATH_REATIVAR),
     lerEstado<HistoricoItem[]>(PATH_HISTORICO)
   ]);
+=======
+  const [anteriores, reativar, historico]: [Pendencia[], string[], HistoricoItem[]] =
+    await Promise.all([
+      lerEstado(PATH_PENDENTES),
+      lerEstado(PATH_REATIVAR),
+      lerEstado(PATH_HISTORICO)
+    ]);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 
   const { fantasmas } = await detectarFantasmas();
   const novos = gerarPendencias(fantasmas, agora);
@@ -150,8 +176,13 @@ async function moverArquivos(
             motivo: pend.motivo
           });
           log.sucesso(`✅ ${pend.arquivo} movido para abandonados.`);
+<<<<<<< HEAD
         } catch (err) {
           log.erro(`❌ Falha ao mover ${pend.arquivo}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+=======
+        } catch (err: any) {
+          log.erro(`❌ Falha ao mover ${pend.arquivo}: ${err.message}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         }
       })
     )

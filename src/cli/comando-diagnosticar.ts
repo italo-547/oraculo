@@ -43,7 +43,11 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
           try {
             guardianResultado = await scanSystemIntegrity(fileEntries);
+<<<<<<< HEAD
             switch (String(guardianResultado.status)) {
+=======
+            switch (guardianResultado.status) {
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
               case 'ok':
                 log.sucesso('🔒 Guardian: integridade preservada.');
                 break;
@@ -77,11 +81,19 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         log.info(chalk.bold('\n📊 Gerando relatórios analíticos...\n'));
         const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
         // Garante que ideal nunca é null
+<<<<<<< HEAD
         const alinhamentosValidos = alinhamentos.map(a => ({ ...a, ideal: a.ideal || '' }));
         await gerarRelatorioEstrutura(alinhamentosValidos);
         await exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
         exibirRelatorioPadroesUso();
         diagnosticarProjeto(sinaisDetectados);
+=======
+        const alinhamentosValidos = alinhamentos.map(a => ({ ...a, ideal: a.ideal ?? '' }));
+        await gerarRelatorioEstrutura(alinhamentosValidos);
+        await exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
+        await exibirRelatorioPadroesUso();
+        await diagnosticarProjeto(sinaisDetectados);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 
         await emitirConselhoOracular({
           hora: new Date().getHours(),
@@ -94,7 +106,11 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         if (config.REPORT_EXPORT_ENABLED) {
           log.info(chalk.bold('\n💾 Exportando relatórios detalhados...\n'));
           const ts = new Date().toISOString().replace(/[:.]/g, '-');
+<<<<<<< HEAD
           const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'oraculo-reports');
+=======
+          const dir = config.REPORT_OUTPUT_DIR ?? path.join(baseDir, 'oraculo-reports');
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
           const nome = `oraculo-relatorio-${ts}`;
           await fs.mkdir(dir, { recursive: true });
 
@@ -142,7 +158,11 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           process.exit(1);
         }
       } catch (error) {
+<<<<<<< HEAD
         log.erro(`❌ Erro fatal durante o diagnóstico: ${(error as Error).message ?? String(error)}`);
+=======
+        log.erro(`❌ Erro fatal durante o diagnóstico: ${(error as Error)?.message ?? String(error)}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         if (config.DEV_MODE) console.error(error);
         process.exit(1);
       }

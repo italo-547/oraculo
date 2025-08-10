@@ -15,8 +15,13 @@ function construirSnapshot(fileEntries: FileEntry[]): Snapshot {
     if (!content?.trim()) continue;
     try {
       snapshot[relPath] = gerarSnapshotDoConteudo(content);
+<<<<<<< HEAD
     } catch (err) {
       log.aviso(`❌ Falha ao gerar hash de ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+=======
+    } catch (err: any) {
+      log.aviso(`❌ Falha ao gerar hash de ${relPath}: ${err.message}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
     }
   }
   return snapshot;
@@ -37,8 +42,13 @@ export async function scanSystemIntegrity(
   let baselineAnterior: Snapshot | null = null;
   try {
     baselineAnterior = await carregarBaseline();
+<<<<<<< HEAD
   } catch (err) {
     log.aviso(`⚠️ Baseline inválido ou corrompido: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+=======
+  } catch (err: any) {
+    log.aviso(`⚠️ Baseline inválido ou corrompido: ${err.message}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
   }
 
   const snapshotAtual = construirSnapshot(fileEntries);

@@ -39,7 +39,11 @@ export const ritualComando = {
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
     const encontrados = new Set<string>();
+<<<<<<< HEAD
     // handlerNode removido pois não é utilizado
+=======
+    let handlerNode: Node | null = null;
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 
     if (!ast) {
       return [
@@ -65,7 +69,11 @@ export const ritualComando = {
             const info = extractHandlerInfo(arg as Node);
             if (info) {
               encontrados.add(nome);
+<<<<<<< HEAD
               // handlerNode removido
+=======
+              handlerNode = info.func;
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
             }
           }
         }

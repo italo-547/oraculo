@@ -20,7 +20,11 @@ export async function scanRepository(
   const {
     includeContent = true,
     filter = () => true,
+<<<<<<< HEAD
     onProgress = () => { return undefined; }
+=======
+    onProgress = () => { }
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
   } = options;
 
   const fileMap: FileMap = {};
@@ -31,8 +35,13 @@ export async function scanRepository(
     try {
       entries = await fs.readdir(dir, { withFileTypes: true });
       entries.sort((a, b) => a.name.localeCompare(b.name));
+<<<<<<< HEAD
     } catch (err) {
       onProgress(`⚠️ Falha ao acessar ${dir}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+=======
+    } catch (err: any) {
+      onProgress(`⚠️ Falha ao acessar ${dir}: ${err.message}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
       return;
     }
 
@@ -64,8 +73,13 @@ export async function scanRepository(
 
           fileMap[relPath] = entryObj;
           onProgress(`✅ Arquivo lido: ${relPath}`);
+<<<<<<< HEAD
         } catch (err) {
           onProgress(`⚠️ Erro ao ler ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+=======
+        } catch (err: any) {
+          onProgress(`⚠️ Erro ao ler ${relPath}: ${err.message}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         }
       }
     }

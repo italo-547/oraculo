@@ -42,8 +42,13 @@ export async function corrigirEstrutura(
 
         try {
           await fs.mkdir(path.dirname(destino), { recursive: true });
+<<<<<<< HEAD
         } catch (err) {
           log.erro(`❌ Falha ao criar diretório para ${destino}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+=======
+        } catch (err: any) {
+          log.erro(`❌ Falha ao criar diretório para ${destino}: ${err.message}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
           return;
         }
 
@@ -60,8 +65,13 @@ export async function corrigirEstrutura(
 
           await fs.rename(origem, destino);
           log.sucesso(`✅ Movido: ${arquivo} → ${path.relative(baseDir, destino)}`);
+<<<<<<< HEAD
         } catch (err) {
           log.erro(`❌ Falha ao mover ${arquivo}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+=======
+        } catch (err: any) {
+          log.erro(`❌ Falha ao mover ${arquivo}: ${err.message}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         }
       })
     )
@@ -71,6 +81,7 @@ export async function corrigirEstrutura(
   for (const pluginRel of PLUGINS) {
     try {
       const pluginModule = await import(path.resolve(baseDir, pluginRel));
+<<<<<<< HEAD
       const plugin = typeof pluginModule === 'object' && pluginModule !== null && 'default' in pluginModule && typeof pluginModule.default === 'function'
         ? pluginModule.default
         : pluginModule;
@@ -79,6 +90,14 @@ export async function corrigirEstrutura(
       }
     } catch (err) {
       log.aviso(`⚠️ Plugin falhou: ${pluginRel} — ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+=======
+      const plugin = pluginModule.default ?? pluginModule;
+      if (typeof plugin === 'function') {
+        await plugin({ mapa, baseDir, layers: STRUCTURE_LAYERS, fileEntries });
+      }
+    } catch (err: any) {
+      log.aviso(`⚠️ Plugin falhou: ${pluginRel} — ${err.message}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
     }
   }
 }

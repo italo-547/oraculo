@@ -48,7 +48,11 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
         await removerArquivosOrfaos(fileEntries, true);
         log.sucesso('✅ Poda concluída: Arquivos órfãos removidos com sucesso!');
       } catch (error) {
+<<<<<<< HEAD
         log.erro(`❌ Erro durante a poda: ${typeof error === 'object' && error && 'message' in error ? (error as { message: string }).message : String(error)}`);
+=======
+        log.erro(`❌ Erro durante a poda: ${(error as Error)?.message ?? String(error)}`);
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         if (config.DEV_MODE) console.error(error);
         process.exit(1);
       }

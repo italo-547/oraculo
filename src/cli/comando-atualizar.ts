@@ -9,7 +9,11 @@ import { scanSystemIntegrity } from '../guardian/sentinela.js';
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 
+<<<<<<< HEAD
 export function comandoAtualizar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
+=======
+export function comandoAtualizar(aplicarFlagsGlobais: (opts: any) => void) {
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
   return new Command('atualizar')
     .description('Atualiza o Oráculo se a integridade estiver preservada')
     .option('--global', 'atualiza globalmente via npm i -g')
@@ -27,8 +31,13 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: Record<string, unkn
         const guardianResultado = await scanSystemIntegrity(fileEntries);
 
         if (
+<<<<<<< HEAD
           guardianResultado.status === ('ok' as typeof guardianResultado.status) ||
           guardianResultado.status === ('baseline-aceito' as typeof guardianResultado.status)
+=======
+          guardianResultado.status === 'ok' ||
+          guardianResultado.status === 'baseline-aceito'
+>>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         ) {
           log.sucesso('🔒 Guardian: integridade validada. Prosseguindo atualização.');
         } else {
