@@ -17,11 +17,7 @@ program
   .option('-d, --dev', 'ativa modo de desenvolvimento (logs de debug)');
 
 // 🌐 Flags globais aplicáveis em todos os comandos
-<<<<<<< HEAD
-interface OraculoGlobalFlags { silence?: boolean; export?: boolean; dev?: boolean }
-=======
 type OraculoGlobalFlags = { silence?: boolean; export?: boolean; dev?: boolean };
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 function aplicarFlagsGlobais(opts: OraculoGlobalFlags) {
   config.REPORT_SILENCE_LOGS = Boolean(opts.silence);
   config.REPORT_EXPORT_ENABLED = Boolean(opts.export);
@@ -32,8 +28,4 @@ function aplicarFlagsGlobais(opts: OraculoGlobalFlags) {
 registrarComandos(program, aplicarFlagsGlobais);
 
 // 🚀 Execução do CLI
-<<<<<<< HEAD
 void program.parseAsync(process.argv);
-=======
-program.parseAsync(process.argv);
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd

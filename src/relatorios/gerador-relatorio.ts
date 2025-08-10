@@ -11,7 +11,6 @@ export async function gerarRelatorioMarkdown(
   const { totalArquivos, ocorrencias, guardian, timestamp, duracaoMs } = resultado;
   const dataISO = new Date(timestamp).toISOString();
   const ocorrenciasOrdenadas: Ocorrencia[] = [...ocorrencias].sort(
-<<<<<<< HEAD
     (a, b) => (a.relPath?.localeCompare(b.relPath ?? '') ?? 0) || ((a.linha ?? 0) - (b.linha ?? 0))
   );
 
@@ -19,11 +18,6 @@ export async function gerarRelatorioMarkdown(
   const guardianTimestamp = guardian && typeof guardian === 'object' && 'timestamp' in guardian ? String((guardian as Record<string, unknown>).timestamp) : '—';
   const guardianTotalArquivos = guardian && typeof guardian === 'object' && 'totalArquivos' in guardian ? String((guardian as Record<string, unknown>).totalArquivos) : '—';
 
-=======
-    (a, b) => a.relPath?.localeCompare(b.relPath ?? '') || (a.linha ?? 0) - (b.linha ?? 0)
-  );
-
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
   const header = `# 📜 Relatório Oráculo  
 
 **Data:** ${dataISO}  
@@ -35,15 +29,9 @@ export async function gerarRelatorioMarkdown(
 
 ## 🛡️ Verificação de Integridade (Guardian)
 
-<<<<<<< HEAD
   - **Status:** ${guardianStatus}
   - **Timestamp:** ${guardianTimestamp}
   - **Total de arquivos protegidos:** ${guardianTotalArquivos}
-=======
-  - **Status:** ${(guardian && typeof guardian === 'object' && 'status' in guardian) ? (guardian as any).status : 'não executada'}
-  - **Timestamp:** ${(guardian && typeof guardian === 'object' && 'timestamp' in guardian) ? (guardian as any).timestamp : '—'}
-  - **Total de arquivos protegidos:** ${(guardian && typeof guardian === 'object' && 'totalArquivos' in guardian) ? (guardian as any).totalArquivos : '—'}
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 
 ---
 
@@ -56,11 +44,7 @@ ${ocorrenciasOrdenadas
         (o) =>
           `| ${o.relPath} | ${o.linha ?? ''} | ${o.nivel ?? ''} | ${o.mensagem.replace(/\|/g, '\\|')} |`
       )
-<<<<<<< HEAD
       .join('\n')}
-=======
-      .join('\\n')}
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 `;
 
   await fs.writeFile(outputPath, header, 'utf-8');

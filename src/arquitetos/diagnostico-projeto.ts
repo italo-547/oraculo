@@ -11,17 +11,10 @@ export function diagnosticarProjeto(sinais: SinaisProjeto): DiagnosticoProjeto {
   let tipo: DiagnosticoProjeto['tipo'] = 'desconhecido';
   let confianca = 0.3;
 
-<<<<<<< HEAD
   if ('ehFullstack' in sinais && sinais.ehFullstack) {
     tipo = 'fullstack';
     confianca = 0.95;
   } else if ('ehMonorepo' in sinais && sinais.ehMonorepo) {
-=======
-  if ((sinais as any).ehFullstack) {
-    tipo = 'fullstack';
-    confianca = 0.95;
-  } else if ((sinais as any).ehMonorepo) {
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
     tipo = 'monorepo';
     confianca = 0.99;
   } else if (ehLanding(sinais)) {

@@ -9,11 +9,7 @@ import type {
 import type { Node, FunctionDeclaration, FunctionExpression, ArrowFunctionExpression } from '@babel/types';
 import type { NodePath } from '@babel/traverse';
 
-<<<<<<< HEAD
 const LIMITE_LINHAS = typeof config.ZELADOR_LINE_THRESHOLD === 'number' ? config.ZELADOR_LINE_THRESHOLD : 30;
-=======
-const LIMITE_LINHAS = config.ZELADOR_LINE_THRESHOLD ?? 30;
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 
 export const analistaFuncoesLongas = {
   nome: 'analista-funcoes-longas',
