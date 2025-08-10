@@ -1,0 +1,60 @@
+name: Validação do Oráculo
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  oraculo-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar cache de dependências
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Apagar build antigo
+        run: rm -rf dist tsconfig.tsbuildinfo
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Instalar dependências
+        run: npm ci
+        
+      - name: Verificar tipos (typecheck)
+        run: npm run typecheck
+
+      - name: Lint (sem ignorar erro)
+        run: npm run lint
+
+      - name: Verificar formatação (Prettier)
+        run: npm run format
+
+      - name: Compilar projeto
+        run: npm run build
+
+      - name: Testar comandos principais do Oráculo
+        run: |
+          node dist/cli.js --help
+          node dist/cli.js diagnosticar --help
+          node dist/cli.js guardian --help
+          node dist/cli.js podar --help
+          node dist/cli.js reestruturar --help
+          node dist/cli.js atualizar --help
+   
+      - name: Rodar testes e cobertura
+        run: npm test && npx nyc report
