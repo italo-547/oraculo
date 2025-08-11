@@ -18,7 +18,7 @@ export const analistaFuncoesLongas = {
     src: string,
     relPath: string,
     ast: NodePath | null,
-    _fullPath: string,
+    fullPath?: string,
     _contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];

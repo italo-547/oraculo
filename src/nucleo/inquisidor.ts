@@ -1,9 +1,12 @@
+import { ritualComando } from '../analistas/ritual-comando.js';
 import * as path from 'path';
 import { scanRepository } from './scanner.js';
 import { decifrarSintaxe } from './parser.js';
 import { executarInquisicao as executarExecucao } from './executor.js';
 import { detectorEstrutura } from '../analistas/detector-estrutura.js';
 import { detectorDependencias } from '../analistas/detector-dependencias.js';
+import { analistaFuncoesLongas } from '../analistas/analista-funcoes-longas.js';
+import { analistaPadroesUso } from '../analistas/analista-padroes-uso.js';
 import { log } from './constelacao/log.js';
 import { config } from './constelacao/cosmos.js';
 
@@ -21,7 +24,13 @@ const EXTENSOES_COM_AST = new Set(
     : ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs'],
 );
 
-export const tecnicas: Tecnica[] = [detectorDependencias, detectorEstrutura];
+export const tecnicas: Tecnica[] = [
+  detectorDependencias,
+  detectorEstrutura,
+  analistaFuncoesLongas,
+  analistaPadroesUso,
+  ritualComando,
+];
 
 export async function prepararComAst(entries: FileEntry[], baseDir: string): Promise<FileEntryWithAst[]> {
   return Promise.all(

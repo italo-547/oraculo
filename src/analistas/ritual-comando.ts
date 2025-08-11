@@ -27,7 +27,7 @@ export const ritualComando = {
     conteudo: string,
     arquivo: string,
     ast: NodePath | null,
-    _fullPath: string,
+    fullPath?: string,
     _contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];

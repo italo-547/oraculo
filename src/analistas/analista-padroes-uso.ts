@@ -28,7 +28,7 @@ export const analistaPadroesUso = {
     _src: string,
     _relPath: string,
     _ast: unknown,
-    _fullPath: string,
+    fullPath?: string,
     contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado => {
     const ocorrencias: Ocorrencia[] = [];
