@@ -20,4 +20,10 @@ describe('hash helpers', () => {
         const hash = gerarSnapshotDoConteudo(conteudo);
         expect(hash).toBe(gerarHashHex(conteudo));
     });
+
+    it('gera snapshot corretamente para conteúdo vazio', () => {
+        const conteudo = '';
+        const hash = gerarSnapshotDoConteudo(conteudo);
+        expect(hash).toBe(gerarHashHex(conteudo));
+    });
 });

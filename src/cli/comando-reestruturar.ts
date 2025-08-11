@@ -58,7 +58,8 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
           );
           rl.close();
 
-          if (answer.toLowerCase() !== 's') {
+          // Normaliza resposta: remove espaços e converte para minúsculo
+          if (answer.trim().toLowerCase() !== 's') {
             log.info('❌ Reestruturação cancelada.');
             return;
           }

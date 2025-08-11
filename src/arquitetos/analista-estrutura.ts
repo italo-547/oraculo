@@ -3,7 +3,10 @@ import pLimit from 'p-limit';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 
-const CAMADAS: Record<string, string> = {};
+/**
+ * Exportado apenas para testes. Não usar fora de testes!
+ */
+export const CAMADAS: Record<string, string> = {};
 const CONCORRENCIA =
   typeof config.AUTOANALISE_CONCURRENCY === 'number' ? config.AUTOANALISE_CONCURRENCY : 5;
 

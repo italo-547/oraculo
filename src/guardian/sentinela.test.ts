@@ -72,6 +72,50 @@ describe('scanSystemIntegrity', () => {
         const result = await scanSystemIntegrity(fileEntries);
         expect(result.status).toBe('ok');
     });
+
+    it('retorna AlteracoesDetectadas e detalhes se houver diferenças e justDiff', async () => {
+        const { carregarBaseline } = await import('./baseline.js');
+        const { diffSnapshots, verificarErros } = await import('./diff.js');
+        (carregarBaseline as any).mockResolvedValue({ a: 'hash_abc' });
+        (diffSnapshots as any).mockReturnValue({ removidos: ['a'], adicionados: [], alterados: [] });
+        (verificarErros as any).mockReturnValue(['erro1']);
+        const fileEntries = [{ relPath: 'b', content: 'def', fullPath: '/tmp/b' }];
+        const result = await scanSystemIntegrity(fileEntries, { justDiff: true });
+        expect(result.status).toBe('alt');
+        expect(result.detalhes).toEqual(['erro1']);
+    });
+
+    it('lança GuardianError se houver erros de integridade', async () => {
+        const { carregarBaseline } = await import('./baseline.js');
+        const { diffSnapshots, verificarErros } = await import('./diff.js');
+        (carregarBaseline as any).mockResolvedValue({ a: 'hash_abc' });
+        (diffSnapshots as any).mockReturnValue({ removidos: [], adicionados: [], alterados: ['a'] });
+        (verificarErros as any).mockReturnValue(['erro_integridade']);
+        const fileEntries = [{ relPath: 'a', content: 'def', fullPath: '/tmp/a' }];
+        await expect(scanSystemIntegrity(fileEntries)).rejects.toThrow('erro_integridade');
+    });
+
+    it('loga aviso se erro ao carregar baseline', async () => {
+        const { carregarBaseline } = await import('./baseline.js');
+        const { log } = await import('../nucleo/constelacao/log.js');
+        (carregarBaseline as any).mockImplementation(() => { throw new Error('corrompido'); });
+        const fileEntries = [{ relPath: 'a', content: 'abc', fullPath: '/tmp/a' }];
+        await scanSystemIntegrity(fileEntries);
+        expect(log.aviso).toHaveBeenCalledWith(expect.stringContaining('corrompido'));
+    });
+
+    it('loga aviso se erro ao gerar hash de arquivo e lança erro de integridade', async () => {
+        const { carregarBaseline } = await import('./baseline.js');
+        const { log } = await import('../nucleo/constelacao/log.js');
+        const { gerarSnapshotDoConteudo } = await import('./hash.js');
+        const { verificarErros } = await import('./diff.js');
+        (carregarBaseline as any).mockResolvedValue({});
+        (gerarSnapshotDoConteudo as any).mockImplementation(() => { throw new Error('hashfail'); });
+        (verificarErros as any).mockReturnValue(['erro_integridade']);
+        const fileEntries = [{ relPath: 'a', content: 'abc', fullPath: '/tmp/a' }];
+        await expect(scanSystemIntegrity(fileEntries)).rejects.toThrow('erro_integridade');
+        expect(log.aviso).toHaveBeenCalledWith(expect.stringContaining('hashfail'));
+    });
 });
 
 describe('acceptNewBaseline', () => {

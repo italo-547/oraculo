@@ -51,4 +51,13 @@ describe('carregarRegistros', () => {
         const registros = await carregarRegistros('/tmp/test.json');
         expect(registros).toEqual([]);
     });
+
+    it('retorna lista vazia e loga aviso se lerEstado lança erro', async () => {
+        const { lerEstado } = await import('../zeladores/util/persistencia.js');
+        const { log } = await import('../nucleo/constelacao/log.js');
+        (lerEstado as any).mockRejectedValue(new Error('falha'));
+        const registros = await carregarRegistros('/tmp/test.json');
+        expect(registros).toEqual([]);
+        expect(log.aviso).toHaveBeenCalledWith(expect.stringContaining('Nenhum registro encontrado'));
+    });
 });

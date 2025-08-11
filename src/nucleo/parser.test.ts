@@ -41,8 +41,25 @@ describe('parser', () => {
         ]);
     });
 
-    it('retorna null e loga para extensões não implementadas', async () => {
+    it('retorna null e loga para parser Kotlin', async () => {
+        const { log } = await import('./constelacao/log.js');
         const ast = await decifrarSintaxe('class X {}', '.kt');
         expect(ast).toBeNull();
+        expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('Kotlin'));
     });
+
+    it('retorna null e loga para parser Java', async () => {
+        const { log } = await import('./constelacao/log.js');
+        const ast = await decifrarSintaxe('class X {}', '.java');
+        expect(ast).toBeNull();
+        expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('Java'));
+    });
+
+    it('retorna null e loga para parser XML', async () => {
+        const { log } = await import('./constelacao/log.js');
+        const ast = await decifrarSintaxe('<xml></xml>', '.xml');
+        expect(ast).toBeNull();
+        expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('XML'));
+    });
+
 });

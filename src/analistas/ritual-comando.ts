@@ -4,7 +4,7 @@ import type { NodePath } from '@babel/traverse';
 import type { ContextoExecucao, Ocorrencia, TecnicaAplicarResultado } from '../tipos/tipos.js';
 import type { Node } from '@babel/types';
 
-function extractHandlerInfo(node: Node): { func: Node; bodyBlock: t.BlockStatement } | null {
+export function extractHandlerInfo(node: Node): { func: Node; bodyBlock: t.BlockStatement } | null {
   if (t.isFunctionDeclaration(node) && t.isBlockStatement(node.body)) {
     return { func: node, bodyBlock: node.body };
   }

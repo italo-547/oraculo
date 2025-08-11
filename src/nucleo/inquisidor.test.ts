@@ -37,6 +37,41 @@ describe('inquisidor', () => {
         expect(resultado.fileEntries.length).toBe(2);
     });
 
+    it('iniciarInquisicao funciona com incluirMetadados: false', async () => {
+        const resultado = await inquisidor.iniciarInquisicao('/fake', { includeContent: true, incluirMetadados: false });
+        expect(resultado).toHaveProperty('totalArquivos', 2);
+        expect(resultado.fileEntries[0]).toHaveProperty('ast', undefined);
+    });
+
+    it('prepararComAst lida com erro em decifrarSintaxe e log.erro é chamado', async () => {
+        vi.resetModules();
+        // Mock log e parser antes do import
+        const logMock = { erro: vi.fn(), info: vi.fn(), sucesso: vi.fn() };
+        vi.doMock('./constelacao/log.js', () => ({ log: logMock }));
+        vi.doMock('./parser.js', () => ({
+            decifrarSintaxe: vi.fn(async () => { throw new Error('falha sintaxe'); })
+        }));
+        const { prepararComAst } = await import('./inquisidor.js');
+        const entries = [{ relPath: 'file1.ts', content: 'conteudo', fullPath: undefined }];
+        await prepararComAst(entries as any, '/fake');
+        expect(logMock.erro).toHaveBeenCalledWith(expect.stringContaining('falha sintaxe'));
+    });
+
+    it('prepararComAst não chama path.resolve se fullPath já é string', async () => {
+        const { prepararComAst } = await import('./inquisidor.js');
+        const entries = [{ relPath: 'file1.ts', content: 'conteudo', fullPath: '/absoluto/file1.ts' }];
+        const result = await prepararComAst(entries as any, '/fake');
+        expect(result[0].fullPath).toBe('/absoluto/file1.ts');
+    });
+
+    it('EXTENSOES_COM_AST usa padrão se config.SCANNER_EXTENSOES_COM_AST não for array', async () => {
+        vi.doMock('./constelacao/cosmos.js', () => ({ config: { SCANNER_EXTENSOES_COM_AST: undefined } }));
+        const { prepararComAst } = await import('./inquisidor.js');
+        const entries = [{ relPath: 'file1.ts', content: 'conteudo', fullPath: undefined }];
+        // Não deve lançar erro
+        await prepararComAst(entries as any, '/fake');
+    });
+
     it('exporta tecnicas como array', () => {
         expect(Array.isArray(inquisidor.tecnicas)).toBe(true);
     });

@@ -1,14 +1,54 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Command } from 'commander';
-import { comandoReestruturar } from './comando-reestruturar.js';
+it('executa reestruturação com ocorrência sem relPath nem arquivo (arquivo desconhecido)', async () => {
+    const { comandoReestruturar } = await import('./comando-reestruturar.js');
+    const { executarInquisicao } = await import('../nucleo/inquisidor.js');
+    const executarInquisicaoMock = vi.mocked(executarInquisicao);
+    executarInquisicaoMock.mockResolvedValueOnce({
+        ocorrencias: [{ tipo: 'erro', mensagem: 'msg' }],
+        totalArquivos: 1,
+        arquivosAnalisados: ['c.ts'],
+        timestamp: Date.now(),
+        duracaoMs: 1
+    });
+    const { corrigirEstrutura } = await import('../zeladores/corretor-estrutura.js');
+    const program = new Command();
+    const aplicarFlagsGlobais = vi.fn();
+    readlineAnswer = 's';
+    const cmd = comandoReestruturar(aplicarFlagsGlobais);
+    program.addCommand(cmd);
+    await program.parseAsync(['node', 'cli', 'reestruturar']);
+    expect(log.info).toHaveBeenCalledWith(expect.stringContaining('arquivo desconhecido'));
+    expect(corrigirEstrutura).toHaveBeenCalledWith(
+        expect.arrayContaining([
+            expect.objectContaining({ arquivo: 'arquivo_desconhecido', ideal: null, atual: 'arquivo_desconhecido' })
+        ]),
+        expect.anything(),
+        expect.anything()
+    );
+});
+it('executa reestruturação e lida com erro fatal (catch) com erro string', async () => {
+    const { comandoReestruturar } = await import('./comando-reestruturar.js');
+    const program = new Command();
+    const aplicarFlagsGlobais = vi.fn();
+    const { iniciarInquisicao } = await import('../nucleo/inquisidor.js');
+    vi.mocked(iniciarInquisicao).mockRejectedValueOnce('erro string simples');
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => { throw new Error('exit'); });
+    const cmd = comandoReestruturar(aplicarFlagsGlobais);
+    program.addCommand(cmd);
+    await expect(program.parseAsync(['node', 'cli', 'reestruturar'])).rejects.toThrow('exit');
+    expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('erro string simples'));
+    exitSpy.mockRestore();
+});
 
-vi.mock('../nucleo/constelacao/log.js', () => ({
-    log: {
-        info: vi.fn(),
-        sucesso: vi.fn(),
-        aviso: vi.fn(),
-        erro: vi.fn(),
-    },
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Command } from 'commander';
+
+// Mock readline para todos os testes, valor padrão 's' (confirma)
+let readlineAnswer = 's';
+vi.mock('node:readline/promises', () => ({
+    createInterface: () => ({
+        question: vi.fn(async () => readlineAnswer),
+        close: vi.fn(),
+    }),
 }));
 vi.mock('chalk', () => ({ default: { bold: (x: string) => x, yellow: (x: string) => x } }));
 vi.mock('../nucleo/constelacao/cosmos.js', () => ({ config: {} }));
@@ -18,6 +58,14 @@ vi.mock('../nucleo/inquisidor.js', () => ({
     tecnicas: [],
 }));
 vi.mock('../zeladores/corretor-estrutura.js', () => ({ corrigirEstrutura: vi.fn(async () => undefined) }));
+vi.mock('../nucleo/constelacao/log.js', () => ({
+    log: {
+        info: vi.fn(),
+        sucesso: vi.fn(),
+        aviso: vi.fn(),
+        erro: vi.fn(),
+    },
+}));
 
 let log: any;
 beforeEach(async () => {
@@ -27,6 +75,7 @@ beforeEach(async () => {
 
 describe('comandoReestruturar', () => {
     it('executa reestruturação e informa repositório otimizado', async () => {
+        const { comandoReestruturar } = await import('./comando-reestruturar.js');
         const program = new Command();
         const aplicarFlagsGlobais = vi.fn();
         const cmd = comandoReestruturar(aplicarFlagsGlobais);
@@ -40,14 +89,8 @@ describe('comandoReestruturar', () => {
 
 
     it('executa reestruturação com ocorrências e confirmação negativa', async () => {
-        // Mock readline para resposta negativa ANTES de importar o comando
-        vi.mock('node:readline/promises', () => ({
-            createInterface: () => ({
-                question: vi.fn(async () => 'n'),
-                close: vi.fn(),
-            }),
-        }));
-        // Importar dependências após mock
+        // Simula resposta negativa do usuário
+        readlineAnswer = 'n';
         const { comandoReestruturar } = await import('./comando-reestruturar.js');
         const { executarInquisicao } = await import('../nucleo/inquisidor.js');
         const executarInquisicaoMock = vi.mocked(executarInquisicao);
@@ -63,10 +106,10 @@ describe('comandoReestruturar', () => {
         const cmd = comandoReestruturar(aplicarFlagsGlobais);
         program.addCommand(cmd);
         await program.parseAsync(['node', 'cli', 'reestruturar']);
-        const cancelada = (logger: any) => logger.mock.calls.some((call: any) => String(call[0]).includes('cancelada'));
-        expect(
-            cancelada(log.info) || cancelada(log.aviso) || cancelada(log.sucesso) || cancelada(log.erro)
-        ).toBe(true);
+        // Verifica se qualquer logger contém 'cancelada'
+        const allLogs = [log.info, log.aviso, log.sucesso, log.erro]
+            .flatMap(fn => fn.mock.calls.flat().map(String)).join('\n');
+        expect(allLogs).toMatch(/cancelada/i);
     });
 
     it('executa reestruturação com --auto (sem confirmação)', async () => {
@@ -90,7 +133,31 @@ describe('comandoReestruturar', () => {
         expect(log.sucesso).toHaveBeenCalledWith(expect.stringContaining('correções aplicadas'));
     });
 
+    it('executa reestruturação manual com confirmação positiva (usuário responde s)', async () => {
+        // Simula resposta positiva do usuário
+        readlineAnswer = 's';
+        const { comandoReestruturar } = await import('./comando-reestruturar.js');
+        const { executarInquisicao } = await import('../nucleo/inquisidor.js');
+        const executarInquisicaoMock = vi.mocked(executarInquisicao);
+        executarInquisicaoMock.mockResolvedValueOnce({
+            ocorrencias: [{ tipo: 'erro', relPath: 'c.ts', mensagem: 'msg' }],
+            totalArquivos: 1,
+            arquivosAnalisados: ['c.ts'],
+            timestamp: Date.now(),
+            duracaoMs: 1
+        });
+        const { corrigirEstrutura } = await import('../zeladores/corretor-estrutura.js');
+        const program = new Command();
+        const aplicarFlagsGlobais = vi.fn();
+        const cmd = comandoReestruturar(aplicarFlagsGlobais);
+        program.addCommand(cmd);
+        await program.parseAsync(['node', 'cli', 'reestruturar']);
+        expect(corrigirEstrutura).toHaveBeenCalled();
+        expect(log.sucesso).toHaveBeenCalledWith(expect.stringContaining('correções aplicadas'));
+    });
+
     it('executa reestruturação e lida com erro fatal (catch)', async () => {
+        const { comandoReestruturar } = await import('./comando-reestruturar.js');
         const program = new Command();
         const aplicarFlagsGlobais = vi.fn();
         const { iniciarInquisicao } = await import('../nucleo/inquisidor.js');
@@ -104,6 +171,7 @@ describe('comandoReestruturar', () => {
     });
 
     it('executa reestruturação e lida com erro fatal em DEV_MODE', async () => {
+        const { comandoReestruturar } = await import('./comando-reestruturar.js');
         const program = new Command();
         const aplicarFlagsGlobais = vi.fn();
         const { iniciarInquisicao } = await import('../nucleo/inquisidor.js');

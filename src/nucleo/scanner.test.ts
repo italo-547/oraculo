@@ -8,6 +8,82 @@ const fakeDirent = (name: string, isDir: boolean = false) => ({
     isSymbolicLink: () => false,
 });
 
+it('ordena arquivos por nome (cobre sort)', async () => {
+    vi.resetModules();
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    (promises.readdir as any).mockResolvedValueOnce([
+        fakeDirent('zeta.txt'),
+        fakeDirent('alpha.txt'),
+        fakeDirent('beta.txt'),
+    ]);
+    (promises.stat as any).mockImplementation(async (file: string) => ({ mtimeMs: 1, isDirectory: () => false, isSymbolicLink: () => false }));
+    const fileMap = await scanRepository('/base');
+    const keys = Object.keys(fileMap);
+    // Deve conter todos os arquivos
+    expect(keys).toEqual(['alpha.txt', 'beta.txt', 'zeta.txt']);
+});
+
+it('não lê conteúdo quando includeContent é false', async () => {
+    vi.resetModules();
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
+    (promises.stat as any).mockResolvedValueOnce({ mtimeMs: 123, isDirectory: () => false, isSymbolicLink: () => false });
+    // Garante que lerEstado não será chamado
+    const persist = await import('../zeladores/util/persistencia.js');
+    const lerEstadoSpy = vi.spyOn(persist, 'lerEstado');
+    const fileMap = await scanRepository('/base', { includeContent: false });
+    expect(Object.keys(fileMap)).toContain('a.txt');
+    expect(fileMap['a.txt'].content).toBeNull();
+    expect(lerEstadoSpy).not.toHaveBeenCalled();
+});
+
+it('cobre erro em lerEstado (catch de arquivo)', async () => {
+    vi.resetModules();
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
+    (promises.stat as any).mockResolvedValueOnce({ mtimeMs: 123, isDirectory: () => false, isSymbolicLink: () => false });
+    // Simula erro em lerEstado
+    const persist = await import('../zeladores/util/persistencia.js');
+    vi.spyOn(persist, 'lerEstado').mockRejectedValueOnce(new Error('erro lerEstado'));
+    const onProgress = vi.fn();
+    const fileMap = await scanRepository('/base', { onProgress });
+    expect(Object.keys(fileMap)).toHaveLength(0);
+    expect(onProgress).toHaveBeenCalledWith(expect.stringContaining('erro lerEstado'));
+});
+
+it('lança erro se stat retornar indefinido', async () => {
+    vi.resetModules();
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
+    (promises.stat as any).mockResolvedValueOnce(undefined);
+    const onProgress = vi.fn();
+    const fileMap = await scanRepository('/base', { onProgress });
+    expect(Object.keys(fileMap)).toHaveLength(0);
+    expect(onProgress).toHaveBeenCalledWith(expect.stringContaining('Stat indefinido'));
+});
+
+it('não recursiona em diretório simbólico (apenas adiciona o symlink ao fileMap)', async () => {
+    vi.resetModules();
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    const persist = await import('../zeladores/util/persistencia.js');
+    (promises.readdir as any).mockResolvedValueOnce([
+        { name: 'symlinkDir', isDirectory: () => true, isSymbolicLink: () => true }
+    ]);
+    (promises.stat as any).mockResolvedValueOnce({ mtimeMs: 1, isDirectory: () => true, isSymbolicLink: () => true });
+    vi.spyOn(persist, 'lerEstado').mockResolvedValueOnce('conteudo_symlink');
+    const onProgress = vi.fn();
+    const fileMap = await scanRepository('/base', { onProgress });
+    // Deve conter apenas o symlink, sem recursão
+    expect(Object.keys(fileMap)).toEqual(['symlinkDir']);
+    expect(fileMap['symlinkDir'].content).toBe('conteudo_symlink');
+    expect(onProgress).toHaveBeenCalledWith(expect.stringContaining('symlinkDir'));
+});
+
 vi.mock('micromatch', () => ({
     default: { isMatch: () => false },
     isMatch: () => false,
@@ -60,5 +136,51 @@ describe('scanRepository', () => {
             expect(bFile.content.replace(/\\/g, '/')).toBe('conteudo_/base/dir/b.js');
         }
         expect(fileMap['a.txt'].ultimaModificacao).toBe(123);
+    });
+
+    it('cobre erro em fs.readdir (catch de diretório)', async () => {
+        const { promises } = await import('node:fs');
+        (promises.readdir as any).mockRejectedValueOnce(new Error('erro readdir'));
+        const onProgress = vi.fn();
+        const fileMap = await scanRepository('/fail', { onProgress });
+        expect(Object.keys(fileMap)).toHaveLength(0);
+        expect(onProgress).toHaveBeenCalledWith(expect.stringContaining('erro readdir'));
+    });
+
+    it('cobre erro em fs.stat (catch de arquivo)', async () => {
+        const { promises } = await import('node:fs');
+        (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
+        (promises.stat as any).mockRejectedValueOnce(new Error('erro stat'));
+        const onProgress = vi.fn();
+        const fileMap = await scanRepository('/fail2', { onProgress });
+        expect(Object.keys(fileMap)).toHaveLength(0);
+        expect(onProgress).toHaveBeenCalledWith(expect.stringContaining('erro stat'));
+    });
+
+    it('ignora arquivos pelo padrão micromatch', async () => {
+        vi.resetModules();
+        const isMatch = () => true;
+        vi.doMock('micromatch', () => ({ default: { isMatch }, isMatch }));
+        const { scanRepository } = await import('./scanner.js');
+        const { promises } = await import('node:fs');
+        (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
+        const fileMap = await scanRepository('/base');
+        expect(Object.keys(fileMap)).toHaveLength(0);
+    });
+
+    it('ignora arquivos pelo filtro customizado', async () => {
+        const { promises } = await import('node:fs');
+        (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
+        const fileMap = await scanRepository('/base', { filter: () => false });
+        expect(Object.keys(fileMap)).toHaveLength(0);
+    });
+
+    it('chama onProgress customizado para sucesso', async () => {
+        const { promises } = await import('node:fs');
+        (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
+        (promises.stat as any).mockResolvedValueOnce({ mtimeMs: 123, isDirectory: () => false, isSymbolicLink: () => false });
+        const onProgress = vi.fn();
+        await scanRepository('/base', { onProgress });
+        expect(onProgress).toHaveBeenCalledWith(expect.stringContaining('✅ Arquivo lido: a.txt'));
     });
 });

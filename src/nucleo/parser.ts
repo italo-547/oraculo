@@ -36,7 +36,7 @@ function parseComXml(_codigo: string): null {
   return null;
 }
 
-const PARSERS = new Map<string, ParserFunc>([
+export const PARSERS = new Map<string, ParserFunc>([
   ['.js', parseComBabel],
   ['.jsx', parseComBabel],
   ['.ts', parseComBabel],
