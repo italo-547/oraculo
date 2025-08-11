@@ -26,6 +26,96 @@ beforeEach(() => {
 });
 
 describe('analistaPadroesUso', () => {
+    it('detecta uso de var', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (ast: any, visitors: any) => {
+                visitors.enter({ node: { type: 'VariableDeclaration', kind: 'var', loc: { start: { line: 1 }, column: 2 } } });
+            },
+        }));
+        const { analistaPadroesUso } = await import('./analista-padroes-uso.js');
+        const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'teste.js' }] };
+        const ocorrencias = analistaPadroesUso.aplicar('', 'teste.js', undefined, '', contexto as any);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'alerta' && o.mensagem.includes("'var'"))).toBe(true);
+    });
+
+    it('detecta uso de let', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (ast: any, visitors: any) => {
+                visitors.enter({ node: { type: 'VariableDeclaration', kind: 'let', loc: { start: { line: 1 }, column: 2 } } });
+            },
+        }));
+        const { analistaPadroesUso } = await import('./analista-padroes-uso.js');
+        const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'teste.js' }] };
+        const ocorrencias = analistaPadroesUso.aplicar('', 'teste.js', undefined, '', contexto as any);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'info' && o.mensagem.includes("'let'"))).toBe(true);
+    });
+
+    it('detecta require em arquivo TS', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (ast: any, visitors: any) => {
+                visitors.enter({ node: { type: 'CallExpression', callee: { type: 'Identifier', name: 'require' }, arguments: [{ type: 'StringLiteral', value: 'mod' }], loc: { start: { line: 1 }, column: 2 } } });
+            },
+        }));
+        const { analistaPadroesUso } = await import('./analista-padroes-uso.js');
+        const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'teste.ts' }] };
+        const ocorrencias = analistaPadroesUso.aplicar('', 'teste.ts', undefined, '', contexto as any);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'alerta' && o.mensagem.includes("require"))).toBe(true);
+    });
+
+    it('detecta uso de eval', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (ast: any, visitors: any) => {
+                visitors.enter({ node: { type: 'CallExpression', callee: { type: 'Identifier', name: 'eval' }, arguments: [], loc: { start: { line: 1 }, column: 2 } } });
+            },
+        }));
+        const { analistaPadroesUso } = await import('./analista-padroes-uso.js');
+        const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'teste.js' }] };
+        const ocorrencias = analistaPadroesUso.aplicar('', 'teste.js', undefined, '', contexto as any);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'critico' && o.mensagem.includes("eval"))).toBe(true);
+    });
+
+    it('detecta uso de with', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (ast: any, visitors: any) => {
+                visitors.enter({ node: { type: 'WithStatement', loc: { start: { line: 1 }, column: 2 } } });
+            },
+        }));
+        const { analistaPadroesUso } = await import('./analista-padroes-uso.js');
+        const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'teste.js' }] };
+        const ocorrencias = analistaPadroesUso.aplicar('', 'teste.js', undefined, '', contexto as any);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'critico' && o.mensagem.includes("with"))).toBe(true);
+    });
+
+    it('detecta uso de module.exports em TS', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (ast: any, visitors: any) => {
+                visitors.enter({ node: { type: 'AssignmentExpression', left: { type: 'MemberExpression', object: { type: 'Identifier', name: 'module' }, property: { type: 'Identifier', name: 'exports' } }, loc: { start: { line: 1 }, column: 2 } } });
+            },
+        }));
+        const { analistaPadroesUso } = await import('./analista-padroes-uso.js');
+        const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'teste.ts' }] };
+        const ocorrencias = analistaPadroesUso.aplicar('', 'teste.ts', undefined, '', contexto as any);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'alerta' && o.mensagem.includes("module.exports"))).toBe(true);
+    });
+
+    it('detecta função anônima', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (ast: any, visitors: any) => {
+                visitors.enter({ node: { type: 'FunctionDeclaration', id: null, loc: { start: { line: 1 }, column: 2 } } });
+            },
+        }));
+        const { analistaPadroesUso } = await import('./analista-padroes-uso.js');
+        const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'teste.js' }] };
+        const ocorrencias = analistaPadroesUso.aplicar('', 'teste.js', undefined, '', contexto as any);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'info' && o.mensagem.includes('anônima'))).toBe(true);
+    });
     it('acumula estatísticas de uso de const, require e export', () => {
         const contexto = {
             arquivos: [{ ast: { type: 'File' }, relPath: 'teste.js' }],

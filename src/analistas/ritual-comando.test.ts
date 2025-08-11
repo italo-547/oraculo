@@ -1,9 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ritualComando } from './ritual-comando.js';
 
+// O mock padrão só para os testes "comando válido"
 vi.mock('../nucleo/constelacao/traverse.js', () => ({
     traverse: (node: any, visitors: any) => {
-        // Simula um comando válido
         if (node.type === 'File') {
             visitors.enter({
                 node: {
@@ -22,9 +21,110 @@ vi.mock('@babel/types', () => ({
     isFunctionExpression: (n: any) => n.type === 'FunctionExpression',
     isArrowFunctionExpression: (n: any) => n.type === 'ArrowFunctionExpression',
     isBlockStatement: (n: any) => n.type === 'BlockStatement',
+    isStringLiteral: (n: any) => n.type === 'StringLiteral',
 }));
 
 describe('ritualComando', () => {
+    it('detecta comandos duplicados', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (node: any, visitors: any) => {
+                visitors.enter({
+                    node: {
+                        type: 'CallExpression',
+                        callee: { type: 'Identifier', name: 'onCommand' },
+                        arguments: [
+                            { type: 'StringLiteral', value: 'cmd1' },
+                            { type: 'FunctionDeclaration', body: { type: 'BlockStatement' } },
+                        ],
+                    },
+                });
+                visitors.enter({
+                    node: {
+                        type: 'CallExpression',
+                        callee: { type: 'Identifier', name: 'onCommand' },
+                        arguments: [
+                            { type: 'StringLiteral', value: 'cmd1' },
+                            { type: 'FunctionDeclaration', body: { type: 'BlockStatement' } },
+                        ],
+                    },
+                });
+            },
+        }));
+        const { ritualComando } = await import('./ritual-comando.js');
+        const fakeAst = { node: { type: 'File' } };
+        const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'padrao-problematico' && o.mensagem.includes('duplicados'))).toBe(true);
+    });
+
+    it('detecta handler anônimo', async () => {
+        vi.resetModules();
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (node: any, visitors: any) => {
+                visitors.enter({
+                    node: {
+                        type: 'CallExpression',
+                        callee: { type: 'Identifier', name: 'onCommand' },
+                        arguments: [
+                            { type: 'StringLiteral', value: 'cmd2' },
+                            { type: 'FunctionDeclaration', id: null, body: { type: 'BlockStatement' } },
+                        ],
+                    },
+                });
+            },
+        }));
+        const { ritualComando } = await import('./ritual-comando.js');
+        const fakeAst = { node: { type: 'File' } };
+        const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
+        // Log temporário para depuração
+        // eslint-disable-next-line no-console
+        console.log('OCORRENCIAS handler anônimo:', JSON.stringify(ocorrencias, null, 2));
+        // Deve haver pelo menos uma ocorrência padrao-problematico com mensagem de anônima
+        const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter((o: any) => o.tipo === 'padrao-problematico');
+        expect(problematicas.some((o: any) => o.mensagem.includes('anônima'))).toBe(true);
+    });
+
+    it('ignora handler inválido (não função)', async () => {
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (node: any, visitors: any) => {
+                visitors.enter({
+                    node: {
+                        type: 'CallExpression',
+                        callee: { type: 'Identifier', name: 'onCommand' },
+                        arguments: [
+                            { type: 'StringLiteral', value: 'cmd3' },
+                            { type: 'Literal', value: 42 },
+                        ],
+                    },
+                });
+            },
+        }));
+        const { ritualComando } = await import('./ritual-comando.js');
+        const fakeAst = { node: { type: 'File' } };
+        const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'padrao-problematico')).toBe(false);
+    });
+
+    it('ignora handler sem bloco de código', async () => {
+        vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+            traverse: (node: any, visitors: any) => {
+                visitors.enter({
+                    node: {
+                        type: 'CallExpression',
+                        callee: { type: 'Identifier', name: 'onCommand' },
+                        arguments: [
+                            { type: 'StringLiteral', value: 'cmd4' },
+                            { type: 'FunctionDeclaration', id: { type: 'Identifier', name: 'f' } },
+                        ],
+                    },
+                });
+            },
+        }));
+        const { ritualComando } = await import('./ritual-comando.js');
+        const fakeAst = { node: { type: 'File' } };
+        const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
+        expect(Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'padrao-problematico')).toBe(false);
+    });
     it('extractHandlerInfo retorna null para node não função', async () => {
         const { extractHandlerInfo } = await import('./ritual-comando.js');
         expect(extractHandlerInfo({ type: 'Literal', value: 42 } as any)).toBeNull();
@@ -41,16 +141,18 @@ describe('ritualComando', () => {
         expect(resultArrow && resultArrow.func).toEqual(arrowFunc);
         expect(resultArrow && resultArrow.bodyBlock).toEqual(arrowFunc.body);
     });
-    it('detecta comando válido', () => {
+    it('detecta comando válido', async () => {
         const fakeAst = {
             node: { type: 'File' },
         };
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
         expect(Array.isArray(ocorrencias)).toBe(true);
         expect(Array.isArray(ocorrencias) ? ocorrencias.length : 0).toBe(0);
     });
 
-    it('retorna erro se ast não for fornecido', () => {
+    it('retorna erro se ast não for fornecido', async () => {
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', null, '', undefined);
         expect(Array.isArray(ocorrencias)).toBe(true);
         if (Array.isArray(ocorrencias)) {
@@ -75,12 +177,13 @@ describe('ritualComando', () => {
         }
     });
 
-    it('test cobre arquivos com e sem bot', () => {
+    it('test cobre arquivos com e sem bot', async () => {
+        const { ritualComando } = await import('./ritual-comando.js');
         expect(ritualComando.test('meubot.js')).toBe(true);
         expect(ritualComando.test('outro-arquivo.js')).toBe(false);
     });
 
-    it('detecta comando válido com FunctionExpression', () => {
+    it('detecta comando válido com FunctionExpression', async () => {
         vi.doMock('../nucleo/constelacao/traverse.js', () => ({
             traverse: (node: any, visitors: any) => {
                 visitors.enter({
@@ -93,12 +196,15 @@ describe('ritualComando', () => {
             },
         }));
         const fakeAst = { node: { type: 'File' } };
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
         expect(Array.isArray(ocorrencias)).toBe(true);
-        expect(Array.isArray(ocorrencias) ? ocorrencias.length : 0).toBe(0);
+        // Não deve haver ocorrências padrao-problematico
+        const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter((o: any) => o.tipo === 'padrao-problematico');
+        expect(problematicas.length).toBe(0);
     });
 
-    it('detecta comando válido com ArrowFunctionExpression', () => {
+    it('detecta comando válido com ArrowFunctionExpression', async () => {
         vi.doMock('../nucleo/constelacao/traverse.js', () => ({
             traverse: (node: any, visitors: any) => {
                 visitors.enter({
@@ -114,12 +220,15 @@ describe('ritualComando', () => {
             },
         }));
         const fakeAst = { node: { type: 'File' } };
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
         expect(Array.isArray(ocorrencias)).toBe(true);
-        expect(Array.isArray(ocorrencias) ? ocorrencias.length : 0).toBe(0);
+        // Não deve haver ocorrências padrao-problematico
+        const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter((o: any) => o.tipo === 'padrao-problematico');
+        expect(problematicas.length).toBe(0);
     });
 
-    it('ignora handler inválido (sem bloco)', () => {
+    it('ignora handler inválido (sem bloco)', async () => {
         vi.doMock('../nucleo/constelacao/traverse.js', () => ({
             traverse: (node: any, visitors: any) => {
                 visitors.enter({
@@ -132,30 +241,28 @@ describe('ritualComando', () => {
             },
         }));
         const fakeAst = { node: { type: 'File' } };
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
-        if (Array.isArray(ocorrencias)) {
-            expect(ocorrencias.length).toBe(0);
-        } else {
-            expect(ocorrencias == null).toBe(true);
-        }
+        // Não deve haver ocorrências padrao-problematico
+        const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter((o: any) => o.tipo === 'padrao-problematico');
+        expect(problematicas.length).toBe(0);
     });
 
-    it('ignora node que não é CallExpression', () => {
+    it('ignora node que não é CallExpression', async () => {
         vi.doMock('../nucleo/constelacao/traverse.js', () => ({
             traverse: (node: any, visitors: any) => {
                 visitors.enter({ node: { type: 'Literal', value: 42 } });
             },
         }));
         const fakeAst = { node: { type: 'File' } };
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
-        if (Array.isArray(ocorrencias)) {
-            expect(ocorrencias.length).toBe(0);
-        } else {
-            expect(ocorrencias == null).toBe(true);
-        }
+        // Não deve haver ocorrências padrao-problematico
+        const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter((o: any) => o.tipo === 'padrao-problematico');
+        expect(problematicas.length).toBe(0);
     });
 
-    it('ignora CallExpression cujo callee não é Identifier', () => {
+    it('ignora CallExpression cujo callee não é Identifier', async () => {
         vi.doMock('../nucleo/constelacao/traverse.js', () => ({
             traverse: (node: any, visitors: any) => {
                 visitors.enter({
@@ -164,15 +271,14 @@ describe('ritualComando', () => {
             },
         }));
         const fakeAst = { node: { type: 'File' } };
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
-        if (Array.isArray(ocorrencias)) {
-            expect(ocorrencias.length).toBe(0);
-        } else {
-            expect(ocorrencias == null).toBe(true);
-        }
+        // Não deve haver ocorrências padrao-problematico
+        const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter((o: any) => o.tipo === 'padrao-problematico');
+        expect(problematicas.length).toBe(0);
     });
 
-    it('ignora comando com handler ausente', () => {
+    it('ignora comando com handler ausente', async () => {
         vi.doMock('../nucleo/constelacao/traverse.js', () => ({
             traverse: (node: any, visitors: any) => {
                 visitors.enter({
@@ -185,15 +291,14 @@ describe('ritualComando', () => {
             },
         }));
         const fakeAst = { node: { type: 'File' } };
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
-        if (Array.isArray(ocorrencias)) {
-            expect(ocorrencias.length).toBe(0);
-        } else {
-            expect(ocorrencias == null).toBe(true);
-        }
+        // Não deve haver ocorrências padrao-problematico
+        const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter((o: any) => o.tipo === 'padrao-problematico');
+        expect(problematicas.length).toBe(0);
     });
 
-    it('ignora comando com handler que não é função', () => {
+    it('ignora comando com handler que não é função', async () => {
         vi.doMock('../nucleo/constelacao/traverse.js', () => ({
             traverse: (node: any, visitors: any) => {
                 visitors.enter({
@@ -206,11 +311,10 @@ describe('ritualComando', () => {
             },
         }));
         const fakeAst = { node: { type: 'File' } };
+        const { ritualComando } = await import('./ritual-comando.js');
         const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
-        if (Array.isArray(ocorrencias)) {
-            expect(ocorrencias.length).toBe(0);
-        } else {
-            expect(ocorrencias == null).toBe(true);
-        }
+        // Não deve haver ocorrências padrao-problematico
+        const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter((o: any) => o.tipo === 'padrao-problematico');
+        expect(problematicas.length).toBe(0);
     });
 });

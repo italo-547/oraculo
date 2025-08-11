@@ -9,7 +9,7 @@ export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
   const constExcessivas = Object.entries(estatisticasUsoGlobal.consts).filter(([, n]) => n > 3);
   const requireRepetidos = Object.entries(estatisticasUsoGlobal.requires).filter(([, n]) => n > 3);
 
-  // log.info('\\n🧼 Relatório de Saúde do Código:\\n'); // Silenciado para saída limpa
+  log.info('\n🧼 Relatório de Saúde do Código:\n');
 
   if (ocorrencias.length > 0) {
     log.aviso('⚠️ Funções longas encontradas:');
@@ -37,5 +37,5 @@ export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
     log.info('');
   }
 
-  // log.sucesso('✅ Fim do relatório do zelador.\\n'); // Silenciado para saída limpa
+  log.sucesso('✅ Fim do relatório do zelador.\n');
 }

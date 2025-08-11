@@ -160,4 +160,104 @@ describe('analistaFuncoesLongas', () => {
         const funcoesLongas = (ocorrencias as any[]).filter(o => o.tipo === 'FUNCAO_LONGA');
         expect(funcoesLongas.length).toBe(0);
     });
+
+    it('detecta função aninhada demais', () => {
+        // Simula NodePath e traverse recursivo para aninhamento
+        function makeNodePath(fn: any, max: number, level: number = 0): any {
+            return {
+                node: fn,
+                traverse(visitors: any) {
+                    if (level < max) {
+                        visitors.FunctionDeclaration(makeNodePath(fn, max, level + 1));
+                    }
+                },
+            };
+        }
+        const fn = {
+            type: 'FunctionDeclaration',
+            loc: { start: { line: 1 }, end: { line: 2 } },
+            params: [],
+            leadingComments: [{}],
+            body: { type: 'BlockStatement', body: [] },
+        };
+        // Cria NodePath com 5 níveis de aninhamento
+        const fakeAst = makeNodePath(fn, 5);
+        const ocorrencias = analistaFuncoesLongas.aplicar(
+            '',
+            'teste.js',
+            fakeAst as any,
+        ) as any[];
+        const aninhadas = ocorrencias.filter(o => o.tipo === 'FUNCAO_ANINHADA');
+        expect(aninhadas.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('detecta função sem comentário', () => {
+        const fakeAst = {
+            node: {
+                type: 'File',
+                body: [
+                    {
+                        type: 'FunctionDeclaration',
+                        loc: { start: { line: 1 }, end: { line: 40 } },
+                        params: [],
+                        // sem leadingComments
+                    },
+                ],
+            },
+        };
+        const ocorrencias = analistaFuncoesLongas.aplicar(
+            '',
+            'teste.js',
+            fakeAst as any,
+        ) as any[];
+        const semComentario = ocorrencias.filter(o => o.tipo === 'FUNCAO_SEM_COMENTARIO');
+        expect(semComentario.length).toBe(1);
+    });
+
+    it('detecta função com muitos parâmetros', () => {
+        const fakeAst = {
+            node: {
+                type: 'File',
+                body: [
+                    {
+                        type: 'FunctionDeclaration',
+                        loc: { start: { line: 1 }, end: { line: 10 } },
+                        params: [1, 2, 3, 4, 5],
+                        leadingComments: [{}],
+                    },
+                ],
+            },
+        };
+        const ocorrencias = analistaFuncoesLongas.aplicar(
+            '',
+            'teste.js',
+            fakeAst as any,
+        ) as any[];
+        const muitosParams = ocorrencias.filter(o => o.tipo === 'MUITOS_PARAMETROS');
+        expect(muitosParams.length).toBe(1);
+    });
+
+    it('cobre AST alternativo (fileNode fallback)', () => {
+        // fileNode sem .node, mas com type: 'File' e body
+        const fakeAst = {
+            type: 'File',
+            body: [
+                {
+                    type: 'FunctionDeclaration',
+                    loc: { start: { line: 1 }, end: { line: 40 } },
+                    params: [],
+                    leadingComments: [{}],
+                },
+            ],
+        };
+        const ocorrencias = analistaFuncoesLongas.aplicar(
+            '',
+            'teste.js',
+            fakeAst as any,
+        );
+        expect(Array.isArray(ocorrencias)).toBe(true);
+        if (Array.isArray(ocorrencias)) {
+            expect(ocorrencias.length).toBeGreaterThan(0);
+        }
+    });
 });

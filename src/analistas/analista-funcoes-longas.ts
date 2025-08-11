@@ -22,7 +22,6 @@ export const analistaFuncoesLongas = {
     ast: NodePath | null,
     _fullPath?: string,
     _contexto?: ContextoExecucao,
-    rootAst?: any,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
 
@@ -91,9 +90,12 @@ export const analistaFuncoesLongas = {
     }
 
     // Função recursiva para NodePath real
-    function analisarRecursivo(path: any, aninhamento: number = 0) {
-      const node = path.node || path;
-      const type = node.type;
+    function analisarRecursivo(
+      path: NodePath | { node: unknown; traverse?: (visitors: Record<string, (p: NodePath) => void>) => void },
+      aninhamento: number = 0
+    ) {
+      const node = 'node' in path ? path.node : path;
+      const type = (node as { type?: string }).type;
       if (
         type === 'FunctionDeclaration' ||
         type === 'FunctionExpression' ||
@@ -105,15 +107,15 @@ export const analistaFuncoesLongas = {
         );
         aninhamento++;
       }
-      if (typeof path.traverse === 'function') {
-        path.traverse({
-          FunctionDeclaration(p: any) {
+      if (typeof (path as { traverse?: unknown }).traverse === 'function') {
+        (path as { traverse: (visitors: Record<string, (p: NodePath) => void>) => void }).traverse({
+          FunctionDeclaration(p: NodePath) {
             analisarRecursivo(p, aninhamento + 1);
           },
-          FunctionExpression(p: any) {
+          FunctionExpression(p: NodePath) {
             analisarRecursivo(p, aninhamento + 1);
           },
-          ArrowFunctionExpression(p: any) {
+          ArrowFunctionExpression(p: NodePath) {
             analisarRecursivo(p, aninhamento + 1);
           },
         });
@@ -129,21 +131,25 @@ export const analistaFuncoesLongas = {
 
     // 2. AST puro ou mock: só processa body do File, nunca recursiona
     const fileNode =
-      ast && ast.node && ast.node.type === 'File' && Array.isArray((ast.node as any).body)
-        ? ast.node
-        : ast && ast.type === 'File' && Array.isArray((ast as any).body)
-          ? ast
+      ast && typeof ast === 'object' && 'node' in ast && (ast as { node: unknown }).node &&
+        (ast as { node: { type?: string; body?: unknown[] } }).node.type === 'File' &&
+        Array.isArray((ast as { node: { body?: unknown[] } }).node.body)
+        ? ((ast as { node: unknown }).node as unknown as { body: unknown[] })
+        : ast && typeof ast === 'object' && (ast as { type?: string }).type === 'File' &&
+          Array.isArray((ast as { body?: unknown[] }).body)
+          ? (ast as unknown as { body: unknown[] })
           : null;
 
     if (fileNode) {
-      const body = (fileNode as any).body;
+      const body = fileNode.body as unknown[];
       for (const child of body) {
         if (
-          child.type === 'FunctionDeclaration' ||
-          child.type === 'FunctionExpression' ||
-          child.type === 'ArrowFunctionExpression'
+          typeof child === 'object' && child !== null &&
+          ((child as { type?: string }).type === 'FunctionDeclaration' ||
+            (child as { type?: string }).type === 'FunctionExpression' ||
+            (child as { type?: string }).type === 'ArrowFunctionExpression')
         ) {
-          analisar(child, 0);
+          analisar(child as FunctionDeclaration | FunctionExpression | ArrowFunctionExpression, 0);
         }
       }
       return ocorrencias;

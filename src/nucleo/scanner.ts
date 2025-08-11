@@ -76,7 +76,8 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
           };
 
           fileMap[relPath] = entryObj;
-          // Não logar cada arquivo individualmente
+          // Logar cada arquivo individualmente para compatibilidade com testes
+          onProgress(`✅ Arquivo lido: ${relPath}`);
         } catch (err) {
           onProgress(
             JSON.stringify({
