@@ -32,8 +32,8 @@ vi.mock('./diff.js', () => ({
 vi.mock('./constantes.js', () => ({
     BASELINE_PATH: '/tmp/baseline.json',
 }));
-vi.mock('../tipos/tipos.js', async (importOriginal) => {
-    const mod = await importOriginal();
+vi.mock('../tipos/tipos.js', async () => {
+    const mod = await import('../tipos/tipos.js');
     return {
         ...mod,
         IntegridadeStatus: { Ok: 'ok', Criado: 'criado', Aceito: 'aceito', AlteracoesDetectadas: 'alt' },
