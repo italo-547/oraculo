@@ -12,6 +12,7 @@ export async function executarInquisicao(
   tecnicas: Tecnica[],
   baseDir: string,
   guardianResultado: unknown,
+  opts?: { verbose?: boolean }
 ): Promise<ResultadoInquisicao> {
   // log.info('🧪 Iniciando execução das técnicas...\n'); // Silenciado para saída limpa
 
@@ -28,7 +29,7 @@ export async function executarInquisicao(
   const ocorrencias: Ocorrencia[] = [];
   const inicioExecucao = performance.now();
 
-  // 🔵 Técnicas globais
+  // � Técnicas globais
   for (const tecnica of tecnicas) {
     if (tecnica.global) {
       const inicio = performance.now();
@@ -38,11 +39,13 @@ export async function executarInquisicao(
           ocorrencias.push(...(Array.isArray(resultado) ? resultado : [resultado]));
         }
         const duracao = (performance.now() - inicio).toFixed(1);
-        // log.sucesso(`✅ Técnica global '${tecnica.nome}' executada em ${duracao}ms`); // Silenciado para saída limpa
+        if (opts?.verbose) {
+          log.sucesso(`✅ Técnica global '${tecnica.nome}' executada em ${duracao}ms`);
+        }
       } catch (error) {
         const err = error as Error;
         log.erro(`❌ Erro na técnica global '${tecnica.nome}': ${err.message}`);
-        if (err.stack) log.info(err.stack);
+        if (err.stack && opts?.verbose) log.info(err.stack);
         ocorrencias.push({
           tipo: 'erro',
           nivel: 'aviso',
@@ -55,8 +58,16 @@ export async function executarInquisicao(
     }
   }
 
-  // 🟢 Técnicas por arquivo
+  // � Técnicas por arquivo
+  let arquivoAtual = 0;
+  const totalArquivos = fileEntriesComAst.length;
   for (const entry of fileEntriesComAst) {
+    arquivoAtual++;
+    if (opts?.verbose) {
+      log.info(`🔎 Arquivo ${arquivoAtual}/${totalArquivos}: ${entry.relPath}`);
+    } else if (arquivoAtual % 10 === 0 || arquivoAtual === totalArquivos) {
+      log.info(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
+    }
     for (const tecnica of tecnicas) {
       if (tecnica.global) continue;
       if (tecnica.test && !tecnica.test(entry.relPath)) continue;
@@ -74,11 +85,13 @@ export async function executarInquisicao(
           ocorrencias.push(...(Array.isArray(resultado) ? resultado : [resultado]));
         }
         const duracao = (performance.now() - inicio).toFixed(1);
-        // log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${duracao}ms`); // Silenciado para saída limpa
+        if (opts?.verbose) {
+          log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${duracao}ms`);
+        }
       } catch (error) {
         const err = error as Error;
         log.erro(`❌ Erro em '${tecnica.nome}' para ${entry.relPath}: ${err.message}`);
-        if (err.stack) log.info(err.stack);
+        if (err.stack && opts?.verbose) log.info(err.stack);
         ocorrencias.push({
           tipo: 'erro',
           nivel: 'erro',

@@ -27,11 +27,17 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
       '-g, --guardian-check',
       'Ativa a verificação de integridade do Guardian durante o diagnóstico',
     )
-    .action(async (opts: { guardianCheck?: boolean }, command: Command) => {
+    .option(
+      '-v, --verbose',
+      'Exibe logs detalhados de cada arquivo e técnica analisada',
+      false,
+    )
+    .action(async (opts: { guardianCheck?: boolean; verbose?: boolean }, command: Command) => {
       aplicarFlagsGlobais(
         command.parent && typeof command.parent.opts === 'function' ? command.parent.opts() : {},
       );
       config.GUARDIAN_ENABLED = opts.guardianCheck ?? false;
+      config.VERBOSE = opts.verbose ?? false;
 
       log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
 
@@ -94,11 +100,11 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           tecnicas,
           baseDir,
           guardianResultado,
+          { verbose: config.VERBOSE },
         );
 
         totalOcorrencias += resultadoFinal.ocorrencias.length;
 
-        // log.info(chalk.bold('\n📊 Gerando relatórios analíticos...\n')); // Silenciado para saída limpa
         const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
         const alinhamentosValidos = alinhamentos.map((a) => ({ ...a, ideal: a.ideal ?? '' }));
         gerarRelatorioEstrutura(alinhamentosValidos);
@@ -185,7 +191,6 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               `\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`,
             ),
           );
-          // log.info('Revise os relatórios acima ou exportados para mais detalhes.'); // Silenciado para saída limpa
           process.exit(1);
         }
       } catch (error) {

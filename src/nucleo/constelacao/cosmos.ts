@@ -9,6 +9,7 @@ const ZELADOR_ABANDONED = path.join(ORACULO_STATE, 'abandonados');
 
 // Configuração global do sistema Oráculo
 export const config = {
+  VERBOSE: false,
   // 🌱 Flags gerais
   DEV_MODE: process.env.NODE_ENV === 'development' || process.env.ORACULO_DEV === 'true',
   AUTOANALISE_CONCURRENCY: 5,

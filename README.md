@@ -39,6 +39,36 @@ node dist/cli.js diagnosticar
 node dist/cli.js podar
 ```
 
+### Flags Globais
+
+Você pode usar as flags globais em qualquer comando para controlar o nível de logs e exportação de relatórios:
+
+| Flag        | Descrição                                                                                 |
+| ----------- | ----------------------------------------------------------------------------------------- |
+| `--silence` | Silencia todos os logs de informação e aviso (sobrepõe `--verbose`)                       |
+| `--verbose` | Exibe logs detalhados de cada arquivo e técnica analisada (ignorado se `--silence` ativo) |
+| `--export`  | Gera arquivos de relatório detalhados (JSON e Markdown)                                   |
+| `--dev`     | Ativa modo de desenvolvimento (logs de debug)                                             |
+
+#### Exemplos de uso:
+
+```bash
+# Diagnóstico limpo (padrão)
+oraculo diagnosticar
+
+# Diagnóstico detalhado (verbose)
+oraculo diagnosticar --verbose
+
+# Diagnóstico totalmente silencioso
+oraculo diagnosticar --silence
+
+# Exportar relatórios detalhados
+oraculo diagnosticar --export
+
+# Combinar flags (silence sempre sobrepõe verbose)
+oraculo diagnosticar --export --verbose --silence
+```
+
 ### Instalação global (opcional)
 
 Se quiser rodar o comando `oraculo` diretamente no terminal, instale globalmente:

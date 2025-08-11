@@ -55,6 +55,8 @@ export const detectorEstrutura = {
         nivel: 'info',
         mensagem: 'Estrutura de monorepo detectada.',
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
       // Monorepo sem packages
       if (!caminhos.some((p) => p.includes('packages/'))) {
@@ -63,6 +65,8 @@ export const detectorEstrutura = {
           nivel: 'aviso',
           mensagem: 'Monorepo sem pasta packages/.',
           origem: 'detector-estrutura',
+          relPath: '[raiz do projeto]',
+          linha: 0,
         });
       }
     }
@@ -74,6 +78,8 @@ export const detectorEstrutura = {
         nivel: 'info',
         mensagem: 'Estrutura fullstack detectada.',
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
     } else if (sinais.temPages && !sinais.temApi) {
       ocorrencias.push({
@@ -81,6 +87,8 @@ export const detectorEstrutura = {
         nivel: 'aviso',
         mensagem: 'Projeto possui pages/ mas não possui api/.',
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
     }
 
@@ -91,6 +99,8 @@ export const detectorEstrutura = {
         nivel: 'aviso',
         mensagem: 'Projeto possui src/ e packages/ (monorepo) ao mesmo tempo. Avalie a organização.',
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
     }
 
@@ -102,6 +112,8 @@ export const detectorEstrutura = {
         nivel: 'aviso',
         mensagem: 'Muitos arquivos na raiz do projeto. Considere organizar em pastas.',
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
     }
 
@@ -112,6 +124,8 @@ export const detectorEstrutura = {
         nivel: 'info',
         mensagem: 'Sinais de backend detectados (controllers/, prisma/, api/).',
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
     }
 
@@ -122,6 +136,8 @@ export const detectorEstrutura = {
         nivel: 'info',
         mensagem: 'Sinais de frontend detectados (components/, pages/).',
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
     }
 
@@ -134,6 +150,8 @@ export const detectorEstrutura = {
           nivel: 'info',
           mensagem: `Arquivo de configuração detectado: ${cfg}`,
           origem: 'detector-estrutura',
+          relPath: cfg,
+          linha: 1,
         });
       }
     }
@@ -146,6 +164,8 @@ export const detectorEstrutura = {
         nivel: 'aviso',
         mensagem: `Projeto possui múltiplos entrypoints: ${entrypoints.join(', ')}`,
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
     }
 
@@ -156,6 +176,8 @@ export const detectorEstrutura = {
         nivel: 'aviso',
         mensagem: 'Projeto grande sem pasta src/. Considere organizar o código fonte.',
         origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 0,
       });
     }
 
