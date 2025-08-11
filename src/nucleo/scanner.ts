@@ -6,7 +6,7 @@ import path from 'path';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import type { FileMap, FileEntry } from '../tipos/tipos.js';
 
-const UTF8 = 'utf-8';
+
 
 interface ScanOptions {
   includeContent?: boolean;

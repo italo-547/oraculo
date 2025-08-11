@@ -1,14 +1,15 @@
 import { promises as fs } from 'node:fs';
 
-export async function lerEstado<T = any>(caminho: string): Promise<T> {
+export async function lerEstado<T = unknown>(caminho: string): Promise<T> {
     try {
         const conteudo = await fs.readFile(caminho, 'utf-8');
-        return JSON.parse(conteudo);
+        return JSON.parse(conteudo) as T;
     } catch {
-        return [] as any;
+        // Retorna valor padrão para tipos conhecidos
+        return ([] as unknown) as T;
     }
 }
 
-export async function salvarEstado<T = any>(caminho: string, dados: T): Promise<void> {
+export async function salvarEstado<T = unknown>(caminho: string, dados: T): Promise<void> {
     await fs.writeFile(caminho, JSON.stringify(dados, null, 2), 'utf-8');
 }

@@ -60,6 +60,5 @@ export async function gerarRelatorioJson(
   resultado: ResultadoInquisicaoCompleto,
   outputPath: string,
 ): Promise<void> {
-  const json = JSON.stringify(resultado, null, 2);
   await salvarEstado(outputPath, resultado);
 }

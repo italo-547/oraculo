@@ -40,7 +40,8 @@ export function diagnosticarProjeto(sinais: SinaisProjeto): DiagnosticoProjeto {
 
 
 function ehLanding(s: SinaisProjeto): boolean {
-  return !!(s.temPages && s.temComponents && !s.temControllers);
+  // Considera landing se temPages for true, mesmo sem components/controllers
+  return !!(s.temPages === true);
 }
 
 function ehApi(s: SinaisProjeto): boolean {
