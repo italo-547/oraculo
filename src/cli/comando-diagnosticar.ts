@@ -3,7 +3,8 @@ import chalk from 'chalk';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 
-import type { Ocorrencia, FileEntryWithAst, IntegridadeStatus, ResultadoGuardian } from '../tipos/tipos.js';
+import type { Ocorrencia, FileEntryWithAst, ResultadoGuardian } from '../tipos/tipos.js';
+import { IntegridadeStatus } from '../tipos/tipos.js';
 
 import { iniciarInquisicao, executarInquisicao, tecnicas } from '../nucleo/inquisidor.js';
 import { scanSystemIntegrity } from '../guardian/sentinela.js';
@@ -24,7 +25,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
     .description('Executa uma análise completa do repositório')
     .option('-g, --guardian-check', 'Ativa a verificação de integridade do Guardian durante o diagnóstico')
     .action(async (opts: { guardianCheck?: boolean }, command: Command) => {
-      aplicarFlagsGlobais((command.parent?.opts && typeof command.parent.opts === 'function') ? command.parent.opts() : {});
+      aplicarFlagsGlobais(
+        command.parent && typeof command.parent.opts === 'function' ? command.parent.opts() : {}
+      );
       config.GUARDIAN_ENABLED = opts.guardianCheck ?? false;
 
       log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
@@ -44,17 +47,17 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           try {
             const resultado = await scanSystemIntegrity(fileEntries);
             guardianResultado = resultado;
-            switch (String(resultado?.status)) {
-              case 'ok':
+            switch (resultado.status) {
+              case IntegridadeStatus.Ok:
                 log.sucesso('🔒 Guardian: integridade preservada.');
                 break;
-              case 'baseline-criado':
+              case IntegridadeStatus.Criado:
                 log.info('📘 Guardian: baseline inicial criado.');
                 break;
-              case 'baseline-aceito':
+              case IntegridadeStatus.Aceito:
                 log.aviso('🌀 Guardian: novo baseline aceito — execute novamente.');
                 break;
-              case 'alteracoes-detectadas':
+              case IntegridadeStatus.AlteracoesDetectadas:
                 log.aviso('🚨 Guardian: alterações suspeitas detectadas! Considere executar `oraculo guardian --diff`.');
                 totalOcorrencias++;
                 break;
@@ -79,12 +82,12 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
         // Garante que ideal nunca é null
         const alinhamentosValidos = alinhamentos.map(a => ({ ...a, ideal: a.ideal ?? '' }));
-        await gerarRelatorioEstrutura(alinhamentosValidos);
+        gerarRelatorioEstrutura(alinhamentosValidos);
         exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
         exibirRelatorioPadroesUso();
         diagnosticarProjeto(sinaisDetectados);
 
-        await emitirConselhoOracular({
+        emitirConselhoOracular({
           hora: new Date().getHours(),
           arquivosParaCorrigir: resultadoFinal.ocorrencias.length,
           arquivosParaPodar: 0, // Não implementado
@@ -100,7 +103,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           await fs.mkdir(dir, { recursive: true });
 
           // baselineModificado pode ser boolean ou undefined, nunca any
-          const baselineModificado = typeof guardianResultado === 'object' && guardianResultado && 'baselineModificado' in guardianResultado
+          const baselineModificado = typeof guardianResultado === 'object' && 'baselineModificado' in (guardianResultado ?? {})
             ? Boolean((guardianResultado as { baselineModificado?: boolean }).baselineModificado)
             : false;
 

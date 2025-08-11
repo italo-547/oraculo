@@ -14,7 +14,7 @@ export const detectorEstrutura = {
   aplicar(
     _src: string,
     _relPath: string,
-    _ast: any,
+    _ast: unknown,
     _fullPath?: string,
     contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {

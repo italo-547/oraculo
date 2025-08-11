@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 
-import type { FileEntryWithAst, ArquivoFantasma, ResultadoPoda } from '../tipos/tipos.js';
+import type { ArquivoFantasma, ResultadoPoda } from '../tipos/tipos.js';
 
 import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 import { removerArquivosOrfaos } from '../zeladores/poda.js';
@@ -13,7 +13,7 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
     .description('Remove arquivos órfãos e lixo do repositório.')
     .option('-f, --force', 'Remove arquivos sem confirmação (CUIDADO!)', false)
     .action(async function (this: Command, opts: { force?: boolean }) {
-      aplicarFlagsGlobais((this.parent?.opts && typeof this.parent.opts === 'function') ? this.parent.opts() : {});
+      aplicarFlagsGlobais(this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {});
       log.info(chalk.bold('\n🌳 Iniciando processo de poda...\n'));
 
       const baseDir = process.cwd();

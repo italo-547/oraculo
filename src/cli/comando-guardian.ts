@@ -1,7 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 
-import type { FileEntryWithAst, IntegridadeStatus } from '../tipos/tipos.js';
+import type { FileEntryWithAst } from '../tipos/tipos.js';
+import { IntegridadeStatus } from '../tipos/tipos.js';
 
 import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 import { scanSystemIntegrity, acceptNewBaseline } from '../guardian/sentinela.js';
@@ -14,7 +15,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
     .option('-a, --accept-baseline', 'Aceita o baseline atual como o novo baseline de integridade')
     .option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline')
     .action(async function (this: Command, opts: { acceptBaseline?: boolean; diff?: boolean }) {
-      aplicarFlagsGlobais((this.parent?.opts && typeof this.parent.opts === 'function') ? this.parent.opts() : {});
+      aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
 
       const baseDir = process.cwd();
       let fileEntries: FileEntryWithAst[] = [];
@@ -30,7 +31,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
         } else if (opts.diff) {
           log.info(chalk.bold('\n📊 Comparando integridade do Oráculo com o baseline...\n'));
           const diffResult = await scanSystemIntegrity(fileEntries, { justDiff: true });
-          if (typeof diffResult.status === 'string' && diffResult.status === 'alteracoes-detectadas' && diffResult.detalhes) {
+          if (diffResult.status === IntegridadeStatus.AlteracoesDetectadas && diffResult.detalhes && diffResult.detalhes.length) {
             log.aviso('🚨 Diferenças detectadas:');
             diffResult.detalhes.forEach((d: string) => { log.info(`  - ${d}`); });
             log.aviso('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
@@ -41,18 +42,18 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
         } else {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
           const guardianResultado = await scanSystemIntegrity(fileEntries);
-          switch (typeof guardianResultado.status === 'string' ? guardianResultado.status : String(guardianResultado.status)) {
-            case 'ok':
+          switch (guardianResultado.status) {
+            case IntegridadeStatus.Ok:
               log.sucesso('🔒 Guardian: integridade preservada.');
               break;
-            case 'baseline-criado':
+            case IntegridadeStatus.Criado:
               log.info('📘 Guardian: baseline inicial criado.');
               log.aviso('Execute `oraculo guardian --accept-baseline` para aceitá-lo ou `oraculo diagnosticar` novamente.');
               break;
-            case 'baseline-aceito':
+            case IntegridadeStatus.Aceito:
               log.sucesso('🌀 Guardian: baseline atualizado e aceito.');
               break;
-            case 'alteracoes-detectadas':
+            case IntegridadeStatus.AlteracoesDetectadas:
               log.aviso('🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.');
               process.exit(1);
           }

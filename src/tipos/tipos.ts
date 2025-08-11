@@ -201,7 +201,6 @@ export type ComandoOraculo =
   | 'atualizar';//
 
 // 📂 AST e Arquivos
-import type { Node } from '@babel/types';
 import type { NodePath } from '@babel/traverse';
 
 export type OrigemArquivo = 'local' | 'remoto' | 'gerado';

@@ -5,13 +5,14 @@ import { detectarFantasmas } from './fantasma.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
 import { gerarRelatorioPodaMarkdown, gerarRelatorioPodaJson } from '../relatorios/relatorio-poda.js';
-import type { FileEntryWithAst, ArquivoFantasma, ResultadoPoda, Pendencia, HistoricoItem } from '../tipos/tipos.js';
+import type { FileEntryWithAst, ResultadoPoda, Pendencia, HistoricoItem } from '../tipos/tipos.js';
 
 // Exporta função para CLI: detecta arquivos órfãos e retorna ResultadoPoda
-export async function removerArquivosOrfaos(fileEntries: FileEntryWithAst[], executarRealmente = false): Promise<ResultadoPoda> {
+export async function removerArquivosOrfaos(_fileEntries: FileEntryWithAst[], /*executarRealmente = false*/): Promise<ResultadoPoda> {
   const { fantasmas } = await detectarFantasmas();
   return { arquivosOrfaos: fantasmas };
 }
+
 
 async function lerEstado<T = unknown>(caminho: string): Promise<T> {
   try {
@@ -42,7 +43,7 @@ function mesclarPendencias(anteriores: Pendencia[], novos: Pendencia[]): Pendenc
   return Array.from(mapa.values());
 }
 
-function dividirPendencias(pendencias: Pendencia[], reativar: string[], agora: number): [Pendencia[], Pendencia[]] {
+function dividirPendencias(pendencias: Pendencia[], reativar: string[], _agora: number): [Pendencia[], Pendencia[]] {
   const aManter: Pendencia[] = [];
   const aPodar: Pendencia[] = [];
   const reativarSet = new Set(reativar);
@@ -58,7 +59,7 @@ function dividirPendencias(pendencias: Pendencia[], reativar: string[], agora: n
 
 const {
   AUTOANALISE_CONCURRENCY: CONCORRENCIA = 5,
-  ZELADOR_GHOST_INACTIVITY_DAYS: DIAS_INATIVOS = 30,
+  // ZELADOR_GHOST_INACTIVITY_DAYS: DIAS_INATIVOS = 30,
   ZELADOR_ABANDONED_DIR: DIR_ABANDONADOS,
   ZELADOR_PENDING_PATH: PATH_PENDENTES,
   ZELADOR_REACTIVATE_PATH: PATH_REATIVAR,
@@ -66,7 +67,7 @@ const {
   ZELADOR_REPORT_PATH: PATH_RELATORIO
 } = config;
 
-const MILIS_DIA = 86_400_000;
+// const MILIS_DIA = 86_400_000;
 
 /**
  * Entrada principal da poda.
