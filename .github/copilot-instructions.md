@@ -1,11 +1,16 @@
+
 ## Helpers Utilitários e Persistência de Estado
 
-Para facilitar a manutenção e evitar duplicidade de código, centralize funções auxiliares recorrentes (ex: helpers de persistência, manipulação de pendências, leitura/escrita de estado) em arquivos utilitários, preferencialmente em `src/zeladores/util/` ou similar.
+Para evitar duplicidade e facilitar manutenção, **todas as funções auxiliares recorrentes** (persistência, manipulação de pendências, leitura/escrita de estado, etc.) devem ser centralizadas em arquivos utilitários, preferencialmente em `src/zeladores/util/`.
 
-### Exemplos de Helpers Utilitários
+### Padrão de Persistência (obrigatório)
+
+Utilize sempre os helpers `lerEstado` e `salvarEstado` para qualquer leitura ou escrita de arquivos de estado, JSON, relatórios ou snapshots. **Não use `fs.readFile` ou `fs.writeFile` diretamente fora desses helpers**.
+
+#### Exemplo real:
 
 ```ts
-// Persistência simples de estado (JSON)
+// src/zeladores/util/persistencia.ts
 import { promises as fs } from 'node:fs';
 
 export async function lerEstado<T = any>(caminho: string): Promise<T> {
@@ -22,13 +27,35 @@ export async function salvarEstado<T = any>(caminho: string, dados: T): Promise<
 }
 ```
 
-### Dicas
+#### Uso correto em outros módulos:
 
-- Sempre que criar helpers para manipulação de pendências, relatórios ou persistência, documente-os e avalie se podem ser reaproveitados em outros domínios.
+```ts
+// src/guardian/registros.ts
+import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
+
+// ...
+await salvarEstado(destino, registros);
+const registros = await lerEstado<RegistroIntegridade[]>(caminho);
+```
+
+```ts
+// src/relatorios/relatorio-poda.ts
+import { salvarEstado } from '../zeladores/util/persistencia.js';
+
+await salvarEstado(caminho, md); // para markdown
+await salvarEstado(caminho, json); // para json
+```
+
+### Dicas e Boas Práticas
+
+- Sempre documente helpers utilitários criados.
 - Prefira helpers puros e sem efeitos colaterais, facilitando testes e manutenção.
 - Se helpers crescerem, mova para um módulo utilitário dedicado e registre o padrão neste arquivo.
+- **Nunca** duplique lógica de persistência em múltiplos arquivos.
+- Para manipulação de pendências, relatórios ou snapshots, sempre use os helpers centralizados.
 
 ---
+
 
 # Copilot Instructions for Oráculo CLI
 
@@ -36,22 +63,27 @@ export async function salvarEstado<T = any>(caminho: string, dados: T): Promise<
 
 Este projeto é uma CLI modular para análise, diagnóstico e manutenção de projetos, organizada em múltiplos domínios (analistas, arquitetos, zeladores, guardian, etc). O código é escrito em TypeScript ESM puro, com tipagem rigorosa e uso extensivo de aliases de importação.
 
+
 ## Estrutura Principal
 
 - `src/cli.ts`: Entrada principal da CLI.
-- `src/cli/`: Implementa comandos individuais (ex: `comando-diagnosticar.ts`, `comando-podar.ts`).
+- `src/cli/`: Comandos individuais (ex: `comando-diagnosticar.ts`, `comando-podar.ts`).
 - `src/analistas/`, `src/arquitetos/`, `src/zeladores/`, `src/guardian/`: Núcleos de lógica para análise, diagnóstico, correção e verificação.
-- `src/nucleo/`: Funções centrais de execução, parsing e scanner.
-- `src/relatorios/`: Geração e estruturação de relatórios.
-- `src/tipos/tipos.ts`: Define todos os tipos e interfaces compartilhados.
+- `src/nucleo/`: Funções centrais de execução, parsing, scanner e utilidades globais.
+- `src/relatorios/`: Geração e estruturação de relatórios (sempre via helpers centralizados).
+- `src/tipos/tipos.ts`: Tipos e interfaces compartilhados.
+- `src/zeladores/util/`: Helpers utilitários e persistência de estado.
+
 
 ## Convenções e Padrões
 
+- **Helpers centralizados**: Persistência, manipulação de pendências e relatórios sempre via helpers em `src/zeladores/util/`.
 - **Aliases de importação**: Use `@nucleo/*`, `@analistas/*`, etc, conforme definido em `tsconfig.json`.
 - **Tipagem**: Sempre utilize tipos definidos em `src/tipos/tipos.ts`.
 - **Modularização**: Cada domínio tem arquivos e funções bem separados.
 - **ESM puro**: Não use `require`; apenas `import`/`export`.
 - **Sem comentários removidos**: `removeComments: false` no build.
+
 
 ## Fluxos de Trabalho
 
@@ -59,6 +91,8 @@ Este projeto é uma CLI modular para análise, diagnóstico e manutenção de pr
 - **Execução CLI**: Rode comandos via `node dist/cli.js <comando>` após build.
 - **Aliases**: Sempre importe módulos usando os aliases do `tsconfig.json`.
 - **Testes**: (Ainda não implementados, mas previstos no roadmap.)
+- **Persistência**: Sempre utilize os helpers centralizados para leitura/escrita de arquivos de estado, relatórios e snapshots.
+
 
 ## Exemplos de Uso de Alias
 
@@ -67,21 +101,28 @@ import { executar } from '@nucleo/executor';
 import { analisarPadroes } from '@analistas/analista-padroes-uso';
 ```
 
+
 ## Decisões Arquiteturais
 
 - Separação clara entre análise (analistas), diagnóstico (arquitetos), correção (zeladores) e verificação (guardian).
-- Relatórios são sempre gerados via módulos em `src/relatorios/`.
+- Relatórios e persistência de estado sempre via helpers centralizados.
 - Tipos centralizados para garantir consistência entre domínios.
+
 
 ## Dependências e Requisitos
 
 - Node.js >= 20.11.0
 - TypeScript (veja `tsconfig.json` para detalhes)
 
+
 ## Referências
 
 - Veja `RELATORIO.md` para histórico de refatorações e decisões recentes.
 - Consulte `tsconfig.json` para detalhes de build e aliases.
+- Consulte `src/zeladores/util/persistencia.ts` para padrão de helpers de persistência.
+
+---
+
 
 ---
 

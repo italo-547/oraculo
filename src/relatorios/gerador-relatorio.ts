@@ -1,4 +1,4 @@
-import fs from 'node:fs/promises';
+import { salvarEstado } from '../zeladores/util/persistencia.js';
 import { ResultadoInquisicaoCompleto, Ocorrencia } from '../tipos/tipos.js';
 
 export async function gerarRelatorioMarkdown(
@@ -53,7 +53,7 @@ ${ocorrenciasOrdenadas
       .join('\n')}
 `;
 
-  await fs.writeFile(outputPath, header, 'utf-8');
+  await salvarEstado(outputPath, header);
 }
 
 export async function gerarRelatorioJson(
@@ -61,5 +61,5 @@ export async function gerarRelatorioJson(
   outputPath: string,
 ): Promise<void> {
   const json = JSON.stringify(resultado, null, 2);
-  await fs.writeFile(outputPath, json, 'utf-8');
+  await salvarEstado(outputPath, resultado);
 }

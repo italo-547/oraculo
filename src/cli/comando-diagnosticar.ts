@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import path from 'node:path';
-import fs from 'node:fs/promises';
+import { salvarEstado } from '../zeladores/util/persistencia.js';
 
 import type { Ocorrencia, FileEntryWithAst, ResultadoGuardian } from '../tipos/tipos.js';
 import { IntegridadeStatus } from '../tipos/tipos.js';
@@ -122,7 +122,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               ? config.REPORT_OUTPUT_DIR
               : path.join(baseDir, 'oraculo-reports');
           const nome = `oraculo-relatorio-${ts}`;
-          await fs.mkdir(dir, { recursive: true });
+          await import('node:fs').then(fs => fs.promises.mkdir(dir, { recursive: true }));
 
           const baselineModificado =
             typeof guardianResultado === 'object' &&
@@ -168,9 +168,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             },
             path.join(dir, `${nome}.md`),
           );
-          await fs.writeFile(
+          await salvarEstado(
             path.join(dir, `${nome}.json`),
-            JSON.stringify(relatorioCompacto, null, 2),
+            relatorioCompacto,
           );
           log.sucesso(`Relatórios exportados para: ${dir}`);
         }

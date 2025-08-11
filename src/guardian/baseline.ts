@@ -1,4 +1,4 @@
-import { promises as fs } from 'node:fs';
+import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
 import path from 'node:path';
 import { BASELINE_PATH } from './constantes.js';
 
@@ -14,10 +14,8 @@ export type SnapshotBaseline = Record<string, string>;
  */
 export async function carregarBaseline(): Promise<SnapshotBaseline | null> {
   try {
-    const txt = await fs.readFile(BASELINE_PATH, 'utf-8');
-    const json: unknown = JSON.parse(txt);
+    const json = await lerEstado<SnapshotBaseline>(BASELINE_PATH);
     if (json && typeof json === 'object' && !Array.isArray(json)) {
-      // Garante que todas as chaves e valores são strings
       const entries = Object.entries(json as Record<string, unknown>).filter(
         ([k, v]) => typeof k === 'string' && typeof v === 'string',
       );
@@ -33,6 +31,6 @@ export async function carregarBaseline(): Promise<SnapshotBaseline | null> {
  * Salva um novo baseline de integridade em disco, sobrescrevendo qualquer estado anterior.
  */
 export async function salvarBaseline(snapshot: SnapshotBaseline): Promise<void> {
-  await fs.mkdir(path.dirname(BASELINE_PATH), { recursive: true });
-  await fs.writeFile(BASELINE_PATH, JSON.stringify(snapshot, null, 2), 'utf-8');
+  await import('node:fs').then(fs => fs.promises.mkdir(path.dirname(BASELINE_PATH), { recursive: true }));
+  await salvarEstado(BASELINE_PATH, snapshot);
 }

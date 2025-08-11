@@ -1,4 +1,4 @@
-import { promises as fs } from 'node:fs';
+import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
 import path from 'node:path';
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
@@ -27,8 +27,8 @@ export async function salvarRegistros(
     registros.push({ arquivo: relPath, hash });
   }
 
-  await fs.mkdir(path.dirname(destino), { recursive: true });
-  await fs.writeFile(destino, JSON.stringify(registros, null, 2), 'utf-8');
+  await import('node:fs').then(fs => fs.promises.mkdir(path.dirname(destino), { recursive: true }));
+  await salvarEstado(destino, registros);
   log.sucesso(`🛡️ Registro de integridade salvo em: ${destino}`);
 }
 
@@ -39,8 +39,7 @@ export async function carregarRegistros(
   caminho: string = DESTINO_PADRAO,
 ): Promise<RegistroIntegridade[]> {
   try {
-    const data = await fs.readFile(caminho, 'utf-8');
-    return JSON.parse(data) as RegistroIntegridade[];
+    return await lerEstado<RegistroIntegridade[]>(caminho);
   } catch {
     log.aviso(`⚠️ Nenhum registro encontrado em ${caminho}`);
     return [];
