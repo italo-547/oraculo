@@ -36,7 +36,6 @@ export const config = {
   ZELADOR_REPORT_PATH: path.join(ORACULO_STATE, 'poda-oraculo.md'),
   ZELADOR_GHOST_INACTIVITY_DAYS: 30,
   ZELADOR_IGNORE_PATTERNS: [
-    'node_modules',
     '.git',
     'oraculo',
     'dist',
@@ -60,4 +59,5 @@ export const config = {
   // Compatibilidade/legado
   STATE_DIR: ORACULO_STATE,
   ZELADOR_STATE_DIR: ORACULO_STATE,
+  COMPACT_MODE: false,
 };

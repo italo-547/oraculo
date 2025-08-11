@@ -32,22 +32,33 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
       'Exibe logs detalhados de cada arquivo e técnica analisada',
       false,
     )
-    .action(async (opts: { guardianCheck?: boolean; verbose?: boolean }, command: Command) => {
+    .option(
+      '-c, --compact',
+      'Modo compacto: logs ainda mais resumidos para projetos grandes',
+      false,
+    )
+    .action(async (opts: { guardianCheck?: boolean; verbose?: boolean; compact?: boolean }, command: Command) => {
       aplicarFlagsGlobais(
         command.parent && typeof command.parent.opts === 'function' ? command.parent.opts() : {},
       );
       config.GUARDIAN_ENABLED = opts.guardianCheck ?? false;
       config.VERBOSE = opts.verbose ?? false;
+      config.COMPACT_MODE = opts.compact ?? false;
 
-      log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
-
+      let iniciouDiagnostico = false;
       const baseDir = process.cwd();
       let guardianResultado: ResultadoGuardian | undefined;
-
       let fileEntries: FileEntryWithAst[] = [];
       let totalOcorrencias = 0;
 
       try {
+        if (!iniciouDiagnostico && !config.COMPACT_MODE) {
+          log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
+          iniciouDiagnostico = true;
+        } else if (!iniciouDiagnostico && config.COMPACT_MODE) {
+          log.info(chalk.bold('\n🔍 Diagnóstico (modo compacto)...\n'));
+          iniciouDiagnostico = true;
+        }
         const leituraInicial = await iniciarInquisicao(baseDir, { incluirMetadados: false });
         fileEntries = leituraInicial.fileEntries;
 
@@ -100,25 +111,36 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           tecnicas,
           baseDir,
           guardianResultado,
-          { verbose: config.VERBOSE },
+          { verbose: config.VERBOSE, compact: config.COMPACT_MODE },
         );
 
         totalOcorrencias += resultadoFinal.ocorrencias.length;
 
-        const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
-        const alinhamentosValidos = alinhamentos.map((a) => ({ ...a, ideal: a.ideal ?? '' }));
-        gerarRelatorioEstrutura(alinhamentosValidos);
-        exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
-        exibirRelatorioPadroesUso();
-        diagnosticarProjeto(sinaisDetectados);
+        // Resumo agrupado de tipos de problemas
+        const tiposOcorrencias: Record<string, number> = {};
+        let temErro = false;
+        for (const occ of resultadoFinal.ocorrencias) {
+          const tipo = occ.tipo ?? 'desconhecido';
+          tiposOcorrencias[tipo] = (tiposOcorrencias[tipo] ?? 0) + 1;
+          if (occ.nivel === 'erro') temErro = true;
+        }
 
-        emitirConselhoOracular({
-          hora: new Date().getHours(),
-          arquivosParaCorrigir: resultadoFinal.ocorrencias.length,
-          arquivosParaPodar: 0,
-          totalOcorrenciasAnaliticas: resultadoFinal.ocorrencias.length,
-          integridadeGuardian: guardianResultado ? guardianResultado.status : 'nao-verificado',
-        });
+        if (!config.COMPACT_MODE) {
+          const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
+          const alinhamentosValidos = alinhamentos.map((a) => ({ ...a, ideal: a.ideal ?? '' }));
+          gerarRelatorioEstrutura(alinhamentosValidos);
+          exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
+          exibirRelatorioPadroesUso();
+          diagnosticarProjeto(sinaisDetectados);
+
+          emitirConselhoOracular({
+            hora: new Date().getHours(),
+            arquivosParaCorrigir: resultadoFinal.ocorrencias.length,
+            arquivosParaPodar: 0,
+            totalOcorrenciasAnaliticas: resultadoFinal.ocorrencias.length,
+            integridadeGuardian: guardianResultado ? guardianResultado.status : 'nao-verificado',
+          });
+        }
 
         if (config.REPORT_EXPORT_ENABLED) {
           log.info(chalk.bold('\n💾 Exportando relatórios detalhados...\n'));
@@ -191,7 +213,17 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               `\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`,
             ),
           );
-          process.exit(1);
+          // Exibe resumo agrupado
+          log.info('Resumo dos tipos de problemas encontrados:');
+          for (const [tipo, qtd] of Object.entries(tiposOcorrencias)) {
+            log.info(`  - ${tipo}: ${qtd}`);
+          }
+          // Só retorna código 1 se houver erro crítico
+          if (temErro) {
+            process.exit(1);
+          } else {
+            process.exit(0);
+          }
         }
       } catch (error) {
         log.erro(
@@ -200,5 +232,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         if (config.DEV_MODE) console.error(error);
         process.exit(1);
       }
+
     });
 }
+

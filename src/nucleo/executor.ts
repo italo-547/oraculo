@@ -12,10 +12,10 @@ export async function executarInquisicao(
   tecnicas: Tecnica[],
   baseDir: string,
   guardianResultado: unknown,
-  opts?: { verbose?: boolean }
+  opts?: { verbose?: boolean; compact?: boolean }
 ): Promise<ResultadoInquisicao> {
-  // log.info('🧪 Iniciando execução das técnicas...\n'); // Silenciado para saída limpa
 
+  const ocorrencias: Ocorrencia[] = [];
   const arquivosValidosSet = new Set(fileEntriesComAst.map((f) => f.relPath));
   const contextoGlobal: ContextoExecucao = {
     baseDir,
@@ -25,11 +25,9 @@ export async function executarInquisicao(
       guardian: guardianResultado,
     },
   };
-
-  const ocorrencias: Ocorrencia[] = [];
   const inicioExecucao = performance.now();
 
-  // � Técnicas globais
+  // Técnicas globais
   for (const tecnica of tecnicas) {
     if (tecnica.global) {
       const inicio = performance.now();
@@ -58,12 +56,16 @@ export async function executarInquisicao(
     }
   }
 
-  // � Técnicas por arquivo
+  // Técnicas por arquivo
   let arquivoAtual = 0;
   const totalArquivos = fileEntriesComAst.length;
   for (const entry of fileEntriesComAst) {
     arquivoAtual++;
-    if (opts?.verbose) {
+    if (opts?.compact) {
+      if (arquivoAtual === totalArquivos) {
+        log.info(`Arquivos analisados: ${totalArquivos}`);
+      }
+    } else if (opts?.verbose) {
       log.info(`🔎 Arquivo ${arquivoAtual}/${totalArquivos}: ${entry.relPath}`);
     } else if (arquivoAtual % 10 === 0 || arquivoAtual === totalArquivos) {
       log.info(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
