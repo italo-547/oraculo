@@ -74,7 +74,23 @@ export async function iniciarInquisicao(
   const { includeContent = true, incluirMetadados = true } = options;
   log.info(`🔍 Iniciando a Inquisição do Oráculo em: ${baseDir}`);
 
-  const fileMap = await scanRepository(baseDir, { includeContent });
+  const fileMap = await scanRepository(baseDir, {
+    includeContent,
+    onProgress: (msg) => {
+      // Só exibe diretórios e erros, e em formato legível por máquina/pessoa
+      try {
+        const obj = JSON.parse(msg);
+        if (obj.tipo === 'diretorio') {
+          log.info(`Examinando diretório: ${obj.caminho}`);
+        } else if (obj.tipo === 'erro') {
+          log.erro(`Erro ao ${obj.acao} ${obj.caminho}: ${obj.mensagem}`);
+        }
+      } catch {
+        // fallback para logs antigos
+        if (msg && msg.includes('⚠️')) log.aviso(msg);
+      }
+    },
+  });
   let fileEntries: FileEntryWithAst[];
 
   if (incluirMetadados) {

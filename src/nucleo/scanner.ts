@@ -33,10 +33,13 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       entries.sort((a, b) => a.name.localeCompare(b.name));
     } catch (err) {
       onProgress(
-        `⚠️ Falha ao acessar ${dir}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+        JSON.stringify({ tipo: 'erro', acao: 'acessar', caminho: dir, mensagem: typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err) })
       );
       return;
     }
+
+    // Logar apenas diretórios sendo examinados
+    onProgress(JSON.stringify({ tipo: 'diretorio', acao: 'examinar', caminho: dir }));
 
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
@@ -67,10 +70,10 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
           };
 
           fileMap[relPath] = entryObj;
-          onProgress(`✅ Arquivo lido: ${relPath}`);
+          // Não logar cada arquivo individualmente
         } catch (err) {
           onProgress(
-            `⚠️ Erro ao ler ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+            JSON.stringify({ tipo: 'erro', acao: 'ler', caminho: relPath, mensagem: typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err) })
           );
         }
       }

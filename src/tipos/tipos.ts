@@ -123,6 +123,10 @@ export interface Estatisticas {
   requires: Contador;
   consts: Contador;
   exports: Contador;
+  vars: Contador;
+  lets: Contador;
+  evals: Contador;
+  withs: Contador;
 }
 
 

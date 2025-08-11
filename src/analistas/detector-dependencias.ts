@@ -48,17 +48,130 @@ export const detectorDependencias = {
   },
 
   aplicar(
-    _src: string,
+    src: string,
     relPath: string,
     ast: NodePath | null,
     _fullPath?: string,
-    _contexto?: ContextoExecucao,
+    contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     if (!ast) return [];
 
     const ocorrencias: Ocorrencia[] = [];
     const refs = extrairReferencias(ast);
+    const tiposImport: Set<'import' | 'require'> = new Set();
+    const fs = require('fs');
 
+    // Detecta padrões problemáticos
+    traverse(ast.node, {
+      ImportDeclaration(p) {
+        tiposImport.add('import');
+        const val = p.node.source.value;
+        // Import externo
+        if (!val.startsWith('.') && !val.startsWith('/')) {
+          ocorrencias.push({
+            tipo: 'info',
+            mensagem: `Importação de dependência externa: '${val}'`,
+            arquivo: relPath,
+            linha: p.node.loc?.start.line,
+            coluna: p.node.loc?.start.column,
+          });
+        }
+        // Import relativo longo
+        if (val.startsWith('.') && val.split('../').length > 3) {
+          ocorrencias.push({
+            tipo: 'aviso',
+            mensagem: `Import relativo sobe muitos diretórios: '${val}'`,
+            arquivo: relPath,
+            linha: p.node.loc?.start.line,
+            coluna: p.node.loc?.start.column,
+          });
+        }
+        // Import de .js em projeto TS
+        if (relPath.endsWith('.ts') && val.endsWith('.js')) {
+          ocorrencias.push({
+            tipo: 'alerta',
+            mensagem: `Importação de arquivo .js em TypeScript: '${val}'`,
+            arquivo: relPath,
+            linha: p.node.loc?.start.line,
+            coluna: p.node.loc?.start.column,
+          });
+        }
+        // Import de arquivo inexistente (só para caminhos relativos)
+        if (val.startsWith('.')) {
+          const importPath = path.join(path.dirname(relPath), val);
+          if (contexto && !contexto.arquivos.some(f => f.relPath === importPath || f.relPath === importPath + '.ts' || f.relPath === importPath + '.js')) {
+            ocorrencias.push({
+              tipo: 'erro',
+              mensagem: `Importação de arquivo inexistente: '${val}'`,
+              arquivo: relPath,
+              linha: p.node.loc?.start.line,
+              coluna: p.node.loc?.start.column,
+            });
+          }
+        }
+      },
+      CallExpression(p) {
+        const { callee, arguments: args } = p.node;
+        if (callee.type === 'Identifier' && callee.name === 'require' && args[0]?.type === 'StringLiteral') {
+          tiposImport.add('require');
+          const val = args[0].value;
+          // Require externo
+          if (!val.startsWith('.') && !val.startsWith('/')) {
+            ocorrencias.push({
+              tipo: 'info',
+              mensagem: `Require de dependência externa: '${val}'`,
+              arquivo: relPath,
+              linha: p.node.loc?.start.line,
+              coluna: p.node.loc?.start.column,
+            });
+          }
+          // Require relativo longo
+          if (val.startsWith('.') && val.split('../').length > 3) {
+            ocorrencias.push({
+              tipo: 'aviso',
+              mensagem: `Require relativo sobe muitos diretórios: '${val}'`,
+              arquivo: relPath,
+              linha: p.node.loc?.start.line,
+              coluna: p.node.loc?.start.column,
+            });
+          }
+          // Require de .js em projeto TS
+          if (relPath.endsWith('.ts') && val.endsWith('.js')) {
+            ocorrencias.push({
+              tipo: 'alerta',
+              mensagem: `Require de arquivo .js em TypeScript: '${val}'`,
+              arquivo: relPath,
+              linha: p.node.loc?.start.line,
+              coluna: p.node.loc?.start.column,
+            });
+          }
+          // Require de arquivo inexistente (só para caminhos relativos)
+          if (val.startsWith('.')) {
+            const importPath = path.join(path.dirname(relPath), val);
+            if (contexto && !contexto.arquivos.some(f => f.relPath === importPath || f.relPath === importPath + '.ts' || f.relPath === importPath + '.js')) {
+              ocorrencias.push({
+                tipo: 'erro',
+                mensagem: `Require de arquivo inexistente: '${val}'`,
+                arquivo: relPath,
+                linha: p.node.loc?.start.line,
+                coluna: p.node.loc?.start.column,
+              });
+            }
+          }
+        }
+      },
+    });
+
+    // Mistura de require/import
+    if (tiposImport.size > 1) {
+      ocorrencias.push({
+        tipo: 'aviso',
+        mensagem: `Uso misto de require e import no mesmo arquivo. Padronize para um só estilo.`,
+        arquivo: relPath,
+      });
+    }
+
+    // Grafo de dependências (mantido)
     for (const ref of refs) {
       const dep = normalizarModulo(ref, relPath);
       let set = grafoDependencias.get(relPath);
@@ -69,6 +182,14 @@ export const detectorDependencias = {
       set.add(dep);
     }
 
+    // Detecta import circular simples (arquivo importa a si mesmo)
+    if (grafoDependencias.get(relPath)?.has(relPath)) {
+      ocorrencias.push({
+        tipo: 'alerta',
+        mensagem: `Importação circular detectada: o arquivo importa a si mesmo.`,
+        arquivo: relPath,
+      });
+    }
 
     return ocorrencias;
   },
