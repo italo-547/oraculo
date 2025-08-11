@@ -18,7 +18,7 @@ function estaSendoReferenciado(relPath: string, grafo: Map<string, Set<string>>)
 }
 
 export async function detectarFantasmas(
-  baseDir: string = process.cwd()
+  baseDir: string = process.cwd(),
 ): Promise<{ total: number; fantasmas: ArquivoFantasma[] }> {
   const fileMap: FileMap = await scanRepository(baseDir);
   const agora = Date.now();
@@ -29,7 +29,7 @@ export async function detectarFantasmas(
     const ext = path.extname(relPath).toLowerCase();
 
     if (!EXTENSOES_ALVO.includes(ext)) continue;
-    if (IGNORAR_PADROES.some(p => relPath.toLowerCase().includes(p))) continue;
+    if (IGNORAR_PADROES.some((p) => relPath.toLowerCase().includes(p))) continue;
 
     try {
       const stat = await fs.stat(fullPath);
@@ -40,16 +40,16 @@ export async function detectarFantasmas(
         fantasmas.push({
           arquivo: relPath,
           referenciado,
-          diasInativo
+          diasInativo,
         });
       }
     } catch {
-      // Arquivo inacessível, ignorado silenciosamente
+      // Silenciosamente ignora arquivos inacessíveis
     }
   }
 
   return {
     total: fantasmas.length,
-    fantasmas
+    fantasmas,
   };
 }

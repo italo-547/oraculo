@@ -9,7 +9,7 @@ const {
   STRUCTURE_PLUGINS: PLUGINS = [],
   STRUCTURE_AUTO_FIX: AUTO_FIX = false,
   STRUCTURE_CONCURRENCY: CONCORRENCIA = 5,
-  STRUCTURE_LAYERS
+  STRUCTURE_LAYERS,
 } = config;
 
 interface ResultadoEstrutural {
@@ -21,12 +21,12 @@ interface ResultadoEstrutural {
 export async function corrigirEstrutura(
   mapa: ResultadoEstrutural[],
   fileEntries: FileEntryWithAst[],
-  baseDir: string = process.cwd()
+  baseDir: string = process.cwd(),
 ): Promise<void> {
   const limit = pLimit(CONCORRENCIA);
 
   await Promise.all(
-    mapa.map(entry =>
+    mapa.map((entry) =>
       limit(async () => {
         const { arquivo, ideal, atual } = entry;
         if (!ideal || ideal === atual) return;
@@ -43,7 +43,10 @@ export async function corrigirEstrutura(
         try {
           await fs.mkdir(path.dirname(destino), { recursive: true });
         } catch (err) {
-          const msg = err && typeof err === 'object' && 'message' in err ? String((err as { message: unknown }).message) : String(err);
+          const msg =
+            err && typeof err === 'object' && 'message' in err
+              ? String((err as { message: unknown }).message)
+              : String(err);
           log.erro(`❌ Falha ao criar diretório para ${destino}: ${msg}`);
           return;
         }
@@ -62,20 +65,33 @@ export async function corrigirEstrutura(
           await fs.rename(origem, destino);
           log.sucesso(`✅ Movido: ${arquivo} → ${path.relative(baseDir, destino)}`);
         } catch (err) {
-          const msg = err && typeof err === 'object' && 'message' in err ? String((err as { message: unknown }).message) : String(err);
+          const msg =
+            err && typeof err === 'object' && 'message' in err
+              ? String((err as { message: unknown }).message)
+              : String(err);
           log.erro(`❌ Falha ao mover ${arquivo}: ${msg}`);
         }
-      })
-    )
+      }),
+    ),
   );
 
-  // 🔌 Plugins estruturais adicionais
   for (const pluginRel of PLUGINS) {
     try {
-      // Importação dinâmica sem uso de any
       const pluginModule: unknown = await import(path.resolve(baseDir, pluginRel));
-      let pluginFn: ((args: { mapa: ResultadoEstrutural[]; baseDir: string; layers: typeof STRUCTURE_LAYERS; fileEntries: FileEntryWithAst[] }) => Promise<void> | void) | undefined;
-      if (pluginModule && typeof pluginModule === 'object' && 'default' in pluginModule && typeof (pluginModule as Record<string, unknown>).default === 'function') {
+      let pluginFn:
+        | ((args: {
+          mapa: ResultadoEstrutural[];
+          baseDir: string;
+          layers: typeof STRUCTURE_LAYERS;
+          fileEntries: FileEntryWithAst[];
+        }) => Promise<void> | void)
+        | undefined;
+      if (
+        pluginModule &&
+        typeof pluginModule === 'object' &&
+        'default' in pluginModule &&
+        typeof (pluginModule as Record<string, unknown>).default === 'function'
+      ) {
         pluginFn = (pluginModule as { default: typeof pluginFn }).default;
       } else if (typeof pluginModule === 'function') {
         pluginFn = pluginModule as typeof pluginFn;
@@ -85,7 +101,12 @@ export async function corrigirEstrutura(
       }
     } catch (err) {
       let msg = 'erro desconhecido';
-      if (err && typeof err === 'object' && 'message' in err && typeof (err as { message?: unknown }).message === 'string') {
+      if (
+        err &&
+        typeof err === 'object' &&
+        'message' in err &&
+        typeof (err as { message?: unknown }).message === 'string'
+      ) {
         msg = String((err as { message: string }).message);
       } else if (typeof err === 'string') {
         msg = err;

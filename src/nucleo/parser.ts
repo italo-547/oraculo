@@ -8,13 +8,15 @@ function parseComBabel(codigo: string, plugins?: string[]): BabelFile | null {
   const defaultPlugins = ['typescript', 'jsx', 'decorators-legacy'];
   const options: ParserOptions = {
     sourceType: 'unambiguous',
-    plugins: (Array.isArray(plugins) ? plugins : defaultPlugins) as ParserOptions['plugins']
+    plugins: (Array.isArray(plugins) ? plugins : defaultPlugins) as ParserOptions['plugins'],
   };
 
   try {
     return babelParse(codigo, options);
   } catch (err) {
-    log.debug(`⚠️ Falha no parser Babel: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+    log.debug(
+      `⚠️ Falha no parser Babel: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+    );
     return null;
   }
 }
@@ -44,7 +46,7 @@ const PARSERS = new Map<string, ParserFunc>([
   ['.kt', parseComKotlin],
   ['.kts', parseComKotlin],
   ['.java', parseComJava],
-  ['.xml', parseComXml]
+  ['.xml', parseComXml],
 ]);
 
 export const EXTENSOES_SUPORTADAS = Array.from(PARSERS.keys());
@@ -57,7 +59,7 @@ interface DecifrarSintaxeOpts {
 export async function decifrarSintaxe(
   codigo: string,
   ext: string,
-  opts: DecifrarSintaxeOpts = {}
+  opts: DecifrarSintaxeOpts = {},
 ): Promise<BabelFile | null> {
   const parser = PARSERS.get(ext);
   if (!parser) {

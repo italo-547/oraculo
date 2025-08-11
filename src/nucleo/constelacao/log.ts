@@ -6,7 +6,7 @@ const icons = {
   sucesso: '🥳',
   erro: '😰',
   aviso: '🥹',
-  debug: '🥴'
+  debug: '🥴',
 };
 
 function shouldSilence(): boolean {
@@ -22,7 +22,7 @@ function getTimestamp(): string {
     hour12: false,
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
+    second: '2-digit',
   });
   return chalk.gray(`[${now}]`);
 }
@@ -54,5 +54,5 @@ export const log = {
     if (isDebugMode()) {
       console.log(`${getTimestamp()} ${chalk.magenta(icons.debug)} ${msg}`);
     }
-  }
+  },
 };

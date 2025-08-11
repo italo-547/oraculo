@@ -28,27 +28,24 @@ export function diagnosticarProjeto(sinais: SinaisProjeto): DiagnosticoProjeto {
     confianca = 0.85;
   } else if (ehLib(sinais)) {
     tipo = 'lib';
-    confianca = 0.80;
+    confianca = 0.8;
   }
 
   return {
     tipo,
     sinais: positivos,
-    confiabilidade: parseFloat(confianca.toFixed(2))
+    confiabilidade: parseFloat(confianca.toFixed(2)),
   };
 }
 
-// Helpers (podem ser movidos para um módulo util futuramente)
 
 function ehLanding(s: SinaisProjeto): boolean {
   return !!(s.temPages && s.temComponents && !s.temControllers);
 }
 
-
 function ehApi(s: SinaisProjeto): boolean {
-  return !!((s.temApi ?? s.temControllers ?? s.temExpress));
+  return !!(s.temApi ?? s.temControllers ?? s.temExpress);
 }
-
 
 function ehLib(s: SinaisProjeto): boolean {
   return !!(s.temSrc && !s.temComponents && !(s.temApi ?? false));

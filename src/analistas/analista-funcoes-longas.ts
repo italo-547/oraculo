@@ -1,6 +1,10 @@
 import { traverse } from '../nucleo/constelacao/traverse.js';
 import type { Ocorrencia, TecnicaAplicarResultado, ContextoExecucao } from '../tipos/tipos.js';
-import type { FunctionDeclaration, FunctionExpression, ArrowFunctionExpression } from '@babel/types';
+import type {
+  FunctionDeclaration,
+  FunctionExpression,
+  ArrowFunctionExpression,
+} from '@babel/types';
 import type { NodePath } from '@babel/traverse';
 
 const LIMITE_LINHAS = 30;
@@ -15,14 +19,14 @@ export const analistaFuncoesLongas = {
     relPath: string,
     ast: NodePath | null,
     _fullPath: string,
-    _contexto?: ContextoExecucao
+    _contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
 
     if (!ast) return [];
 
     function analisar(
-      fn: FunctionDeclaration | FunctionExpression | ArrowFunctionExpression
+      fn: FunctionDeclaration | FunctionExpression | ArrowFunctionExpression,
     ): void {
       if (!fn.loc) return;
 
@@ -36,7 +40,7 @@ export const analistaFuncoesLongas = {
           arquivo: relPath,
           linha: fn.loc.start.line,
           mensagem: `Função com ${linhas} linhas (máx: ${LIMITE_LINHAS})`,
-          origem: 'analista-funcoes-longas'
+          origem: 'analista-funcoes-longas',
         });
       }
     }
@@ -50,9 +54,9 @@ export const analistaFuncoesLongas = {
       },
       ArrowFunctionExpression(path) {
         analisar(path.node);
-      }
+      },
     });
 
     return ocorrencias;
-  }
+  },
 };

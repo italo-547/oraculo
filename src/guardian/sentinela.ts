@@ -16,7 +16,9 @@ function construirSnapshot(fileEntries: FileEntry[]): Snapshot {
     try {
       snapshot[relPath] = gerarSnapshotDoConteudo(content);
     } catch (err) {
-      log.aviso(`❌ Falha ao gerar hash de ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+      log.aviso(
+        `❌ Falha ao gerar hash de ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+      );
     }
   }
   return snapshot;
@@ -24,7 +26,7 @@ function construirSnapshot(fileEntries: FileEntry[]): Snapshot {
 
 export async function scanSystemIntegrity(
   fileEntries: FileEntry[],
-  options?: { justDiff?: boolean }
+  options?: { justDiff?: boolean },
 ): Promise<{
   status: IntegridadeStatus;
   timestamp: string;
@@ -38,7 +40,9 @@ export async function scanSystemIntegrity(
   try {
     baselineAnterior = await carregarBaseline();
   } catch (err) {
-    log.aviso(`⚠️ Baseline inválido ou corrompido: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+    log.aviso(
+      `⚠️ Baseline inválido ou corrompido: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+    );
   }
 
   const snapshotAtual = construirSnapshot(fileEntries);
@@ -62,7 +66,7 @@ export async function scanSystemIntegrity(
     return {
       status: erros.length ? IntegridadeStatus.AlteracoesDetectadas : IntegridadeStatus.Ok,
       timestamp: agora,
-      detalhes: erros
+      detalhes: erros,
     };
   }
 

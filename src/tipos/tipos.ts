@@ -1,9 +1,4 @@
 
-
-//
-// 📂 Integridade e Erros
-//
-
 export interface ResultadoGuardian {
   status: IntegridadeStatus;
   detalhes?: string[];
@@ -26,9 +21,6 @@ export class GuardianError extends Error {
   }
 }
 
-//
-// 📂 Ocorrências e Técnicas
-//
 
 export type OcorrenciaNivel = 'erro' | 'aviso' | 'info' | 'sucesso';
 
@@ -57,13 +49,10 @@ export interface Tecnica {
     relPath: string,
     ast: NodePath | null,
     fullPath?: string,
-    contexto?: ContextoExecucao
+    contexto?: ContextoExecucao,
   ) => TecnicaAplicarResultado | Promise<TecnicaAplicarResultado>;
 }
 
-//
-// 📂 Execução e Diagnóstico
-//
 
 export interface AmbienteExecucao {
   arquivosValidosSet: Set<string>;
@@ -117,9 +106,6 @@ export interface ResultadoInquisicaoCompleto extends ResultadoInquisicao {
   guardian: unknown;
 }
 
-//
-// 📂 Opções e Métricas
-//
 
 export interface ScanOptions {
   includeContent?: boolean;
@@ -139,9 +125,6 @@ export interface Estatisticas {
   exports: Contador;
 }
 
-//
-// 📂 Arquivos e Pendências
-//
 
 export interface ResultadoCorrecao {
   correcoesAplicadas: number;
@@ -170,9 +153,6 @@ export interface HistoricoItem {
   motivo: string;
 }
 
-//
-// 📂 Relatórios e CLI
-//
 
 export interface RelatorioCompacto {
   resumo: {
@@ -193,14 +173,8 @@ export interface RelatorioCompacto {
   }[];
 }
 
-export type ComandoOraculo =
-  | 'diagnosticar'
-  | 'guardian'
-  | 'podar'
-  | 'reestruturar'
-  | 'atualizar';//
+export type ComandoOraculo = 'diagnosticar' | 'guardian' | 'podar' | 'reestruturar' | 'atualizar'; //
 
-// 📂 AST e Arquivos
 import type { NodePath } from '@babel/traverse';
 
 export type OrigemArquivo = 'local' | 'remoto' | 'gerado';
@@ -219,5 +193,3 @@ export interface FileEntryWithAst extends FileEntry {
 
 export type FileMap = Record<string, FileEntry>;
 export type FileMapWithAst = Record<string, FileEntryWithAst>;
-
-

@@ -3,9 +3,9 @@ import pLimit from 'p-limit';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 
-// TODO: Definir camadas de estrutura conforme necessidade do projeto
 const CAMADAS: Record<string, string> = {};
-const CONCORRENCIA = typeof config.AUTOANALISE_CONCURRENCY === 'number' ? config.AUTOANALISE_CONCURRENCY : 5;
+const CONCORRENCIA =
+  typeof config.AUTOANALISE_CONCURRENCY === 'number' ? config.AUTOANALISE_CONCURRENCY : 5;
 
 interface ResultadoEstrutural {
   arquivo: string;
@@ -15,19 +15,19 @@ interface ResultadoEstrutural {
 
 export async function analisarEstrutura(
   fileEntries: FileEntryWithAst[],
-  _baseDir: string = process.cwd()
+  _baseDir: string = process.cwd(),
 ): Promise<ResultadoEstrutural[]> {
   const limit = pLimit(CONCORRENCIA);
 
   const resultados = await Promise.all(
-    fileEntries.map(entry =>
+    fileEntries.map((entry) =>
       limit(() => {
         const rel = entry.relPath;
         const atual = rel.split(path.sep)[0] || '';
         let ideal: string | null = null;
 
-        const matchDireta = Object.entries(CAMADAS).find(
-          ([, dir]) => rel.startsWith(dir + path.sep)
+        const matchDireta = Object.entries(CAMADAS).find(([, dir]) =>
+          rel.startsWith(dir + path.sep),
         );
 
         if (matchDireta) {
@@ -41,8 +41,8 @@ export async function analisarEstrutura(
         }
 
         return { arquivo: rel, atual, ideal };
-      })
-    )
+      }),
+    ),
   );
 
   return resultados;

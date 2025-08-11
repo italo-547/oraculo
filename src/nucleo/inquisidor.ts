@@ -12,37 +12,31 @@ import type {
   FileEntry,
   InquisicaoOptions,
   Tecnica,
-  ResultadoInquisicaoCompleto
+  ResultadoInquisicaoCompleto,
 } from '../tipos/tipos.js';
 
 const EXTENSOES_COM_AST = new Set(
-  Array.isArray(config.SCANNER_EXTENSOES_COM_AST) ? config.SCANNER_EXTENSOES_COM_AST : ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs']
+  Array.isArray(config.SCANNER_EXTENSOES_COM_AST)
+    ? config.SCANNER_EXTENSOES_COM_AST
+    : ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs'],
 );
 
-export const tecnicas: Tecnica[] = [
-  detectorDependencias,
-  detectorEstrutura
-];
+export const tecnicas: Tecnica[] = [detectorDependencias, detectorEstrutura];
 
-async function prepararComAst(
-  entries: FileEntry[],
-  baseDir: string
-): Promise<FileEntryWithAst[]> {
+async function prepararComAst(entries: FileEntry[], baseDir: string): Promise<FileEntryWithAst[]> {
   return Promise.all(
     entries.map(async (entry): Promise<FileEntryWithAst> => {
-      let ast: import('@babel/traverse').NodePath<import('@babel/types').Node> | undefined = undefined;
+      let ast: import('@babel/traverse').NodePath<import('@babel/types').Node> | undefined =
+        undefined;
       const ext = path.extname(entry.relPath);
 
       if (entry.content && EXTENSOES_COM_AST.has(ext)) {
         try {
           const parsed = await decifrarSintaxe(entry.content, ext);
-          if (
-            parsed &&
-            typeof parsed === 'object' &&
-            'node' in parsed &&
-            'parent' in parsed
-          ) {
-            ast = (parsed as unknown) as import('@babel/traverse').NodePath<import('@babel/types').Node>;
+          if (parsed && typeof parsed === 'object' && 'node' in parsed && 'parent' in parsed) {
+            ast = parsed as unknown as import('@babel/traverse').NodePath<
+              import('@babel/types').Node
+            >;
           } else {
             ast = undefined;
           }
@@ -55,19 +49,21 @@ async function prepararComAst(
       return {
         ...entry,
         ast,
-        fullPath: typeof entry.fullPath === 'string' ? entry.fullPath : path.resolve(baseDir, entry.relPath)
+        fullPath:
+          typeof entry.fullPath === 'string'
+            ? entry.fullPath
+            : path.resolve(baseDir, entry.relPath),
       };
-    })
+    }),
   );
 }
 
 export async function iniciarInquisicao(
   baseDir: string = process.cwd(),
-  options: InquisicaoOptions = {}
+  options: InquisicaoOptions = {},
 ): Promise<ResultadoInquisicaoCompleto> {
   const { includeContent = true, incluirMetadados = true } = options;
   log.info(`🔍 Iniciando a Inquisição do Oráculo em: ${baseDir}`);
-
 
   const fileMap = await scanRepository(baseDir, { includeContent });
   let fileEntries: FileEntryWithAst[];
@@ -78,7 +74,8 @@ export async function iniciarInquisicao(
     fileEntries = Object.values(fileMap).map((entry) => ({
       ...entry,
       ast: undefined,
-      fullPath: typeof entry.fullPath === 'string' ? entry.fullPath : path.resolve(baseDir, entry.relPath)
+      fullPath:
+        typeof entry.fullPath === 'string' ? entry.fullPath : path.resolve(baseDir, entry.relPath),
     }));
   }
 
@@ -87,7 +84,7 @@ export async function iniciarInquisicao(
     fileEntries,
     tecnicas,
     baseDir,
-    undefined
+    undefined,
   );
 
   log.sucesso(`🔮 Inquisição concluída. Total de ocorrências: ${ocorrencias.length}`);
@@ -95,11 +92,11 @@ export async function iniciarInquisicao(
   return {
     totalArquivos,
     ocorrencias,
-    arquivosAnalisados: fileEntries.map(f => f.relPath),
+    arquivosAnalisados: fileEntries.map((f) => f.relPath),
     timestamp: Date.now(),
     duracaoMs: 0,
     fileEntries,
-    guardian: undefined
+    guardian: undefined,
   };
 }
 

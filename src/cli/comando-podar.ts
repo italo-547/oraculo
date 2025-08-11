@@ -13,7 +13,9 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
     .description('Remove arquivos órfãos e lixo do repositório.')
     .option('-f, --force', 'Remove arquivos sem confirmação (CUIDADO!)', false)
     .action(async function (this: Command, opts: { force?: boolean }) {
-      aplicarFlagsGlobais(this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {});
+      aplicarFlagsGlobais(
+        this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {},
+      );
       log.info(chalk.bold('\n🌳 Iniciando processo de poda...\n'));
 
       const baseDir = process.cwd();
@@ -27,16 +29,20 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
         }
 
         log.aviso(`\n${resultadoPoda.arquivosOrfaos.length} arquivos órfãos detectados:`);
-        resultadoPoda.arquivosOrfaos.forEach((file: ArquivoFantasma) => { log.info(`- ${file.arquivo}`); });
+        resultadoPoda.arquivosOrfaos.forEach((file: ArquivoFantasma) => {
+          log.info(`- ${file.arquivo}`);
+        });
 
         if (!opts.force) {
           const readline = await import('node:readline/promises');
           const rl = readline.createInterface({
             input: process.stdin,
-            output: process.stdout
+            output: process.stdout,
           });
 
-          const answer = await rl.question(chalk.yellow('Tem certeza que deseja remover esses arquivos? (s/N) '));
+          const answer = await rl.question(
+            chalk.yellow('Tem certeza que deseja remover esses arquivos? (s/N) '),
+          );
           rl.close();
 
           if (answer.toLowerCase() !== 's') {
@@ -45,10 +51,12 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
           }
         }
 
-        await removerArquivosOrfaos(fileEntries, true);
+        await removerArquivosOrfaos(fileEntries);
         log.sucesso('✅ Poda concluída: Arquivos órfãos removidos com sucesso!');
       } catch (error) {
-        log.erro(`❌ Erro durante a poda: ${typeof error === 'object' && error && 'message' in error ? (error as { message: string }).message : String(error)}`);
+        log.erro(
+          `❌ Erro durante a poda: ${typeof error === 'object' && error && 'message' in error ? (error as { message: string }).message : String(error)}`,
+        );
         if (config.DEV_MODE) console.error(error);
         process.exit(1);
       }

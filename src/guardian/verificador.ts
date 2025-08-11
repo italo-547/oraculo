@@ -16,9 +16,9 @@ export interface ResultadoVerificacao {
  */
 export function verificarRegistros(
   fileEntries: FileEntry[],
-  registrosSalvos: RegistroIntegridade[]
+  registrosSalvos: RegistroIntegridade[],
 ): ResultadoVerificacao {
-  const registrosMap = new Map(registrosSalvos.map(r => [r.arquivo, r.hash]));
+  const registrosMap = new Map(registrosSalvos.map((r) => [r.arquivo, r.hash]));
   const corrompidos: string[] = [];
 
   for (const { relPath, content } of fileEntries) {
@@ -32,6 +32,6 @@ export function verificarRegistros(
 
   return {
     corrompidos,
-    verificados: registrosSalvos.length
+    verificados: registrosSalvos.length,
   };
 }

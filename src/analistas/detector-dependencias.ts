@@ -10,9 +10,7 @@ export const grafoDependencias = new Map<string, Set<string>>();
  */
 function normalizarModulo(mod: string, relPath: string): string {
   if (mod.startsWith('.')) {
-    const resolved = path
-      .normalize(path.join(path.dirname(relPath), mod))
-      .replace(/\\/g, '/');
+    const resolved = path.normalize(path.join(path.dirname(relPath), mod)).replace(/\\/g, '/');
     return resolved;
   }
   return mod;
@@ -35,9 +33,9 @@ function extrairReferencias(ast: NodePath): string[] {
         callee.name === 'require' &&
         args[0]?.type === 'StringLiteral'
       ) {
-        refs.push((args[0]).value);
+        refs.push(args[0].value);
       }
-    }
+    },
   });
 
   return refs;
@@ -54,7 +52,7 @@ export const detectorDependencias = {
     relPath: string,
     ast: NodePath | null,
     _fullPath?: string,
-    _contexto?: ContextoExecucao
+    _contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     if (!ast) return [];
 
@@ -71,9 +69,7 @@ export const detectorDependencias = {
       set.add(dep);
     }
 
-    // (Opcional) Você pode gerar ocorrências aqui se quiser validar algo
-    // como ciclos de dependência, requires relativos suspeitos etc.
 
     return ocorrencias;
-  }
+  },
 };

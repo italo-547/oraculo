@@ -11,13 +11,11 @@ export interface SnapshotDiff {
  */
 export function diffSnapshots(
   before: Record<string, string>,
-  after: Record<string, string>
+  after: Record<string, string>,
 ): SnapshotDiff {
-  const removidos = Object.keys(before).filter(key => !(key in after));
-  const adicionados = Object.keys(after).filter(key => !(key in before));
-  const alterados = Object.keys(before).filter(
-    key => key in after && before[key] !== after[key]
-  );
+  const removidos = Object.keys(before).filter((key) => !(key in after));
+  const adicionados = Object.keys(after).filter((key) => !(key in before));
+  const alterados = Object.keys(before).filter((key) => key in after && before[key] !== after[key]);
   return { removidos, adicionados, alterados };
 }
 

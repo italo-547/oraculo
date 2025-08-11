@@ -13,14 +13,13 @@ interface ScanOptions {
   onProgress?: (msg: string) => void;
 }
 
-export async function scanRepository(
-  baseDir: string,
-  options: ScanOptions = {}
-): Promise<FileMap> {
+export async function scanRepository(baseDir: string, options: ScanOptions = {}): Promise<FileMap> {
   const {
     includeContent = true,
     filter = () => true,
-    onProgress = () => { return undefined; }
+    onProgress = () => {
+      return undefined;
+    },
   } = options;
 
   const fileMap: FileMap = {};
@@ -32,7 +31,9 @@ export async function scanRepository(
       entries = await fs.readdir(dir, { withFileTypes: true });
       entries.sort((a, b) => a.name.localeCompare(b.name));
     } catch (err) {
-      onProgress(`⚠️ Falha ao acessar ${dir}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+      onProgress(
+        `⚠️ Falha ao acessar ${dir}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+      );
       return;
     }
 
@@ -59,13 +60,15 @@ export async function scanRepository(
             fullPath,
             relPath,
             content: content ?? null,
-            ultimaModificacao: stat.mtimeMs
+            ultimaModificacao: stat.mtimeMs,
           };
 
           fileMap[relPath] = entryObj;
           onProgress(`✅ Arquivo lido: ${relPath}`);
         } catch (err) {
-          onProgress(`⚠️ Erro ao ler ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+          onProgress(
+            `⚠️ Erro ao ler ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+          );
         }
       }
     }

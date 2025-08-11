@@ -1,38 +1,31 @@
-import { promises as fs } from 'node:fs';
+import { lerEstado, salvarEstado } from './util/persistencia.js';
 import path from 'node:path';
 import pLimit from 'p-limit';
 import { detectarFantasmas } from './fantasma.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
-import { gerarRelatorioPodaMarkdown, gerarRelatorioPodaJson } from '../relatorios/relatorio-poda.js';
+import {
+  gerarRelatorioPodaMarkdown,
+  gerarRelatorioPodaJson,
+} from '../relatorios/relatorio-poda.js';
 import type { FileEntryWithAst, ResultadoPoda, Pendencia, HistoricoItem } from '../tipos/tipos.js';
 
-// Exporta função para CLI: detecta arquivos órfãos e retorna ResultadoPoda
-export async function removerArquivosOrfaos(_fileEntries: FileEntryWithAst[], /*executarRealmente = false*/): Promise<ResultadoPoda> {
+export async function removerArquivosOrfaos(
+  _fileEntries: FileEntryWithAst[] /*executarRealmente = false*/,
+): Promise<ResultadoPoda> {
   const { fantasmas } = await detectarFantasmas();
   return { arquivosOrfaos: fantasmas };
 }
 
-
-async function lerEstado<T = unknown>(caminho: string): Promise<T> {
-  try {
-    const conteudo = await fs.readFile(caminho, 'utf-8');
-    return JSON.parse(conteudo) as T;
-  } catch {
-    return ([] as unknown) as T;
-  }
-}
-
-async function salvarEstado<T>(caminho: string, dados: T): Promise<void> {
-  await fs.writeFile(caminho, JSON.stringify(dados, null, 2), 'utf-8');
-}
-
-function gerarPendencias(fantasmas: { arquivo: string; referenciado?: boolean }[], agora: number): Pendencia[] {
-  return fantasmas.map(f => ({
+function gerarPendencias(
+  fantasmas: { arquivo: string; referenciado?: boolean }[],
+  agora: number,
+): Pendencia[] {
+  return fantasmas.map((f) => ({
     arquivo: f.arquivo,
     motivo: f.referenciado ? 'inativo' : 'órfão',
     detectedAt: agora,
-    scheduleAt: agora
+    scheduleAt: agora,
   }));
 }
 
@@ -43,7 +36,11 @@ function mesclarPendencias(anteriores: Pendencia[], novos: Pendencia[]): Pendenc
   return Array.from(mapa.values());
 }
 
-function dividirPendencias(pendencias: Pendencia[], reativar: string[], _agora: number): [Pendencia[], Pendencia[]] {
+function dividirPendencias(
+  pendencias: Pendencia[],
+  reativar: string[],
+  _agora: number,
+): [Pendencia[], Pendencia[]] {
   const aManter: Pendencia[] = [];
   const aPodar: Pendencia[] = [];
   const reativarSet = new Set(reativar);
@@ -59,19 +56,13 @@ function dividirPendencias(pendencias: Pendencia[], reativar: string[], _agora: 
 
 const {
   AUTOANALISE_CONCURRENCY: CONCORRENCIA = 5,
-  // ZELADOR_GHOST_INACTIVITY_DAYS: DIAS_INATIVOS = 30,
   ZELADOR_ABANDONED_DIR: DIR_ABANDONADOS,
   ZELADOR_PENDING_PATH: PATH_PENDENTES,
   ZELADOR_REACTIVATE_PATH: PATH_REATIVAR,
   ZELADOR_HISTORY_PATH: PATH_HISTORICO,
-  ZELADOR_REPORT_PATH: PATH_RELATORIO
+  ZELADOR_REPORT_PATH: PATH_RELATORIO,
 } = config;
 
-// const MILIS_DIA = 86_400_000;
-
-/**
- * Entrada principal da poda.
- */
 export async function executarPodaCiclica(executarRealmente = false): Promise<void> {
   log.info('\n🌿 Iniciando poda automática...\n');
 
@@ -85,7 +76,7 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
   const [anteriores, reativar, historico] = await Promise.all([
     lerEstado<Pendencia[]>(PATH_PENDENTES),
     lerEstado<string[]>(PATH_REATIVAR),
-    lerEstado<HistoricoItem[]>(PATH_HISTORICO)
+    lerEstado<HistoricoItem[]>(PATH_HISTORICO),
   ]);
 
   const { fantasmas } = await detectarFantasmas();
@@ -95,7 +86,9 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
 
   if (!aPodar.length) {
     log.sucesso('✅ Nenhum arquivo para podar neste ciclo.\n');
-    await gerarRelatorioPodaMarkdown(PATH_RELATORIO.replace(/\.json$/, '.md'), aPodar, aManter, { simulado: !executarRealmente });
+    await gerarRelatorioPodaMarkdown(PATH_RELATORIO.replace(/\.json$/, '.md'), aPodar, aManter, {
+      simulado: !executarRealmente,
+    });
     await gerarRelatorioPodaJson(PATH_RELATORIO, aPodar, aManter);
     return;
   }
@@ -110,10 +103,7 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
     moverArquivosSimulado(aPodar, base);
   }
 
-  // Relatórios já gerados acima
 }
-
-// Funções auxiliares
 function moverArquivosSimulado(lista: Pendencia[], base: string): void {
   log.info(`Simulando movimentação para ${DIR_ABANDONADOS}:\n`);
   for (const item of lista) {
@@ -126,28 +116,30 @@ function moverArquivosSimulado(lista: Pendencia[], base: string): void {
 async function moverArquivos(
   lista: Pendencia[],
   base: string,
-  historico: HistoricoItem[]
+  historico: HistoricoItem[],
 ): Promise<void> {
   const limitar = pLimit(CONCORRENCIA);
 
   await Promise.all(
-    lista.map(pend =>
+    lista.map((pend) =>
       limitar(async () => {
         const src = path.join(base, pend.arquivo);
         const dest = path.join(base, DIR_ABANDONADOS, pend.arquivo);
         try {
-          await fs.mkdir(path.dirname(dest), { recursive: true });
-          await fs.rename(src, dest);
+          await import('node:fs').then(fs => fs.promises.mkdir(path.dirname(dest), { recursive: true }));
+          await import('node:fs').then(fs => fs.promises.rename(src, dest));
           historico.push({
             arquivo: pend.arquivo,
             movidoEm: new Date().toISOString(),
-            motivo: pend.motivo
+            motivo: pend.motivo,
           });
           log.sucesso(`✅ ${pend.arquivo} movido para abandonados.`);
         } catch (err) {
-          log.erro(`❌ Falha ao mover ${pend.arquivo}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`);
+          log.erro(
+            `❌ Falha ao mover ${pend.arquivo}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+          );
         }
-      })
-    )
+      }),
+    ),
   );
 }

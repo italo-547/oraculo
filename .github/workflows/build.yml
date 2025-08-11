@@ -34,7 +34,7 @@ jobs:
 
       - name: Instalar dependências
         run: npm ci
-        
+
       - name: Verificar tipos (typecheck)
         run: npm run typecheck
 
@@ -55,6 +55,6 @@ jobs:
           node dist/cli.js podar --help
           node dist/cli.js reestruturar --help
           node dist/cli.js atualizar --help
-   
+
       - name: Rodar testes e cobertura
         run: npm test && npx nyc report

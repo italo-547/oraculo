@@ -9,7 +9,10 @@ function extractHandlerInfo(node: Node): { func: Node; bodyBlock: t.BlockStateme
     return { func: node, bodyBlock: node.body };
   }
 
-  if ((t.isFunctionExpression(node) || t.isArrowFunctionExpression(node)) && t.isBlockStatement(node.body)) {
+  if (
+    (t.isFunctionExpression(node) || t.isArrowFunctionExpression(node)) &&
+    t.isBlockStatement(node.body)
+  ) {
     return { func: node, bodyBlock: node.body };
   }
 
@@ -25,11 +28,10 @@ export const ritualComando = {
     arquivo: string,
     ast: NodePath | null,
     _fullPath: string,
-    _contexto?: ContextoExecucao
+    _contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
     const encontrados = new Set<string>();
-
 
     if (!ast) {
       return [
@@ -40,8 +42,8 @@ export const ritualComando = {
           linha: 1,
           arquivo,
           mensagem: 'AST não fornecida ou inválida para validação do comando.',
-          origem: 'ritual-comando'
-        }
+          origem: 'ritual-comando',
+        },
       ];
     }
 
@@ -55,11 +57,10 @@ export const ritualComando = {
             const info = extractHandlerInfo(arg as Node);
             if (info) {
               encontrados.add(nome);
-
             }
           }
         }
-      }
+      },
     });
 
     if (encontrados.size === 0) {
@@ -68,10 +69,10 @@ export const ritualComando = {
         nivel: 'aviso',
         mensagem: 'Nenhum comando registrado usando "onCommand" ou "registerCommand".',
         relPath: arquivo,
-        origem: 'ritual-comando'
+        origem: 'ritual-comando',
       });
     }
 
     return ocorrencias;
-  }
+  },
 };

@@ -23,10 +23,13 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
   return new Command('diagnosticar')
     .alias('diag')
     .description('Executa uma análise completa do repositório')
-    .option('-g, --guardian-check', 'Ativa a verificação de integridade do Guardian durante o diagnóstico')
+    .option(
+      '-g, --guardian-check',
+      'Ativa a verificação de integridade do Guardian durante o diagnóstico',
+    )
     .action(async (opts: { guardianCheck?: boolean }, command: Command) => {
       aplicarFlagsGlobais(
-        command.parent && typeof command.parent.opts === 'function' ? command.parent.opts() : {}
+        command.parent && typeof command.parent.opts === 'function' ? command.parent.opts() : {},
       );
       config.GUARDIAN_ENABLED = opts.guardianCheck ?? false;
 
@@ -58,14 +61,24 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                 log.aviso('🌀 Guardian: novo baseline aceito — execute novamente.');
                 break;
               case IntegridadeStatus.AlteracoesDetectadas:
-                log.aviso('🚨 Guardian: alterações suspeitas detectadas! Considere executar `oraculo guardian --diff`.');
+                log.aviso(
+                  '🚨 Guardian: alterações suspeitas detectadas! Considere executar `oraculo guardian --diff`.',
+                );
                 totalOcorrencias++;
                 break;
             }
           } catch (err) {
             log.erro('🚨 Guardian bloqueou: alterações suspeitas ou erro fatal.');
-            if (config.GUARDIAN_ENFORCE_PROTECTION && typeof err === 'object' && err && 'detalhes' in err && Array.isArray((err as { detalhes?: unknown }).detalhes)) {
-              (err as { detalhes: string[] }).detalhes.forEach((d) => { log.aviso('❗ ' + d); });
+            if (
+              config.GUARDIAN_ENFORCE_PROTECTION &&
+              typeof err === 'object' &&
+              err &&
+              'detalhes' in err &&
+              Array.isArray((err as { detalhes?: unknown }).detalhes)
+            ) {
+              (err as { detalhes: string[] }).detalhes.forEach((d) => {
+                log.aviso('❗ ' + d);
+              });
               process.exit(1);
             } else {
               log.aviso('⚠️ Modo permissivo: prosseguindo sob risco.');
@@ -73,15 +86,21 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           }
         }
 
-        const { fileEntries: fileEntriesComAst } = await iniciarInquisicao(baseDir, { incluirMetadados: true });
-        const resultadoFinal = await executarInquisicao(fileEntriesComAst, tecnicas, baseDir, guardianResultado);
+        const { fileEntries: fileEntriesComAst } = await iniciarInquisicao(baseDir, {
+          incluirMetadados: true,
+        });
+        const resultadoFinal = await executarInquisicao(
+          fileEntriesComAst,
+          tecnicas,
+          baseDir,
+          guardianResultado,
+        );
 
         totalOcorrencias += resultadoFinal.ocorrencias.length;
 
         log.info(chalk.bold('\n📊 Gerando relatórios analíticos...\n'));
         const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
-        // Garante que ideal nunca é null
-        const alinhamentosValidos = alinhamentos.map(a => ({ ...a, ideal: a.ideal ?? '' }));
+        const alinhamentosValidos = alinhamentos.map((a) => ({ ...a, ideal: a.ideal ?? '' }));
         gerarRelatorioEstrutura(alinhamentosValidos);
         exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
         exibirRelatorioPadroesUso();
@@ -90,22 +109,26 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         emitirConselhoOracular({
           hora: new Date().getHours(),
           arquivosParaCorrigir: resultadoFinal.ocorrencias.length,
-          arquivosParaPodar: 0, // Não implementado
+          arquivosParaPodar: 0,
           totalOcorrenciasAnaliticas: resultadoFinal.ocorrencias.length,
-          integridadeGuardian: guardianResultado?.status ?? 'nao-verificado',
+          integridadeGuardian: guardianResultado ? guardianResultado.status : 'nao-verificado',
         });
 
         if (config.REPORT_EXPORT_ENABLED) {
           log.info(chalk.bold('\n💾 Exportando relatórios detalhados...\n'));
           const ts = new Date().toISOString().replace(/[:.]/g, '-');
-          const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'oraculo-reports');
+          const dir =
+            typeof config.REPORT_OUTPUT_DIR === 'string'
+              ? config.REPORT_OUTPUT_DIR
+              : path.join(baseDir, 'oraculo-reports');
           const nome = `oraculo-relatorio-${ts}`;
           await fs.mkdir(dir, { recursive: true });
 
-          // baselineModificado pode ser boolean ou undefined, nunca any
-          const baselineModificado = typeof guardianResultado === 'object' && 'baselineModificado' in (guardianResultado ?? {})
-            ? Boolean((guardianResultado as { baselineModificado?: boolean }).baselineModificado)
-            : false;
+          const baselineModificado =
+            typeof guardianResultado === 'object' &&
+              'baselineModificado' in (guardianResultado ?? {})
+              ? Boolean((guardianResultado as { baselineModificado?: boolean }).baselineModificado)
+              : false;
 
           const relatorioCompacto = {
             resumo: {
@@ -113,17 +136,20 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               totalOcorrencias: resultadoFinal.ocorrencias.length,
               tiposOcorrencias: Object.fromEntries(
                 Object.entries(
-                  resultadoFinal.ocorrencias.reduce((acc: Record<string, number>, occ: Ocorrencia) => {
-                    const tipo = occ.tipo ?? 'desconhecido';
-                    acc[tipo] = (acc[tipo] ?? 0) + 1;
-                    return acc;
-                  }, {})
-                ).sort(([, a], [, b]) => b - a)
+                  resultadoFinal.ocorrencias.reduce(
+                    (acc: Record<string, number>, occ: Ocorrencia) => {
+                      const tipo = occ.tipo ?? 'desconhecido';
+                      acc[tipo] = (acc[tipo] ?? 0) + 1;
+                      return acc;
+                    },
+                    {},
+                  ),
+                ).sort(([, a], [, b]) => b - a),
               ),
               arquivosComProblemas: new Set(resultadoFinal.ocorrencias.map((o) => o.relPath)).size,
-              integridadeGuardian: guardianResultado?.status ?? 'nao-verificado',
+              integridadeGuardian: guardianResultado ? guardianResultado.status : 'nao-verificado',
               baselineModificado,
-              arquivosOrfaosDetectados: 0, // Não implementado
+              arquivosOrfaosDetectados: 0,
             },
             detalhesOcorrencias: resultadoFinal.ocorrencias.map((occ: Ocorrencia) => ({
               filePath: occ.relPath,
@@ -134,24 +160,38 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             })),
           };
 
-          await gerarRelatorioMarkdown({
-            ...resultadoFinal,
-            fileEntries: fileEntriesComAst,
-            guardian: guardianResultado
-          }, path.join(dir, `${nome}.md`));
-          await fs.writeFile(path.join(dir, `${nome}.json`), JSON.stringify(relatorioCompacto, null, 2));
+          await gerarRelatorioMarkdown(
+            {
+              ...resultadoFinal,
+              fileEntries: fileEntriesComAst,
+              guardian: guardianResultado,
+            },
+            path.join(dir, `${nome}.md`),
+          );
+          await fs.writeFile(
+            path.join(dir, `${nome}.json`),
+            JSON.stringify(relatorioCompacto, null, 2),
+          );
           log.sucesso(`Relatórios exportados para: ${dir}`);
         }
 
         if (totalOcorrencias === 0) {
-          log.sucesso(chalk.bold('\n✨ Oráculo: Repositório impecável! Nenhum problema detectado.\n'));
+          log.sucesso(
+            chalk.bold('\n✨ Oráculo: Repositório impecável! Nenhum problema detectado.\n'),
+          );
         } else {
-          log.aviso(chalk.bold(`\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`));
+          log.aviso(
+            chalk.bold(
+              `\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`,
+            ),
+          );
           log.info('Revise os relatórios acima ou exportados para mais detalhes.');
           process.exit(1);
         }
       } catch (error) {
-        log.erro(`❌ Erro fatal durante o diagnóstico: ${(error as Error).message ?? String(error)}`);
+        log.erro(
+          `❌ Erro fatal durante o diagnóstico: ${(error as Error).message ?? String(error)}`,
+        );
         if (config.DEV_MODE) console.error(error);
         process.exit(1);
       }

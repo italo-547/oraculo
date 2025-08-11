@@ -1,5 +1,10 @@
 import { grafoDependencias } from './detector-dependencias.js';
-import type { TecnicaAplicarResultado, ContextoExecucao, Ocorrencia, SinaisProjeto } from '../tipos/tipos.js';
+import type {
+  TecnicaAplicarResultado,
+  ContextoExecucao,
+  Ocorrencia,
+  SinaisProjeto,
+} from '../tipos/tipos.js';
 
 export const sinaisDetectados: SinaisProjeto = {};
 
@@ -7,7 +12,6 @@ export const detectorEstrutura = {
   nome: 'detector-estrutura',
   global: true,
   test(_relPath: string): boolean {
-    // Global: tanto faz o arquivo; será rodado uma vez no final
     return true;
   },
 
@@ -16,7 +20,7 @@ export const detectorEstrutura = {
     _relPath: string,
     _ast: unknown,
     _fullPath?: string,
-    contexto?: ContextoExecucao
+    contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     if (!contexto) return [];
 
@@ -34,16 +38,14 @@ export const detectorEstrutura = {
       temSrc: caminhos.some((p) => p.includes('/src/')),
       temPrisma: caminhos.some((p) => p.includes('prisma/') || p.includes('schema.prisma')),
       temPackages: caminhos.some((p) => p.includes('packages/') || p.includes('turbo.json')),
-      temExpress: grafoDependencias.has('express')
+      temExpress: grafoDependencias.has('express'),
     };
 
-    // Derivados
     const ehFullstack = !!(sinais.temPages && sinais.temApi && sinais.temPrisma);
     const ehMonorepo = !!sinais.temPackages;
 
     Object.assign(sinaisDetectados, sinais);
 
-    // Se quiser gerar ocorrências com base nisso, pode adicionar aqui:
     const ocorrencias: Ocorrencia[] = [];
 
     if (ehMonorepo) {
@@ -51,7 +53,7 @@ export const detectorEstrutura = {
         tipo: 'estrutura-monorepo',
         nivel: 'info',
         mensagem: 'Estrutura de monorepo detectada.',
-        origem: 'detector-estrutura'
+        origem: 'detector-estrutura',
       });
     }
 
@@ -60,10 +62,10 @@ export const detectorEstrutura = {
         tipo: 'estrutura-fullstack',
         nivel: 'info',
         mensagem: 'Estrutura fullstack detectada.',
-        origem: 'detector-estrutura'
+        origem: 'detector-estrutura',
       });
     }
 
     return ocorrencias;
-  }
+  },
 };

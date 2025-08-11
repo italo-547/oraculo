@@ -14,10 +14,10 @@ import { FileEntry } from '../tipos/tipos.js';
 export async function vigiaOculta(
   arquivos: FileEntry[],
   caminhoRegistro: string = REGISTRO_VIGIA_CAMINHO_PADRAO,
-  autoReset = true
+  autoReset = true,
 ): Promise<void> {
   const registros = await carregarRegistros(caminhoRegistro);
-  const mapaAnterior = new Map<string, string>(registros.map(r => [r.arquivo, r.hash]));
+  const mapaAnterior = new Map<string, string>(registros.map((r) => [r.arquivo, r.hash]));
   const corrompidos: string[] = [];
 
   for (const { relPath, content } of arquivos) {

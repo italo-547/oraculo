@@ -7,6 +7,7 @@
 ## ✅ Refatoração Geral por Diretórios
 
 ### 📁 `src/analistas/`
+
 - Tipagem aplicada a todas as funções.
 - Corrigidos:
   - `analista-padroes-uso.ts`
@@ -15,25 +16,30 @@
   - `ritual-comandos.ts`
 
 ### 📁 `src/arquitetos/`
+
 - Diagnóstico e alinhamento ajustados.
 - Tipos restaurados e coerência com `tipos.ts`.
 
 ### 📁 `src/zeladores/`
+
 - Aplicação de tipagens: `ResultadoPoda`, `ResultadoCorrecao`.
 - Correções em lógica de poda e órfãos.
 
 ### 📁 `src/guardian/`
+
 - Refatoração completa e ordenada de:
   - `hash.ts`, `sentinela.ts`, `vigiaOculto.ts`, `baseline.ts`
   - `verificador.ts`, `registros.ts`, `constantes.ts`, `diff.ts`, `index.ts`
 - Preparado para evoluções futuras (SHA, enforcement, etc).
 
 ### 📁 `src/nucleo/`
+
 - Arquivos centrais revisados:
   - `executor.ts`, `inquisidor.ts`, `scanner.ts`, `parser.ts`
 - Tipagem aplicada, funções ajustadas.
 
 ### 📁 `src/relatorios/`
+
 - Refatoração de todos os relatórios:
   - `relatorio-estrutura.ts`, `relatorio-padroes-uso.ts`
   - `relatorio-zelador-saude.ts`, `gerador-relatorio.ts`, `conselheiro-oracular.ts`
@@ -61,11 +67,13 @@
 ## ✅ Infraestrutura
 
 ### 📦 `package.json`
+
 - Versão mínima do Node ajustada para `>=20.11.0`
 - Todas as dependências alinhadas e estáveis
 - `"type": "module"` com ESM puro
 
 ### ⚙️ `tsconfig.json`
+
 - ESM com `module: NodeNext`, `target: ES2022`
 - `allowImportingTsExtensions: true`
 - Caminhos com `@aliases` definidos e consistentes

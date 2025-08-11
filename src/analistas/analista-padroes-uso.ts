@@ -1,13 +1,18 @@
 // src/analistas/analista-padroes-uso.ts
 import * as t from '@babel/types';
 import { traverse } from '../nucleo/constelacao/traverse.js';
-import type { Estatisticas, Ocorrencia, ContextoExecucao, TecnicaAplicarResultado } from '../tipos/tipos.js';
+import type {
+  Estatisticas,
+  Ocorrencia,
+  ContextoExecucao,
+  TecnicaAplicarResultado,
+} from '../tipos/tipos.js';
 
 // Objeto para armazenar as estatísticas acumuladas
 export const estatisticasUsoGlobal: Estatisticas = {
   requires: {},
   consts: {},
-  exports: {}
+  exports: {},
 };
 
 // Função auxiliar para incrementar contadores
@@ -24,7 +29,7 @@ export const analistaPadroesUso = {
     _relPath: string,
     _ast: unknown,
     _fullPath: string,
-    contexto?: ContextoExecucao
+    contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado => {
     const ocorrencias: Ocorrencia[] = [];
 
@@ -56,10 +61,10 @@ export const analistaPadroesUso = {
           if (t.isExportNamedDeclaration(node) || t.isExportDefaultDeclaration(node)) {
             incrementar(estatisticasUsoGlobal.exports, 'export');
           }
-        }
+        },
       });
     }
 
     return ocorrencias;
-  }
+  },
 };

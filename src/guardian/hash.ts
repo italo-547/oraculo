@@ -25,7 +25,7 @@ export function gerarSnapshotDoConteudo(conteudo: string): string {
   const snapshot: SnapshotDetalhado = {
     hash: gerarHashHex(conteudo),
     linhas: linhas.length,
-    amostra: linhas[0]?.slice(0, 200) ?? ''
+    amostra: linhas[0]?.slice(0, 200) ?? '',
   };
   return snapshot.hash;
 }

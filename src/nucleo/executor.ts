@@ -4,25 +4,25 @@ import type {
   Ocorrencia,
   Tecnica,
   ContextoExecucao,
-  ResultadoInquisicao
+  ResultadoInquisicao,
 } from '../tipos/tipos.js';
 
 export async function executarInquisicao(
   fileEntriesComAst: FileEntryWithAst[],
   tecnicas: Tecnica[],
   baseDir: string,
-  guardianResultado: unknown
+  guardianResultado: unknown,
 ): Promise<ResultadoInquisicao> {
   log.info('🧪 Iniciando execução das técnicas...\n');
 
-  const arquivosValidosSet = new Set(fileEntriesComAst.map(f => f.relPath));
+  const arquivosValidosSet = new Set(fileEntriesComAst.map((f) => f.relPath));
   const contextoGlobal: ContextoExecucao = {
     baseDir,
     arquivos: fileEntriesComAst,
     ambiente: {
       arquivosValidosSet,
-      guardian: guardianResultado
-    }
+      guardian: guardianResultado,
+    },
   };
 
   const ocorrencias: Ocorrencia[] = [];
@@ -49,7 +49,7 @@ export async function executarInquisicao(
           mensagem: `Falha na técnica global '${tecnica.nome}': ${err.message}`,
           relPath: '[execução global]',
           arquivo: '[execução global]',
-          linha: 0
+          linha: 0,
         });
       }
     }
@@ -68,7 +68,7 @@ export async function executarInquisicao(
           entry.relPath,
           entry.ast ?? null,
           entry.fullPath,
-          contextoGlobal
+          contextoGlobal,
         );
         if (resultado) {
           ocorrencias.push(...(Array.isArray(resultado) ? resultado : [resultado]));
@@ -85,7 +85,7 @@ export async function executarInquisicao(
           mensagem: `Falha na técnica '${tecnica.nome}' para ${entry.relPath}: ${err.message}`,
           relPath: entry.relPath,
           arquivo: entry.relPath,
-          linha: 0
+          linha: 0,
         });
       }
     }
@@ -96,9 +96,9 @@ export async function executarInquisicao(
 
   return {
     totalArquivos: fileEntriesComAst.length,
-    arquivosAnalisados: fileEntriesComAst.map(e => e.relPath),
+    arquivosAnalisados: fileEntriesComAst.map((e) => e.relPath),
     ocorrencias,
     timestamp: Date.now(),
-    duracaoMs
+    duracaoMs,
   };
 }

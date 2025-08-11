@@ -7,7 +7,10 @@ export const BASELINE_PATH = path.resolve(process.cwd(), config.GUARDIAN_BASELIN
 /**
  * 📌 Caminho padrão para os registros da Vigia Oculta.
  */
-export const REGISTRO_VIGIA_CAMINHO_PADRAO = path.resolve(config.ZELADOR_STATE_DIR, 'integridade.json');
+export const REGISTRO_VIGIA_CAMINHO_PADRAO = path.resolve(
+  config.ZELADOR_STATE_DIR,
+  'integridade.json',
+);
 /**
  * 🧮 Algoritmo padrão utilizado para hashing de integridade.
  * (BLAKE3 é o padrão universal do Guardian.)

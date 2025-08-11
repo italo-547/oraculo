@@ -17,7 +17,7 @@ export interface RegistroIntegridade {
  */
 export async function salvarRegistros(
   fileEntries: FileEntry[],
-  destino: string = DESTINO_PADRAO
+  destino: string = DESTINO_PADRAO,
 ): Promise<void> {
   const registros: RegistroIntegridade[] = [];
 
@@ -36,7 +36,7 @@ export async function salvarRegistros(
  * Carrega os registros de integridade persistidos. Retorna lista vazia se não existir.
  */
 export async function carregarRegistros(
-  caminho: string = DESTINO_PADRAO
+  caminho: string = DESTINO_PADRAO,
 ): Promise<RegistroIntegridade[]> {
   try {
     const data = await fs.readFile(caminho, 'utf-8');

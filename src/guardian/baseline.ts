@@ -18,7 +18,9 @@ export async function carregarBaseline(): Promise<SnapshotBaseline | null> {
     const json: unknown = JSON.parse(txt);
     if (json && typeof json === 'object' && !Array.isArray(json)) {
       // Garante que todas as chaves e valores são strings
-      const entries = Object.entries(json as Record<string, unknown>).filter(([k, v]) => typeof k === 'string' && typeof v === 'string');
+      const entries = Object.entries(json as Record<string, unknown>).filter(
+        ([k, v]) => typeof k === 'string' && typeof v === 'string',
+      );
       return Object.fromEntries(entries) as SnapshotBaseline;
     }
     return null;

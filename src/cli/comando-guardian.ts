@@ -15,7 +15,9 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
     .option('-a, --accept-baseline', 'Aceita o baseline atual como o novo baseline de integridade')
     .option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline')
     .action(async function (this: Command, opts: { acceptBaseline?: boolean; diff?: boolean }) {
-      aplicarFlagsGlobais(this.parent?.opts?.() ?? {});
+      aplicarFlagsGlobais(
+        this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {},
+      );
 
       const baseDir = process.cwd();
       let fileEntries: FileEntryWithAst[] = [];
@@ -31,9 +33,15 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
         } else if (opts.diff) {
           log.info(chalk.bold('\n📊 Comparando integridade do Oráculo com o baseline...\n'));
           const diffResult = await scanSystemIntegrity(fileEntries, { justDiff: true });
-          if (diffResult.status === IntegridadeStatus.AlteracoesDetectadas && diffResult.detalhes && diffResult.detalhes.length) {
+          if (
+            diffResult.status === IntegridadeStatus.AlteracoesDetectadas &&
+            diffResult.detalhes &&
+            diffResult.detalhes.length
+          ) {
             log.aviso('🚨 Diferenças detectadas:');
-            diffResult.detalhes.forEach((d: string) => { log.info(`  - ${d}`); });
+            diffResult.detalhes?.forEach((d: string) => {
+              log.info(`  - ${d}`);
+            });
             log.aviso('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
             process.exit(1);
           } else {
@@ -48,13 +56,17 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
               break;
             case IntegridadeStatus.Criado:
               log.info('📘 Guardian: baseline inicial criado.');
-              log.aviso('Execute `oraculo guardian --accept-baseline` para aceitá-lo ou `oraculo diagnosticar` novamente.');
+              log.aviso(
+                'Execute `oraculo guardian --accept-baseline` para aceitá-lo ou `oraculo diagnosticar` novamente.',
+              );
               break;
             case IntegridadeStatus.Aceito:
               log.sucesso('🌀 Guardian: baseline atualizado e aceito.');
               break;
             case IntegridadeStatus.AlteracoesDetectadas:
-              log.aviso('🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.');
+              log.aviso(
+                '🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.',
+              );
               process.exit(1);
           }
         }

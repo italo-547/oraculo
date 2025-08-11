@@ -14,7 +14,9 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: Record<string, unkn
     .description('Atualiza o Oráculo se a integridade estiver preservada')
     .option('--global', 'atualiza globalmente via npm i -g')
     .action(async function (this: Command, opts: { global?: boolean }) {
-      aplicarFlagsGlobais(this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {});
+      aplicarFlagsGlobais(
+        this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {},
+      );
       log.info(chalk.bold('\n🔄 Iniciando processo de atualização...\n'));
 
       const baseDir = process.cwd();
@@ -32,13 +34,15 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: Record<string, unkn
         ) {
           log.sucesso('🔒 Guardian: integridade validada. Prosseguindo atualização.');
         } else {
-          log.aviso('🌀 Guardian gerou novo baseline ou detectou alterações. Prosseguindo com cautela.');
-          log.info('Recomendado: `oraculo guardian --diff` e `oraculo guardian --accept-baseline` antes de atualizar.');
+          log.aviso(
+            '🌀 Guardian gerou novo baseline ou detectou alterações. Prosseguindo com cautela.',
+          );
+          log.info(
+            'Recomendado: `oraculo guardian --diff` e `oraculo guardian --accept-baseline` antes de atualizar.',
+          );
         }
 
-        const cmd = opts.global
-          ? 'npm install -g oraculo@latest'
-          : 'npm install oraculo@latest';
+        const cmd = opts.global ? 'npm install -g oraculo@latest' : 'npm install oraculo@latest';
 
         log.info(`📥 Executando: ${cmd}`);
         execSync(cmd, { stdio: 'inherit' });
@@ -46,8 +50,15 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: Record<string, unkn
         log.sucesso('✅ Atualização concluída com sucesso!');
       } catch (err: unknown) {
         log.erro('🚨 Atualização abortada ou falhou.');
-        if (typeof err === 'object' && err && 'detalhes' in err && Array.isArray((err as { detalhes?: unknown }).detalhes)) {
-          (err as { detalhes: string[] }).detalhes.forEach((d: string) => { log.aviso('❗ ' + d); });
+        if (
+          typeof err === 'object' &&
+          err &&
+          'detalhes' in err &&
+          Array.isArray((err as { detalhes?: unknown }).detalhes)
+        ) {
+          (err as { detalhes: string[] }).detalhes.forEach((d: string) => {
+            log.aviso('❗ ' + d);
+          });
         }
         if (config.DEV_MODE) console.error(err);
         process.exit(1);

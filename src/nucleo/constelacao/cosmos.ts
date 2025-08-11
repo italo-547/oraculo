@@ -42,7 +42,7 @@ export const config = {
     'build',
     'coverage',
     'package-lock.json',
-    'yarn.lock'
+    'yarn.lock',
   ],
   ZELADOR_LINE_THRESHOLD: 20,
 

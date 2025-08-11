@@ -1,8 +1,5 @@
 import { log } from '../nucleo/constelacao/log.js';
 
-/**
- * Contexto que aciona o conselho oracular.
- */
 export interface ConselhoContexto {
   hora?: number;
   arquivosParaCorrigir?: number;
@@ -11,14 +8,11 @@ export interface ConselhoContexto {
   integridadeGuardian?: string;
 }
 
-/**
- * Emite um conselho gentil quando o contexto sugere que o(a) dev precisa respirar.
- */
 export function emitirConselhoOracular(estresse: ConselhoContexto): void {
   const {
     hora = new Date().getHours(),
     arquivosParaCorrigir = 0,
-    arquivosParaPodar = 0
+    arquivosParaPodar = 0,
   } = estresse;
 
   const madrugada = hora >= 22 || hora < 5;

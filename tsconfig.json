@@ -18,37 +18,16 @@
     "allowJs": false,
     "baseUrl": ".",
     "paths": {
-      "@nucleo/*": [
-        "src/nucleo/*"
-      ],
-      "@analistas/*": [
-        "src/analistas/*"
-      ],
-      "@arquitetos/*": [
-        "src/arquitetos/*"
-      ],
-      "@zeladores/*": [
-        "src/zeladores/*"
-      ],
-      "@relatorios/*": [
-        "src/relatorios/*"
-      ],
-      "@*": [
-        "src/*"
-      ],
-      "@guardian/*": [
-        "src/guardian/*"
-      ],
-      "@tipos/*": [
-        "src/tipos/*"
-      ]
+      "@nucleo/*": ["src/nucleo/*"],
+      "@analistas/*": ["src/analistas/*"],
+      "@arquitetos/*": ["src/arquitetos/*"],
+      "@zeladores/*": ["src/zeladores/*"],
+      "@relatorios/*": ["src/relatorios/*"],
+      "@*": ["src/*"],
+      "@guardian/*": ["src/guardian/*"],
+      "@tipos/*": ["src/tipos/*"]
     }
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "dist",
-    ".oraculo"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", ".oraculo"]
 }
