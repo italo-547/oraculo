@@ -21,8 +21,9 @@ export async function salvarRegistros(
 ): Promise<void> {
   const registros: RegistroIntegridade[] = [];
 
+
   for (const { relPath, content } of fileEntries) {
-    if (!relPath || !content?.trim()) continue;
+    if (!relPath || typeof content !== 'string' || !content.trim()) continue;
     const hash = gerarSnapshotDoConteudo(content);
     registros.push({ arquivo: relPath, hash });
   }

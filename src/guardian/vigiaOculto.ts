@@ -20,8 +20,9 @@ export async function vigiaOculta(
   const mapaAnterior = new Map<string, string>(registros.map((r) => [r.arquivo, r.hash]));
   const corrompidos: string[] = [];
 
+
   for (const { relPath, content } of arquivos) {
-    if (!relPath || !content?.trim()) continue;
+    if (!relPath || typeof content !== 'string' || !content.trim()) continue;
     const hashAtual = gerarSnapshotDoConteudo(content); // retorna string
     const hashEsperado = mapaAnterior.get(relPath);
     if (hashEsperado && hashAtual !== hashEsperado) {

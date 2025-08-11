@@ -12,12 +12,12 @@ type Snapshot = Record<string, string>;
 function construirSnapshot(fileEntries: FileEntry[]): Snapshot {
   const snapshot: Snapshot = {};
   for (const { relPath, content } of fileEntries) {
-    if (!content?.trim()) continue;
+    if (typeof content !== 'string' || !content.trim()) continue;
     try {
       snapshot[relPath] = gerarSnapshotDoConteudo(content);
     } catch (err) {
       log.aviso(
-        `❌ Falha ao gerar hash de ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+        `x Falha ao gerar hash de ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
       );
     }
   }
