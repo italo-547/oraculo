@@ -42,12 +42,12 @@ export const analistaPadroesUso = {
     estatisticasUsoGlobal.evals = {};
     estatisticasUsoGlobal.withs = {};
 
-    if (!contexto) return [];
+    if (!contexto) return null;
 
     for (const file of contexto.arquivos) {
       const ast = file.ast;
       if (!ast) continue;
-      const relPath = file.relPath;
+      const relPath = file.relPath || '';
 
       traverse('node' in ast ? ast.node : ast, {
         enter(path) {
