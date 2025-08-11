@@ -1,6 +1,7 @@
+
 # 📘 Relatório de Progresso — Projeto Oráculo CLI
 
-**Última atualização:** 2025-07-26 05:12:19
+**Última atualização:** 2025-08-11
 
 ---
 
@@ -80,13 +81,31 @@
 
 ---
 
-## 🔜 Próximos passos sugeridos
 
-- ✅ Testar execução real do CLI (`oraculo diagnosticar`, etc)
-- ⚙️ Reforçar Guardian com estrutura e testes próprios
-- 🧪 Adicionar testes automatizados básicos
-- 🧾 Criar `README.md` com instruções CLI e licença
-- 💡 Planejar extensão futura (ex: plugin VSCode)
+## ✅ Qualidade de Testes e Cobertura
+
+- Cobertura de testes: ~97% statements, 100% funções, quase todos os fluxos de negócio e erros relevantes cobertos.
+- Testes robustos: Cobrem CLI, núcleo, zeladores, plugins (execução real e falhas), integrações e principais erros.
+- Isolamento e manutenção: Mocks centralizados, helpers, fácil de manter e evoluir.
+- O que falta: Branches de erro muito raros, checagens defensivas ou integrações externas. Não vale a pena forçar 100% só pelo número.
+
+## 🔎 Diagnóstico Realista
+
+- O projeto está seguro para refatorações, regressões e evoluções.
+- Risco residual muito baixo. O que falta não compromete a segurança, estabilidade ou evolução.
+- Recomendação: Priorize cobertura de fluxos de negócio e integrações reais. Não é necessário perseguir 100% de cobertura em todos os arquivos.
+
+## 🔜 Sugestões Prioritárias (pré-produção)
+
+1. **Documentação**: Atualizar README e RELATORIO.md, garantir instruções claras e comentários em helpers.
+2. **Automação e Dev Experience**: Pipeline de CI, lint/format, hooks de pre-commit.
+3. **Cobertura de Integração**: Testes ponta-a-ponta rodando a CLI real, múltiplos plugins/configs.
+4. **Performance/Escalabilidade**: Testes de stress, monitorar gargalos de I/O.
+5. **Manutenção/Refatoração**: Remover duplicidades, garantir uso de aliases, limpar dependências.
+6. **Segurança**: Validar entradas da CLI, monitorar vulnerabilidades.
+7. **Roadmap/Evolução**: Planejar próximos recursos e preparar para feedback de usuários.
+
+> **Recomendação:** Priorize documentação e automação antes de expandir funcionalidades. Isso garante base sólida, facilita onboarding e reduz riscos ao entrar em produção.
 
 ---
 

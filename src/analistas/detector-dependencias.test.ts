@@ -125,7 +125,7 @@ describe('detectorDependencias', () => {
             const mockPath = {
                 normalize,
                 join: (...args: string[]) => args.join('/'),
-                dirname: (p) => p.split('/').slice(0, -1).join('/'),
+                dirname: (p: string) => p.split('/').slice(0, -1).join('/'),
             };
             return { ...mockPath, default: mockPath };
         });
@@ -162,7 +162,7 @@ describe('detectorDependencias', () => {
         });
         await vi.doMock('../nucleo/constelacao/traverse.js', () => ({ traverse: traverseMock }));
         await vi.doMock('node:path', () => {
-            const normalize = (input) => {
+            const normalize = (input: string) => {
                 const parts = input.replace(/\\/g, '/').split('/');
                 const stack = [];
                 for (const part of parts) {
@@ -174,8 +174,8 @@ describe('detectorDependencias', () => {
             };
             const mockPath = {
                 normalize,
-                join: (...args) => args.join('/'),
-                dirname: (p) => p.split('/').slice(0, -1).join('/'),
+                join: (...args: string[]) => args.join('/'),
+                dirname: (p: string) => p.split('/').slice(0, -1).join('/'),
             };
             return { ...mockPath, default: mockPath };
         });

@@ -100,7 +100,7 @@ vi.mock('node:fs', () => ({
 vi.mock('path', async (importOriginal) => {
     const mod = await importOriginal();
     return {
-        ...mod,
+        ...(typeof mod === 'object' && mod !== null ? mod : {}),
         join: (...args: string[]) => args.join('/'),
         relative: (from: string, to: string) => to.replace(from + '/', ''),
         dirname: (p: string) => p.split('/').slice(0, -1).join('/') || '/',
