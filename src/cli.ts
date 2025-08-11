@@ -17,7 +17,7 @@ program
   .option('-d, --dev', 'ativa modo de desenvolvimento (logs de debug)');
 
 // 🌐 Flags globais aplicáveis em todos os comandos
-type OraculoGlobalFlags = { silence?: boolean; export?: boolean; dev?: boolean };
+interface OraculoGlobalFlags { silence?: boolean; export?: boolean; dev?: boolean; }
 function aplicarFlagsGlobais(opts: OraculoGlobalFlags) {
   config.REPORT_SILENCE_LOGS = Boolean(opts.silence);
   config.REPORT_EXPORT_ENABLED = Boolean(opts.export);

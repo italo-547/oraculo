@@ -57,11 +57,7 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
         await corrigirEstrutura(mapa, fileEntries, baseDir);
         log.sucesso(`✅ Reestruturação concluída: ${analiseParaCorrecao.ocorrencias.length} correções aplicadas.`);
       } catch (error) {
-<<<<<<< HEAD
         log.erro(`❌ Erro durante a reestruturação: ${typeof error === 'object' && error && 'message' in error ? (error as { message: string }).message : String(error)}`);
-=======
-        log.erro(`❌ Erro durante a reestruturação: ${(error as Error)?.message ?? String(error)}`);
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         if (config.DEV_MODE) console.error(error);
         process.exit(1);
       }

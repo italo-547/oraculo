@@ -15,16 +15,11 @@ export type SnapshotBaseline = Record<string, string>;
 export async function carregarBaseline(): Promise<SnapshotBaseline | null> {
   try {
     const txt = await fs.readFile(BASELINE_PATH, 'utf-8');
-    const json = JSON.parse(txt);
-<<<<<<< HEAD
+    const json: unknown = JSON.parse(txt);
     if (json && typeof json === 'object' && !Array.isArray(json)) {
       // Garante que todas as chaves e valores são strings
       const entries = Object.entries(json as Record<string, unknown>).filter(([k, v]) => typeof k === 'string' && typeof v === 'string');
       return Object.fromEntries(entries) as SnapshotBaseline;
-=======
-    if (json && typeof json === 'object') {
-      return json as SnapshotBaseline;
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
     }
     return null;
   } catch {

@@ -42,11 +42,8 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
         } else {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
           const guardianResultado = await scanSystemIntegrity(fileEntries);
-<<<<<<< HEAD
           switch (String(guardianResultado.status)) {
-=======
-          switch (guardianResultado.status) {
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
+          switch (String(guardianResultado.status)) {
             case 'ok':
               log.sucesso('🔒 Guardian: integridade preservada.');
               break;
@@ -63,11 +60,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
           }
         }
       } catch (err) {
-<<<<<<< HEAD
         log.erro(`❌ Erro no Guardian: ${(err as Error).message ?? String(err)}`);
-=======
-        log.erro(`❌ Erro no Guardian: ${(err as Error)?.message ?? String(err)}`);
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
         if (config.DEV_MODE) console.error(err);
         process.exit(1);
       }

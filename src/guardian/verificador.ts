@@ -14,14 +14,10 @@ export interface ResultadoVerificacao {
  * @param registrosSalvos Registros prévios salvos (hashes de referência)
  * @returns Resultado contendo lista de arquivos corrompidos e total verificado
  */
-<<<<<<< HEAD
 export function verificarRegistros(
-=======
-export async function verificarRegistros(
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
   fileEntries: FileEntry[],
   registrosSalvos: RegistroIntegridade[]
-): Promise<ResultadoVerificacao> {
+): ResultadoVerificacao {
   const registrosMap = new Map(registrosSalvos.map(r => [r.arquivo, r.hash]));
   const corrompidos: string[] = [];
 
@@ -34,15 +30,8 @@ export async function verificarRegistros(
     }
   }
 
-<<<<<<< HEAD
-  return Promise.resolve({
-    corrompidos,
-    verificados: registrosSalvos.length
-  });
-=======
   return {
     corrompidos,
     verificados: registrosSalvos.length
   };
->>>>>>> 0fbb13cfd80dd0e692bdfff5027ea6ce8bd0bddd
 }
