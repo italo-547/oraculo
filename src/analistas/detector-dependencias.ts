@@ -1,17 +1,6 @@
 import path from 'node:path';
 import { traverse } from '../nucleo/constelacao/traverse.js';
-
-import type {
-  TecnicaAplicarResultado,
-  ContextoExecucao,
-  Ocorrencia
-} from '../tipos/tipos.js';
-import type {
-  Node,
-  ImportDeclaration,
-  CallExpression,
-  StringLiteral
-} from '@babel/types';
+import type { TecnicaAplicarResultado, ContextoExecucao, Ocorrencia } from '../tipos/tipos.js';
 import type { NodePath } from '@babel/traverse';
 
 export const grafoDependencias = new Map<string, Set<string>>();

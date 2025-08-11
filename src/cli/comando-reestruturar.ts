@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 
-import type { Ocorrencia, FileEntryWithAst, ResultadoCorrecao } from '../tipos/tipos.js';
+import type { Ocorrencia, FileEntryWithAst } from '../tipos/tipos.js';
 
 import { iniciarInquisicao, executarInquisicao, tecnicas } from '../nucleo/inquisidor.js';
 import { corrigirEstrutura } from '../zeladores/corretor-estrutura.js';

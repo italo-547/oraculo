@@ -5,7 +5,7 @@ import { comandoPodar } from './comando-podar.js';
 import { comandoReestruturar } from './comando-reestruturar.js';
 import { comandoAtualizar } from './comando-atualizar.js';
 
-export function registrarComandos(program: Command, aplicarFlagsGlobais: (opts: any) => void) {
+export function registrarComandos(program: Command, aplicarFlagsGlobais: (opts: unknown) => void) {
   program.addCommand(comandoDiagnosticar(aplicarFlagsGlobais));
   program.addCommand(comandoGuardian(aplicarFlagsGlobais));
   program.addCommand(comandoPodar(aplicarFlagsGlobais));

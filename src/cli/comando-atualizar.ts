@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { execSync } from 'node:child_process';
 
-import type { FileEntryWithAst, IntegridadeStatus } from '../tipos/tipos.js';
+import type { FileEntryWithAst } from '../tipos/tipos.js';
 
 import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 import { scanSystemIntegrity } from '../guardian/sentinela.js';

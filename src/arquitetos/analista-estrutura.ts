@@ -21,7 +21,7 @@ export async function analisarEstrutura(
 
   const resultados = await Promise.all(
     fileEntries.map(entry =>
-      limit(async () => {
+      limit(() => {
         const rel = entry.relPath;
         const atual = rel.split(path.sep)[0] || '';
         let ideal: string | null = null;

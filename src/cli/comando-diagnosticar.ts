@@ -42,8 +42,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         if (config.GUARDIAN_ENABLED) {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
           try {
-            guardianResultado = await scanSystemIntegrity(fileEntries);
-            switch (String(guardianResultado.status)) {
+            const resultado = await scanSystemIntegrity(fileEntries);
+            guardianResultado = resultado;
+            switch (String(resultado?.status)) {
               case 'ok':
                 log.sucesso('🔒 Guardian: integridade preservada.');
                 break;
@@ -79,7 +80,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         // Garante que ideal nunca é null
         const alinhamentosValidos = alinhamentos.map(a => ({ ...a, ideal: a.ideal ?? '' }));
         await gerarRelatorioEstrutura(alinhamentosValidos);
-        await exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
+        exibirRelatorioZeladorSaude(resultadoFinal.ocorrencias);
         exibirRelatorioPadroesUso();
         diagnosticarProjeto(sinaisDetectados);
 
@@ -98,6 +99,11 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           const nome = `oraculo-relatorio-${ts}`;
           await fs.mkdir(dir, { recursive: true });
 
+          // baselineModificado pode ser boolean ou undefined, nunca any
+          const baselineModificado = typeof guardianResultado === 'object' && guardianResultado && 'baselineModificado' in guardianResultado
+            ? Boolean((guardianResultado as { baselineModificado?: boolean }).baselineModificado)
+            : false;
+
           const relatorioCompacto = {
             resumo: {
               totalArquivos: fileEntriesComAst.length,
@@ -105,15 +111,15 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               tiposOcorrencias: Object.fromEntries(
                 Object.entries(
                   resultadoFinal.ocorrencias.reduce((acc: Record<string, number>, occ: Ocorrencia) => {
-                    const tipo = occ.tipo || 'desconhecido';
-                    acc[tipo] = (acc[tipo] || 0) + 1;
+                    const tipo = occ.tipo ?? 'desconhecido';
+                    acc[tipo] = (acc[tipo] ?? 0) + 1;
                     return acc;
                   }, {})
                 ).sort(([, a], [, b]) => b - a)
               ),
               arquivosComProblemas: new Set(resultadoFinal.ocorrencias.map((o) => o.relPath)).size,
               integridadeGuardian: guardianResultado?.status ?? 'nao-verificado',
-              baselineModificado: guardianResultado?.baselineModificado ?? false,
+              baselineModificado,
               arquivosOrfaosDetectados: 0, // Não implementado
             },
             detalhesOcorrencias: resultadoFinal.ocorrencias.map((occ: Ocorrencia) => ({

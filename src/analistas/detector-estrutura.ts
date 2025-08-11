@@ -1,13 +1,5 @@
 import { grafoDependencias } from './detector-dependencias.js';
-
-import type {
-  TecnicaAplicarResultado,
-  ContextoExecucao,
-  Ocorrencia,
-  SinaisProjeto
-} from '../tipos/tipos.js';
-import type { Node } from '@babel/types';
-import type { NodePath } from '@babel/traverse';
+import type { TecnicaAplicarResultado, ContextoExecucao, Ocorrencia, SinaisProjeto } from '../tipos/tipos.js';
 
 export const sinaisDetectados: SinaisProjeto = {};
 
@@ -22,7 +14,7 @@ export const detectorEstrutura = {
   aplicar(
     _src: string,
     _relPath: string,
-    _ast: NodePath | null,
+    _ast: any,
     _fullPath?: string,
     contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {

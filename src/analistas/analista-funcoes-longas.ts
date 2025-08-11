@@ -1,15 +1,9 @@
 import { traverse } from '../nucleo/constelacao/traverse.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-
-import type {
-  Ocorrencia,
-  TecnicaAplicarResultado,
-  ContextoExecucao
-} from '../tipos/tipos.js';
-import type { Node, FunctionDeclaration, FunctionExpression, ArrowFunctionExpression } from '@babel/types';
+import type { Ocorrencia, TecnicaAplicarResultado, ContextoExecucao } from '../tipos/tipos.js';
+import type { FunctionDeclaration, FunctionExpression, ArrowFunctionExpression } from '@babel/types';
 import type { NodePath } from '@babel/traverse';
 
-const LIMITE_LINHAS = typeof config.ZELADOR_LINE_THRESHOLD === 'number' ? config.ZELADOR_LINE_THRESHOLD : 30;
+const LIMITE_LINHAS = 30;
 
 export const analistaFuncoesLongas = {
   nome: 'analista-funcoes-longas',
@@ -20,8 +14,8 @@ export const analistaFuncoesLongas = {
     src: string,
     relPath: string,
     ast: NodePath | null,
-    fullPath: string,
-    contexto?: ContextoExecucao
+    _fullPath: string,
+    _contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
 

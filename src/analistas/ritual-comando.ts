@@ -1,25 +1,15 @@
 import { traverse } from '../nucleo/constelacao/traverse.js';
 import * as t from '@babel/types';
 import type { NodePath } from '@babel/traverse';
-import { config } from '../nucleo/constelacao/cosmos.js';
-
-import type {
-  ContextoExecucao,
-  Ocorrencia,
-  TecnicaAplicarResultado
-} from '../tipos/tipos.js';
+import type { ContextoExecucao, Ocorrencia, TecnicaAplicarResultado } from '../tipos/tipos.js';
 import type { Node } from '@babel/types';
 
 function extractHandlerInfo(node: Node): { func: Node; bodyBlock: t.BlockStatement } | null {
-  if (node && t.isFunctionDeclaration(node) && t.isBlockStatement(node.body)) {
+  if (t.isFunctionDeclaration(node) && t.isBlockStatement(node.body)) {
     return { func: node, bodyBlock: node.body };
   }
 
-  if (
-    node &&
-    (t.isFunctionExpression(node) || t.isArrowFunctionExpression(node)) &&
-    t.isBlockStatement(node.body)
-  ) {
+  if ((t.isFunctionExpression(node) || t.isArrowFunctionExpression(node)) && t.isBlockStatement(node.body)) {
     return { func: node, bodyBlock: node.body };
   }
 
@@ -34,8 +24,8 @@ export const ritualComando = {
     conteudo: string,
     arquivo: string,
     ast: NodePath | null,
-    fullPath: string,
-    contexto?: ContextoExecucao
+    _fullPath: string,
+    _contexto?: ContextoExecucao
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
     const encontrados = new Set<string>();

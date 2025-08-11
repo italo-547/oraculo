@@ -26,7 +26,7 @@ async function salvarEstado<T>(caminho: string, dados: T): Promise<void> {
   await fs.writeFile(caminho, JSON.stringify(dados, null, 2), 'utf-8');
 }
 
-function gerarPendencias(fantasmas: Array<{ arquivo: string; referenciado?: boolean }>, agora: number): Pendencia[] {
+function gerarPendencias(fantasmas: { arquivo: string; referenciado?: boolean }[], agora: number): Pendencia[] {
   return fantasmas.map(f => ({
     arquivo: f.arquivo,
     motivo: f.referenciado ? 'inativo' : 'órfão',
@@ -106,7 +106,7 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
     await salvarEstado(PATH_HISTORICO, historico);
     log.sucesso('🧹 Podagem concluída.');
   } else {
-    await moverArquivosSimulado(aPodar, base);
+    moverArquivosSimulado(aPodar, base);
   }
 
   // Relatórios já gerados acima

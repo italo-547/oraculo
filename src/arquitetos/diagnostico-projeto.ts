@@ -44,12 +44,14 @@ function ehLanding(s: SinaisProjeto): boolean {
   return !!(s.temPages && s.temComponents && !s.temControllers);
 }
 
+
 function ehApi(s: SinaisProjeto): boolean {
-  return !!(s.temApi || s.temControllers || s.temExpress);
+  return !!((s.temApi ?? s.temControllers ?? s.temExpress));
 }
 
+
 function ehLib(s: SinaisProjeto): boolean {
-  return !!(s.temSrc && !s.temComponents && !s.temApi);
+  return !!(s.temSrc && !s.temComponents && !(s.temApi ?? false));
 }
 
 function ehCli(s: SinaisProjeto): boolean {

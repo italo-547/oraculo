@@ -30,8 +30,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
         } else if (opts.diff) {
           log.info(chalk.bold('\n📊 Comparando integridade do Oráculo com o baseline...\n'));
           const diffResult = await scanSystemIntegrity(fileEntries, { justDiff: true });
-
-          if (diffResult.status === 'alteracoes-detectadas' && diffResult.detalhes) {
+          if (typeof diffResult.status === 'string' && diffResult.status === 'alteracoes-detectadas' && diffResult.detalhes) {
             log.aviso('🚨 Diferenças detectadas:');
             diffResult.detalhes.forEach((d: string) => { log.info(`  - ${d}`); });
             log.aviso('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
@@ -42,8 +41,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
         } else {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
           const guardianResultado = await scanSystemIntegrity(fileEntries);
-          switch (String(guardianResultado.status)) {
-          switch (String(guardianResultado.status)) {
+          switch (typeof guardianResultado.status === 'string' ? guardianResultado.status : String(guardianResultado.status)) {
             case 'ok':
               log.sucesso('🔒 Guardian: integridade preservada.');
               break;
