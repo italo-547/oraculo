@@ -98,7 +98,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
 
         totalOcorrencias += resultadoFinal.ocorrencias.length;
 
-        log.info(chalk.bold('\n📊 Gerando relatórios analíticos...\n'));
+        // log.info(chalk.bold('\n📊 Gerando relatórios analíticos...\n')); // Silenciado para saída limpa
         const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
         const alinhamentosValidos = alinhamentos.map((a) => ({ ...a, ideal: a.ideal ?? '' }));
         gerarRelatorioEstrutura(alinhamentosValidos);
@@ -185,7 +185,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               `\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`,
             ),
           );
-          log.info('Revise os relatórios acima ou exportados para mais detalhes.');
+          // log.info('Revise os relatórios acima ou exportados para mais detalhes.'); // Silenciado para saída limpa
           process.exit(1);
         }
       } catch (error) {

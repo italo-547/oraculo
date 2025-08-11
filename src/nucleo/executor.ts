@@ -13,7 +13,7 @@ export async function executarInquisicao(
   baseDir: string,
   guardianResultado: unknown,
 ): Promise<ResultadoInquisicao> {
-  log.info('🧪 Iniciando execução das técnicas...\n');
+  // log.info('🧪 Iniciando execução das técnicas...\n'); // Silenciado para saída limpa
 
   const arquivosValidosSet = new Set(fileEntriesComAst.map((f) => f.relPath));
   const contextoGlobal: ContextoExecucao = {
@@ -38,7 +38,7 @@ export async function executarInquisicao(
           ocorrencias.push(...(Array.isArray(resultado) ? resultado : [resultado]));
         }
         const duracao = (performance.now() - inicio).toFixed(1);
-        log.sucesso(`✅ Técnica global '${tecnica.nome}' executada em ${duracao}ms`);
+        // log.sucesso(`✅ Técnica global '${tecnica.nome}' executada em ${duracao}ms`); // Silenciado para saída limpa
       } catch (error) {
         const err = error as Error;
         log.erro(`❌ Erro na técnica global '${tecnica.nome}': ${err.message}`);
@@ -74,7 +74,7 @@ export async function executarInquisicao(
           ocorrencias.push(...(Array.isArray(resultado) ? resultado : [resultado]));
         }
         const duracao = (performance.now() - inicio).toFixed(1);
-        log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${duracao}ms`);
+        // log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${duracao}ms`); // Silenciado para saída limpa
       } catch (error) {
         const err = error as Error;
         log.erro(`❌ Erro em '${tecnica.nome}' para ${entry.relPath}: ${err.message}`);
