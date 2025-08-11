@@ -1,13 +1,13 @@
 // src/analistas/analista-padroes-uso.ts
 import * as t from '@babel/types';
 import { traverse } from '../nucleo/constelacao/traverse.js';
+import { incrementar, garantirArray } from '../zeladores/util/helpers-analistas.js';
 import type {
   Estatisticas,
   Ocorrencia,
   ContextoExecucao,
   TecnicaAplicarResultado,
 } from '../tipos/tipos.js';
-
 
 // Estatísticas globais (mantidas)
 export const estatisticasUsoGlobal: Estatisticas = {
@@ -19,10 +19,6 @@ export const estatisticasUsoGlobal: Estatisticas = {
   evals: {},
   withs: {},
 };
-
-function incrementar(contador: Record<string, number>, chave: string): void {
-  contador[chave] = (contador[chave] ?? 0) + 1;
-}
 
 export const analistaPadroesUso = {
   nome: 'analista-padroes-uso',
@@ -46,7 +42,7 @@ export const analistaPadroesUso = {
     estatisticasUsoGlobal.evals = {};
     estatisticasUsoGlobal.withs = {};
 
-    if (!contexto) return null;
+    if (!contexto) return [];
 
     for (const file of contexto.arquivos) {
       const ast = file.ast;
@@ -115,11 +111,14 @@ export const analistaPadroesUso = {
           }
           // Detecta module.exports ou exports. em TS
           if (
-            (t.isAssignmentExpression(node) &&
-              t.isMemberExpression(node.left) &&
-              ((t.isIdentifier(node.left.object) && node.left.object.name === 'module' && t.isIdentifier(node.left.property) && node.left.property.name === 'exports') ||
-                (t.isIdentifier(node.left.object) && node.left.object.name === 'exports')) &&
-              relPath.endsWith('.ts'))
+            t.isAssignmentExpression(node) &&
+            t.isMemberExpression(node.left) &&
+            ((t.isIdentifier(node.left.object) &&
+              node.left.object.name === 'module' &&
+              t.isIdentifier(node.left.property) &&
+              node.left.property.name === 'exports') ||
+              (t.isIdentifier(node.left.object) && node.left.object.name === 'exports')) &&
+            relPath.endsWith('.ts')
           ) {
             ocorrencias.push({
               tipo: 'alerta',
@@ -155,10 +154,7 @@ export const analistaPadroesUso = {
             });
           }
           // Detecta arrow function como método de classe
-          if (
-            t.isClassProperty?.(node) &&
-            t.isArrowFunctionExpression(node.value)
-          ) {
+          if (t.isClassProperty?.(node) && t.isArrowFunctionExpression(node.value)) {
             ocorrencias.push({
               tipo: 'info',
               mensagem: `Arrow function usada como método de classe. Prefira métodos tradicionais para melhor herança.`,
@@ -171,6 +167,6 @@ export const analistaPadroesUso = {
       });
     }
 
-    return ocorrencias;
+    return garantirArray(ocorrencias);
   },
 };

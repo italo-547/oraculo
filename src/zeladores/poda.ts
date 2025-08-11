@@ -102,7 +102,6 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
   } else {
     moverArquivosSimulado(aPodar, base);
   }
-
 }
 function moverArquivosSimulado(lista: Pendencia[], base: string): void {
   log.info(`Simulando movimentação para ${DIR_ABANDONADOS}:\n`);
@@ -126,8 +125,10 @@ async function moverArquivos(
         const src = path.join(base, pend.arquivo);
         const dest = path.join(base, DIR_ABANDONADOS, pend.arquivo);
         try {
-          await import('node:fs').then(fs => fs.promises.mkdir(path.dirname(dest), { recursive: true }));
-          await import('node:fs').then(fs => fs.promises.rename(src, dest));
+          await import('node:fs').then((fs) =>
+            fs.promises.mkdir(path.dirname(dest), { recursive: true }),
+          );
+          await import('node:fs').then((fs) => fs.promises.rename(src, dest));
           historico.push({
             arquivo: pend.arquivo,
             movidoEm: new Date().toISOString(),

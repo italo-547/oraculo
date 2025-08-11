@@ -31,6 +31,8 @@ export async function carregarBaseline(): Promise<SnapshotBaseline | null> {
  * Salva um novo baseline de integridade em disco, sobrescrevendo qualquer estado anterior.
  */
 export async function salvarBaseline(snapshot: SnapshotBaseline): Promise<void> {
-  await import('node:fs').then(fs => fs.promises.mkdir(path.dirname(BASELINE_PATH), { recursive: true }));
+  await import('node:fs').then((fs) =>
+    fs.promises.mkdir(path.dirname(BASELINE_PATH), { recursive: true }),
+  );
   await salvarEstado(BASELINE_PATH, snapshot);
 }

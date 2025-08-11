@@ -1,4 +1,3 @@
-
 export interface ResultadoGuardian {
   status: IntegridadeStatus;
   detalhes?: string[];
@@ -20,7 +19,6 @@ export class GuardianError extends Error {
     this.detalhes = erros;
   }
 }
-
 
 export type OcorrenciaNivel = 'erro' | 'aviso' | 'info' | 'sucesso';
 
@@ -52,7 +50,6 @@ export interface Tecnica {
     contexto?: ContextoExecucao,
   ) => TecnicaAplicarResultado | Promise<TecnicaAplicarResultado>;
 }
-
 
 export interface AmbienteExecucao {
   arquivosValidosSet: Set<string>;
@@ -106,7 +103,6 @@ export interface ResultadoInquisicaoCompleto extends ResultadoInquisicao {
   guardian: unknown;
 }
 
-
 export interface ScanOptions {
   includeContent?: boolean;
   includeAst?: boolean;
@@ -128,7 +124,6 @@ export interface Estatisticas {
   evals: Contador;
   withs: Contador;
 }
-
 
 export interface ResultadoCorrecao {
   correcoesAplicadas: number;
@@ -156,7 +151,6 @@ export interface HistoricoItem {
   movidoEm: string;
   motivo: string;
 }
-
 
 export interface RelatorioCompacto {
   resumo: {

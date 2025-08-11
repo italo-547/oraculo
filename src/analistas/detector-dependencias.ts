@@ -40,6 +40,10 @@ function extrairReferencias(ast: NodePath): string[] {
   return refs;
 }
 
+/**
+ * Analisa dependências do arquivo (import/require), detecta padrões problemáticos e atualiza grafo global.
+ * Retorna ocorrências para imports/require suspeitos, mistos, circulares, etc.
+ */
 export const detectorDependencias = {
   nome: 'detector-dependencias',
   test(relPath: string): boolean {
@@ -97,7 +101,15 @@ export const detectorDependencias = {
         // Import de arquivo inexistente (só para caminhos relativos)
         if (val.startsWith('.')) {
           const importPath = path.join(path.dirname(relPath), val);
-          if (contexto && !contexto.arquivos.some(f => f.relPath === importPath || f.relPath === importPath + '.ts' || f.relPath === importPath + '.js')) {
+          if (
+            contexto &&
+            !contexto.arquivos.some(
+              (f) =>
+                f.relPath === importPath ||
+                f.relPath === importPath + '.ts' ||
+                f.relPath === importPath + '.js',
+            )
+          ) {
             ocorrencias.push({
               tipo: 'erro',
               mensagem: `Importação de arquivo inexistente: '${val}'`,
@@ -110,7 +122,11 @@ export const detectorDependencias = {
       },
       CallExpression(p) {
         const { callee, arguments: args } = p.node;
-        if (callee.type === 'Identifier' && callee.name === 'require' && args[0]?.type === 'StringLiteral') {
+        if (
+          callee.type === 'Identifier' &&
+          callee.name === 'require' &&
+          args[0]?.type === 'StringLiteral'
+        ) {
           tiposImport.add('require');
           const val = args[0].value;
           // Require externo
@@ -146,7 +162,15 @@ export const detectorDependencias = {
           // Require de arquivo inexistente (só para caminhos relativos)
           if (val.startsWith('.')) {
             const importPath = path.join(path.dirname(relPath), val);
-            if (contexto && !contexto.arquivos.some(f => f.relPath === importPath || f.relPath === importPath + '.ts' || f.relPath === importPath + '.js')) {
+            if (
+              contexto &&
+              !contexto.arquivos.some(
+                (f) =>
+                  f.relPath === importPath ||
+                  f.relPath === importPath + '.ts' ||
+                  f.relPath === importPath + '.js',
+              )
+            ) {
               ocorrencias.push({
                 tipo: 'erro',
                 mensagem: `Require de arquivo inexistente: '${val}'`,
@@ -189,6 +213,6 @@ export const detectorDependencias = {
       });
     }
 
-    return ocorrencias;
+    return Array.isArray(ocorrencias) ? ocorrencias : [];
   },
 };

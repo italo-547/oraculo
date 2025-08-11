@@ -38,7 +38,6 @@ export function diagnosticarProjeto(sinais: SinaisProjeto): DiagnosticoProjeto {
   };
 }
 
-
 function ehLanding(s: SinaisProjeto): boolean {
   // Considera landing se temPages for true, mesmo sem components/controllers
   return !!(s.temPages === true);

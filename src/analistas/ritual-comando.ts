@@ -7,18 +7,41 @@ import type { Node } from '@babel/types';
 /**
  * Extrai informações do handler de comando, se for função válida.
  */
-export function extractHandlerInfo(node: Node): { func: Node; bodyBlock: t.BlockStatement, isAnonymous: boolean, params: t.Identifier[] } | null {
+export function extractHandlerInfo(
+  node: Node,
+): {
+  func: Node;
+  bodyBlock: t.BlockStatement;
+  isAnonymous: boolean;
+  params: t.Identifier[];
+} | null {
   if (t.isFunctionDeclaration(node) && t.isBlockStatement(node.body)) {
-    return { func: node, bodyBlock: node.body, isAnonymous: !node.id, params: node.params as t.Identifier[] };
+    return {
+      func: node,
+      bodyBlock: node.body,
+      isAnonymous: !node.id,
+      params: node.params as t.Identifier[],
+    };
   }
-  if ((t.isFunctionExpression(node) || t.isArrowFunctionExpression(node)) && t.isBlockStatement(node.body)) {
+  if (
+    (t.isFunctionExpression(node) || t.isArrowFunctionExpression(node)) &&
+    t.isBlockStatement(node.body)
+  ) {
     // Arrow functions nunca têm nome próprio
-    return { func: node, bodyBlock: node.body, isAnonymous: true, params: node.params as t.Identifier[] };
+    return {
+      func: node,
+      bodyBlock: node.body,
+      isAnonymous: true,
+      params: node.params as t.Identifier[],
+    };
   }
   return null;
 }
 
-
+/**
+ * Analisa comandos registrados (onCommand/registerCommand), detecta duplicidade, handlers inválidos, boas práticas.
+ * Retorna ocorrências para cada problema ou padrão detectado.
+ */
 export const ritualComando = {
   nome: 'ritual-comando',
   test: (relPath: string): boolean => relPath.includes('bot'),
@@ -31,7 +54,12 @@ export const ritualComando = {
     _contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
-    const comandos: { nome: string, handler: unknown, info: ReturnType<typeof extractHandlerInfo> | null, node: t.CallExpression }[] = [];
+    const comandos: {
+      nome: string;
+      handler: unknown;
+      info: ReturnType<typeof extractHandlerInfo> | null;
+      node: t.CallExpression;
+    }[] = [];
     const comandoNomes: string[] = [];
 
     if (!ast) {
@@ -53,7 +81,7 @@ export const ritualComando = {
         const node = path.node;
         if (t.isCallExpression(node) && t.isIdentifier(node.callee)) {
           const nome = node.callee.name;
-          if (["onCommand", "registerCommand"].includes(nome)) {
+          if (['onCommand', 'registerCommand'].includes(nome)) {
             // Nome do comando pode estar no primeiro argumento
             let comandoNome = '';
             if (node.arguments[0] && t.isStringLiteral(node.arguments[0])) {
@@ -79,7 +107,9 @@ export const ritualComando = {
     }
 
     // Detectar comandos duplicados
-    const duplicados = comandoNomes.filter((item, idx) => item && comandoNomes.indexOf(item) !== idx);
+    const duplicados = comandoNomes.filter(
+      (item, idx) => item && comandoNomes.indexOf(item) !== idx,
+    );
     if (duplicados.length > 0) {
       ocorrencias.push({
         tipo: 'padrao-problematico',
@@ -155,7 +185,7 @@ export const ritualComando = {
         });
       }
       // Ausência de try/catch
-      const hasTryCatch = info.bodyBlock.body.some(stmt => t.isTryStatement(stmt));
+      const hasTryCatch = info.bodyBlock.body.some((stmt) => t.isTryStatement(stmt));
       if (!hasTryCatch) {
         ocorrencias.push({
           tipo: 'boa-pratica-ausente',
@@ -191,6 +221,6 @@ export const ritualComando = {
       });
     }
 
-    return ocorrencias;
+    return Array.isArray(ocorrencias) ? ocorrencias : [];
   },
 };

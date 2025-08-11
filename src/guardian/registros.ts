@@ -21,14 +21,15 @@ export async function salvarRegistros(
 ): Promise<void> {
   const registros: RegistroIntegridade[] = [];
 
-
   for (const { relPath, content } of fileEntries) {
     if (!relPath || typeof content !== 'string' || !content.trim()) continue;
     const hash = gerarSnapshotDoConteudo(content);
     registros.push({ arquivo: relPath, hash });
   }
 
-  await import('node:fs').then(fs => fs.promises.mkdir(path.dirname(destino), { recursive: true }));
+  await import('node:fs').then((fs) =>
+    fs.promises.mkdir(path.dirname(destino), { recursive: true }),
+  );
   await salvarEstado(destino, registros);
   log.sucesso(`🛡️ Registro de integridade salvo em: ${destino}`);
 }

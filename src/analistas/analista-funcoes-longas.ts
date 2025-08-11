@@ -22,15 +22,15 @@ export const analistaFuncoesLongas = {
     ast: NodePath | null,
     _fullPath?: string,
     _contexto?: ContextoExecucao,
+    rootAst?: any,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
 
     if (!ast) return [];
 
-
     function analisar(
       fn: FunctionDeclaration | FunctionExpression | ArrowFunctionExpression,
-      _aninhamento: number = 0
+      _aninhamento: number = 0,
     ): void {
       if (!fn.loc) return;
 
@@ -90,22 +90,22 @@ export const analistaFuncoesLongas = {
       }
     }
 
-
+    // Função recursiva para NodePath real
     function analisarRecursivo(path: any, aninhamento: number = 0) {
-      // Suporte a NodePath real e mocks simples de AST
-      let node = path.node || path;
+      const node = path.node || path;
       const type = node.type;
+      if (
+        type === 'FunctionDeclaration' ||
+        type === 'FunctionExpression' ||
+        type === 'ArrowFunctionExpression'
+      ) {
+        analisar(
+          node as FunctionDeclaration | FunctionExpression | ArrowFunctionExpression,
+          aninhamento,
+        );
+        aninhamento++;
+      }
       if (typeof path.traverse === 'function') {
-        // NodePath real: analisar função e recursão normal
-        if (
-          type === 'FunctionDeclaration' ||
-          type === 'FunctionExpression' ||
-          type === 'ArrowFunctionExpression'
-        ) {
-          analisar(node as FunctionDeclaration | FunctionExpression | ArrowFunctionExpression, aninhamento);
-          aninhamento++;
-        }
-        // Recursão para filhos: só se for NodePath real (com traverse)
         path.traverse({
           FunctionDeclaration(p: any) {
             analisarRecursivo(p, aninhamento + 1);
@@ -117,51 +117,39 @@ export const analistaFuncoesLongas = {
             analisarRecursivo(p, aninhamento + 1);
           },
         });
-      } else {
-        // Mock simples: só processa se for File, sem recursão para filhos
-        if (type === 'File' && Array.isArray(node.body)) {
-          for (const child of node.body) {
-            if (
-              child.type === 'FunctionDeclaration' ||
-              child.type === 'FunctionExpression' ||
-              child.type === 'ArrowFunctionExpression'
-            ) {
-              analisar(child, aninhamento);
-            }
-          }
-        }
-        // Nunca recursiona em mocks simples, nem processa funções fora do File
-        return;
       }
     }
 
+    // --- Fluxo centralizado e robusto ---
+    // 1. NodePath real: use traverse e recursão
     if (ast && typeof ast.traverse === 'function') {
-      // NodePath real
       analisarRecursivo(ast, 0);
-    } else if (ast && ast.node && ast.node.type === 'File' && Array.isArray((ast.node as any).body)) {
-      // Mock do tipo { node: { type: 'File', body: [...] } }
-      for (const child of (ast.node as any).body) {
-        if (
-          child.type === 'FunctionDeclaration' ||
-          child.type === 'FunctionExpression' ||
-          child.type === 'ArrowFunctionExpression'
-        ) {
-          analisar(child, 0);
-        }
-      }
-    } else if (ast && ast.type === 'File' && Array.isArray((ast as any).body)) {
-      // AST puro (type: File)
-      for (const child of (ast as any).body) {
-        if (
-          child.type === 'FunctionDeclaration' ||
-          child.type === 'FunctionExpression' ||
-          child.type === 'ArrowFunctionExpression'
-        ) {
-          analisar(child, 0);
-        }
-      }
+      return ocorrencias;
     }
 
+    // 2. AST puro ou mock: só processa body do File, nunca recursiona
+    const fileNode =
+      ast && ast.node && ast.node.type === 'File' && Array.isArray((ast.node as any).body)
+        ? ast.node
+        : ast && ast.type === 'File' && Array.isArray((ast as any).body)
+          ? ast
+          : null;
+
+    if (fileNode) {
+      const body = (fileNode as any).body;
+      for (const child of body) {
+        if (
+          child.type === 'FunctionDeclaration' ||
+          child.type === 'FunctionExpression' ||
+          child.type === 'ArrowFunctionExpression'
+        ) {
+          analisar(child, 0);
+        }
+      }
+      return ocorrencias;
+    }
+
+    // Se não for nenhum dos casos acima, retorna vazio
     return ocorrencias;
   },
 };

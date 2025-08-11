@@ -12,9 +12,8 @@ export async function executarInquisicao(
   tecnicas: Tecnica[],
   baseDir: string,
   guardianResultado: unknown,
-  opts?: { verbose?: boolean; compact?: boolean }
+  opts?: { verbose?: boolean; compact?: boolean },
 ): Promise<ResultadoInquisicao> {
-
   const ocorrencias: Ocorrencia[] = [];
   const arquivosValidosSet = new Set(fileEntriesComAst.map((f) => f.relPath));
   const contextoGlobal: ContextoExecucao = {

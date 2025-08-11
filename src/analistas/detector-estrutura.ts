@@ -8,6 +8,10 @@ import type {
 
 export const sinaisDetectados: SinaisProjeto = {};
 
+/**
+ * Analisa a estrutura do projeto e detecta padrões como monorepo, fullstack, mistura de src/packages, etc.
+ * Retorna ocorrências para cada sinal relevante encontrado.
+ */
 export const detectorEstrutura = {
   nome: 'detector-estrutura',
   global: true,
@@ -97,7 +101,8 @@ export const detectorEstrutura = {
       ocorrencias.push({
         tipo: 'estrutura-mista',
         nivel: 'aviso',
-        mensagem: 'Projeto possui src/ e packages/ (monorepo) ao mesmo tempo. Avalie a organização.',
+        mensagem:
+          'Projeto possui src/ e packages/ (monorepo) ao mesmo tempo. Avalie a organização.',
         origem: 'detector-estrutura',
         relPath: '[raiz do projeto]',
         linha: 0,
@@ -105,7 +110,9 @@ export const detectorEstrutura = {
     }
 
     // Muitos arquivos na raiz
-    const arquivosRaiz = caminhos.filter((p) => !p.includes('/') || p.indexOf('/') === p.length - 1);
+    const arquivosRaiz = caminhos.filter(
+      (p) => !p.includes('/') || p.indexOf('/') === p.length - 1,
+    );
     if (arquivosRaiz.length > 10) {
       ocorrencias.push({
         tipo: 'estrutura-suspeita',
@@ -181,6 +188,6 @@ export const detectorEstrutura = {
       });
     }
 
-    return ocorrencias;
+    return Array.isArray(ocorrencias) ? ocorrencias : [];
   },
 };

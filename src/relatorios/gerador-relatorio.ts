@@ -46,11 +46,11 @@ export async function gerarRelatorioMarkdown(
 | Arquivo | Linha | Nível  | Mensagem |
 | ------- | ----- | ------ | -------- |
 ${ocorrenciasOrdenadas
-      .map(
-        (o) =>
-          `| ${o.relPath} | ${o.linha ?? ''} | ${o.nivel ?? ''} | ${o.mensagem.replace(/\|/g, '\\|')} |`,
-      )
-      .join('\n')}
+  .map(
+    (o) =>
+      `| ${o.relPath} | ${o.linha ?? ''} | ${o.nivel ?? ''} | ${o.mensagem.replace(/\|/g, '\\|')} |`,
+  )
+  .join('\n')}
 `;
 
   await salvarEstado(outputPath, header);

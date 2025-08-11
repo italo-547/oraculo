@@ -32,7 +32,10 @@ export const tecnicas: Tecnica[] = [
   ritualComando,
 ];
 
-export async function prepararComAst(entries: FileEntry[], baseDir: string): Promise<FileEntryWithAst[]> {
+export async function prepararComAst(
+  entries: FileEntry[],
+  baseDir: string,
+): Promise<FileEntryWithAst[]> {
   return Promise.all(
     entries.map(async (entry): Promise<FileEntryWithAst> => {
       let ast: import('@babel/traverse').NodePath<import('@babel/types').Node> | undefined =

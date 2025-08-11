@@ -111,13 +111,25 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 
 ## Dependências e Requisitos
 
-- Node.js >= 20.11.0
+- Node.js 24.0.4
 - TypeScript (veja `tsconfig.json` para detalhes)
+- Vitest para testes unitários
+- Monitoramento de dependências recomendado (ex: dependabot, npm-check-updates)
 
+## Organização de Documentação
+
+- Toda documentação e relatórios devem ser centralizados na pasta `docs/` na raiz do projeto.
+- Relatórios, históricos e arquivos de referência devem ser movidos para `docs/`.
+- Exemplos: `docs/RELATORIO.md`, `docs/CHECKLIST.md`.
+
+## Checklist de Melhorias
+
+- Use e atualize sempre o arquivo `docs/CHECKLIST.md` para registrar pendências, melhorias e histórico de ajustes.
+- Sempre consulte o checklist antes e depois de cada modificação relevante.
 
 ## Referências
 
-- Veja `RELATORIO.md` para histórico de refatorações e decisões recentes.
+- Veja `docs/RELATORIO.md` para histórico de refatorações e decisões recentes.
 - Consulte `tsconfig.json` para detalhes de build e aliases.
 - Consulte `src/zeladores/util/persistencia.ts` para padrão de helpers de persistência.
 

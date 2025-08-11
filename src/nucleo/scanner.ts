@@ -6,8 +6,6 @@ import path from 'path';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import type { FileMap, FileEntry } from '../tipos/tipos.js';
 
-
-
 interface ScanOptions {
   includeContent?: boolean;
   filter?: (relPath: string, entry: Dirent) => boolean;
@@ -33,7 +31,15 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       entries.sort((a, b) => a.name.localeCompare(b.name));
     } catch (err) {
       onProgress(
-        JSON.stringify({ tipo: 'erro', acao: 'acessar', caminho: dir, mensagem: typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err) })
+        JSON.stringify({
+          tipo: 'erro',
+          acao: 'acessar',
+          caminho: dir,
+          mensagem:
+            typeof err === 'object' && err && 'message' in err
+              ? (err as { message: string }).message
+              : String(err),
+        }),
       );
       return;
     }
@@ -73,7 +79,15 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
           // Não logar cada arquivo individualmente
         } catch (err) {
           onProgress(
-            JSON.stringify({ tipo: 'erro', acao: 'ler', caminho: relPath, mensagem: typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err) })
+            JSON.stringify({
+              tipo: 'erro',
+              acao: 'ler',
+              caminho: relPath,
+              mensagem:
+                typeof err === 'object' && err && 'message' in err
+                  ? (err as { message: string }).message
+                  : String(err),
+            }),
           );
         }
       }

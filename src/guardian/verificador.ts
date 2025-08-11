@@ -21,7 +21,6 @@ export function verificarRegistros(
   const registrosMap = new Map(registrosSalvos.map((r) => [r.arquivo, r.hash]));
   const corrompidos: string[] = [];
 
-
   for (const { relPath, content } of fileEntries) {
     if (!relPath || typeof content !== 'string' || !content.trim()) continue;
     const hashAtual = gerarSnapshotDoConteudo(content); // retorna string

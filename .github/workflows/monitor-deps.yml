@@ -1,28 +1,21 @@
-name: CI
+name: Monitorar dependências
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  schedule:
+    - cron: '0 8 * * 1' # toda segunda-feira às 8h UTC
+  workflow_dispatch:
 
 jobs:
-  build-and-test:
+  check-dependencies:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
-
       - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.x
-
       - name: Instalar dependências
         run: npm ci
-
-      - name: Rodar ESLint
-        run: npx eslint --ext .ts src
-
-      - name: Rodar testes
-        run: npx vitest run
+      - name: Verificar dependências desatualizadas
+        run: npx npm-check-updates || true
