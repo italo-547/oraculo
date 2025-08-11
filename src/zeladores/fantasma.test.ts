@@ -49,4 +49,23 @@ describe('detectarFantasmas', () => {
             ]),
         );
     });
+
+    it('ignora arquivos inacessíveis (branch de erro)', async () => {
+        const agora = Date.now();
+        const { scanRepository } = await import('../nucleo/scanner.js');
+        const scanRepoMock = scanRepository as unknown as Mock;
+        scanRepoMock.mockResolvedValue({
+            'a.ts': { relPath: 'a.ts', fullPath: '/tmp/a.ts' },
+            'b.js': { relPath: 'b.js', fullPath: '/tmp/b.js' },
+        });
+        // Mock fs.stat para lançar erro em um arquivo
+        // @ts-expect-error
+        vi.spyOn(fs, 'stat').mockImplementation(async (file) => {
+            if (file === '/tmp/a.ts') throw new Error('not found');
+            return { mtimeMs: agora - 10 * 86_400_000, isFile: () => true, isDirectory: () => false };
+        });
+        const resultado = await detectarFantasmas('/tmp');
+        expect(resultado.fantasmas.some(f => f.arquivo === 'a.ts')).toBe(false);
+        expect(resultado.fantasmas.some(f => f.arquivo === 'b.js')).toBe(true);
+    });
 });

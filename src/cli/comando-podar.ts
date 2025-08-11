@@ -45,14 +45,22 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
           );
           rl.close();
 
+          // eslint-disable-next-line no-console
+          console.log('DEBUG: Valor de answer na poda:', answer);
           if (answer.toLowerCase() !== 's') {
+            // eslint-disable-next-line no-console
+            console.log('DEBUG: Entrou no bloco de cancelamento da poda');
             log.info('❌ Poda cancelada.');
             return;
           }
         }
 
-        await removerArquivosOrfaos(fileEntries);
-        log.sucesso('✅ Poda concluída: Arquivos órfãos removidos com sucesso!');
+        // Só remove se confirmado
+        // --force: remove direto
+        if (opts.force) {
+          await removerArquivosOrfaos(fileEntries);
+          log.sucesso('✅ Poda concluída: Arquivos órfãos removidos com sucesso!');
+        }
       } catch (error) {
         log.erro(
           `❌ Erro durante a poda: ${typeof error === 'object' && error && 'message' in error ? (error as { message: string }).message : String(error)}`,
