@@ -45,10 +45,8 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
           );
           rl.close();
 
-          // eslint-disable-next-line no-console
           console.log('DEBUG: Valor de answer na poda:', answer);
           if (answer.toLowerCase() !== 's') {
-            // eslint-disable-next-line no-console
             console.log('DEBUG: Entrou no bloco de cancelamento da poda');
             log.info('❌ Poda cancelada.');
             return;
