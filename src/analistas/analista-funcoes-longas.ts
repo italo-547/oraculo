@@ -1,4 +1,4 @@
-import { traverse } from '../nucleo/constelacao/traverse.js';
+// ...existing code...
 import type { Ocorrencia, TecnicaAplicarResultado, ContextoExecucao } from '../tipos/tipos.js';
 import type {
   FunctionDeclaration,
@@ -20,7 +20,7 @@ export const analistaFuncoesLongas = {
     src: string,
     relPath: string,
     ast: NodePath | null,
-    fullPath?: string,
+    _fullPath?: string,
     _contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
@@ -30,7 +30,7 @@ export const analistaFuncoesLongas = {
 
     function analisar(
       fn: FunctionDeclaration | FunctionExpression | ArrowFunctionExpression,
-      aninhamento: number = 0
+      _aninhamento: number = 0
     ): void {
       if (!fn.loc) return;
 

@@ -27,11 +27,11 @@ export const ritualComando = {
     conteudo: string,
     arquivo: string,
     ast: NodePath | null,
-    fullPath?: string,
+    _fullPath?: string,
     _contexto?: ContextoExecucao,
   ): TecnicaAplicarResultado {
     const ocorrencias: Ocorrencia[] = [];
-    const comandos: { nome: string, handler: any, info: ReturnType<typeof extractHandlerInfo> | null, node: t.CallExpression }[] = [];
+    const comandos: { nome: string, handler: unknown, info: ReturnType<typeof extractHandlerInfo> | null, node: t.CallExpression }[] = [];
     const comandoNomes: string[] = [];
 
     if (!ast) {
@@ -92,7 +92,24 @@ export const ritualComando = {
 
     // Analisar cada handler
     for (const { nome, handler, info, node } of comandos) {
-      const linha = (handler && (handler.loc?.start.line || node.loc?.start.line)) || 1;
+      let linha = 1;
+      if (
+        handler &&
+        typeof handler === 'object' &&
+        handler !== null &&
+        'loc' in handler &&
+        handler.loc &&
+        typeof handler.loc === 'object' &&
+        'start' in handler.loc &&
+        handler.loc.start &&
+        typeof handler.loc.start === 'object' &&
+        'line' in (handler.loc.start as Record<string, unknown>) &&
+        typeof (handler.loc.start as Record<string, unknown>).line === 'number'
+      ) {
+        linha = (handler.loc.start as { line: number }).line;
+      } else if (node.loc?.start.line) {
+        linha = node.loc.start.line;
+      }
       if (!info) {
         ocorrencias.push({
           tipo: 'padrao-problematico',

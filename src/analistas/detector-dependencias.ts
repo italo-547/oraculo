@@ -2,7 +2,6 @@ import path from 'node:path';
 import { traverse } from '../nucleo/constelacao/traverse.js';
 import type { TecnicaAplicarResultado, ContextoExecucao, Ocorrencia } from '../tipos/tipos.js';
 import type { NodePath } from '@babel/traverse';
-
 export const grafoDependencias = new Map<string, Set<string>>();
 
 /**
@@ -59,7 +58,6 @@ export const detectorDependencias = {
     const ocorrencias: Ocorrencia[] = [];
     const refs = extrairReferencias(ast);
     const tiposImport: Set<'import' | 'require'> = new Set();
-    const fs = require('fs');
 
     // Detecta padrões problemáticos
     traverse(ast.node, {

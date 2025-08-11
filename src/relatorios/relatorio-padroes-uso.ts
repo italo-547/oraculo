@@ -1,4 +1,4 @@
-import { log } from '../nucleo/constelacao/log.js';
+// import { log } from '../nucleo/constelacao/log.js';
 
 export function exibirRelatorioPadroesUso(): void {
   // log.info('\n📊 Padrões de Uso do Código:'); // Silenciado para saída limpa
