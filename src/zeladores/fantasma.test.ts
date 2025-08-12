@@ -6,9 +6,21 @@ import { promises as fs } from 'node:fs';
 vi.mock('../nucleo/scanner.js', () => ({
   scanRepository: vi.fn(async (_base: string) => {
     return {
-      'src/antigo.ts': { relPath: 'src/antigo.ts', fullPath: path.resolve('temp-fantasma/src/antigo.ts'), content: '' },
-      'src/recente.ts': { relPath: 'src/recente.ts', fullPath: path.resolve('temp-fantasma/src/recente.ts'), content: '' },
-      'src/referenciado.ts': { relPath: 'src/referenciado.ts', fullPath: path.resolve('temp-fantasma/src/referenciado.ts'), content: '' },
+      'src/antigo.ts': {
+        relPath: 'src/antigo.ts',
+        fullPath: path.resolve('temp-fantasma/src/antigo.ts'),
+        content: '',
+      },
+      'src/recente.ts': {
+        relPath: 'src/recente.ts',
+        fullPath: path.resolve('temp-fantasma/src/recente.ts'),
+        content: '',
+      },
+      'src/referenciado.ts': {
+        relPath: 'src/referenciado.ts',
+        fullPath: path.resolve('temp-fantasma/src/referenciado.ts'),
+        content: '',
+      },
     };
   }),
 }));

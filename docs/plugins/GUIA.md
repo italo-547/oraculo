@@ -12,7 +12,7 @@ Você pode estender o Oráculo de duas formas principais:
 Ambos são carregados em tempo de execução e devem ser modulares (ESM). Erros não interrompem a execução principal: são capturados e registrados como ocorrências ou avisos de log.
 
 ---
- 
+
 ## 1. Técnicas / Analistas
 
 Uma técnica implementa a interface `Tecnica` (ou `Analista` – superset) definida em `src/tipos/tipos.ts`.
@@ -96,7 +96,7 @@ export const registroAnalistas = [
 - Em caso de erro, permita exceção ser capturada: será convertida em ocorrência de erro analista.
 
 ---
- 
+
 ## 2. Plugins de Estrutura
 
 Executados pelo módulo `corretor-estrutura`. Modificam ou enriquecem a representação estrutural antes de correções.
@@ -114,9 +114,9 @@ Suportado:
 
 ```ts
 interface PluginEstruturaContexto {
-  mapa: unknown;           // Mapa estrutural atual
-  baseDir: string;         // Diretório base
-  layers: string[];        // Camadas detectadas
+  mapa: unknown; // Mapa estrutural atual
+  baseDir: string; // Diretório base
+  layers: string[]; // Camadas detectadas
   fileEntries: Array<{ relPath: string; fullPath: string; content: string | null }>;
 }
 
@@ -142,7 +142,7 @@ Registrar caminho no config (exemplo conceitual):
 
 ```jsonc
 {
-  "STRUCTURE_PLUGINS": ["./plugins/marcar-infra.js"]
+  "STRUCTURE_PLUGINS": ["./plugins/marcar-infra.js"],
 }
 ```
 
@@ -154,7 +154,7 @@ Registrar caminho no config (exemplo conceitual):
 - Não alterar campos inesperados em `fileEntries`; criar novas propriedades sob namespace (`_pluginX`) se precisar estender.
 
 ---
- 
+
 ## 3. Testando sua Técnica / Plugin
 
 1. Criar testes unitários para a lógica principal (detecção / transformação).
@@ -175,7 +175,7 @@ it('detecta TODO', () => {
 ```
 
 ---
- 
+
 ## 4. Convenções de Nome
 
 - Arquivos de técnicas: `analista-<descricao>.ts` ou `<categoria>-<foco>.ts` quando ainda não padronizado.
@@ -183,7 +183,7 @@ it('detecta TODO', () => {
 - Nome de plugin: contexto curto (ex: `marcar-infra`, `ajustar-alias`).
 
 ---
- 
+
 ## 5. Checklist Antes de Submeter
 
 - [ ] Nome claro (`nome` definido na técnica)
@@ -194,7 +194,7 @@ it('detecta TODO', () => {
 - [ ] Documentação breve (1-2 linhas) adicionada onde relevante
 
 ---
- 
+
 ## 6. Roadmap Futuro de Extensibilidade
 
 - Carregamento dinâmico condicional por categoria / filtro de CLI.
@@ -203,10 +203,11 @@ it('detecta TODO', () => {
 - Sistema de versão e compatibilidade para evitar quebra em upgrades.
 
 ---
- 
+
 ## 7. Suporte & Dúvidas
 
 Abra uma Issue descrevendo intenção, exemplo de ocorrência e impacto esperado. Forneça snippet mínimo de reprodução.
 
 ---
+
 Licença do guia: MIT (seguir decisão final de licença do projeto).

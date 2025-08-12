@@ -25,7 +25,9 @@ it('exporta relatório com REPORT_OUTPUT_DIR customizado e baselineModificado tr
   };
   vi.doMock('../nucleo/inquisidor.js', () => ({
     iniciarInquisicao: vi.fn(async () => ({ fileEntries: [fakeEntry] })),
-    prepararComAst: vi.fn(async (entries: any) => entries.map((e: any) => ({ ...e, ast: undefined }))),
+    prepararComAst: vi.fn(async (entries: any) =>
+      entries.map((e: any) => ({ ...e, ast: undefined })),
+    ),
     executarInquisicao: vi.fn(async () => ({ ocorrencias: [], fileEntries: [fakeEntry] })),
     tecnicas: [],
   }));
@@ -74,8 +76,8 @@ beforeEach(async () => {
   vi.mock('../nucleo/constelacao/cosmos.js', () => ({ config: {} }));
   vi.mock('../nucleo/inquisidor.js', () => ({
     iniciarInquisicao: vi.fn(async () => ({ fileEntries: [] })),
-  prepararComAst: vi.fn(async (entries: any) => entries),
-  executarInquisicao: vi.fn(async () => ({ ocorrencias: [], fileEntries: [] })),
+    prepararComAst: vi.fn(async (entries: any) => entries),
+    executarInquisicao: vi.fn(async () => ({ ocorrencias: [], fileEntries: [] })),
     tecnicas: [],
   }));
   vi.mock('../guardian/sentinela.js', () => ({
@@ -119,16 +121,16 @@ describe('comandoDiagnosticar', () => {
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
-  const { config } = await import('../nucleo/constelacao/cosmos.js');
-  config.SCAN_ONLY = true; // força modo scan-only
+    const { config } = await import('../nucleo/constelacao/cosmos.js');
+    config.SCAN_ONLY = true; // força modo scan-only
     const { prepararComAst, executarInquisicao } = await import('../nucleo/inquisidor.js');
     const prepararComAstMock = vi.mocked(prepararComAst);
     const executarInquisicaoMock = vi.mocked(executarInquisicao);
     const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
-  // adiciona flag global no root (definida em cli.ts normalmente)
-  (program as any).option?.('--scan-only');
-  program.addCommand(cmd);
-  await program.parseAsync(['node', 'cli', 'diagnosticar', '--scan-only']);
+    // adiciona flag global no root (definida em cli.ts normalmente)
+    (program as any).option?.('--scan-only');
+    program.addCommand(cmd);
+    await program.parseAsync(['node', 'cli', 'diagnosticar', '--scan-only']);
     expect(prepararComAstMock).not.toHaveBeenCalled();
     expect(executarInquisicaoMock).not.toHaveBeenCalled();
     expect(log.info).toHaveBeenCalledWith(expect.stringMatching(/Modo scan-only/));
@@ -232,18 +234,20 @@ describe('comandoDiagnosticar', () => {
     vi.clearAllMocks();
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
-  const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
-  const { config } = await import('../nucleo/constelacao/cosmos.js');
-  config.REPORT_EXPORT_ENABLED = true;
-  config.SCAN_ONLY = false; // garante modo normal
-  const { gerarRelatorioMarkdown } = await import('../relatorios/gerador-relatorio.js');
-  const { salvarEstado } = await import('../zeladores/util/persistencia.js');
+    const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
+    const { config } = await import('../nucleo/constelacao/cosmos.js');
+    config.REPORT_EXPORT_ENABLED = true;
+    config.SCAN_ONLY = false; // garante modo normal
+    const { gerarRelatorioMarkdown } = await import('../relatorios/gerador-relatorio.js');
+    const { salvarEstado } = await import('../zeladores/util/persistencia.js');
     const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
     program.addCommand(cmd);
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
-  expect(gerarRelatorioMarkdown).toHaveBeenCalledTimes(1);
-  expect(salvarEstado).toHaveBeenCalledTimes(1);
-  expect(logMock.sucesso).toHaveBeenCalledWith(expect.stringContaining('Relatórios exportados para'));
+    expect(gerarRelatorioMarkdown).toHaveBeenCalledTimes(1);
+    expect(salvarEstado).toHaveBeenCalledTimes(1);
+    expect(logMock.sucesso).toHaveBeenCalledWith(
+      expect.stringContaining('Relatórios exportados para'),
+    );
     config.REPORT_EXPORT_ENABLED = false;
   });
 
@@ -263,8 +267,8 @@ describe('comandoDiagnosticar', () => {
     });
     const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
     program.addCommand(cmd);
-  await program.parseAsync(['node', 'cli', 'diagnosticar']);
-  expect(logMock.aviso.mock.calls.length > 0 || logMock.sucesso.mock.calls.length > 0).toBe(true);
+    await program.parseAsync(['node', 'cli', 'diagnosticar']);
+    expect(logMock.aviso.mock.calls.length > 0 || logMock.sucesso.mock.calls.length > 0).toBe(true);
   });
 
   it('executa diagnóstico e lida com erro fatal (catch)', async () => {

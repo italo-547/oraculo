@@ -1,6 +1,4 @@
 import { grafoDependencias } from './detector-dependencias.js';
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
 import type {
   TecnicaAplicarResultado,
   ContextoExecucao,
@@ -111,8 +109,8 @@ export const detectorEstrutura = {
       });
     }
 
-  // Muitos arquivos na raiz (considera apenas nível imediato sem subpastas)
-  const arquivosRaiz = caminhos.filter((p) => !p.includes('/') && p.trim() !== '');
+    // Muitos arquivos na raiz (considera apenas nível imediato sem subpastas)
+    const arquivosRaiz = caminhos.filter((p) => !p.includes('/') && p.trim() !== '');
     if (arquivosRaiz.length > 10) {
       ocorrencias.push({
         tipo: 'estrutura-suspeita',

@@ -22,6 +22,27 @@ export const configDefault = {
   GUARDIAN_ALLOW_ADDS: false,
   GUARDIAN_ALLOW_CHG: false,
   GUARDIAN_ALLOW_DELS: false,
+  // Padrões ignorados somente para o Guardian (não impacta scanner geral / analistas)
+  GUARDIAN_IGNORE_PATTERNS: [
+    // Dependências e artefatos externos
+    'node_modules',
+    'node_modules/**',
+    '**/node_modules/**',
+    '.pnpm/**',
+    // Estado interno / cache / builds
+    '.oraculo/**',
+    'dist/**',
+    'coverage/**',
+    'build/**',
+    // Arquivos temporários e lockfiles
+    '*.log',
+    '*.lock',
+    'package-lock.json',
+    'yarn.lock',
+    'pnpm-lock.yaml',
+    // VCS
+    '.git/**',
+  ],
 
   // 📄 Relatórios
   REPORT_SILENCE_LOGS: false,
@@ -42,6 +63,8 @@ export const configDefault = {
     'dist',
     'build',
     'coverage',
+  // Evita varredura de dependências externas – melhora performance e reduz ruído do Guardian
+  'node_modules',
     'package-lock.json',
     'yarn.lock',
   ],
@@ -86,6 +109,9 @@ export const configDefault = {
   COMPACT_MODE: false,
   // Modo somente varredura (sem AST, sem técnicas) quando ativado por flag
   SCAN_ONLY: false,
+  // Controle de ruído de erros de parsing
+  PARSE_ERRO_AGRUPAR: true, // quando true, múltiplos erros no mesmo arquivo são consolidados
+  PARSE_ERRO_MAX_POR_ARQUIVO: 1, // limite de ocorrências individuais por arquivo antes de agrupar
 };
 
 // Clonamos para instância mutável

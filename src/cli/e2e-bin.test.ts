@@ -28,7 +28,7 @@ describe('@e2e E2E CLI binário', () => {
     mkdirSync(join(tempDir, 'src'));
     writeFileSync(join(tempDir, 'src/index.ts'), 'console.log("ok e2e")', 'utf-8');
 
-  const proc = spawnSync(process.execPath, [cliPath, 'diagnosticar', '--scan-only'], {
+    const proc = spawnSync(process.execPath, [cliPath, 'diagnosticar', '--scan-only'], {
       cwd: tempDir,
       encoding: 'utf-8',
     });
@@ -71,11 +71,7 @@ describe('@e2e E2E CLI binário', () => {
     );
     mkdirSync(join(tempDir, 'src'));
     // Arquivo que força ritual-comando a reconhecer padrão (nome contendo 'bot')
-    writeFileSync(
-      join(tempDir, 'src', 'main.ts'),
-      'export function ok(){ return 42; }',
-      'utf-8',
-    );
+    writeFileSync(join(tempDir, 'src', 'main.ts'), 'export function ok(){ return 42; }', 'utf-8');
     const envLimpo = { ...process.env } as Record<string, string | undefined>;
     // Remover flag de ambiente de testes para permitir process.exit real
     delete envLimpo.VITEST;

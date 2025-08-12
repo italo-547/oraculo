@@ -13,8 +13,10 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
   return new Command('guardian')
     .description('Gerencia e verifica a integridade do ambiente do Oráculo.')
     .option('-a, --accept-baseline', 'Aceita o baseline atual como o novo baseline de integridade')
-    .option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline')
-    .action(async function (this: Command, opts: { acceptBaseline?: boolean; diff?: boolean }) {
+  .option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline')
+  .option('--full-scan', 'Executa verificação sem aplicar GUARDIAN_IGNORE_PATTERNS (não persistir baseline)')
+  .option('--json', 'Saída em JSON estruturado (para CI/integracoes)')
+  .action(async function (this: Command, opts: { acceptBaseline?: boolean; diff?: boolean; fullScan?: boolean; json?: boolean }) {
       aplicarFlagsGlobais(
         this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {},
       );
@@ -25,11 +27,28 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
       try {
         const resultadoInquisicao = await iniciarInquisicao(baseDir, { incluirMetadados: false });
         fileEntries = resultadoInquisicao.fileEntries;
+        const ignoradosOriginais = config.GUARDIAN_IGNORE_PATTERNS;
+        if (opts.fullScan) {
+          // Temporariamente desabilita padrões ignorados
+          (config as any).GUARDIAN_IGNORE_PATTERNS = [];
+          if (!opts.acceptBaseline) {
+            log.aviso('⚠️ --full-scan ativo: baseline NÃO será persistido com escopo expandido.');
+          }
+        }
 
         if (opts.acceptBaseline) {
+          if (opts.fullScan) {
+            log.aviso('🚫 Não é permitido aceitar baseline em modo --full-scan. Remova a flag e repita.');
+            (config as any).GUARDIAN_IGNORE_PATTERNS = ignoradosOriginais;
+            process.exit(1);
+          }
           log.info(chalk.bold('\n🔄 Aceitando novo baseline de integridade...\n'));
           await acceptNewBaseline(fileEntries);
-          log.sucesso('🔒 Novo baseline de integridade aceito com sucesso!');
+          if (opts.json) {
+            console.log(JSON.stringify({ status: IntegridadeStatus.Aceito, baseline: true }));
+          } else {
+            log.sucesso('🔒 Novo baseline de integridade aceito com sucesso!');
+          }
         } else if (opts.diff) {
           log.info(chalk.bold('\n📊 Comparando integridade do Oráculo com o baseline...\n'));
           const diffResult = await scanSystemIntegrity(fileEntries, { justDiff: true });
@@ -38,41 +57,64 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
             diffResult.detalhes &&
             diffResult.detalhes.length
           ) {
-            log.aviso('🚨 Diferenças detectadas:');
-            diffResult.detalhes?.forEach((d: string) => {
-              log.info(`  - ${d}`);
-            });
-            log.aviso('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
+            if (opts.json) {
+              console.log(
+                JSON.stringify({
+                  status: 'alteracoes-detectadas',
+                  detalhes: diffResult.detalhes,
+                }),
+              );
+            } else {
+              log.aviso('🚨 Diferenças detectadas:');
+              diffResult.detalhes?.forEach((d: string) => {
+                log.info(`  - ${d}`);
+              });
+              log.aviso('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
+            }
             process.exit(1);
           } else {
-            log.sucesso('✅ Nenhuma diferença detectada. Integridade preservada.');
+            if (opts.json) {
+              console.log(JSON.stringify({ status: 'ok', detalhes: [] }));
+            } else {
+              log.sucesso('✅ Nenhuma diferença detectada. Integridade preservada.');
+            }
           }
         } else {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
           const guardianResultado = await scanSystemIntegrity(fileEntries);
           switch (guardianResultado.status) {
             case IntegridadeStatus.Ok:
-              log.sucesso('🔒 Guardian: integridade preservada.');
+              if (opts.json) console.log(JSON.stringify({ status: 'ok' }));
+              else log.sucesso('🔒 Guardian: integridade preservada.');
               break;
             case IntegridadeStatus.Criado:
-              log.info('📘 Guardian: baseline inicial criado.');
+              if (opts.json) console.log(JSON.stringify({ status: 'baseline-criado' }));
+              else log.info('📘 Guardian: baseline inicial criado.');
               log.aviso(
                 'Execute `oraculo guardian --accept-baseline` para aceitá-lo ou `oraculo diagnosticar` novamente.',
               );
               break;
             case IntegridadeStatus.Aceito:
-              log.sucesso('🌀 Guardian: baseline atualizado e aceito.');
+              if (opts.json) console.log(JSON.stringify({ status: 'baseline-aceito' }));
+              else log.sucesso('🌀 Guardian: baseline atualizado e aceito.');
               break;
             case IntegridadeStatus.AlteracoesDetectadas:
-              log.aviso(
-                '🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.',
-              );
+              if (opts.json) console.log(JSON.stringify({ status: 'alteracoes-detectadas' }));
+              else
+                log.aviso(
+                  '🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.',
+                );
               process.exit(1);
           }
+        }
+        if (opts.fullScan) {
+          // Restaura padrões originais após execução
+          (config as any).GUARDIAN_IGNORE_PATTERNS = ignoradosOriginais;
         }
       } catch (err) {
         log.erro(`❌ Erro no Guardian: ${(err as Error).message ?? String(err)}`);
         if (config.DEV_MODE) console.error(err);
+  if (opts.json) console.log(JSON.stringify({ status: 'erro', mensagem: (err as Error).message }));
         process.exit(1);
       }
     });

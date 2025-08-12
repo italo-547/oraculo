@@ -10,8 +10,13 @@ function parseComBabel(codigo: string, plugins?: string[]): BabelFile | null {
     sourceType: 'unambiguous',
     plugins: (Array.isArray(plugins) ? plugins : defaultPlugins) as ParserOptions['plugins'],
   };
-
-  return babelParse(codigo, options);
+  try {
+    return babelParse(codigo, options);
+  } catch (e) {
+    // Mantém comportamento resiliente: parser inválido retorna null (testes esperam isso)
+    log.debug(`⚠️ Erro de parsing Babel: ${(e as Error).message}`);
+    return null;
+  }
 }
 
 function parseComKotlin(_codigo: string): null {

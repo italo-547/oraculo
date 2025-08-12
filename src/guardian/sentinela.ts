@@ -6,6 +6,8 @@ import { carregarBaseline, salvarBaseline } from './baseline.js';
 import { diffSnapshots, verificarErros } from './diff.js';
 import { BASELINE_PATH } from './constantes.js';
 import { IntegridadeStatus, GuardianError, FileEntry } from '../tipos/tipos.js';
+import micromatch from 'micromatch';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
 type Snapshot = Record<string, string>;
 
@@ -45,7 +47,18 @@ export async function scanSystemIntegrity(
     );
   }
 
-  const snapshotAtual = construirSnapshot(fileEntries);
+  // Filtra entradas conforme padrões ignorados específicos do Guardian
+  const ignorados = config.GUARDIAN_IGNORE_PATTERNS || [];
+  const filtrados = fileEntries.filter((f) => {
+    const rel = f.relPath.replace(/\\/g, '/');
+    if (rel.includes('node_modules/')) return false; // fallback defensivo
+    return !micromatch.isMatch(rel, ignorados);
+  });
+  if (config.DEV_MODE) {
+    const removidos = fileEntries.length - filtrados.length;
+    log.info(`⚙️ Guardian filtro aplicado: ${filtrados.length} arquivos considerados (removidos ${removidos}).`);
+  }
+  const snapshotAtual = construirSnapshot(filtrados);
 
   if (!baselineAnterior) {
     log.info(`[Guardian] 🆕 ${agora} — Baseline inicial criado.`);
@@ -78,7 +91,13 @@ export async function scanSystemIntegrity(
 }
 
 export async function acceptNewBaseline(fileEntries: FileEntry[]): Promise<void> {
-  const snapshotAtual = construirSnapshot(fileEntries);
+  const ignorados = config.GUARDIAN_IGNORE_PATTERNS || [];
+  const filtrados = fileEntries.filter((f) => {
+    const rel = f.relPath.replace(/\\/g, '/');
+    if (rel.includes('node_modules/')) return false; // fallback defensivo
+    return !micromatch.isMatch(rel, ignorados);
+  });
+  const snapshotAtual = construirSnapshot(filtrados);
   await fs.mkdir(path.dirname(BASELINE_PATH), { recursive: true });
   await salvarBaseline(snapshotAtual);
 }

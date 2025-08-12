@@ -30,7 +30,8 @@
   "test:e2e": "vitest run src/cli/e2e-bin.test.ts",
   "coverage": "vitest run --coverage",
   "coverage:gate": "vitest run --coverage --reporter=json --outputFile=coverage-temp.json && node scripts/coverage-gate.cjs",
-  "check": "npm run lint && npm run typecheck && npm run test:unit"
+  "check": "npm run lint && npm run typecheck && npm run test:unit",
+  "perf:baseline": "node scripts/perf-baseline.mjs"
   },
   "keywords": [
     "cli",

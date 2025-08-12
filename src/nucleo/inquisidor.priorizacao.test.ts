@@ -7,7 +7,11 @@ import { config } from './constelacao/cosmos.js';
 // Mock scanner para controlar ordem inicial
 vi.mock('./scanner.js', () => ({
   scanRepository: vi.fn(async () => ({
-    'docs/readme.md': { relPath: 'docs/readme.md', fullPath: path.resolve('docs/readme.md'), content: '' },
+    'docs/readme.md': {
+      relPath: 'docs/readme.md',
+      fullPath: path.resolve('docs/readme.md'),
+      content: '',
+    },
     'src/a.ts': { relPath: 'src/a.ts', fullPath: path.resolve('src/a.ts'), content: '' },
     'src/b.ts': { relPath: 'src/b.ts', fullPath: path.resolve('src/b.ts'), content: '' },
   })),
@@ -41,7 +45,10 @@ describe('priorização ignora meta no topo', () => {
     );
     config.ANALISE_PRIORIZACAO_ENABLED = true;
     config.ANALISE_INCREMENTAL_STATE_PATH = incPath;
-    const resultado = await iniciarInquisicao(process.cwd(), { incluirMetadados: false, skipExec: true });
+    const resultado = await iniciarInquisicao(process.cwd(), {
+      incluirMetadados: false,
+      skipExec: true,
+    });
     const ordem = resultado.fileEntries.map((f) => f.relPath);
     // docs/readme.md teria score maior, mas deve aparecer por último
     expect(ordem[0]).toMatch(/^src\//);

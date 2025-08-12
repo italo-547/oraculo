@@ -8,11 +8,15 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Testes ponta-a-ponta executando binário buildado (CLI real) – 5 cenários
 - [x] Automação: adicionar lint/format ao CI e gate de cobertura
 - [ ] Guia de criação de plugins (exemplos práticos)
-- [ ] Baseline de performance (scan + AST parse) e relatório comparativo
+- [x] Baseline de performance inicial (script `perf:baseline`)
+- [ ] Comparação automática de baseline e regressões
+- [x] Flag `--full-scan` para incluir `node_modules` controladamente (stress test) (baseline bloqueado)
+- [ ] Documentar política de ignores do Guardian (guardian.md)
 - [ ] Métricas internas opcionais (tempo por técnica, cache hits)
 - [ ] Monitor de dependências (dependabot + script npm-check-updates) – workflow existe, falta documentar resultado automático
 - [ ] Sanitização/validação de entradas da CLI
 - [ ] Documentar contrato de saída para guardian (statuses)
+- [ ] Agregação configurável de PARSE_ERRO na saída (limite por arquivo)
 - [ ] Revisar logs DEBUG e consolidar flag
 - [ ] Documentar estratégia de mocks de AST (centralização)
 - [x] Licença final: MIT (sem restrições adicionais)

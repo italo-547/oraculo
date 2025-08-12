@@ -91,7 +91,8 @@ export async function prepararComAst(
               ast = undefined;
               // Registrar ocorrência de parse inválido (erro sintático)
               const globalStore2 = globalStore as unknown as Record<string, unknown>;
-              const lista = (globalStore2.__ORACULO_PARSE_ERROS__ as OcorrenciaParseErro[] | undefined) || [];
+              const lista =
+                (globalStore2.__ORACULO_PARSE_ERROS__ as OcorrenciaParseErro[] | undefined) || [];
               lista.push(
                 ocorrenciaParseErro({
                   mensagem: 'Erro de parsing: AST não gerada (código possivelmente inválido).',
@@ -169,7 +170,11 @@ export async function iniciarInquisicao(
     const norm = rel.replace(/\\/g, '/');
     if (META_PATTERNS.some((r) => r.test(norm))) return true;
     if (!norm.startsWith('src/') && /\.(md|MD)$/.test(norm)) return true;
-    if (!norm.startsWith('src/') && /^(package|tsconfig|eslint|vitest)\.(json|js|cjs|mjs)$/i.test(norm)) return true;
+    if (
+      !norm.startsWith('src/') &&
+      /^(package|tsconfig|eslint|vitest)\.(json|js|cjs|mjs)$/i.test(norm)
+    )
+      return true;
     if (/^\.eslint-report\.json$/i.test(norm)) return true;
     if (/^\.gitignore$/i.test(norm)) return true;
     if (norm.startsWith('.oraculo/')) return true;
@@ -209,11 +214,14 @@ export async function iniciarInquisicao(
             occ = hist.ocorrencias?.length || 0;
           }
           const reuso = hist.reaproveitadoCount || 0;
-          const score = dur * pesos.duracaoMs + occ * pesos.ocorrencias - reuso * pesos.penalidadeReuso;
+          const score =
+            dur * pesos.duracaoMs + occ * pesos.ocorrencias - reuso * pesos.penalidadeReuso;
           return { ...e, __score: score } as FileEntry & { __score: number };
         });
         scored.sort(
-          (a, b) => (b as unknown as { __score: number }).__score - (a as unknown as { __score: number }).__score,
+          (a, b) =>
+            (b as unknown as { __score: number }).__score -
+            (a as unknown as { __score: number }).__score,
         );
         // Reorganiza empurrando meta para o final
         const prioritarios: (FileEntry & { __score: number })[] = [];
@@ -235,11 +243,15 @@ export async function iniciarInquisicao(
             }),
           );
         } else {
-          const exibidos = somentePrioritarios.slice(0, 5).map((e) => e.relPath).join(', ') || '—';
-            log.info(`🧮 Priorização aplicada (top 5 sem meta): ${exibidos}`);
-            if (metas.length) {
-              log.info(`   (ℹ️ ${metas.length} arquivos meta movidos para o final da fila)`);
-            }
+          const exibidos =
+            somentePrioritarios
+              .slice(0, 5)
+              .map((e) => e.relPath)
+              .join(', ') || '—';
+          log.info(`🧮 Priorização aplicada (top 5 sem meta): ${exibidos}`);
+          if (metas.length) {
+            log.info(`   (ℹ️ ${metas.length} arquivos meta movidos para o final da fila)`);
+          }
         }
       }
     } catch (e) {
@@ -272,13 +284,39 @@ export async function iniciarInquisicao(
     ((globalThis as unknown as Record<string, unknown>)
       .__ORACULO_PARSE_ERROS__ as OcorrenciaParseErro[]) || [];
   if (parseErros.length) {
-    ocorrencias.push(...parseErros);
+  // Armazena contagem original para métricas (usado em saída JSON)
+  (globalThis as any).__ORACULO_PARSE_ERROS_ORIGINAIS__ = parseErros.length;
+    if (config.PARSE_ERRO_AGRUPAR) {
+      const porArquivo: Record<string, OcorrenciaParseErro[]> = {};
+      for (const pe of parseErros) {
+        const k = pe.relPath || '__desconhecido__';
+        (porArquivo[k] = porArquivo[k] || []).push(pe);
+      }
+      for (const [arq, lista] of Object.entries(porArquivo)) {
+        if (lista.length <= (config.PARSE_ERRO_MAX_POR_ARQUIVO || 1)) {
+          ocorrencias.push(...lista);
+        } else {
+          // Consolida em uma única ocorrência representativa
+            ocorrencias.push(
+            ocorrenciaParseErro({
+              mensagem: `Erros de parsing agregados: ${lista.length} ocorrências suprimidas neste arquivo (exibe 1).`,
+              relPath: arq === '__desconhecido__' ? undefined : arq,
+              origem: 'parser',
+            }),
+          );
+        }
+      }
+    } else {
+      ocorrencias.push(...parseErros);
+    }
   }
 
   if (!skipExec) {
     log.sucesso(`🔮 Inquisição concluída. Total de ocorrências: ${ocorrencias.length}`);
   } else if (!config.COMPACT_MODE) {
-    log.info(`🔍 Varredura concluída (execução de técnicas saltada). Arquivos: ${fileEntries.length}`);
+    log.info(
+      `🔍 Varredura concluída (execução de técnicas saltada). Arquivos: ${fileEntries.length}`,
+    );
   }
 
   return {

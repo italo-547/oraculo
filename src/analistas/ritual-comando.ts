@@ -171,12 +171,9 @@ export const ritualComando = {
         });
       }
       // Muitos parâmetros
-      const paramCount =
-        typeof (info.func as any) === 'object' &&
-        (info.func as any).params &&
-        Array.isArray((info.func as any).params)
-          ? (info.func as any).params.length
-          : (info.totalParams ?? info.params.length);
+      // Deriva quantidade de parâmetros sem recorrer a any
+      // totalParams já é computado em extractHandlerInfo; fallback para length de params
+      const paramCount = info.totalParams ?? info.params.length;
       if (paramCount > 3) {
         ocorrencias.push({
           tipo: 'padrao-problematico',

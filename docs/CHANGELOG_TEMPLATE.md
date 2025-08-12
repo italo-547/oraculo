@@ -30,9 +30,7 @@ Mantenha um histórico claro e objetivo de todas as mudanças relevantes no proj
 
 ### Interno/Infra
 
--
-
----
+- ***
 
 Exemplo:
 

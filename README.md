@@ -25,7 +25,7 @@ Oráculo é uma CLI modular para análise, diagnóstico e manutenção de projet
 git clone https://github.com/aynsken/oraculo.git
 cd oraculo
 npm install
-```
+```bash
 
 ## 🖥️ Como usar
 
@@ -61,13 +61,14 @@ Durante a execução dos testes a variável `VITEST=1` (ou já definida pelo run
 
 Você pode usar as flags globais em qualquer comando para controlar o nível de logs e exportação de relatórios:
 
-| Flag        | Descrição                                                                                 |
-| ----------- | ----------------------------------------------------------------------------------------- |
-| `--silence` | Silencia todos os logs de informação e aviso (sobrepõe `--verbose`)                       |
-| `--verbose` | Exibe logs detalhados de cada arquivo e técnica analisada (ignorado se `--silence` ativo) |
-| `--export`  | Gera arquivos de relatório detalhados (JSON e Markdown)                                   |
-| `--dev`     | Ativa modo de desenvolvimento (logs de debug)                                             |
-| `--scan-only` | Executa somente varredura e priorização, sem aplicar técnicas                |
+| Flag          | Descrição                                                                                 |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| `--silence`   | Silencia todos os logs de informação e aviso (sobrepõe `--verbose`)                       |
+| `--verbose`   | Exibe logs detalhados de cada arquivo e técnica analisada (ignorado se `--silence` ativo) |
+| `--export`    | Gera arquivos de relatório detalhados (JSON e Markdown)                                   |
+| `--dev`       | Ativa modo de desenvolvimento (logs de debug)                                             |
+| `--scan-only` | Executa somente varredura e priorização, sem aplicar técnicas                             |
+| `--json`      | (diagnosticar/guardian) Saída estruturada JSON para uso em CI                             |
 
 #### Exemplos de uso
 
@@ -118,8 +119,9 @@ oraculo <comando>
 - `podar` — Remove arquivos órfãos
 - `reestruturar` — Corrige estrutura de pastas/arquivos
 - `guardian` — Verificações de integridade (baseline, diff de hashes, sentinela)
+- Documentação detalhada do Guardian: `docs/guardian.md`
 - ...e outros! Veja todos com:
-  
+
 ```bash
 node dist/cli.js --help
 ```
@@ -133,7 +135,6 @@ Rodar todos os testes:
 ```bash
 npm test
 ```
-
 
 Ver cobertura:
 
@@ -184,13 +185,13 @@ src/
 
 ## 🧬 Camadas de Teste (Resumo)
 
-| Camada | Objetivo | Exemplos |
-| ------ | -------- | -------- |
-| Unidade | Validar funções/helpers isolados | analistas individuais |
-| Integração | Fluxos entre módulos | inquisidor + executor |
-| Guardian/Persistência | Baseline, diff, hash | `guardian/*` |
-| CLI Commands | Comportamento de comandos sem build | `comando-*.test.ts` |
-| E2E Binário | Execução real pós-build | `e2e-bin.test.ts` |
+| Camada                | Objetivo                            | Exemplos              |
+| --------------------- | ----------------------------------- | --------------------- |
+| Unidade               | Validar funções/helpers isolados    | analistas individuais |
+| Integração            | Fluxos entre módulos                | inquisidor + executor |
+| Guardian/Persistência | Baseline, diff, hash                | `guardian/*`          |
+| CLI Commands          | Comportamento de comandos sem build | `comando-*.test.ts`   |
+| E2E Binário           | Execução real pós-build             | `e2e-bin.test.ts`     |
 
 ### Cenários E2E Atuais
 
@@ -222,7 +223,19 @@ Distribuído sob a licença MIT. Uso comercial, fork, modificação e redistribu
 
 Se surgir necessidade futura de oferecer extras proprietários, dá para fazer via modelo open-core sem alterar o core livre.
 
+## 🚀 Performance (Baseline Inicial)
+
+Rode `npm run perf:baseline` para gerar snapshot sintético em `docs/perf/` contendo:
+
+- Tempo de parsing vs análise total
+- Contagem de arquivos e tamanhos agregados
+- Duração por analista (quando métricas habilitadas)
+- Versão Node e commit
+
+Em breve: comparação automática e alerta de regressões.
+
 ---
+
 Notas rápidas de manutenção:
 
 - Evite duplicar lógica de persistência

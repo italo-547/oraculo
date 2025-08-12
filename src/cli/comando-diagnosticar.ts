@@ -6,7 +6,12 @@ import { salvarEstado } from '../zeladores/util/persistencia.js';
 import type { Ocorrencia, FileEntryWithAst, ResultadoGuardian } from '../tipos/tipos.js';
 import { IntegridadeStatus } from '../tipos/tipos.js';
 
-import { iniciarInquisicao, executarInquisicao, tecnicas, prepararComAst } from '../nucleo/inquisidor.js';
+import {
+  iniciarInquisicao,
+  executarInquisicao,
+  tecnicas,
+  prepararComAst,
+} from '../nucleo/inquisidor.js';
 import { scanSystemIntegrity } from '../guardian/sentinela.js';
 import { alinhamentoEstrutural } from '../arquitetos/analista-estrutura.js';
 import { diagnosticarProjeto } from '../arquitetos/diagnostico-projeto.js';
@@ -33,9 +38,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
       'Modo compacto: logs ainda mais resumidos para projetos grandes',
       false,
     )
+  .option('--json', 'Saída JSON estruturada (para CI/integracoes)', false)
     .action(
       async (
-        opts: { guardianCheck?: boolean; verbose?: boolean; compact?: boolean },
+  opts: { guardianCheck?: boolean; verbose?: boolean; compact?: boolean; json?: boolean },
         command: Command,
       ) => {
         aplicarFlagsGlobais(
@@ -52,7 +58,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         let totalOcorrencias = 0;
 
         try {
-          if (!iniciouDiagnostico && !config.COMPACT_MODE) {
+          if (opts.json) {
+            // Suprime cabeçalhos verbosos no modo JSON
+          } else if (!iniciouDiagnostico && !config.COMPACT_MODE) {
             log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
             iniciouDiagnostico = true;
           } else if (!iniciouDiagnostico && config.COMPACT_MODE) {
@@ -61,7 +69,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           }
           // 1) Primeira varredura rápida (sem AST) apenas para obter entries e opcionalmente rodar Guardian
           // Usa skipExec para evitar execução duplicada das técnicas – apenas coleta entries iniciais
-          const leituraInicial = await iniciarInquisicao(baseDir, { incluirMetadados: false, skipExec: true });
+          const leituraInicial = await iniciarInquisicao(baseDir, {
+            incluirMetadados: false,
+            skipExec: true,
+          });
           fileEntries = leituraInicial.fileEntries; // contém conteúdo mas sem AST
 
           if (config.GUARDIAN_ENABLED) {
@@ -128,6 +139,11 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                 log.erro(`Falha ao exportar relatório de scan-only: ${(e as Error).message}`);
               }
             }
+            if (opts.json) {
+              console.log(
+                JSON.stringify({ modo: 'scan-only', totalArquivos: fileEntries.length }),
+              );
+            }
             if (!process.env.VITEST) process.exit(0);
             return; // evita continuar
           }
@@ -143,7 +159,12 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           );
           // Anexa erros de parsing coletados durante prepararComAst (não incluídos em executarInquisicao)
           const globalStore = globalThis as unknown as Record<string, unknown>;
-          const parseErros = (globalStore.__ORACULO_PARSE_ERROS__ as any[] | undefined) || [];
+          const parseErrosRaw =
+            (globalStore.__ORACULO_PARSE_ERROS__ as unknown[] | undefined) || [];
+          const parseErros: Ocorrencia[] = parseErrosRaw.filter(
+            (e): e is Ocorrencia =>
+              !!e && typeof e === 'object' && 'tipo' in e && 'mensagem' in e && 'relPath' in e,
+          );
           if (parseErros.length) {
             resultadoFinal.ocorrencias.push(...parseErros);
             // Limpa para evitar vazamento entre execuções
@@ -159,12 +180,23 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             tiposOcorrencias[tipo] = (tiposOcorrencias[tipo] ?? 0) + 1;
             if (occ.nivel === 'erro') temErro = true;
           }
+          // Métricas específicas de parse agregados
+          const totalParseErrosOriginais = (globalThis as any).__ORACULO_PARSE_ERROS_ORIGINAIS__ as
+            | number
+            | undefined;
+          const parseAggregatedMetric = {
+            totalOriginais: totalParseErrosOriginais || tiposOcorrencias['PARSE_ERRO'] || 0,
+            totalExibidos: tiposOcorrencias['PARSE_ERRO'] || 0,
+            agregados: totalParseErrosOriginais
+              ? Math.max(0, (totalParseErrosOriginais || 0) - (tiposOcorrencias['PARSE_ERRO'] || 0))
+              : 0,
+          };
           // Garantia: parse errors sempre elevam a severidade mesmo que nivel não tenha sido propagado
           if (!temErro && tiposOcorrencias['PARSE_ERRO'] > 0) {
             temErro = true;
           }
 
-          if (!config.COMPACT_MODE) {
+          if (!config.COMPACT_MODE && !opts.json) {
             const alinhamentos = await alinhamentoEstrutural(fileEntriesComAst, baseDir);
             const alinhamentosValidos = alinhamentos.map((a) => ({ ...a, ideal: a.ideal ?? '' }));
             gerarRelatorioEstrutura(alinhamentosValidos);
@@ -181,7 +213,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             });
           }
 
-          if (config.REPORT_EXPORT_ENABLED) {
+          if (config.REPORT_EXPORT_ENABLED && !opts.json) {
             log.info(chalk.bold('\n💾 Exportando relatórios detalhados...\n'));
             const ts = new Date().toISOString().replace(/[:.]/g, '-');
             const dir =
@@ -244,27 +276,46 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             log.sucesso(`Relatórios exportados para: ${dir}`);
           }
 
-          if (totalOcorrencias === 0) {
-            log.sucesso(
-              chalk.bold('\n✨ Oráculo: Repositório impecável! Nenhum problema detectado.\n'),
-            );
+          if (opts.json) {
+            const saida = {
+              status: temErro ? 'erro' : 'ok',
+              guardian: guardianResultado ? guardianResultado.status : 'nao-verificado',
+              totalArquivos: fileEntriesComAst.length,
+              totalOcorrencias: resultadoFinal.ocorrencias.length,
+              tiposOcorrencias,
+              parseErros: parseAggregatedMetric,
+              ocorrencias: resultadoFinal.ocorrencias.map((o) => ({
+                tipo: o.tipo,
+                relPath: o.relPath,
+                mensagem: o.mensagem,
+                nivel: o.nivel,
+              })),
+            };
+            console.log(JSON.stringify(saida));
+            if (temErro) {
+              if (!process.env.VITEST) process.exit(1);
+            } else if (!process.env.VITEST) process.exit(0);
           } else {
-            log.aviso(
-              chalk.bold(
-                `\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`,
-              ),
-            );
-            // Exibe resumo agrupado
-            log.info('Resumo dos tipos de problemas encontrados:');
-            for (const [tipo, qtd] of Object.entries(tiposOcorrencias)) {
-              log.info(`  - ${tipo}: ${qtd}`);
+            if (totalOcorrencias === 0) {
+              log.sucesso(
+                chalk.bold('\n✨ Oráculo: Repositório impecável! Nenhum problema detectado.\n'),
+              );
+            } else {
+              log.aviso(
+                chalk.bold(
+                  `\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`,
+                ),
+              );
+              log.info('Resumo dos tipos de problemas encontrados:');
+              for (const [tipo, qtd] of Object.entries(tiposOcorrencias)) {
+                log.info(`  - ${tipo}: ${qtd}`);
+              }
+              if (temErro) {
+                if (!process.env.VITEST) process.exit(1);
+              } else if (!process.env.VITEST) {
+                process.exit(0);
+              }
             }
-            // Só retorna código 1 se houver erro crítico
-             if (temErro) {
-               if (!process.env.VITEST) process.exit(1);
-             } else if (!process.env.VITEST) {
-               process.exit(0);
-             }
           }
         } catch (error) {
           log.erro(
