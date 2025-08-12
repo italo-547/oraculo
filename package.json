@@ -17,13 +17,14 @@
     "node": ">=24.0.4"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "prebuild": "rimraf dist",
-    "build": "tsc",
-    "start": "node ./dist/cli.js",
-    "diagnosticar": "node ./dist/cli.js diagnosticar",
-    "lint": "eslint \"src/**/*.ts\"",
-    "format": "prettier --check \"src/**/*.ts\""
+  "typecheck": "tsc --noEmit",
+  "prebuild": "rimraf dist",
+  "build": "tsc",
+  "start": "node ./dist/cli.js",
+  "diagnosticar": "node ./dist/cli.js diagnosticar",
+  "lint": "eslint \"src/**/*.ts\"",
+  "format": "prettier --check \"src/**/*.ts\"",
+  "test": "vitest run"
   },
   "keywords": [
     "cli",
