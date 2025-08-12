@@ -91,8 +91,10 @@ export const analistaFuncoesLongas = {
 
     // Função recursiva para NodePath real
     function analisarRecursivo(
-      path: NodePath | { node: unknown; traverse?: (visitors: Record<string, (p: NodePath) => void>) => void },
-      aninhamento: number = 0
+      path:
+        | NodePath
+        | { node: unknown; traverse?: (visitors: Record<string, (p: NodePath) => void>) => void },
+      aninhamento: number = 0,
     ) {
       const node = 'node' in path ? path.node : path;
       const type = (node as { type?: string }).type;
@@ -131,12 +133,17 @@ export const analistaFuncoesLongas = {
 
     // 2. AST puro ou mock: só processa body do File, nunca recursiona
     const fileNode =
-      ast && typeof ast === 'object' && 'node' in ast && (ast as { node: unknown }).node &&
-        (ast as { node: { type?: string; body?: unknown[] } }).node.type === 'File' &&
-        Array.isArray((ast as { node: { body?: unknown[] } }).node.body)
+      ast &&
+      typeof ast === 'object' &&
+      'node' in ast &&
+      (ast as { node: unknown }).node &&
+      (ast as { node: { type?: string; body?: unknown[] } }).node.type === 'File' &&
+      Array.isArray((ast as { node: { body?: unknown[] } }).node.body)
         ? ((ast as { node: unknown }).node as unknown as { body: unknown[] })
-        : ast && typeof ast === 'object' && (ast as { type?: string }).type === 'File' &&
-          Array.isArray((ast as { body?: unknown[] }).body)
+        : ast &&
+            typeof ast === 'object' &&
+            (ast as { type?: string }).type === 'File' &&
+            Array.isArray((ast as { body?: unknown[] }).body)
           ? (ast as unknown as { body: unknown[] })
           : null;
 
@@ -144,7 +151,8 @@ export const analistaFuncoesLongas = {
       const body = fileNode.body as unknown[];
       for (const child of body) {
         if (
-          typeof child === 'object' && child !== null &&
+          typeof child === 'object' &&
+          child !== null &&
           ((child as { type?: string }).type === 'FunctionDeclaration' ||
             (child as { type?: string }).type === 'FunctionExpression' ||
             (child as { type?: string }).type === 'ArrowFunctionExpression')

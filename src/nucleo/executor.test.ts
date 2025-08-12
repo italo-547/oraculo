@@ -23,33 +23,29 @@ describe('executarInquisicao', () => {
       {
         nome: 'global1',
         global: true,
-        aplicar: vi
-          .fn()
-          .mockResolvedValue({
-            tipo: 'info',
-            nivel: 'info',
-            mensagem: 'ok',
-            relPath: '',
-            arquivo: '',
-            linha: 0,
-          }),
+        aplicar: vi.fn().mockResolvedValue({
+          tipo: 'info',
+          nivel: 'info',
+          mensagem: 'ok',
+          relPath: '',
+          arquivo: '',
+          linha: 0,
+        }),
       },
       {
         nome: 'porArquivo',
         global: false,
         test: (relPath: string) => relPath === 'a',
-        aplicar: vi
-          .fn()
-          .mockResolvedValue([
-            {
-              tipo: 'aviso',
-              nivel: 'aviso',
-              mensagem: 'warn',
-              relPath: 'a',
-              arquivo: 'a',
-              linha: 1,
-            },
-          ]),
+        aplicar: vi.fn().mockResolvedValue([
+          {
+            tipo: 'aviso',
+            nivel: 'aviso',
+            mensagem: 'warn',
+            relPath: 'a',
+            arquivo: 'a',
+            linha: 1,
+          },
+        ]),
       },
     ];
     const resultado = await executarInquisicao(fileEntries, tecnicas as any, '/tmp', {});
@@ -100,16 +96,14 @@ describe('executarInquisicao', () => {
       { relPath: 'a', content: 'abc', fullPath: '/tmp/a', ast: undefined as any },
       { relPath: 'b', content: 'def', fullPath: '/tmp/b', ast: undefined as any },
     ];
-    const aplicarMock = vi
-      .fn()
-      .mockResolvedValue({
-        tipo: 'info',
-        nivel: 'info',
-        mensagem: 'ok',
-        relPath: '',
-        arquivo: '',
-        linha: 0,
-      });
+    const aplicarMock = vi.fn().mockResolvedValue({
+      tipo: 'info',
+      nivel: 'info',
+      mensagem: 'ok',
+      relPath: '',
+      arquivo: '',
+      linha: 0,
+    });
     const tecnicas = [
       {
         nome: 'semTest',

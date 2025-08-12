@@ -7,9 +7,7 @@ import type { Node } from '@babel/types';
 /**
  * Extrai informações do handler de comando, se for função válida.
  */
-export function extractHandlerInfo(
-  node: Node,
-): {
+export function extractHandlerInfo(node: Node): {
   func: Node;
   bodyBlock: t.BlockStatement;
   isAnonymous?: boolean;

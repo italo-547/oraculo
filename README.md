@@ -1,4 +1,3 @@
-
 # Oráculo CLI
 
 [![CI](https://github.com/aynsken/oraculo/actions/workflows/ci.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/ci.yml)
@@ -28,7 +27,6 @@ cd oraculo
 npm install
 ```
 
-
 ## 🖥️ Como usar
 
 ### Rodar a CLI
@@ -39,6 +37,7 @@ node dist/cli.js <comando>
 ```
 
 Exemplo:
+
 ```bash
 node dist/cli.js diagnosticar
 node dist/cli.js podar
@@ -102,11 +101,13 @@ oraculo <comando>
 ## 🧪 Testes
 
 Rodar todos os testes:
+
 ```bash
 npm test
 ```
 
 Ver cobertura:
+
 ```bash
 npx vitest run --coverage
 ```

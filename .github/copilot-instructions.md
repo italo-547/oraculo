@@ -1,4 +1,3 @@
-
 ## Helpers Utilitários e Persistência de Estado
 
 Para evitar duplicidade e facilitar manutenção, **todas as funções auxiliares recorrentes** (persistência, manipulação de pendências, leitura/escrita de estado, etc.) devem ser centralizadas em arquivos utilitários, preferencialmente em `src/zeladores/util/`.
@@ -56,13 +55,11 @@ await salvarEstado(caminho, json); // para json
 
 ---
 
-
 # Copilot Instructions for Oráculo CLI
 
 ## Visão Geral
 
 Este projeto é uma CLI modular para análise, diagnóstico e manutenção de projetos, organizada em múltiplos domínios (analistas, arquitetos, zeladores, guardian, etc). O código é escrito em TypeScript ESM puro, com tipagem rigorosa e uso extensivo de aliases de importação.
-
 
 ## Estrutura Principal
 
@@ -74,7 +71,6 @@ Este projeto é uma CLI modular para análise, diagnóstico e manutenção de pr
 - `src/tipos/tipos.ts`: Tipos e interfaces compartilhados.
 - `src/zeladores/util/`: Helpers utilitários e persistência de estado.
 
-
 ## Convenções e Padrões
 
 - **Helpers centralizados**: Persistência, manipulação de pendências e relatórios sempre via helpers em `src/zeladores/util/`.
@@ -84,7 +80,6 @@ Este projeto é uma CLI modular para análise, diagnóstico e manutenção de pr
 - **ESM puro**: Não use `require`; apenas `import`/`export`.
 - **Sem comentários removidos**: `removeComments: false` no build.
 
-
 ## Fluxos de Trabalho
 
 - **Build**: Use o TypeScript com as opções do `tsconfig.json`. Saída em `dist/`.
@@ -93,7 +88,6 @@ Este projeto é uma CLI modular para análise, diagnóstico e manutenção de pr
 - **Testes**: (Ainda não implementados, mas previstos no roadmap.)
 - **Persistência**: Sempre utilize os helpers centralizados para leitura/escrita de arquivos de estado, relatórios e snapshots.
 
-
 ## Exemplos de Uso de Alias
 
 ```ts
@@ -101,13 +95,11 @@ import { executar } from '@nucleo/executor';
 import { analisarPadroes } from '@analistas/analista-padroes-uso';
 ```
 
-
 ## Decisões Arquiteturais
 
 - Separação clara entre análise (analistas), diagnóstico (arquitetos), correção (zeladores) e verificação (guardian).
 - Relatórios e persistência de estado sempre via helpers centralizados.
 - Tipos centralizados para garantir consistência entre domínios.
-
 
 ## Dependências e Requisitos
 
@@ -134,7 +126,6 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 - Consulte `src/zeladores/util/persistencia.ts` para padrão de helpers de persistência.
 
 ---
-
 
 ---
 

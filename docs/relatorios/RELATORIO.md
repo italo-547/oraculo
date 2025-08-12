@@ -1,4 +1,3 @@
-
 # 📘 Relatório de Progresso — Projeto Oráculo CLI
 
 **Última atualização:** 2025-08-11
@@ -80,7 +79,6 @@
 - Caminhos com `@aliases` definidos e consistentes
 
 ---
-
 
 ## ✅ Qualidade de Testes e Cobertura
 

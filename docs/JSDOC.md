@@ -36,7 +36,9 @@ function soma(a, b) {
  * @async
  * @returns {Promise<void>}
  */
-async function executar() { /* ... */ }
+async function executar() {
+  /* ... */
+}
 ```
 
 ## Recomendações
