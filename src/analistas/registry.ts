@@ -3,6 +3,7 @@ import { analistaPadroesUso } from './analista-padroes-uso.js';
 import { detectorDependencias } from './detector-dependencias.js';
 import { detectorEstrutura } from './detector-estrutura.js';
 import { ritualComando } from './ritual-comando.js';
+import { analistaTodoComments } from './analista-todo-comments.js';
 import type { Analista, Tecnica } from '../tipos/tipos.js';
 
 // Registro central de analistas. Futuro: lazy loading, filtros por categoria.
@@ -12,6 +13,7 @@ export const registroAnalistas: (Analista | Tecnica)[] = [
   analistaFuncoesLongas,
   analistaPadroesUso as unknown as Tecnica,
   ritualComando as unknown as Tecnica,
+  analistaTodoComments as unknown as Tecnica,
 ];
 
 export function listarAnalistas() {

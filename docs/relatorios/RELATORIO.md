@@ -1,6 +1,6 @@
 # 📘 Relatório de Progresso — Projeto Oráculo CLI
 
-**Última atualização:** 2025-08-12
+**Última atualização:** 2025-08-12 (atualizado com E2E ampliado e gate de cobertura)
 
 ---
 
@@ -82,11 +82,12 @@
 
 ## ✅ Qualidade de Testes e Cobertura
 
-- Cobertura de testes: ~97% statements, 100% funções, quase todos os fluxos de negócio e erros relevantes cobertos (304 testes verdes em 2025-08-12).
-- Testes robustos: Cobrem CLI, núcleo, zeladores, plugins (execução real e falhas), integrações e principais erros.
-- Isolamento e manutenção: Mocks centralizados, helpers, fácil de manter e evoluir.
-- Gating de saída: `process.exit` suprimido durante testes via `process.env.VITEST` para permitir inspeção de logs sem abortar runner.
-- O que falta: Branches de erro muito raros, checagens defensivas ou integrações externas. Não vale a pena forçar 100% só pelo número.
+- Cobertura (última execução): ~97% statements, ~100% funções. 309 testes verdes.
+- Camadas exercitadas: unidade, integração, persistência/guardian, comandos CLI e E2E binário pós-build (5 cenários).
+- E2E adicionados: scan-only, scan-only export, diagnóstico completo benigno, guardian baseline, cenário de erro determinístico (exit code 1).
+- Gate de cobertura automatizado (scripts `coverage` + `coverage:gate` no CI e build).
+- `process.exit` suprimido durante testes via `process.env.VITEST` garantindo inspeção segura.
+- O que falta: casos de erro muito raros (falhas de IO inesperadas, corrupções) e métricas de performance.
 
 ## 🔎 Diagnóstico Realista
 
@@ -94,16 +95,16 @@
 - Risco residual muito baixo. O que falta não compromete a segurança, estabilidade ou evolução.
 - Recomendação: Priorize cobertura de fluxos de negócio e integrações reais. Não é necessário perseguir 100% de cobertura em todos os arquivos.
 
-## 🔜 Sugestões Prioritárias (pré-produção)
+## 🔜 Sugestões Prioritárias (próxima etapa)
 
-1. **Flag `--scan-only`**: Implementar para permitir varredura sem execução de técnicas.
-2. **Testes ponta-a-ponta**: Executar binário pós-build simulando cenários reais e múltiplas flags combinadas.
-3. **Automação e DX**: Pipeline CI com lint, format e cobertura mínima; pre-commit hooks.
-4. **Performance/Escalabilidade**: Stress test em repositórios grandes; medir tempo médio de scan e AST parse.
-5. **Plugins**: Documentar criação e contrato; sandbox para exemplos.
-6. **Segurança**: Sanitização de entrada, validação de caminhos e monitoramento de dependências.
-7. **Baseline de performance**: Relatório comparativo por commit para detectar regressões.
-8. **Observabilidade**: Métricas opcionais (tempo por técnica, arquivos ignorados, cache hits AST).
+1. Guia de criação de plugins (contrato + exemplo mínimo + melhores práticas de falha isolada).
+2. Baseline de performance (script gerador + coleta de tempos: scan, AST parse, técnicas).
+3. Observabilidade leve: log opcional de tempo por técnica (flag experimental).
+4. Métricas internas opcionais (cache hits, arquivos ignorados) agregadas a relatório JSON exportado.
+5. Sanitização/validação adicional de entrada (paths relativos, glob injection prevention).
+6. Pre-commit hooks (lint, typecheck rápido, test:unit) via Husky (opcional).
+7. Alinhamento de licença (README diz MIT, package.json está 'Restrita' – decidir e unificar).
+8. Guia de padronização de código (nomenclatura, diretórios, convenções de ocorrências).
 
 > **Recomendação:** Priorize documentação e automação antes de expandir funcionalidades. Isso garante base sólida, facilita onboarding e reduz riscos ao entrar em produção.
 

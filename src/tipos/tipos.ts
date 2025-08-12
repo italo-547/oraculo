@@ -109,7 +109,7 @@ export function ocorrenciaParseErro(data: {
   linha?: number;
   coluna?: number;
 }): OcorrenciaParseErro {
-  return criarOcorrencia<OcorrenciaParseErro>({ tipo: 'PARSE_ERRO', ...data });
+  return criarOcorrencia<OcorrenciaParseErro>({ tipo: 'PARSE_ERRO', nivel: 'erro', ...data });
 }
 
 export type TecnicaAplicarResultado = Ocorrencia | Ocorrencia[] | null | undefined;

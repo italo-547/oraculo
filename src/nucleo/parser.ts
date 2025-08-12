@@ -11,14 +11,7 @@ function parseComBabel(codigo: string, plugins?: string[]): BabelFile | null {
     plugins: (Array.isArray(plugins) ? plugins : defaultPlugins) as ParserOptions['plugins'],
   };
 
-  try {
-    return babelParse(codigo, options);
-  } catch (err) {
-    log.debug(
-      `⚠️ Falha no parser Babel: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
-    );
-    return null;
-  }
+  return babelParse(codigo, options);
 }
 
 function parseComKotlin(_codigo: string): null {

@@ -89,6 +89,17 @@ export async function prepararComAst(
               >;
             } else {
               ast = undefined;
+              // Registrar ocorrência de parse inválido (erro sintático)
+              const globalStore2 = globalStore as unknown as Record<string, unknown>;
+              const lista = (globalStore2.__ORACULO_PARSE_ERROS__ as OcorrenciaParseErro[] | undefined) || [];
+              lista.push(
+                ocorrenciaParseErro({
+                  mensagem: 'Erro de parsing: AST não gerada (código possivelmente inválido).',
+                  relPath: entry.relPath,
+                  origem: 'parser',
+                }),
+              );
+              globalStore2.__ORACULO_PARSE_ERROS__ = lista;
             }
             metricas.parsingTimeMs += performance.now() - inicioParse;
             metricas.cacheMiss++;

@@ -19,6 +19,8 @@ program
   )
   .option('-e, --export', 'gera arquivos de relatório detalhados (JSON e Markdown)')
   .option('-d, --dev', 'ativa modo de desenvolvimento (logs de debug)');
+// Flag experimental implementada
+program.option('--scan-only', 'executa apenas varredura e priorização sem AST ou técnicas');
 // Flags experimentais de config dinâmica (exemplos comuns)
 program
   .option('--log-estruturado', 'ativa logging estruturado JSON')
@@ -36,12 +38,14 @@ interface OraculoGlobalFlags {
   logEstruturado?: boolean;
   incremental?: boolean;
   meticas?: boolean;
+  scanOnly?: boolean;
 }
 function aplicarFlagsGlobais(opts: unknown) {
   const flags = opts as OraculoGlobalFlags;
   config.REPORT_SILENCE_LOGS = Boolean(flags.silence);
   config.REPORT_EXPORT_ENABLED = Boolean(flags.export);
   config.DEV_MODE = Boolean(flags.dev);
+  config.SCAN_ONLY = Boolean(flags.scanOnly);
   // Se silence está ativo, verbose é sempre falso
   config.VERBOSE = flags.silence ? false : Boolean(flags.verbose);
   const overrides: Record<string, unknown> = {};

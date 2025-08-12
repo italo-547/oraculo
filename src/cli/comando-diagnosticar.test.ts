@@ -114,6 +114,26 @@ describe('comandoDiagnosticar', () => {
     expect(aplicarFlagsGlobais).toHaveBeenCalled();
   });
 
+  it('executa somente varredura com --scan-only (sem AST ou técnicas)', async () => {
+    vi.clearAllMocks();
+    const program = new Command();
+    const aplicarFlagsGlobais = vi.fn();
+    const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
+  const { config } = await import('../nucleo/constelacao/cosmos.js');
+  config.SCAN_ONLY = true; // força modo scan-only
+    const { prepararComAst, executarInquisicao } = await import('../nucleo/inquisidor.js');
+    const prepararComAstMock = vi.mocked(prepararComAst);
+    const executarInquisicaoMock = vi.mocked(executarInquisicao);
+    const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
+  // adiciona flag global no root (definida em cli.ts normalmente)
+  (program as any).option?.('--scan-only');
+  program.addCommand(cmd);
+  await program.parseAsync(['node', 'cli', 'diagnosticar', '--scan-only']);
+    expect(prepararComAstMock).not.toHaveBeenCalled();
+    expect(executarInquisicaoMock).not.toHaveBeenCalled();
+    expect(log.info).toHaveBeenCalledWith(expect.stringMatching(/Modo scan-only/));
+  });
+
   it('executa diagnóstico com guardian-check e cobre todos os status', async () => {
     vi.clearAllMocks();
     const program = new Command();
@@ -215,6 +235,7 @@ describe('comandoDiagnosticar', () => {
   const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
   const { config } = await import('../nucleo/constelacao/cosmos.js');
   config.REPORT_EXPORT_ENABLED = true;
+  config.SCAN_ONLY = false; // garante modo normal
   const { gerarRelatorioMarkdown } = await import('../relatorios/gerador-relatorio.js');
   const { salvarEstado } = await import('../zeladores/util/persistencia.js');
     const cmd = comandoDiagnosticar(aplicarFlagsGlobais);

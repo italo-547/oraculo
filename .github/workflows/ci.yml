@@ -21,8 +21,14 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      - name: Rodar ESLint
-        run: npx eslint --ext .ts src
+      - name: Verificações rápidas (lint + type + unit)
+        run: npm run check
 
-      - name: Rodar testes
-        run: npx vitest run
+      - name: Cobertura completa
+        run: npm run coverage
+
+      - name: Gate de cobertura
+        run: npm run coverage:gate
+
+      - name: Testes E2E (binário)
+        run: npm run build && npm run test:e2e

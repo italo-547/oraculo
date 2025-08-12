@@ -62,7 +62,9 @@ it('cobre erro em lerEstado (catch de arquivo)', async () => {
   vi.spyOn(persist, 'lerEstado').mockRejectedValueOnce(new Error('erro lerEstado'));
   const onProgress = vi.fn();
   const fileMap = await scanRepository('/base', { onProgress });
-  expect(Object.keys(fileMap)).toHaveLength(0);
+  // Agora mantemos o arquivo no mapa mas com content null; onProgress registra o erro
+  expect(Object.keys(fileMap)).toContain('a.txt');
+  expect(fileMap['a.txt'].content).toBeNull();
   expect(onProgress).toHaveBeenCalledWith(expect.stringContaining('erro lerEstado'));
 });
 

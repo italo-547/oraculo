@@ -57,4 +57,7 @@ jobs:
           node dist/cli.js atualizar --help
 
       - name: Rodar testes e cobertura
-        run: npm test && npx nyc report
+        run: npm run coverage
+
+      - name: Gate de cobertura
+        run: npm run coverage:gate

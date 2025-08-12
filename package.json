@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Oráculo: Análise, limpeza e organização de repositórios",
   "author": "Italo C Lopes",
-  "license": "Restrita",
+  "license": "MIT",
   "main": "./dist/cli.js",
   "bin": {
     "oraculo": "./dist/cli.js"
@@ -23,8 +23,14 @@
   "start": "node ./dist/cli.js",
   "diagnosticar": "node ./dist/cli.js diagnosticar",
   "lint": "eslint \"src/**/*.ts\"",
-  "format": "prettier --check \"src/**/*.ts\"",
-  "test": "vitest run"
+  "format": "prettier --check \"**/*.{ts,md}\"",
+  "format:fix": "prettier --write \"**/*.{ts,md}\"",
+  "test": "vitest run",
+  "test:unit": "vitest run --ignore 'src/cli/e2e-bin.test.ts'",
+  "test:e2e": "vitest run src/cli/e2e-bin.test.ts",
+  "coverage": "vitest run --coverage",
+  "coverage:gate": "vitest run --coverage --reporter=json --outputFile=coverage-temp.json && node scripts/coverage-gate.cjs",
+  "check": "npm run lint && npm run typecheck && npm run test:unit"
   },
   "keywords": [
     "cli",

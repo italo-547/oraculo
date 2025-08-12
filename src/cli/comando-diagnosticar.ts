@@ -105,6 +105,33 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             }
           }
 
+          // Se modo somente varredura estiver ativo, encerramos após coleta inicial (antes de preparar AST)
+          if (config.SCAN_ONLY) {
+            log.info(chalk.bold(`\n🗺️  Modo scan-only: ${fileEntries.length} arquivos mapeados.`));
+            if (config.REPORT_EXPORT_ENABLED) {
+              try {
+                const ts = new Date().toISOString().replace(/[:.]/g, '-');
+                const dir =
+                  typeof config.REPORT_OUTPUT_DIR === 'string'
+                    ? config.REPORT_OUTPUT_DIR
+                    : path.join(baseDir, 'oraculo-reports');
+                await import('node:fs').then((fs) => fs.promises.mkdir(dir, { recursive: true }));
+                const nome = `oraculo-scan-${ts}`;
+                const resumo = {
+                  modo: 'scan-only',
+                  totalArquivos: fileEntries.length,
+                  timestamp: new Date().toISOString(),
+                };
+                await salvarEstado(path.join(dir, `${nome}.json`), resumo);
+                log.sucesso(`Relatório de scan salvo em ${dir}`);
+              } catch (e) {
+                log.erro(`Falha ao exportar relatório de scan-only: ${(e as Error).message}`);
+              }
+            }
+            if (!process.env.VITEST) process.exit(0);
+            return; // evita continuar
+          }
+
           // 2) Preparar AST somente uma vez e executar técnicas (evita segunda inquisição completa)
           const fileEntriesComAst = await prepararComAst(fileEntries, baseDir);
           const resultadoFinal = await executarInquisicao(
@@ -114,7 +141,14 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             guardianResultado,
             { verbose: config.VERBOSE, compact: config.COMPACT_MODE },
           );
-
+          // Anexa erros de parsing coletados durante prepararComAst (não incluídos em executarInquisicao)
+          const globalStore = globalThis as unknown as Record<string, unknown>;
+          const parseErros = (globalStore.__ORACULO_PARSE_ERROS__ as any[] | undefined) || [];
+          if (parseErros.length) {
+            resultadoFinal.ocorrencias.push(...parseErros);
+            // Limpa para evitar vazamento entre execuções
+            delete globalStore.__ORACULO_PARSE_ERROS__;
+          }
           totalOcorrencias += resultadoFinal.ocorrencias.length;
 
           // Resumo agrupado de tipos de problemas
@@ -124,6 +158,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             const tipo = occ.tipo ?? 'desconhecido';
             tiposOcorrencias[tipo] = (tiposOcorrencias[tipo] ?? 0) + 1;
             if (occ.nivel === 'erro') temErro = true;
+          }
+          // Garantia: parse errors sempre elevam a severidade mesmo que nivel não tenha sido propagado
+          if (!temErro && tiposOcorrencias['PARSE_ERRO'] > 0) {
+            temErro = true;
           }
 
           if (!config.COMPACT_MODE) {

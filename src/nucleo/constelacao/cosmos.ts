@@ -84,6 +84,8 @@ export const configDefault = {
   STATE_DIR: ORACULO_STATE,
   ZELADOR_STATE_DIR: ORACULO_STATE,
   COMPACT_MODE: false,
+  // Modo somente varredura (sem AST, sem técnicas) quando ativado por flag
+  SCAN_ONLY: false,
 };
 
 // Clonamos para instância mutável

@@ -4,17 +4,19 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 ## Para Fazer
 
-- [ ] Implementar flag `--scan-only`
-- [ ] Testes ponta-a-ponta executando binário buildado (CLI real)
+- [x] Implementar flag `--scan-only`
+- [x] Testes ponta-a-ponta executando binário buildado (CLI real) – 5 cenários
+- [x] Automação: adicionar lint/format ao CI e gate de cobertura
 - [ ] Guia de criação de plugins (exemplos práticos)
 - [ ] Baseline de performance (scan + AST parse) e relatório comparativo
 - [ ] Métricas internas opcionais (tempo por técnica, cache hits)
-- [ ] Automação: adicionar lint/format ao CI e gate de cobertura
-- [ ] Monitor de dependências (dependabot + script npm-check-updates)
+- [ ] Monitor de dependências (dependabot + script npm-check-updates) – workflow existe, falta documentar resultado automático
 - [ ] Sanitização/validação de entradas da CLI
 - [ ] Documentar contrato de saída para guardian (statuses)
 - [ ] Revisar logs DEBUG e consolidar flag
 - [ ] Documentar estratégia de mocks de AST (centralização)
+- [x] Licença final: MIT (sem restrições adicionais)
+- [ ] Guia de padronização de código / convenções
 
 ## Feito
 
@@ -24,7 +26,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Atualização do `.github/copilot-instructions.md` para refletir padrões atuais
 - [x] Gating de `process.exit` via `process.env.VITEST` nos testes
 - [x] README atualizado com arquitetura modular e fluxo de desenvolvimento
-- [x] RELATORIO.md atualizado (data 2025-08-12, 304 testes verdes)
+- [x] RELATORIO.md atualizado (data 2025-08-12, 309 testes verdes + E2E ampliado)
 
 ---
 

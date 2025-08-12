@@ -67,7 +67,7 @@ Você pode usar as flags globais em qualquer comando para controlar o nível de 
 | `--verbose` | Exibe logs detalhados de cada arquivo e técnica analisada (ignorado se `--silence` ativo) |
 | `--export`  | Gera arquivos de relatório detalhados (JSON e Markdown)                                   |
 | `--dev`     | Ativa modo de desenvolvimento (logs de debug)                                             |
-| `--scan-only` (planejada) | Executa somente varredura e priorização, sem aplicar técnicas                |
+| `--scan-only` | Executa somente varredura e priorização, sem aplicar técnicas                |
 
 #### Exemplos de uso
 
@@ -91,6 +91,8 @@ oraculo diagnosticar --export --verbose --silence
 ### Plugins
 
 Plugins podem ser carregados (ex: corretores / zeladores) para aplicar transformações. Recomenda-se isolar lógica em módulos ESM e seguir a tipagem definida em `src/tipos/tipos.ts`. Falhas em plugins não interrompem a execução principal: são logadas com nível aviso.
+
+Guia completo de extensões e criação de técnicas: veja `docs/plugins/GUIA.md`.
 
 ### Persistência e Helpers
 
@@ -124,7 +126,7 @@ node dist/cli.js --help
 
 ## 🧪 Testes
 
-Estado atual: 304 testes passando (data: 2025-08-12). A contagem pode evoluir.
+Estado atual: 309 testes passando (data: 2025-08-12). A contagem pode evoluir.
 
 Rodar todos os testes:
 
@@ -171,17 +173,54 @@ src/
 
 ## 📋 Roadmap (recorte ativo)
 
-- [ ] Implementar flag `--scan-only`
-- [ ] Testes ponta-a-ponta executando binário buildado
-- [ ] Documentar criação de plugins (guia prático)
+- [x] Implementar flag `--scan-only`
+- [x] Testes ponta-a-ponta executando binário buildado (E2E básicos + guardian + exit code erro)
+- [x] Integração contínua com lint + format + coverage gate (CI + build)
+- [x] Documentar criação de plugins (guia prático + exemplo mínimo)
 - [ ] Métricas de performance (scan grande / memória)
-- [ ] Integração contínua com lint + format + coverage gate
-- [ ] Relatório de baseline de performance
+- [ ] Baseline comparativa de performance por commit
+- [ ] Relatório de baseline de performance automatizado
+- [ ] Guia de padronização / estilo de código (linters + convenções)
+
+## 🧬 Camadas de Teste (Resumo)
+
+| Camada | Objetivo | Exemplos |
+| ------ | -------- | -------- |
+| Unidade | Validar funções/helpers isolados | analistas individuais |
+| Integração | Fluxos entre módulos | inquisidor + executor |
+| Guardian/Persistência | Baseline, diff, hash | `guardian/*` |
+| CLI Commands | Comportamento de comandos sem build | `comando-*.test.ts` |
+| E2E Binário | Execução real pós-build | `e2e-bin.test.ts` |
+
+### Cenários E2E Atuais
+
+- Modo `--scan-only` (exit 0)
+- `--scan-only --export` gera arquivo JSON
+- Diagnóstico completo benigno (exit 0)
+- Criação de baseline guardian (exit 0)
+- Ocorrência com erro técnico gera exit code 1
+
+Detalhes completos em `docs/relatorios/camadas-testes.md`.
 
 ---
 
 **Autor:** Italo C Lopes  
 **Licença:** MIT
+
+## 🛡️ Licença
+
+Distribuído sob a licença MIT. Uso comercial, fork, modificação e redistribuição são permitidos. Atribuição é bem-vinda, mas não obrigatória.
+
+### Por que MIT?
+
+- Reduz fricção de adoção em empresas (compliance já conhece o texto padrão)
+- Maximiza probabilidade de contribuições externas (licença reconhecida e permissiva)
+- Evita ambiguidade de termos subjetivos como “uso comercial” / “revenda”
+- Simplifica packaging em registries, distros e automações (SPDX: MIT)
+- Permite que qualquer pessoa experimente, derive e integre sem negociar exceções
+- Foco do projeto é impacto e comunidade, não captura de valor via restrição
+
+Se surgir necessidade futura de oferecer extras proprietários, dá para fazer via modelo open-core sem alterar o core livre.
 
 ---
 Notas rápidas de manutenção:
