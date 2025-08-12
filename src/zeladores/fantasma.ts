@@ -7,7 +7,8 @@ import type { ArquivoFantasma, FileMap } from '../tipos/tipos.js';
 
 const EXTENSOES_ALVO = ['.js', '.ts', '.jsx', '.tsx'];
 const IGNORAR_PADROES = ['test', 'mock', 'spec', 'stories'];
-const INATIVIDADE_DIAS = Number(process.env.GHOST_DAYS) || 30;
+// Janela de inatividade mínima para considerar fantasma (default mais conservador)
+const INATIVIDADE_DIAS = Number(process.env.GHOST_DAYS) || 45;
 const MILIS_POR_DIA = 86_400_000;
 
 function estaSendoReferenciado(relPath: string, grafo: Map<string, Set<string>>): boolean {
@@ -34,14 +35,21 @@ export async function detectarFantasmas(
     try {
       const stat = await fs.stat(fullPath);
       const diasInativo = Math.floor((agora - stat.mtimeMs) / MILIS_POR_DIA);
+      // Se o grafo ainda não foi populado (execução isolada da poda), não arrisca classificar
+      if (grafoDependencias.size === 0) continue;
       const referenciado = estaSendoReferenciado(relPath, grafoDependencias);
 
-      if (!referenciado || diasInativo > INATIVIDADE_DIAS) {
-        fantasmas.push({
-          arquivo: relPath,
-          referenciado,
-          diasInativo,
-        });
+      // Regras de exclusão preventiva (não marcar como fantasma):
+      if (relPath.startsWith('src/')) {
+        // Protege arquivos fonte recentes ou de index/entry mesmo que não referenciados ainda
+        if (/\/index\.(ts|js|tsx|jsx)$/.test(relPath)) continue;
+      }
+      if (/\.(d\.ts)$/.test(relPath)) continue; // declarações
+      if (/config\.(ts|js|cjs|mjs)$/.test(relPath)) continue;
+
+      // NOVA heurística (mais segura): somente é fantasma se (não referenciado) E (inativo acima do limiar)
+      if (!referenciado && diasInativo > INATIVIDADE_DIAS) {
+        fantasmas.push({ arquivo: relPath, referenciado, diasInativo });
       }
     } catch {
       // Silenciosamente ignora arquivos inacessíveis

@@ -1,6 +1,6 @@
 # 📘 Relatório de Progresso — Projeto Oráculo CLI
 
-**Última atualização:** 2025-08-11
+**Última atualização:** 2025-08-12
 
 ---
 
@@ -82,9 +82,10 @@
 
 ## ✅ Qualidade de Testes e Cobertura
 
-- Cobertura de testes: ~97% statements, 100% funções, quase todos os fluxos de negócio e erros relevantes cobertos.
+- Cobertura de testes: ~97% statements, 100% funções, quase todos os fluxos de negócio e erros relevantes cobertos (304 testes verdes em 2025-08-12).
 - Testes robustos: Cobrem CLI, núcleo, zeladores, plugins (execução real e falhas), integrações e principais erros.
 - Isolamento e manutenção: Mocks centralizados, helpers, fácil de manter e evoluir.
+- Gating de saída: `process.exit` suprimido durante testes via `process.env.VITEST` para permitir inspeção de logs sem abortar runner.
 - O que falta: Branches de erro muito raros, checagens defensivas ou integrações externas. Não vale a pena forçar 100% só pelo número.
 
 ## 🔎 Diagnóstico Realista
@@ -95,13 +96,14 @@
 
 ## 🔜 Sugestões Prioritárias (pré-produção)
 
-1. **Documentação**: Atualizar README e RELATORIO.md, garantir instruções claras e comentários em helpers.
-2. **Automação e Dev Experience**: Pipeline de CI, lint/format, hooks de pre-commit.
-3. **Cobertura de Integração**: Testes ponta-a-ponta rodando a CLI real, múltiplos plugins/configs.
-4. **Performance/Escalabilidade**: Testes de stress, monitorar gargalos de I/O.
-5. **Manutenção/Refatoração**: Remover duplicidades, garantir uso de aliases, limpar dependências.
-6. **Segurança**: Validar entradas da CLI, monitorar vulnerabilidades.
-7. **Roadmap/Evolução**: Planejar próximos recursos e preparar para feedback de usuários.
+1. **Flag `--scan-only`**: Implementar para permitir varredura sem execução de técnicas.
+2. **Testes ponta-a-ponta**: Executar binário pós-build simulando cenários reais e múltiplas flags combinadas.
+3. **Automação e DX**: Pipeline CI com lint, format e cobertura mínima; pre-commit hooks.
+4. **Performance/Escalabilidade**: Stress test em repositórios grandes; medir tempo médio de scan e AST parse.
+5. **Plugins**: Documentar criação e contrato; sandbox para exemplos.
+6. **Segurança**: Sanitização de entrada, validação de caminhos e monitoramento de dependências.
+7. **Baseline de performance**: Relatório comparativo por commit para detectar regressões.
+8. **Observabilidade**: Métricas opcionais (tempo por técnica, arquivos ignorados, cache hits AST).
 
 > **Recomendação:** Priorize documentação e automação antes de expandir funcionalidades. Isso garante base sólida, facilita onboarding e reduz riscos ao entrar em produção.
 

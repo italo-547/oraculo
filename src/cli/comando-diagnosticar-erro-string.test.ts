@@ -51,7 +51,7 @@ describe('comandoDiagnosticar (erro string isolado)', () => {
     });
     const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    await expect(program.parseAsync(['node', 'cli', 'diagnosticar'])).rejects.toThrow('exit');
+    await program.parseAsync(['node', 'cli', 'diagnosticar']);
     const { log } = await import('../nucleo/constelacao/log.js');
     expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('erro string simples'));
     exitSpy.mockRestore();

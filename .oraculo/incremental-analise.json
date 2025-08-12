@@ -1,1 +1,28 @@
-{"versao":1,"arquivos":{"a.js":{"hash":"1","ocorrencias":[{"tipo":"X","mensagem":"x"}],"analistas":{"an":{"ocorrencias":3,"duracaoMs":30}},"reaproveitadoCount":0},"b.js":{"hash":"2","ocorrencias":[{"tipo":"X","mensagem":"x"}],"analistas":{"an":{"ocorrencias":1,"duracaoMs":5}},"reaproveitadoCount":5},"c.js":{"hash":"3","ocorrencias":[],"analistas":{"an":{"ocorrencias":0,"duracaoMs":1}},"reaproveitadoCount":0}}}
+{
+  "versao": 1,
+  "arquivos": {
+    "b.js": {
+      "hash": "ddfc5d5ff6d3e506",
+      "ocorrencias": [
+        {
+          "tipo": "Y",
+          "mensagem": "m",
+          "relPath": "b.js"
+        }
+      ],
+      "analistas": {
+        "t": {
+          "ocorrencias": 1,
+          "duracaoMs": 0.056199999999989814
+        }
+      },
+      "ultimaExecucaoMs": 1754991468815,
+      "reaproveitadoCount": 0
+    }
+  },
+  "estatisticas": {
+    "totalReaproveitamentos": 0,
+    "totalArquivosProcessados": 1,
+    "ultimaDuracaoMs": 2
+  }
+}

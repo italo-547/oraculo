@@ -85,7 +85,7 @@ Este projeto é uma CLI modular para análise, diagnóstico e manutenção de pr
 - **Build**: Use o TypeScript com as opções do `tsconfig.json`. Saída em `dist/`.
 - **Execução CLI**: Rode comandos via `node dist/cli.js <comando>` após build.
 - **Aliases**: Sempre importe módulos usando os aliases do `tsconfig.json`.
-- **Testes**: (Ainda não implementados, mas previstos no roadmap.)
+- **Testes**: Já implementados (Vitest). Durante testes `process.env.VITEST` deve impedir chamadas a `process.exit`.
 - **Persistência**: Sempre utilize os helpers centralizados para leitura/escrita de arquivos de estado, relatórios e snapshots.
 
 ## Exemplos de Uso de Alias
@@ -124,6 +124,7 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 - Veja `docs/RELATORIO.md` para histórico de refatorações e decisões recentes.
 - Consulte `tsconfig.json` para detalhes de build e aliases.
 - Consulte `src/zeladores/util/persistencia.ts` para padrão de helpers de persistência.
+- Veja `docs/relatorios/RELATORIO.md` para status atual (ex: contagem de testes).
 
 ---
 

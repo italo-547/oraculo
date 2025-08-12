@@ -155,10 +155,13 @@ export async function iniciarInquisicao(
   // Filtra arquivos meta que não devem influenciar priorização (ainda são analisados, mas não ranqueados no topo)
   const META_PATTERNS = [/^\.github\//, /^docs\//, /^\.oraculo\//, /^\.vscode\//];
   function isMeta(rel: string): boolean {
-    if (META_PATTERNS.some((r) => r.test(rel))) return true;
-    if (!rel.startsWith('src/') && /\.(md|MD)$/.test(rel)) return true;
-    if (!rel.startsWith('src/') && /^(package|tsconfig|eslint|vitest)\.(json|js|cjs|mjs)$/i.test(rel)) return true;
-    if (/^\.eslint-report\.json$/i.test(rel)) return true;
+    const norm = rel.replace(/\\/g, '/');
+    if (META_PATTERNS.some((r) => r.test(norm))) return true;
+    if (!norm.startsWith('src/') && /\.(md|MD)$/.test(norm)) return true;
+    if (!norm.startsWith('src/') && /^(package|tsconfig|eslint|vitest)\.(json|js|cjs|mjs)$/i.test(norm)) return true;
+    if (/^\.eslint-report\.json$/i.test(norm)) return true;
+    if (/^\.gitignore$/i.test(norm)) return true;
+    if (norm.startsWith('.oraculo/')) return true;
     return false;
   }
   const metaSet = new Set(entriesBase.filter((e) => isMeta(e.relPath)).map((e) => e.relPath));
@@ -207,24 +210,25 @@ export async function iniciarInquisicao(
         for (const s of scored) (metaSet.has(s.relPath) ? metas : prioritarios).push(s);
         const reconstituido = [...prioritarios, ...metas];
         entriesBase = reconstituido as unknown as typeof entriesBase;
+        const somentePrioritarios = reconstituido.filter((e) => !metaSet.has(e.relPath));
         if (config.LOG_ESTRUTURADO) {
           log.info(
             JSON.stringify({
               tipo: 'priorizacao',
               estrategia: 'historico-incremental',
-              arquivos: reconstituido.slice(0, 10).map((e) => ({
+              top: somentePrioritarios.slice(0, 10).map((e) => ({
                 arq: e.relPath,
                 score: (e as unknown as { __score: number }).__score,
               })),
+              metaEmpurrados: metas.length,
             }),
           );
         } else {
-          log.info(
-            `🧮 Priorização aplicada (top 5): ${reconstituido
-              .slice(0, 5)
-              .map((e) => e.relPath)
-              .join(', ')}`,
-          );
+          const exibidos = somentePrioritarios.slice(0, 5).map((e) => e.relPath).join(', ') || '—';
+            log.info(`🧮 Priorização aplicada (top 5 sem meta): ${exibidos}`);
+            if (metas.length) {
+              log.info(`   (ℹ️ ${metas.length} arquivos meta movidos para o final da fila)`);
+            }
         }
       }
     } catch (e) {

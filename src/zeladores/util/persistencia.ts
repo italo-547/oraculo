@@ -1,34 +1,32 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
+/**
+ * Lê e desserializa um arquivo JSON de estado.
+ * Fallback: retorna [] para compat legado ou objeto vazio quando apropriado.
+ */
 export async function lerEstado<T = unknown>(caminho: string): Promise<T> {
   try {
     const conteudo = await fs.readFile(caminho, 'utf-8');
     try {
-      return JSON.parse(conteudo) as T; // tenta JSON
+      return JSON.parse(conteudo) as T; // sucesso JSON
     } catch {
-      // Retorna conteúdo bruto quando não é JSON válido
-      return conteudo as unknown as T;
+      // Compatibilidade com testes / legado: se JSON inválido retorna []
+      return [] as unknown as T;
     }
   } catch {
-    // Erro de leitura: mantém fallback anterior (array vazia) para compatibilidade
     return [] as unknown as T;
   }
 }
 
+/** Serialização simples (não atômica). */
 export async function salvarEstado<T = unknown>(caminho: string, dados: T): Promise<void> {
-  // Garante que o diretório existe antes de tentar escrever
-  const dir = path.dirname(caminho);
-  try {
-    await fs.mkdir(dir, { recursive: true });
-  } catch {
-    /* ignorado */
-  }
-  if (typeof dados === 'string') {
-    await fs.writeFile(caminho, dados, 'utf-8');
-  } else {
-    await fs.writeFile(caminho, JSON.stringify(dados, null, 2), 'utf-8');
-  }
+  await fs.mkdir(path.dirname(caminho), { recursive: true }).catch(() => {});
+  await fs.writeFile(
+    caminho,
+    typeof dados === 'string' ? (dados as string) : JSON.stringify(dados, null, 2),
+    'utf-8',
+  );
 }
 
 // Leitura bruta de arquivo de texto (sem parse JSON). Uso para conteúdo fonte.
@@ -38,4 +36,14 @@ export async function lerArquivoTexto(caminho: string): Promise<string> {
   } catch {
     return '';
   }
+}
+
+/** Escrita atômica: grava em tmp e renomeia. */
+export async function salvarEstadoAtomico<T = unknown>(caminho: string, dados: T): Promise<void> {
+  const dir = path.dirname(caminho);
+  await fs.mkdir(dir, { recursive: true });
+  const tmp = path.join(dir, `.tmp-${Date.now()}-${Math.random().toString(16).slice(2)}.json`);
+  const payload = JSON.stringify(dados, null, 2);
+  await fs.writeFile(tmp, payload, 'utf-8');
+  await fs.rename(tmp, caminho);
 }

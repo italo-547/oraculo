@@ -1,11 +1,26 @@
 import { describe, it, expect, vi } from 'vitest';
 import { gerarHashHex, gerarSnapshotDoConteudo } from './hash.js';
+import { getHashes, createHash } from 'node:crypto';
 
 vi.mock('./constantes.js', () => ({
   ALGORITMO_HASH: 'sha256',
 }));
 
 describe('hash helpers', () => {
+  it('usa algoritmo suportado ou fallback', () => {
+    const conteudo = 'amostra-de-conteudo';
+    const disponiveis = new Set(getHashes());
+    const candidatos = ['blake3', 'sha256', 'sha1', 'md5'];
+    const esperadoAlg = candidatos.find((c) => disponiveis.has(c));
+    const hash = gerarHashHex(conteudo);
+    if (esperadoAlg) {
+      const esperado = createHash(esperadoAlg).update(conteudo).digest('hex');
+      expect(hash).toBe(esperado);
+    } else {
+      // fallback simples mínimo 8 chars
+      expect(hash.length).toBeGreaterThanOrEqual(8);
+    }
+  });
   it('gera hash hexadecimal consistente', () => {
     const hash1 = gerarHashHex('abc');
     const hash2 = gerarHashHex('abc');

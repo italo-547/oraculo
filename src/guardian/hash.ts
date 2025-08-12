@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, getHashes } from 'node:crypto';
 import { ALGORITMO_HASH } from './constantes.js';
 
 export interface SnapshotDetalhado {
@@ -11,7 +11,22 @@ export interface SnapshotDetalhado {
  * Gera um hash hexadecimal a partir do conteúdo fornecido.
  */
 export function gerarHashHex(conteudo: string): string {
-  return createHash(ALGORITMO_HASH).update(conteudo).digest('hex');
+  const candidatos = [ALGORITMO_HASH, 'sha256', 'sha1', 'md5'];
+  const disponiveis = new Set(getHashes());
+  for (const alg of candidatos) {
+    try {
+      if (!disponiveis.has(alg)) continue; // ignora não suportados no runtime
+      return createHash(alg).update(conteudo).digest('hex');
+    } catch {
+      // tenta próximo
+    }
+  }
+  // Fallback ultra simples (não criptográfico) — evita exception ruidosa
+  let hash = 0;
+  for (let i = 0; i < conteudo.length; i++) {
+    hash = (hash * 31 + conteudo.charCodeAt(i)) >>> 0;
+  }
+  return hash.toString(16).padStart(8, '0');
 }
 
 /**

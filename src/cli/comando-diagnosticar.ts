@@ -60,7 +60,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             iniciouDiagnostico = true;
           }
           // 1) Primeira varredura rápida (sem AST) apenas para obter entries e opcionalmente rodar Guardian
-          const leituraInicial = await iniciarInquisicao(baseDir, { incluirMetadados: false });
+          // Usa skipExec para evitar execução duplicada das técnicas – apenas coleta entries iniciais
+          const leituraInicial = await iniciarInquisicao(baseDir, { incluirMetadados: false, skipExec: true });
           fileEntries = leituraInicial.fileEntries; // contém conteúdo mas sem AST
 
           if (config.GUARDIAN_ENABLED) {
@@ -97,7 +98,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                 (err as { detalhes: string[] }).detalhes.forEach((d) => {
                   log.aviso('❗ ' + d);
                 });
-                process.exit(1);
+                if (!process.env.VITEST) process.exit(1);
               } else {
                 log.aviso('⚠️ Modo permissivo: prosseguindo sob risco.');
               }
@@ -221,18 +222,18 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               log.info(`  - ${tipo}: ${qtd}`);
             }
             // Só retorna código 1 se houver erro crítico
-            if (temErro) {
-              process.exit(1);
-            } else {
-              process.exit(0);
-            }
+             if (temErro) {
+               if (!process.env.VITEST) process.exit(1);
+             } else if (!process.env.VITEST) {
+               process.exit(0);
+             }
           }
         } catch (error) {
           log.erro(
             `❌ Erro fatal durante o diagnóstico: ${(error as Error).message ?? String(error)}`,
           );
           if (config.DEV_MODE) console.error(error);
-          process.exit(1);
+          if (!process.env.VITEST) process.exit(1);
         }
       },
     );

@@ -1,5 +1,5 @@
 import micromatch from 'micromatch';
-import { lerArquivoTexto } from '../zeladores/util/persistencia.js';
+import { lerEstado } from '../zeladores/util/persistencia.js';
 import { promises as fs } from 'node:fs';
 import type { Dirent, Stats } from 'node:fs';
 import path from 'path';
@@ -63,10 +63,9 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
             stat = await fs.stat(fullPath);
             statCache.set(fullPath, stat);
           }
-
-          const content = includeContent ? await lerArquivoTexto(fullPath) : null;
-
           if (!stat) throw new Error('Stat indefinido para ' + fullPath);
+
+          const content = includeContent ? await lerEstado<string>(fullPath) : null;
 
           const entryObj: FileEntry = {
             fullPath,
