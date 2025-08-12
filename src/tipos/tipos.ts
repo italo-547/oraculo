@@ -22,18 +22,94 @@ export class GuardianError extends Error {
 
 export type OcorrenciaNivel = 'erro' | 'aviso' | 'info' | 'sucesso';
 
-export interface Ocorrencia {
+// Ocorrências Discriminadas
+export interface OcorrenciaBase {
   tipo: string;
-  nivel?: OcorrenciaNivel;
   mensagem: string;
+  nivel?: OcorrenciaNivel;
   relPath?: string;
   linha?: number;
   coluna?: number;
+  origem?: string;
+  arquivo?: string;
+}
+
+export interface OcorrenciaErroAnalista extends OcorrenciaBase {
+  tipo: 'ERRO_ANALISTA';
+  stack?: string;
+}
+
+export interface OcorrenciaComplexidadeFuncao extends OcorrenciaBase {
+  tipo: 'FUNCAO_COMPLEXA';
+  linhas?: number;
+  parametros?: number;
+  aninhamento?: number;
+  limites?: { maxLinhas?: number; maxParametros?: number; maxAninhamento?: number };
+}
+
+export interface OcorrenciaParseErro extends OcorrenciaBase {
+  tipo: 'PARSE_ERRO';
+  detalhe?: string;
+  trecho?: string;
+}
+
+// Generic fallback / legacy occurrence type
+export interface OcorrenciaGenerica extends OcorrenciaBase {
+  [k: string]: unknown;
+}
+
+export type Ocorrencia =
+  | OcorrenciaErroAnalista
+  | OcorrenciaComplexidadeFuncao
+  | OcorrenciaParseErro
+  | OcorrenciaGenerica; // manter por compatibilidade
+
+// Enum de severidade textual padronizada (complementar ao campo numerico opcional)
+export type SeveridadeTexto = 'info' | 'aviso' | 'risco' | 'critico';
+
+// Builder simples para ocorrência garantindo escape básico e campos mínimos.
+export function criarOcorrencia<T extends Ocorrencia>(
+  base: Pick<T, 'tipo' | 'mensagem'> & Omit<Partial<T>, 'tipo' | 'mensagem'>,
+): T {
+  const resultado: Ocorrencia = {
+    nivel: 'info',
+    origem: 'oraculo',
+    ...base,
+    mensagem: base.mensagem.trim(),
+  };
+  return resultado as T;
+}
+
+// Helpers especializados
+export function ocorrenciaErroAnalista(data: {
+  mensagem: string;
+  relPath?: string;
+  stack?: string;
+  origem?: string;
+}): OcorrenciaErroAnalista {
+  return criarOcorrencia<OcorrenciaErroAnalista>({ tipo: 'ERRO_ANALISTA', ...data });
+}
+export function ocorrenciaFuncaoComplexa(data: {
+  mensagem: string;
+  relPath?: string;
+  linhas?: number;
+  parametros?: number;
+  aninhamento?: number;
+  limites?: { maxLinhas?: number; maxParametros?: number; maxAninhamento?: number };
+  origem?: string;
+}): OcorrenciaComplexidadeFuncao {
+  return criarOcorrencia<OcorrenciaComplexidadeFuncao>({ tipo: 'FUNCAO_COMPLEXA', ...data });
+}
+export function ocorrenciaParseErro(data: {
+  mensagem: string;
+  relPath?: string;
+  detalhe?: string;
   trecho?: string;
   origem?: string;
-  resolucao?: string;
-  severidade?: number;
-  arquivo?: string;
+  linha?: number;
+  coluna?: number;
+}): OcorrenciaParseErro {
+  return criarOcorrencia<OcorrenciaParseErro>({ tipo: 'PARSE_ERRO', ...data });
 }
 
 export type TecnicaAplicarResultado = Ocorrencia | Ocorrencia[] | null | undefined;
@@ -49,6 +125,25 @@ export interface Tecnica {
     fullPath?: string,
     contexto?: ContextoExecucao,
   ) => TecnicaAplicarResultado | Promise<TecnicaAplicarResultado>;
+}
+
+// Interface futura unificada para analistas (superset de Tecnica).
+export interface Analista extends Tecnica {
+  nome: string; // obrigatório para identificação
+  categoria?: string; // ex: 'complexidade', 'estrutura'
+  descricao?: string; // breve resumo exibido em listagens
+  limites?: Record<string, number>; // ex: { maxLinhas: 30 }
+  sempreAtivo?: boolean; // ignora filtros
+}
+
+// Factory para criar analista com validação mínima.
+export function criarAnalista<A extends Analista>(def: A): A {
+  if (!def || typeof def !== 'object') throw new Error('Definição de analista inválida');
+  if (!def.nome || (/\s/.test(def.nome) === false) === false) {
+    // nome pode ter hifens, apenas exige não vazio
+  }
+  if (typeof def.aplicar !== 'function') throw new Error(`Analista ${def.nome} sem função aplicar`);
+  return Object.freeze(def);
 }
 
 export interface AmbienteExecucao {
@@ -97,6 +192,22 @@ export interface ResultadoInquisicao {
   duracaoMs: number;
 }
 
+export interface MetricaAnalista {
+  nome: string;
+  duracaoMs: number;
+  ocorrencias: number;
+  global: boolean;
+}
+
+export interface MetricaExecucao {
+  totalArquivos: number;
+  tempoParsingMs: number;
+  tempoAnaliseMs: number;
+  cacheAstHits: number;
+  cacheAstMiss: number;
+  analistas: MetricaAnalista[];
+}
+
 export interface ResultadoInquisicaoCompleto extends ResultadoInquisicao {
   arquivosAnalisados: string[];
   fileEntries: FileEntryWithAst[];
@@ -111,6 +222,7 @@ export interface ScanOptions {
 export interface InquisicaoOptions {
   includeContent?: boolean;
   incluirMetadados?: boolean;
+  skipExec?: boolean; // quando true apenas escaneia e prepara (se solicitado) sem executar analistas
 }
 
 export type Contador = Record<string, number>;

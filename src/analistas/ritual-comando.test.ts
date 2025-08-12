@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // O mock padrão só para os testes "comando válido"
 vi.mock('../nucleo/constelacao/traverse.js', () => ({
@@ -25,6 +25,10 @@ vi.mock('@babel/types', () => ({
 }));
 
 describe('ritualComando', () => {
+  // Garante que cada teste reimporta o módulo usando o mock de traverse correto
+  beforeEach(() => {
+    vi.resetModules();
+  });
   it('detecta comandos duplicados', async () => {
     vi.resetModules();
     vi.doMock('../nucleo/constelacao/traverse.js', () => ({

@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 
 import { registrarComandos } from './cli/comandos.js';
-import { config } from './nucleo/constelacao/cosmos.js';
+import { config, aplicarConfigParcial } from './nucleo/constelacao/cosmos.js';
 
 // 🛠️ Configuração principal do CLI
 const program = new Command();
@@ -19,6 +19,13 @@ program
   )
   .option('-e, --export', 'gera arquivos de relatório detalhados (JSON e Markdown)')
   .option('-d, --dev', 'ativa modo de desenvolvimento (logs de debug)');
+// Flags experimentais de config dinâmica (exemplos comuns)
+program
+  .option('--log-estruturado', 'ativa logging estruturado JSON')
+  .option('--incremental', 'habilita análise incremental')
+  .option('--no-incremental', 'desabilita análise incremental')
+  .option('--metricas', 'habilita métricas de análise')
+  .option('--no-metricas', 'desabilita métricas de análise');
 
 // 🌐 Flags globais aplicáveis em todos os comandos
 interface OraculoGlobalFlags {
@@ -26,6 +33,9 @@ interface OraculoGlobalFlags {
   verbose?: boolean;
   export?: boolean;
   dev?: boolean;
+  logEstruturado?: boolean;
+  incremental?: boolean;
+  meticas?: boolean;
 }
 function aplicarFlagsGlobais(opts: unknown) {
   const flags = opts as OraculoGlobalFlags;
@@ -34,6 +44,13 @@ function aplicarFlagsGlobais(opts: unknown) {
   config.DEV_MODE = Boolean(flags.dev);
   // Se silence está ativo, verbose é sempre falso
   config.VERBOSE = flags.silence ? false : Boolean(flags.verbose);
+  const overrides: Record<string, unknown> = {};
+  const optObj = opts as Record<string, unknown>;
+  if (typeof optObj.logEstruturado === 'boolean') overrides.LOG_ESTRUTURADO = optObj.logEstruturado;
+  if (typeof optObj.incremental === 'boolean')
+    overrides.ANALISE_INCREMENTAL_ENABLED = optObj.incremental;
+  if (typeof optObj.metricas === 'boolean') overrides.ANALISE_METRICAS_ENABLED = optObj.metricas;
+  if (Object.keys(overrides).length) aplicarConfigParcial(overrides);
 }
 
 // 🔗 Registro de todos os comandos

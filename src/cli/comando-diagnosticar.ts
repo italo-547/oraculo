@@ -6,7 +6,7 @@ import { salvarEstado } from '../zeladores/util/persistencia.js';
 import type { Ocorrencia, FileEntryWithAst, ResultadoGuardian } from '../tipos/tipos.js';
 import { IntegridadeStatus } from '../tipos/tipos.js';
 
-import { iniciarInquisicao, executarInquisicao, tecnicas } from '../nucleo/inquisidor.js';
+import { iniciarInquisicao, executarInquisicao, tecnicas, prepararComAst } from '../nucleo/inquisidor.js';
 import { scanSystemIntegrity } from '../guardian/sentinela.js';
 import { alinhamentoEstrutural } from '../arquitetos/analista-estrutura.js';
 import { diagnosticarProjeto } from '../arquitetos/diagnostico-projeto.js';
@@ -59,8 +59,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             log.info(chalk.bold('\n🔍 Diagnóstico (modo compacto)...\n'));
             iniciouDiagnostico = true;
           }
+          // 1) Primeira varredura rápida (sem AST) apenas para obter entries e opcionalmente rodar Guardian
           const leituraInicial = await iniciarInquisicao(baseDir, { incluirMetadados: false });
-          fileEntries = leituraInicial.fileEntries;
+          fileEntries = leituraInicial.fileEntries; // contém conteúdo mas sem AST
 
           if (config.GUARDIAN_ENABLED) {
             log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
@@ -103,9 +104,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             }
           }
 
-          const { fileEntries: fileEntriesComAst } = await iniciarInquisicao(baseDir, {
-            incluirMetadados: true,
-          });
+          // 2) Preparar AST somente uma vez e executar técnicas (evita segunda inquisição completa)
+          const fileEntriesComAst = await prepararComAst(fileEntries, baseDir);
           const resultadoFinal = await executarInquisicao(
             fileEntriesComAst,
             tecnicas,

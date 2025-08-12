@@ -1,5 +1,7 @@
 // ...existing code...
 import type { Ocorrencia, TecnicaAplicarResultado, ContextoExecucao } from '../tipos/tipos.js';
+import { criarAnalista } from '../tipos/tipos.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 import type {
   FunctionDeclaration,
   FunctionExpression,
@@ -7,12 +9,20 @@ import type {
 } from '@babel/types';
 import type { NodePath } from '@babel/traverse';
 
-const LIMITE_LINHAS = 30;
-const LIMITE_PARAMETROS = 4;
-const LIMITE_ANINHAMENTO = 3;
+const LIMITE_LINHAS = config.ANALISE_LIMITES?.FUNCOES_LONGAS?.MAX_LINHAS ?? 30;
+const LIMITE_PARAMETROS = config.ANALISE_LIMITES?.FUNCOES_LONGAS?.MAX_PARAMETROS ?? 4;
+const LIMITE_ANINHAMENTO = config.ANALISE_LIMITES?.FUNCOES_LONGAS?.MAX_ANINHAMENTO ?? 3;
 
-export const analistaFuncoesLongas = {
+export const analistaFuncoesLongas = criarAnalista({
   nome: 'analista-funcoes-longas',
+  categoria: 'complexidade',
+  descricao:
+    'Detecta funcoes muito longas, com muitos parametros, aninhamento excessivo ou sem comentario',
+  limites: {
+    linhas: LIMITE_LINHAS,
+    params: LIMITE_PARAMETROS,
+    aninhamento: LIMITE_ANINHAMENTO,
+  },
   test: (relPath: string): boolean => relPath.endsWith('.js') || relPath.endsWith('.ts'),
   global: false,
 
@@ -166,4 +176,4 @@ export const analistaFuncoesLongas = {
     // Se não for nenhum dos casos acima, retorna vazio
     return ocorrencias;
   },
-};
+});

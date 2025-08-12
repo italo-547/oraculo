@@ -1,4 +1,6 @@
 import { grafoDependencias } from './detector-dependencias.js';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import type {
   TecnicaAplicarResultado,
   ContextoExecucao,
@@ -19,13 +21,13 @@ export const detectorEstrutura = {
     return true;
   },
 
-  aplicar(
+  async aplicar(
     _src: string,
     _relPath: string,
     _ast: unknown,
     _fullPath?: string,
     contexto?: ContextoExecucao,
-  ): TecnicaAplicarResultado {
+  ): Promise<TecnicaAplicarResultado> {
     if (!contexto) return [];
 
     const caminhos = contexto.arquivos.map((f) => f.relPath);
@@ -109,10 +111,8 @@ export const detectorEstrutura = {
       });
     }
 
-    // Muitos arquivos na raiz
-    const arquivosRaiz = caminhos.filter(
-      (p) => !p.includes('/') || p.indexOf('/') === p.length - 1,
-    );
+  // Muitos arquivos na raiz (considera apenas nível imediato sem subpastas)
+  const arquivosRaiz = caminhos.filter((p) => !p.includes('/') && p.trim() !== '');
     if (arquivosRaiz.length > 10) {
       ocorrencias.push({
         tipo: 'estrutura-suspeita',
@@ -176,16 +176,25 @@ export const detectorEstrutura = {
       });
     }
 
-    // Ausência de src/ em projetos grandes
+    // Ausência de src/ em projetos grandes (verifica realmente se diretório src existe fisicamente)
     if (!sinais.temSrc && caminhos.length > 30) {
-      ocorrencias.push({
-        tipo: 'estrutura-sem-src',
-        nivel: 'aviso',
-        mensagem: 'Projeto grande sem pasta src/. Considere organizar o código fonte.',
-        origem: 'detector-estrutura',
-        relPath: '[raiz do projeto]',
-        linha: 0,
-      });
+      try {
+        const raiz = contexto.baseDir || process.cwd();
+        const srcPath = path.join(raiz, 'src');
+  const statOk = await fs.stat(srcPath).catch(() => null as unknown as { isDirectory?: () => boolean } | null);
+  if (!statOk || !statOk.isDirectory || !statOk.isDirectory()) {
+          ocorrencias.push({
+            tipo: 'estrutura-sem-src',
+            nivel: 'aviso',
+            mensagem: 'Projeto grande sem pasta src/. Considere organizar o código fonte.',
+            origem: 'detector-estrutura',
+            relPath: '[raiz do projeto]',
+            linha: 0,
+          });
+        }
+      } catch {
+        // silencioso
+      }
     }
 
     return Array.isArray(ocorrencias) ? ocorrencias : [];

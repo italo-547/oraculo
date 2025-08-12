@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { promises as fs } from 'node:fs';
 
 // Diretório atual do usuário (base do projeto)
 const CWD = process.cwd();
@@ -8,7 +9,7 @@ const ORACULO_STATE = path.join(CWD, '.oraculo');
 const ZELADOR_ABANDONED = path.join(ORACULO_STATE, 'abandonados');
 
 // Configuração global do sistema Oráculo
-export const config = {
+export const configDefault = {
   VERBOSE: false,
   // 🌱 Flags gerais
   DEV_MODE: process.env.NODE_ENV === 'development' || process.env.ORACULO_DEV === 'true',
@@ -50,6 +51,29 @@ export const config = {
   // 🔍 Analistas
   SCANNER_EXTENSOES_COM_AST: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs'],
   VIGIA_TOP_N: 10,
+  ANALISE_LIMITES: {
+    FUNCOES_LONGAS: {
+      MAX_LINHAS: 30,
+      MAX_PARAMETROS: 4,
+      MAX_ANINHAMENTO: 3,
+    },
+  },
+  ANALISE_AST_CACHE_ENABLED: true,
+  ANALISE_METRICAS_ENABLED: true,
+  ANALISE_METRICAS_HISTORICO_PATH: path.join(ORACULO_STATE, 'metricas-historico.json'),
+  ANALISE_METRICAS_HISTORICO_MAX: 200,
+  // Priorização de arquivos (usa histórico incremental anterior)
+  ANALISE_PRIORIZACAO_ENABLED: true,
+  ANALISE_PRIORIZACAO_PESOS: {
+    duracaoMs: 1,
+    ocorrencias: 2,
+    penalidadeReuso: 0.5,
+  },
+  LOG_ESTRUTURADO: false,
+  // Incremental desabilitado por padrão para evitar efeitos colaterais em testes; habilite explicitamente onde necessário
+  ANALISE_INCREMENTAL_ENABLED: false,
+  ANALISE_INCREMENTAL_STATE_PATH: path.join(ORACULO_STATE, 'incremental-analise.json'),
+  ANALISE_INCREMENTAL_VERSION: 1,
 
   // Estrutura (plugins, layers, auto-fix, concorrência)
   STRUCTURE_PLUGINS: [],
@@ -62,3 +86,137 @@ export const config = {
   ZELADOR_STATE_DIR: ORACULO_STATE,
   COMPACT_MODE: false,
 };
+
+// Clonamos para instância mutável
+export const config: typeof configDefault & {
+  __OVERRIDES__?: Record<string, { from: unknown; to: unknown; fonte: string }>;
+} = JSON.parse(JSON.stringify(configDefault));
+
+type DiffRegistro = { from: unknown; to: unknown; fonte: string };
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return !!v && typeof v === 'object' && !Array.isArray(v);
+}
+
+function deepMerge(
+  target: Record<string, unknown>,
+  src: Record<string, unknown>,
+  fonte: string,
+  diffs: Record<string, DiffRegistro>,
+  prefix = '',
+): void {
+  for (const k of Object.keys(src || {})) {
+    const keyPath = prefix ? `${prefix}.${k}` : k;
+    const srcVal = src[k];
+    const tgtVal = target[k];
+    if (isPlainObject(srcVal) && isPlainObject(tgtVal)) {
+      deepMerge(
+        tgtVal as Record<string, unknown>,
+        srcVal as Record<string, unknown>,
+        fonte,
+        diffs,
+        keyPath,
+      );
+    } else if (srcVal !== undefined) {
+      if (tgtVal !== srcVal) {
+        diffs[keyPath] = { from: tgtVal, to: srcVal, fonte };
+      }
+      // atribuição dinâmica segura
+      (target as Record<string, unknown>)[k] = srcVal as unknown;
+    }
+  }
+}
+
+async function carregarArquivoConfig(): Promise<Record<string, unknown> | null> {
+  // Ordem de busca simples
+  const candidatos = ['oraculo.config.json', 'src/config.json'];
+  for (const nome of candidatos) {
+    try {
+      const conteudo = await fs.readFile(path.join(process.cwd(), nome), 'utf-8');
+      const json = conteudo.trim() ? JSON.parse(conteudo) : null;
+      if (json) return json;
+    } catch {
+      /* ignore */
+    }
+  }
+  return null;
+}
+
+function carregarEnvConfig(): Record<string, unknown> {
+  const resultado: Record<string, unknown> = {};
+  // Mapeia cada chave do default para uma env ORACULO_<KEY>
+  const stack: Array<{ obj: Record<string, unknown>; prefix: string }> = [
+    { obj: configDefault as unknown as Record<string, unknown>, prefix: '' },
+  ];
+  while (stack.length) {
+    const popped = stack.pop();
+    if (!popped) break;
+    const { obj, prefix } = popped;
+    for (const k of Object.keys(obj)) {
+      const keyPath = prefix ? `${prefix}.${k}` : k;
+      const envName = `ORACULO_${keyPath.replace(/\./g, '_').toUpperCase()}`;
+      const currentVal = (obj as Record<string, unknown>)[k];
+      if (isPlainObject(currentVal)) {
+        stack.push({ obj: currentVal, prefix: keyPath });
+      } else {
+        const rawEnv = process.env[envName];
+        if (rawEnv !== undefined) {
+          let val: unknown = rawEnv;
+          if (/^(true|false)$/i.test(rawEnv)) val = rawEnv.toLowerCase() === 'true';
+          else if (/^-?\d+(\.\d+)?$/.test(rawEnv)) val = Number(rawEnv);
+          resultadoPathAssign(resultado, keyPath, val);
+        }
+      }
+    }
+  }
+  return resultado;
+}
+
+function resultadoPathAssign(base: Record<string, unknown>, keyPath: string, value: unknown) {
+  const parts = keyPath.split('.');
+  let cursor: Record<string, unknown> = base;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const p = parts[i];
+    let next = cursor[p];
+    if (!isPlainObject(next)) {
+      next = {};
+      cursor[p] = next;
+    }
+    cursor = next as Record<string, unknown>;
+  }
+  cursor[parts[parts.length - 1]] = value;
+}
+
+export async function inicializarConfigDinamica(overridesCli?: Record<string, unknown>) {
+  const diffs: Record<string, DiffRegistro> = {};
+  const arquivo = await carregarArquivoConfig();
+  if (arquivo)
+    deepMerge(
+      config as unknown as Record<string, unknown>,
+      arquivo as Record<string, unknown>,
+      'arquivo',
+      diffs,
+    );
+  const envCfg = carregarEnvConfig();
+  if (Object.keys(envCfg).length)
+    deepMerge(config as unknown as Record<string, unknown>, envCfg, 'env', diffs);
+  if (overridesCli && Object.keys(overridesCli).length)
+    deepMerge(
+      config as unknown as Record<string, unknown>,
+      overridesCli as Record<string, unknown>,
+      'cli',
+      diffs,
+    );
+  config.__OVERRIDES__ = diffs;
+  return diffs;
+}
+
+export function aplicarConfigParcial(partial: Record<string, unknown>) {
+  const diffs: Record<string, DiffRegistro> = {};
+  deepMerge(config as unknown as Record<string, unknown>, partial, 'programatico', diffs);
+  config.__OVERRIDES__ = { ...(config.__OVERRIDES__ || {}), ...diffs };
+  return diffs;
+}
+
+// Inicialização automática (arquivo + env) sem CLI (CLI aplicará depois)
+void inicializarConfigDinamica();

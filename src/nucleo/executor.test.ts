@@ -88,7 +88,8 @@ describe('executarInquisicao', () => {
       },
     ];
     const resultado = await executarInquisicao(fileEntries, tecnicas as any, '/tmp', {});
-    expect(resultado.ocorrencias[0].mensagem).toMatch(/Falha na técnica 'porArquivoErr'/);
+    // Agora mensagem inclui caminho do arquivo
+    expect(resultado.ocorrencias[0].mensagem).toMatch(/Falha na técnica 'porArquivoErr' para a/);
   });
 
   it('executa técnica por arquivo sem test (deve rodar para todos)', async () => {
@@ -112,6 +113,7 @@ describe('executarInquisicao', () => {
       },
     ];
     await executarInquisicao(fileEntries, tecnicas as any, '/tmp', {});
+    // Com incremental desativado por padrão continua executando para todos
     expect(aplicarMock).toHaveBeenCalledTimes(2);
   });
 
