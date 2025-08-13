@@ -26,6 +26,41 @@ import { emitirConselhoOracular } from '../relatorios/conselheiro-oracular.js';
 import { gerarRelatorioMarkdown } from '../relatorios/gerador-relatorio.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
+// Tipagem dos símbolos esperados
+interface SimbolosLog {
+  info: string;
+  sucesso: string;
+  erro: string;
+  aviso: string;
+  debug: string;
+  fase: string;
+  passo: string;
+  scan: string;
+  guardian: string;
+  pasta: string;
+}
+const __SIMBOLOS_FALLBACK: SimbolosLog = {
+  info: 'ℹ️',
+  sucesso: '✅',
+  erro: '❌',
+  aviso: '⚠️',
+  debug: '🐞',
+  fase: '🔶',
+  passo: '▫️',
+  scan: '🔍',
+  guardian: '🛡️',
+  pasta: '📂',
+};
+const __S: SimbolosLog =
+  typeof (log as unknown as { simbolos?: SimbolosLog }).simbolos === 'object'
+    ? (log as unknown as { simbolos: SimbolosLog }).simbolos
+    : __SIMBOLOS_FALLBACK;
+// Wrapper seguro para fase quando mocks de teste não expõem log.fase
+const __faseSegura = (titulo: string) => {
+  const l = log as unknown as { fase?: (t: string) => void; info?: (m: string) => void };
+  if (typeof l.fase === 'function') return l.fase(titulo);
+  if (typeof l.info === 'function') return l.info(titulo);
+};
 import { formatPct } from '../nucleo/constelacao/format.js';
 
 export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
@@ -100,7 +135,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           const parts: string[] = [];
           if (includeList.length) parts.push(`include=[${includeList.join(', ')}]`);
           if (excludeList.length) parts.push(`exclude=[${excludeList.join(', ')}]`);
-          log.info(chalk.bold(`\n🎯 Filtros ativos: ${parts.join(' ')}\n`));
+          log.info(chalk.bold(`\n${__S.info} Filtros ativos: ${parts.join(' ')}\n`));
         }
 
         let iniciouDiagnostico = false;
@@ -140,10 +175,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           if (opts.json) {
             // Suprime cabeçalhos verbosos no modo JSON
           } else if (!iniciouDiagnostico && !config.COMPACT_MODE) {
-            log.info(chalk.bold('\n🔍 Iniciando diagnóstico completo...\n'));
+            __faseSegura('Iniciando diagnóstico completo');
             iniciouDiagnostico = true;
           } else if (!iniciouDiagnostico && config.COMPACT_MODE) {
-            log.info(chalk.bold('\n🔍 Diagnóstico (modo compacto)...\n'));
+            __faseSegura('Diagnóstico (modo compacto)');
             iniciouDiagnostico = true;
           }
           // 1) Primeira varredura rápida (sem AST) apenas para obter entries e opcionalmente rodar Guardian
@@ -155,30 +190,30 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           fileEntries = leituraInicial.fileEntries; // contém conteúdo mas sem AST
 
           if (config.GUARDIAN_ENABLED) {
-            log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
+            __faseSegura('Verificando integridade do Oráculo');
             try {
               const resultado = await scanSystemIntegrity(fileEntries, { suppressLogs: true });
               guardianResultado = resultado;
               switch (resultado.status) {
                 case IntegridadeStatus.Ok:
-                  log.sucesso('🔒 Guardian: integridade preservada.');
+                  log.sucesso(`${__S.sucesso} Guardian: integridade preservada.`);
                   break;
                 case IntegridadeStatus.Criado:
                   // Mensagem reduzida para evitar duplicidade com comando guardian
-                  log.info('📘 Guardian baseline criado.');
+                  log.info(`${__S.info} Guardian baseline criado.`);
                   break;
                 case IntegridadeStatus.Aceito:
-                  log.aviso('🌀 Guardian: novo baseline aceito — execute novamente.');
+                  log.aviso(`${__S.aviso} Guardian: novo baseline aceito — execute novamente.`);
                   break;
                 case IntegridadeStatus.AlteracoesDetectadas:
                   log.aviso(
-                    '🚨 Guardian: alterações suspeitas detectadas! Considere executar `oraculo guardian --diff`.',
+                    `${__S.erro} Guardian: alterações suspeitas detectadas! Considere executar 'oraculo guardian --diff'.`,
                   );
                   totalOcorrencias++;
                   break;
               }
             } catch (err) {
-              log.erro('🚨 Guardian bloqueou: alterações suspeitas ou erro fatal.');
+              log.erro(`${__S.erro} Guardian bloqueou: alterações suspeitas ou erro fatal.`);
               if (
                 config.GUARDIAN_ENFORCE_PROTECTION &&
                 typeof err === 'object' &&
@@ -187,18 +222,20 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                 Array.isArray((err as { detalhes?: unknown }).detalhes)
               ) {
                 (err as { detalhes: string[] }).detalhes.forEach((d) => {
-                  log.aviso('❗ ' + d);
+                  log.aviso(`${__S.aviso} ${d}`);
                 });
                 if (!process.env.VITEST) process.exit(1);
               } else {
-                log.aviso('⚠️ Modo permissivo: prosseguindo sob risco.');
+                log.aviso(`${__S.aviso} Modo permissivo: prosseguindo sob risco.`);
               }
             }
           }
 
           // Se modo somente varredura estiver ativo, encerramos após coleta inicial (antes de preparar AST)
           if (config.SCAN_ONLY) {
-            log.info(chalk.bold(`\n🗺️  Modo scan-only: ${fileEntries.length} arquivos mapeados.`));
+            log.info(
+              chalk.bold(`\n${__S.info} Modo scan-only: ${fileEntries.length} arquivos mapeados.`),
+            );
             if (config.REPORT_EXPORT_ENABLED) {
               try {
                 const ts = new Date().toISOString().replace(/[:.]/g, '-');
@@ -250,14 +287,16 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               arquetiposResultado.melhores.length
             ) {
               const candidatos = arquetiposResultado.melhores;
-              const header = chalk.bold('\n🏗️  Arquétipos candidatos (estrutura do projeto)');
+              const header = chalk.bold(
+                `\n${__S.info} Arquétipos candidatos (estrutura do projeto)`,
+              );
               if (!config.COMPACT_MODE) log.info(header);
               // Linha compacta sempre disponível quando não em JSON
               if (config.COMPACT_MODE) {
                 const lista = candidatos
                   .map((c) => `${c.nome}(${formatPct(c.confidence)})`)
                   .join(', ');
-                log.info(`🏗️  arquétipos: ${lista}`);
+                log.info(`${__S.info} arquétipos: ${lista}`);
               } else {
                 for (const c of candidatos) {
                   const faltando = c.missingRequired.length
@@ -419,7 +458,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           }
 
           if (config.REPORT_EXPORT_ENABLED && !opts.json) {
-            log.info(chalk.bold('\n💾 Exportando relatórios detalhados...\n'));
+            __faseSegura('Exportando relatórios detalhados');
             const ts = new Date().toISOString().replace(/[:.]/g, '-');
             const dir =
               typeof config.REPORT_OUTPUT_DIR === 'string'
@@ -573,12 +612,14 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           } else {
             if (totalOcorrencias === 0) {
               log.sucesso(
-                chalk.bold('\n✨ Oráculo: Repositório impecável! Nenhum problema detectado.\n'),
+                chalk.bold(
+                  `\n${__S.sucesso} Oráculo: Repositório impecável! Nenhum problema detectado.\n`,
+                ),
               );
             } else {
               log.aviso(
                 chalk.bold(
-                  `\n⚠️ Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`,
+                  `\n${__S.aviso} Oráculo: Diagnóstico concluído. ${totalOcorrencias} problema(s) detectado(s).`,
                 ),
               );
               log.info('Resumo dos tipos de problemas encontrados:');
@@ -594,7 +635,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           }
         } catch (error) {
           log.erro(
-            `❌ Erro fatal durante o diagnóstico: ${(error as Error).message ?? String(error)}`,
+            `${__S.erro} Erro fatal durante o diagnóstico: ${(error as Error).message ?? String(error)}`,
           );
           if (config.DEV_MODE) console.error(error);
           if (!process.env.VITEST) process.exit(1);

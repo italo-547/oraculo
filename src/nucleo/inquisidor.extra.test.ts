@@ -38,7 +38,7 @@ describe('inquisidor extra', () => {
     }));
 
     vi.doMock('./constelacao/log.js', () => ({
-      log: { info, erro, sucesso, aviso },
+      log: { info, erro, sucesso, aviso, simbolos: { scan: 'SCAN', pasta: 'DIR', info: 'i' } },
     }));
 
     vi.doMock('./constelacao/cosmos.js', () => ({

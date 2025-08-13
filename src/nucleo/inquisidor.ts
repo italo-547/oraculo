@@ -4,6 +4,35 @@ import { scanRepository } from './scanner.js';
 import { decifrarSintaxe } from './parser.js';
 import { executarInquisicao as executarExecucao, registrarUltimasMetricas } from './executor.js';
 import { log } from './constelacao/log.js';
+// Fallback de símbolos para cenários de teste onde o mock de log não inclui `simbolos`.
+interface SimbolosLog {
+  info: string;
+  sucesso: string;
+  erro: string;
+  aviso: string;
+  debug: string;
+  fase: string;
+  passo: string;
+  scan: string;
+  guardian: string;
+  pasta: string;
+}
+const SIMBOLOS_FALLBACK: SimbolosLog = {
+  info: 'ℹ️',
+  sucesso: '✅',
+  erro: '❌',
+  aviso: '⚠️',
+  debug: '🐞',
+  fase: '🔶',
+  passo: '▫️',
+  scan: '🔍',
+  guardian: '🛡️',
+  pasta: '📂',
+};
+const S: SimbolosLog =
+  typeof (log as unknown as { simbolos?: SimbolosLog }).simbolos === 'object'
+    ? (log as unknown as { simbolos: SimbolosLog }).simbolos
+    : SIMBOLOS_FALLBACK;
 import { config } from './constelacao/cosmos.js';
 import { lerEstado } from '../zeladores/util/persistencia.js';
 import { promises as fs } from 'node:fs';
@@ -151,7 +180,7 @@ export async function iniciarInquisicao(
   options: InquisicaoOptions = {},
 ): Promise<ResultadoInquisicaoCompleto> {
   const { includeContent = true, incluirMetadados = true, skipExec = false } = options;
-  log.info(`🔍 Iniciando a Inquisição do Oráculo em: ${baseDir}`);
+  log.info(`${S.scan} Iniciando a Inquisição do Oráculo em: ${baseDir}`);
 
   const fileMap = await scanRepository(baseDir, {
     includeContent,
@@ -274,7 +303,7 @@ export async function iniciarInquisicao(
               .join(', ') || '—';
           log.info(`🧮 Priorização aplicada (top 5 sem meta): ${exibidos}`);
           if (metas.length) {
-            log.info(`   (ℹ️ ${metas.length} arquivos meta movidos para o final da fila)`);
+            log.info(`   (${S.info} ${metas.length} arquivos meta movidos para o final da fila)`);
           }
         }
       }
@@ -306,7 +335,7 @@ export async function iniciarInquisicao(
       const resto = totalDirs - samples.length;
       const amostra = samples.join(', ');
       log.info(
-        `📂 Diretórios escaneados: ${totalDirs}` +
+        `${S.pasta} Diretórios escaneados: ${totalDirs}` +
           (samples.length ? ` (ex: ${amostra}${resto > 0 ? ` +${resto}` : ''})` : ''),
       );
     }
@@ -361,7 +390,7 @@ export async function iniciarInquisicao(
     log.sucesso(`🔮 Inquisição concluída. Total de ocorrências: ${ocorrencias.length}`);
   } else if (!config.COMPACT_MODE) {
     log.info(
-      `🔍 Varredura concluída (execução de técnicas saltada). Arquivos: ${fileEntries.length}`,
+      `${S.scan} Varredura concluída (execução de técnicas saltada). Arquivos: ${fileEntries.length}`,
     );
   }
 

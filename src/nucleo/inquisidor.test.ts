@@ -15,7 +15,12 @@ vi.mock('./executor.js', () => ({
   executarInquisicao: vi.fn(async () => ({ totalArquivos: 2, ocorrencias: [{}, {}] })),
 }));
 vi.mock('./constelacao/log.js', () => ({
-  log: { info: vi.fn(), erro: vi.fn(), sucesso: vi.fn() },
+  log: {
+    info: vi.fn(),
+    erro: vi.fn(),
+    sucesso: vi.fn(),
+    simbolos: { scan: 'SCAN', pasta: 'DIR', info: 'i' },
+  },
 }));
 vi.mock('./constelacao/cosmos.js', () => ({
   config: {

@@ -3,7 +3,13 @@ import { iniciarInquisicao } from './inquisidor.js';
 import { config } from './constelacao/cosmos.js';
 
 vi.mock('./constelacao/log.js', () => ({
-  log: { info: vi.fn(), erro: vi.fn(), sucesso: vi.fn(), aviso: vi.fn() },
+  log: {
+    info: vi.fn(),
+    erro: vi.fn(),
+    sucesso: vi.fn(),
+    aviso: vi.fn(),
+    simbolos: { scan: 'SCAN', pasta: 'DIR', info: 'i' },
+  },
 }));
 import { log } from './constelacao/log.js';
 

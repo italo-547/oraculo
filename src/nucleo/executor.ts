@@ -127,6 +127,16 @@ export async function executarInquisicao(
   // Técnicas por arquivo
   let arquivoAtual = 0;
   const totalArquivos = fileEntriesComAst.length;
+  // Define passo de logging quando em modo verbose para evitar spam massivo
+  function passoDeLog(total: number): number {
+    // Assumimos faixas: até 100 => cada arquivo; 101-250 => a cada 10; 251-500 => a cada 25; >500 => a cada 100
+    if (total <= 100) return 1;
+    if (total <= 250) return 10;
+    if (total <= 500) return 25;
+    return 100;
+  }
+  const frames = ['->', '=>', '>>', '=>'] as const;
+  const stepVerbose = passoDeLog(totalArquivos);
   for (const entry of fileEntriesComAst) {
     arquivoAtual++;
     if (opts?.compact) {
@@ -134,7 +144,15 @@ export async function executarInquisicao(
         log.info(`Arquivos analisados: ${totalArquivos}`);
       }
     } else if (opts?.verbose) {
-      log.info(`🔎 Arquivo ${arquivoAtual}/${totalArquivos}: ${entry.relPath}`);
+      // Throttle de logs em modo verbose conforme total de arquivos
+      if (
+        arquivoAtual === 1 ||
+        arquivoAtual % stepVerbose === 0 ||
+        arquivoAtual === totalArquivos
+      ) {
+        const seta = frames[arquivoAtual % frames.length];
+        log.info(`${seta} Arquivo ${arquivoAtual}/${totalArquivos}: ${entry.relPath}`);
+      }
     } else if (arquivoAtual % 10 === 0 || arquivoAtual === totalArquivos) {
       log.info(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
     }
