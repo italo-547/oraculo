@@ -50,9 +50,30 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
       const relPath = path.relative(baseDir, fullPath);
-
-      if (micromatch.isMatch(relPath, config.ZELADOR_IGNORE_PATTERNS)) continue;
-      if (!filter(relPath, entry)) continue;
+      // ------------------------------
+      // Filtros de inclusão / exclusão
+      // Semântica:
+      // 1. Se houver padrões de include, somente arquivos que casam passam.
+      // 2. Excludes explícitos SEMPRE removem, independente de include.
+      // 3. Ignora padrões padrão (ZELADOR_IGNORE_PATTERNS) apenas quando NÃO há include.
+      // 4. Filtro customizado (callback) por último.
+      // ------------------------------
+      const hasInclude = !!config.CLI_INCLUDE_PATTERNS?.length;
+      if (hasInclude && !micromatch.isMatch(relPath, config.CLI_INCLUDE_PATTERNS)) {
+        continue; // não incluso explicitamente
+      }
+      if (
+        config.CLI_EXCLUDE_PATTERNS?.length &&
+        micromatch.isMatch(relPath, config.CLI_EXCLUDE_PATTERNS)
+      ) {
+        continue; // excluído explicitamente
+      }
+      if (!hasInclude && micromatch.isMatch(relPath, config.ZELADOR_IGNORE_PATTERNS)) {
+        continue; // ignore padrão só quando não há include explícito
+      }
+      if (!filter(relPath, entry)) {
+        continue; // filtro customizado
+      }
 
       if (entry.isDirectory() && !entry.isSymbolicLink()) {
         await scan(fullPath);

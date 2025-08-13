@@ -126,7 +126,7 @@ vi.mock('path', async (importOriginal) => {
   };
 });
 vi.mock('../nucleo/constelacao/cosmos.js', () => ({
-  config: { ZELADOR_IGNORE_PATTERNS: [] },
+  config: { ZELADOR_IGNORE_PATTERNS: [], CLI_INCLUDE_PATTERNS: [], CLI_EXCLUDE_PATTERNS: [] },
 }));
 
 describe('scanRepository', () => {
@@ -181,7 +181,7 @@ describe('scanRepository', () => {
     expect(onProgress).toHaveBeenCalledWith(expect.stringContaining('erro stat'));
   });
 
-  it('ignora arquivos pelo padrão micromatch', async () => {
+  it('ignora arquivos pelo padrão micromatch (ignores default)', async () => {
     vi.resetModules();
     const isMatch = () => true;
     vi.doMock('micromatch', () => ({ default: { isMatch }, isMatch }));
@@ -190,6 +190,61 @@ describe('scanRepository', () => {
     (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
     const fileMap = await scanRepository('/base');
     expect(Object.keys(fileMap)).toHaveLength(0);
+  });
+
+  it('inclui somente padrões quando CLI_INCLUDE_PATTERNS definido', async () => {
+    vi.resetModules();
+    // Mock dedicado de micromatch para comportamento determinístico neste cenário
+    vi.doMock('micromatch', () => ({
+      default: { isMatch: (str: string, patterns: string[]) => patterns.some((p) => p === str) },
+      isMatch: (str: string, patterns: string[]) => patterns.some((p) => p === str),
+    }));
+    vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
+      config: {
+        ZELADOR_IGNORE_PATTERNS: ['*.txt'],
+        CLI_INCLUDE_PATTERNS: ['a.txt'],
+        CLI_EXCLUDE_PATTERNS: [],
+      },
+    }));
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt'), fakeDirent('b.txt')]);
+    (promises.stat as any).mockResolvedValue(async () => ({
+      mtimeMs: 1,
+      isDirectory: () => false,
+      isSymbolicLink: () => false,
+    }));
+    const fileMap = await scanRepository('/base');
+    // Com include ativo, apenas arquivos que casem algum include são considerados, ignorando ignores padrão.
+    // 'a.txt' casa; 'b.txt' não casa e deve ser filtrado.
+    expect(Object.keys(fileMap)).toEqual(['a.txt']);
+  });
+
+  it('exclui padrões adicionais em CLI_EXCLUDE_PATTERNS', async () => {
+    vi.resetModules();
+    // Mock dedicado de micromatch para exclusão por igualdade simples
+    vi.doMock('micromatch', () => ({
+      default: { isMatch: (str: string, patterns: string[]) => patterns.some((p) => p === str) },
+      isMatch: (str: string, patterns: string[]) => patterns.some((p) => p === str),
+    }));
+    vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
+      config: {
+        ZELADOR_IGNORE_PATTERNS: [],
+        CLI_INCLUDE_PATTERNS: [],
+        CLI_EXCLUDE_PATTERNS: ['b.txt'],
+      },
+    }));
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt'), fakeDirent('b.txt')]);
+    (promises.stat as any).mockResolvedValue(async () => ({
+      mtimeMs: 1,
+      isDirectory: () => false,
+      isSymbolicLink: () => false,
+    }));
+    const fileMap = await scanRepository('/base');
+    // Exclude deve remover b.txt
+    expect(Object.keys(fileMap)).toEqual(['a.txt']);
   });
 
   it('ignora arquivos pelo filtro customizado', async () => {

@@ -23,6 +23,7 @@ describe('cosmos deepMerge e overrides', () => {
     const diffs = await inicializarConfigDinamica({
       ANALISE_LIMITES: { FUNCOES_LONGAS: { MAX_LINHAS: 20 } },
     });
+    // Ordem efetiva: arquivo (10) < env (15) < cli (20) => CLI prevalece no final
     expect(config.ANALISE_LIMITES.FUNCOES_LONGAS.MAX_LINHAS).toBe(20);
     expect(Object.keys(diffs)).toContain('ANALISE_LIMITES.FUNCOES_LONGAS.MAX_LINHAS');
     const { aplicarConfigParcial } = await import('./cosmos.js');

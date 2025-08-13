@@ -101,13 +101,13 @@ oraculo <comando>
 
 ### Principais Comandos
 
-| Comando        | Descrição                                        |
-| -------------- | ------------------------------------------------ |
-| `diagnosticar` | Analisa padrões, estrutura e gera plano sugerido |
-| `guardian`     | Cria/atualiza/verifica baseline de integridade   |
-| `podar`        | Lista ou remove (seguro) arquivos órfãos         |
-| `metricas`     | Histórico agregado de métricas internas          |
-| `reestruturar` | (experimental) Aplicar plano de reorganização    |
+| Comando        | Descrição                                                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| diagnosticar   | Análise completa (arquitetura, padrões, estrutura, guardian opcional). Suporta filtros `--include` e `--exclude` para glob patterns pontuais |
+| `guardian`     | Cria/atualiza/verifica baseline de integridade                                                                                               |
+| `podar`        | Lista ou remove (seguro) arquivos órfãos                                                                                                     |
+| `metricas`     | Histórico agregado de métricas internas                                                                                                      |
+| `reestruturar` | (experimental) Aplicar plano de reorganização                                                                                                |
 
 Lista completa: `node dist/cli.js --help`.
 
@@ -203,6 +203,56 @@ Blocos adicionais:
 ```
 
 Isso facilita métricas de adoção multi-stack e priorização de analistas dedicados.
+
+### Filtros Pontuais de Arquivos (`--include` / `--exclude`)
+
+Use para um diagnóstico focado (investigar somente uma pasta, ou incluir node_modules pontualmente, ou excluir arquivos de teste). Ambos aceitam:
+
+- Múltiplas ocorrências da mesma flag (`--include a --include b`)
+- Lista separada por vírgula (`--include "a,b,c"`)
+- Separação por espaços dentro do valor (`--exclude "dist/** docs/**"`)
+  Espaços e vírgulas são normalizados e duplicados removidos. Padrões são globs micromatch.
+
+Regras de precedência:
+
+1. Se `--include` estiver presente e não vazio: somente arquivos que casem pelo menos um pattern listado serão considerados (ignora os ignores padrão, ex: permite inspecionar `node_modules`).
+2. Em seguida aplica-se `--exclude` (remove qualquer arquivo que casar com algum pattern extra).
+3. Se `--include` não for usado: usa ignores padrão e depois aplica `--exclude`.
+
+Exemplos:
+
+```bash
+# Incluir apenas arquivos TypeScript e package.json
+oraculo diagnosticar --include "src/**/*.ts,package.json"
+
+# Inspecionar apenas node_modules (bypass de ignore padrão) para auditoria pontual
+oraculo diagnosticar --include "node_modules/**"
+
+# Incluir somente código de produção e excluir testes
+oraculo diagnosticar --include "src/**" --exclude "**/*.test.ts,**/*.spec.ts"
+
+# Múltiplas ocorrências equivalentes a lista combinada
+oraculo diagnosticar --include src/core/** --include src/guardian/** --exclude "**/*.test.ts"
+
+# Excluir diretórios de documentação e arquivos de build extras
+oraculo diagnosticar --exclude "docs/**,dist/**"
+
+# Combinação: focar em duas pastas específicas e ainda excluir mocks
+oraculo diagnosticar --include "src/core/**,src/guardian/**" --exclude "**/mocks/**"
+```
+
+Boas práticas:
+
+- Evite listas muito grandes de globs: separe investigações em execuções menores.
+- Use `--json` junto quando integrar em scripts (a saída filtrada reduz ruído e volume de dados).
+- Para auditorias de dependências, combine com flags silenciosas: `oraculo diagnosticar --include "node_modules/**" --silence --json`.
+
+Limitações atuais:
+
+- Apenas separação por vírgula suportada (futuramente avaliar suporte a repetir `--include`).
+- Não há feedback explícito listando padrões aplicados (pode ser adicionado em modo `--verbose`).
+
+Se precisar resetar filtros programaticamente, não passe as flags (elas não persistem em config).
 
 ### Exit Codes
 

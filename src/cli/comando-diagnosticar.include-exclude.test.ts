@@ -1,0 +1,106 @@
+import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest';
+import { Command } from 'commander';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+
+// Usaremos o iniciarInquisicao real (scanner) + prepararComAst real, mas mockamos executarInquisicao
+// para capturar os fileEntries já filtrados após include/exclude.
+
+const originalCwd = process.cwd();
+const FIXED_TMP = path.join(originalCwd, 'tmp-oraculo-filtros-test');
+
+async function setupTmp(files: Record<string, string>) {
+  // Limpa se existir
+  await fs.rm(FIXED_TMP, { recursive: true, force: true });
+  await fs.mkdir(FIXED_TMP, { recursive: true });
+  for (const [rel, content] of Object.entries(files)) {
+    const full = path.join(FIXED_TMP, rel);
+    await fs.mkdir(path.dirname(full), { recursive: true });
+    await fs.writeFile(full, content, 'utf-8');
+  }
+  process.chdir(FIXED_TMP);
+  return FIXED_TMP;
+}
+
+afterAll(async () => {
+  // Restaura cwd e remove diretório fixo ao final
+  process.chdir(originalCwd);
+  await fs.rm(FIXED_TMP, { recursive: true, force: true });
+});
+
+beforeEach(async () => {
+  vi.resetModules();
+  // Garante restauração de CWD antes de recriar
+  process.chdir(originalCwd);
+});
+
+describe('comando-diagnosticar filtros include/exclude', () => {
+  it('--include (múltiplas ocorrências e vírgulas) restringe arquivos e sobrepõe ignores padrão (ex: node_modules)', async () => {
+    await setupTmp({
+      'src/a.ts': 'console.log("a")',
+      'node_modules/lib/index.js': 'console.log("lib")',
+      'outro/b.ts': 'console.log("b")',
+    });
+
+    // Importações após estrutura criada
+    const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
+    const inquisidor = await import('../nucleo/inquisidor.js');
+    const executarInqSpy = vi
+      .spyOn(inquisidor, 'executarInquisicao')
+      .mockImplementation(async (_fileEntries, tecnicas, baseDir, guardianResultado, opts) => {
+        return { ocorrencias: [], fileEntries: _fileEntries } as any;
+      });
+
+    const program = new Command();
+    const aplicarFlagsGlobais = vi.fn();
+    program.addCommand(comandoDiagnosticar(aplicarFlagsGlobais));
+    await program.parseAsync([
+      'node',
+      'cli',
+      'diagnosticar',
+      '--include',
+      'node_modules/**',
+      '--include',
+      'src/**/*.ts,src/**/*.tsx',
+    ]);
+
+    const chamada = executarInqSpy.mock.calls.at(-1);
+    expect(chamada).toBeTruthy();
+    const fileEntries = chamada?.[0] || [];
+    // Deve conter somente arquivo dentro de node_modules
+    const rels = fileEntries.map((f: any) => f.relPath.replace(/\\/g, '/')).sort();
+    // O include prioriza apenas patterns que batem – sem src/ presentes, apenas node_modules
+    expect(rels).toEqual(['node_modules/lib/index.js']);
+  });
+
+  it('--exclude (repetido e com espaços) remove padrões após include vazio (comportamento normal)', async () => {
+    await setupTmp({
+      'src/a.ts': 'console.log("a")',
+      'src/b.ts': 'console.log("b")',
+      'test/c.test.ts': 'console.log("c")',
+    });
+    const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
+    const inquisidor = await import('../nucleo/inquisidor.js');
+    const executarInqSpy = vi
+      .spyOn(inquisidor, 'executarInquisicao')
+      .mockImplementation(async (_fileEntries) => {
+        return { ocorrencias: [], fileEntries: _fileEntries } as any;
+      });
+    const program = new Command();
+    const aplicarFlagsGlobais = vi.fn();
+    program.addCommand(comandoDiagnosticar(aplicarFlagsGlobais));
+    await program.parseAsync([
+      'node',
+      'cli',
+      'diagnosticar',
+      '--exclude',
+      'test/**',
+      '--exclude',
+      '  docs/**  ',
+    ]);
+    const fileEntries = executarInqSpy.mock.calls.at(-1)?.[0] || [];
+    const rels = fileEntries.map((f: any) => f.relPath.replace(/\\/g, '/')).sort();
+    expect(rels).not.toContain('test/c.test.ts');
+    expect(rels).toContain('src/a.ts');
+  });
+});

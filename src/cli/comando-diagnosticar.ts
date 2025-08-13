@@ -43,9 +43,34 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
       false,
     )
     .option('--json', 'Saída JSON estruturada (para CI/integracoes)', false)
+    .option(
+      '--include <padrao>',
+      'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)',
+      (val: string, prev: string[]) => {
+        prev.push(val);
+        return prev;
+      },
+      [] as string[],
+    )
+    .option(
+      '--exclude <padrao>',
+      'Glob pattern a EXCLUIR adicionalmente (pode repetir a flag ou usar vírgulas / espaços)',
+      (val: string, prev: string[]) => {
+        prev.push(val);
+        return prev;
+      },
+      [] as string[],
+    )
     .action(
       async (
-        opts: { guardianCheck?: boolean; verbose?: boolean; compact?: boolean; json?: boolean },
+        opts: {
+          guardianCheck?: boolean;
+          verbose?: boolean;
+          compact?: boolean;
+          json?: boolean;
+          include?: string[];
+          exclude?: string[];
+        },
         command: Command,
       ) => {
         aplicarFlagsGlobais(
@@ -54,6 +79,29 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         config.GUARDIAN_ENABLED = opts.guardianCheck ?? false;
         config.VERBOSE = opts.verbose ?? false;
         config.COMPACT_MODE = opts.compact ?? false;
+        // Filtros dinâmicos (limpeza inicial de espaços, evita strings vazias)
+        const processPatternList = (raw: string[] | undefined) => {
+          if (!raw || !raw.length) return [] as string[];
+          return Array.from(
+            new Set(
+              raw
+                .flatMap((r) => r.split(/[\s,]+/))
+                .map((s) => s.trim())
+                .filter(Boolean),
+            ),
+          );
+        };
+        const includeList = processPatternList(opts.include);
+        if (includeList.length) config.CLI_INCLUDE_PATTERNS = includeList;
+        const excludeList = processPatternList(opts.exclude);
+        if (excludeList.length) config.CLI_EXCLUDE_PATTERNS = excludeList;
+
+        if (config.VERBOSE && !opts.json && (includeList.length || excludeList.length)) {
+          const parts: string[] = [];
+          if (includeList.length) parts.push(`include=[${includeList.join(', ')}]`);
+          if (excludeList.length) parts.push(`exclude=[${excludeList.join(', ')}]`);
+          log.info(chalk.bold(`\n🎯 Filtros ativos: ${parts.join(' ')}\n`));
+        }
 
         let iniciouDiagnostico = false;
         const baseDir = process.cwd();

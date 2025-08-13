@@ -68,6 +68,9 @@ export const configDefault = {
     'package-lock.json',
     'yarn.lock',
   ],
+  // Padrões adicionais controlados via CLI para filtragem dinâmica pontual
+  CLI_INCLUDE_PATTERNS: [] as string[], // quando não vazio: somente arquivos que casem algum pattern serão considerados (override dos ignores padrão)
+  CLI_EXCLUDE_PATTERNS: [] as string[], // sempre excluídos (aplicado após include)
   ZELADOR_LINE_THRESHOLD: 20,
 
   // 🔍 Analistas
