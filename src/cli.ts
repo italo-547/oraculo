@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 
 import { registrarComandos } from './cli/comandos.js';
+import { comandoPerf } from './cli/comando-perf.js';
 import { config, aplicarConfigParcial } from './nucleo/constelacao/cosmos.js';
 
 // 🛠️ Configuração principal do CLI
@@ -18,7 +19,8 @@ program
     'exibe logs detalhados de cada arquivo e técnica analisada (ignorado se --silence)',
   )
   .option('-e, --export', 'gera arquivos de relatório detalhados (JSON e Markdown)')
-  .option('-d, --dev', 'ativa modo de desenvolvimento (logs de debug)');
+  .option('-d, --dev', 'ativa modo de desenvolvimento (deprecated, use --debug)')
+  .option('--debug', 'ativa logs de debug (equivalente a --dev)');
 // Flag experimental implementada
 program.option('--scan-only', 'executa apenas varredura e priorização sem AST ou técnicas');
 // Flags experimentais de config dinâmica (exemplos comuns)
@@ -35,16 +37,31 @@ interface OraculoGlobalFlags {
   verbose?: boolean;
   export?: boolean;
   dev?: boolean;
+  debug?: boolean;
   logEstruturado?: boolean;
   incremental?: boolean;
   meticas?: boolean;
   scanOnly?: boolean;
 }
-function aplicarFlagsGlobais(opts: unknown) {
+async function aplicarFlagsGlobais(opts: unknown) {
   const flags = opts as OraculoGlobalFlags;
+  // Sanitização e normalização (pode lançar)
+  try {
+    // lazy import para não criar ciclo
+    const { sanitizarFlags } = await import('./zeladores/util/validacao.js');
+    sanitizarFlags(flags as Record<string, unknown>);
+  } catch (e) {
+    console.error(chalk.red(`❌ Flags inválidas: ${(e as Error).message}`));
+    if (!process.env.VITEST) process.exit(1);
+  }
   config.REPORT_SILENCE_LOGS = Boolean(flags.silence);
   config.REPORT_EXPORT_ENABLED = Boolean(flags.export);
-  config.DEV_MODE = Boolean(flags.dev);
+  const debugAtivo =
+    Boolean(flags.debug) || Boolean(flags.dev) || process.env.ORACULO_DEBUG === 'true';
+  if (!flags.debug && flags.dev) {
+    console.warn(chalk.yellow('⚠️  --dev está deprecado; prefira --debug.')); // aviso único
+  }
+  config.DEV_MODE = debugAtivo;
   config.SCAN_ONLY = Boolean(flags.scanOnly);
   // Se silence está ativo, verbose é sempre falso
   config.VERBOSE = flags.silence ? false : Boolean(flags.verbose);
@@ -58,7 +75,10 @@ function aplicarFlagsGlobais(opts: unknown) {
 }
 
 // 🔗 Registro de todos os comandos
-registrarComandos(program, aplicarFlagsGlobais);
+registrarComandos(program, (o) => {
+  return aplicarFlagsGlobais(o);
+});
+program.addCommand(comandoPerf());
 
 // 🚀 Execução do CLI
 void program.parseAsync(process.argv);

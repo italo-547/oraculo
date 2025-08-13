@@ -24,6 +24,7 @@ vi.mock('chalk', () => ({
 vi.mock('../nucleo/constelacao/cosmos.js', () => ({ config: {} }));
 vi.mock('../nucleo/inquisidor.js', () => ({
   iniciarInquisicao: vi.fn(async () => ({ fileEntries: [] })),
+  registrarUltimasMetricas: vi.fn(),
 }));
 vi.mock('../zeladores/poda.js', () => ({
   removerArquivosOrfaos: vi.fn(async () => ({ arquivosOrfaos: [] })),

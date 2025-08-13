@@ -2,7 +2,7 @@ import { registroAnalistas } from '../analistas/registry.js';
 import * as path from 'path';
 import { scanRepository } from './scanner.js';
 import { decifrarSintaxe } from './parser.js';
-import { executarInquisicao as executarExecucao } from './executor.js';
+import { executarInquisicao as executarExecucao, registrarUltimasMetricas } from './executor.js';
 import { log } from './constelacao/log.js';
 import { config } from './constelacao/cosmos.js';
 import { lerEstado } from '../zeladores/util/persistencia.js';
@@ -332,4 +332,4 @@ export async function iniciarInquisicao(
   };
 }
 
-export { executarExecucao as executarInquisicao };
+export { executarExecucao as executarInquisicao, registrarUltimasMetricas };

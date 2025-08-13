@@ -6,16 +6,16 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 ### Alta Prioridade
 
-- [ ] Comparação automática de baseline e regressões (gerar diff entre últimos snapshots em `docs/perf/` e destacar variações > X%)
-- [ ] Sanitização/validação de entradas da CLI (normalizar paths, validar números, rejeitar combinações inválidas cedo)
-- [ ] Revisar logs DEBUG e consolidar flag (`--dev` vs `ORACULO_DEBUG` => unificar em `--debug` mantendo retrocompatibilidade)
+- [x] Comparação automática de baseline e regressões (gerar diff entre últimos snapshots em `docs/perf/` e destacar variações > X%)
+- [x] Sanitização/validação de entradas da CLI (normalizar paths, validar números, rejeitar combinações inválidas cedo)
+- [x] Revisar logs DEBUG e consolidar flag (`--dev` vs `ORACULO_DEBUG` => unificar em `--debug` mantendo retrocompatibilidade)
 
 ### Média Prioridade
 
 - [ ] Monitor de dependências: documentar fluxo automatizado + workflow agendado (usar `npm outdated` + `npm audit` não-blocking)
 - [ ] Documentar estratégia de mocks de AST (arquivo guia em `docs/tests/AST_MOCKS.md` centralizando padrões)
 - [ ] Guia de padronização de código / convenções (estilo, naming, estrutura de analistas, limites de complexidade)
-- [ ] Gate de regressão de performance opcional (falhar CI se parsing/análise > +30% vs baseline referência)
+- [ ] Gate de regressão de performance opcional (falhar CI se parsing/análise > +30% vs baseline referência) <!-- próximo passo: integrar comando perf compare no CI -->
 
 ### Baixa Prioridade / Futuro Próximo
 
@@ -36,6 +36,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Automação: adicionar lint/format ao CI e gate de cobertura
 - [x] Guia de criação de plugins (exemplos práticos) (`docs/plugins/GUIA.md` com exemplo analista + plugin estrutura)
 - [x] Baseline de performance inicial (script `perf:baseline`)
+- [x] Comando `perf compare` para regressões sintéticas
 - [x] Flag `--full-scan` para incluir `node_modules` controladamente (baseline bloqueado)
 - [x] Documentar política de ignores do Guardian (guardian.md)
 - [x] Saída JSON estruturada (`diagnosticar --json`, `guardian --json`)

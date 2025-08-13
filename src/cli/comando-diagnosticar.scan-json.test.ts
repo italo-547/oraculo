@@ -29,6 +29,7 @@ describe('comandoDiagnosticar scan/json branches', () => {
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: fakeEntries })),
       prepararComAst: vi.fn(),
       executarInquisicao: vi.fn(),
+      registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
@@ -78,6 +79,7 @@ describe('comandoDiagnosticar scan/json branches', () => {
         return entries.map((e: any) => ({ ...e, ast: undefined }));
       }),
       executarInquisicao: vi.fn(async () => ({ ocorrencias: [], fileEntries: fakeEntries })),
+      registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({

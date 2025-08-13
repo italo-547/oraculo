@@ -31,6 +31,7 @@ describe('comandoDiagnosticar scan-only falha export', () => {
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: fakeEntries })),
       prepararComAst: vi.fn(),
       executarInquisicao: vi.fn(),
+      registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({

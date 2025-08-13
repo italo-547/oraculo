@@ -37,6 +37,7 @@ vi.mock('../nucleo/inquisidor.js', () => ({
     throw 'erro string simples';
   }),
   executarInquisicao: vi.fn(async () => ({ ocorrencias: [], fileEntries: [] })),
+  registrarUltimasMetricas: vi.fn(),
   tecnicas: [],
 }));
 

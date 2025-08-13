@@ -66,7 +66,8 @@ Você pode usar as flags globais em qualquer comando para controlar o nível de 
 | `--silence`   | Silencia todos os logs de informação e aviso (sobrepõe `--verbose`)                       |
 | `--verbose`   | Exibe logs detalhados de cada arquivo e técnica analisada (ignorado se `--silence` ativo) |
 | `--export`    | Gera arquivos de relatório detalhados (JSON e Markdown)                                   |
-| `--dev`       | Ativa modo de desenvolvimento (logs de debug)                                             |
+| `--debug`     | Ativa modo de desenvolvimento (logs detalhados de debug)                                  |
+| `--dev`       | Alias legado para `--debug` (deprecado)                                                   |
 | `--scan-only` | Executa somente varredura e priorização, sem aplicar técnicas                             |
 | `--json`      | (diagnosticar/guardian) Saída estruturada JSON para uso em CI                             |
 
@@ -119,6 +120,7 @@ oraculo <comando>
 - `podar` — Remove arquivos órfãos
 - `reestruturar` — Corrige estrutura de pastas/arquivos
 - `guardian` — Verificações de integridade (baseline, diff de hashes, sentinela)
+- `perf baseline|compare` — Gera e compara snapshots sintéticos de performance (parsing/análise)
 - Documentação detalhada do Guardian: `docs/guardian.md`
 - ...e outros! Veja todos com:
 
@@ -142,7 +144,7 @@ Ver cobertura:
 npx vitest run --coverage
 ```
 
-### Política de Cobertura (Gate)
+### Política de Cobertura (Gate) & Performance Opcional
 
 Limiar mínimo (enforced em CI/local via `npm run coverage:enforce`):
 
@@ -165,6 +167,8 @@ Critérios para novas exclusões: só se não houver lógica de produção ou fo
 Processo para elevar limiares: aumentar uma métrica por vez quando o piso real estiver estável ≥ (limiar + 3%). Atualizado agora pois ultrapassamos 90% global (Statements/Lines ~91.3%). Próximo alvo potencial: Branches 90%+ após estabilizar acima de ~89% por alguns commits e reduzir pequenos clusters remanescentes.
 
 Pull Requests devem manter (ou aumentar) cobertura efetiva. Se reduzir, justificar em descrição com plano de recuperação.
+
+Gate de performance (experimental): snapshots gerados via `npm run perf:baseline` e comparados no CI (`perf:compare` + `perf:gate`). Regressões > limite configurado (default 30%) em parsing/analise são sinalizadas com aviso; pode evoluir para hard fail quando estabilizado.
 
 ### Estratégia de Testes
 

@@ -314,3 +314,14 @@ export async function executarInquisicao(
     metricas: metricasExecucao || undefined,
   };
 }
+
+// Hook simples para expor última métrica de execução (consumido por comando perf baseline)
+export function registrarUltimasMetricas(metricas: MetricaExecucao | undefined) {
+  try {
+    (
+      globalThis as unknown as { __ULTIMAS_METRICAS_ORACULO__?: MetricaExecucao | null }
+    ).__ULTIMAS_METRICAS_ORACULO__ = metricas || null;
+  } catch {
+    /* ignore */
+  }
+}

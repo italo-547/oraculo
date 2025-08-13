@@ -29,6 +29,7 @@ it('exporta relatório com REPORT_OUTPUT_DIR customizado e baselineModificado tr
       entries.map((e: any) => ({ ...e, ast: undefined })),
     ),
     executarInquisicao: vi.fn(async () => ({ ocorrencias: [], fileEntries: [fakeEntry] })),
+    registrarUltimasMetricas: vi.fn(),
     tecnicas: [],
   }));
   const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');

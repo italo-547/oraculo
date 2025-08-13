@@ -9,6 +9,7 @@ import { IntegridadeStatus } from '../tipos/tipos.js';
 import {
   iniciarInquisicao,
   executarInquisicao,
+  registrarUltimasMetricas,
   tecnicas,
   prepararComAst,
 } from '../nucleo/inquisidor.js';
@@ -161,6 +162,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             guardianResultado,
             { verbose: config.VERBOSE, compact: config.COMPACT_MODE },
           );
+          // Evita falhas em testes onde registrarUltimasMetricas não é mockado
+          if (typeof registrarUltimasMetricas === 'function' && resultadoFinal.metricas) {
+            registrarUltimasMetricas(resultadoFinal.metricas);
+          }
           // Anexa erros de parsing coletados durante prepararComAst (não incluídos em executarInquisicao)
           const parseErrosRaw =
             (oraculoGlobals.__ORACULO_PARSE_ERROS__ as unknown[] | undefined) || [];

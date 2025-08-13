@@ -13,6 +13,7 @@ vi.mock('../nucleo/inquisidor.js', () => ({
   iniciarInquisicao: vi.fn(async () => ({ fileEntries: [], tempoMs: 1 })),
   prepararComAst: vi.fn(async () => []),
   executarInquisicao: vi.fn(async () => ({ ocorrencias: [], fileEntries: [] })),
+  registrarUltimasMetricas: vi.fn(),
   tecnicas: [],
 }));
 
