@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "tests/fixtures/**/*.ts"],
   "exclude": ["dist", ".oraculo"]
 }
