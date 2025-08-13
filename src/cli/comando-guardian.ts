@@ -147,7 +147,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
                         .__ORACULO_DIFF_CACHE_HITS__ || 0,
                   }),
                 );
-              else log.info('📘 Guardian: baseline inicial criado.');
+              else log.info('📘 Guardian baseline criado.');
               log.aviso(
                 'Execute `oraculo guardian --accept-baseline` para aceitá-lo ou `oraculo diagnosticar` novamente.',
               );

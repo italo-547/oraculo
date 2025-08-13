@@ -45,9 +45,8 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
           );
           rl.close();
 
-          console.log('DEBUG: Valor de answer na poda:', answer);
+          // debug removido (usava console.log) – manter somente se modo debug ativo futuramente
           if (answer.toLowerCase() !== 's') {
-            console.log('DEBUG: Entrou no bloco de cancelamento da poda');
             log.info('❌ Poda cancelada.');
             return;
           }

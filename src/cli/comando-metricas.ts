@@ -82,7 +82,8 @@ export function comandoMetricas() {
         }
 
         if (opts.json) {
-          log.info(
+          // Emite JSON puro (sem prefixos de log) para facilitar piping / CI
+          console.log(
             JSON.stringify(
               { total: lista.length, limite: opts.limite, historico: ultimos, agregados: agg },
               null,

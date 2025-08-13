@@ -1,4 +1,12 @@
-# Dependências
+node_modules/
+dist/
+dist-pack/
+.oraculo/historico-metricas/
+diag*.json
+guardian*.json
+*.log
+coverage/
+*.tsbuildinfo# Dependências
 node_modules/
 
 # Build

@@ -18,7 +18,7 @@ export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
     }
     log.info('');
   } else {
-    log.sucesso('✅ Nenhuma função acima do limite.\\n');
+    log.sucesso('Nenhuma função acima do limite.');
   }
 
   if (constExcessivas.length > 0) {
@@ -37,5 +37,5 @@ export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
     log.info('');
   }
 
-  log.sucesso('✅ Fim do relatório do zelador.\n');
+  log.sucesso('Fim do relatório do zelador.');
 }

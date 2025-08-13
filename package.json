@@ -20,6 +20,7 @@
     "typecheck": "tsc --noEmit",
     "prebuild": "rimraf dist",
     "build": "tsc",
+    "build:pack": "npm run build && node scripts/prepare-pack.mjs",
     "start": "node ./dist/cli.js",
     "diagnosticar": "node ./dist/cli.js diagnosticar",
     "lint": "eslint \"src/**/*.ts\"",

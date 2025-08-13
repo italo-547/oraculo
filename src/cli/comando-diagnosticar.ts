@@ -116,7 +116,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                   log.sucesso('🔒 Guardian: integridade preservada.');
                   break;
                 case IntegridadeStatus.Criado:
-                  log.info('📘 Guardian: baseline inicial criado.');
+                  // Mensagem reduzida para evitar duplicidade com comando guardian
+                  log.info('📘 Guardian baseline criado.');
                   break;
                 case IntegridadeStatus.Aceito:
                   log.aviso('🌀 Guardian: novo baseline aceito — execute novamente.');
@@ -301,6 +302,34 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             delete oraculoGlobals.__ORACULO_PARSE_ERROS__;
           }
           totalOcorrencias += resultadoFinal.ocorrencias.length;
+
+          // Agregação simples de TODO_PENDENTE (reduz ruído): colapsa múltiplas ocorrências do mesmo arquivo em uma única com contagem
+          try {
+            const agrupados = new Map<string, { primeira: Ocorrencia; qtd: number }>();
+            for (const occ of resultadoFinal.ocorrencias) {
+              if (occ.tipo === 'TODO_PENDENTE' && occ.relPath) {
+                const key = occ.relPath;
+                const ref = agrupados.get(key);
+                if (ref) ref.qtd += 1;
+                else agrupados.set(key, { primeira: occ, qtd: 1 });
+              }
+            }
+            if (agrupados.size) {
+              // Remove duplicados originais
+              resultadoFinal.ocorrencias = resultadoFinal.ocorrencias.filter(
+                (o) => o.tipo !== 'TODO_PENDENTE',
+              );
+              for (const { primeira, qtd } of agrupados.values()) {
+                resultadoFinal.ocorrencias.push({
+                  ...primeira,
+                  mensagem:
+                    qtd === 1 ? primeira.mensagem : `${qtd} TODOs pendentes no arquivo (agregado)`,
+                });
+              }
+            }
+          } catch {
+            // falha silenciosa - não compromete diagnóstico
+          }
 
           // Resumo agrupado de tipos de problemas
           const tiposOcorrencias: Record<string, number> = {};
