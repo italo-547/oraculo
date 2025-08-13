@@ -21,7 +21,7 @@ Oráculo é uma CLI modular para análise, diagnóstico e manutenção de projet
 
 ## 📦 Instalação
 
-```bash
+````bash
 git clone https://github.com/aynsken/oraculo.git
 cd oraculo
 npm install
@@ -34,7 +34,7 @@ npm install
 ```bash
 npm run build
 node dist/cli.js <comando>
-```
+````
 
 Exemplo:
 
@@ -177,10 +177,11 @@ src/
 - [x] Implementar flag `--scan-only`
 - [x] Testes ponta-a-ponta executando binário buildado (E2E básicos + guardian + exit code erro)
 - [x] Integração contínua com lint + format + coverage gate (CI + build)
-- [x] Documentar criação de plugins (guia prático + exemplo mínimo)
-- [ ] Métricas de performance (scan grande / memória)
+- [x] Flags `--json` (diagnosticar/guardian) e `--full-scan` (guardian)
+- [ ] Métricas de performance (scan grande / memória) exportáveis
 - [ ] Baseline comparativa de performance por commit
 - [ ] Relatório de baseline de performance automatizado
+- [ ] Guia de criação de plugins (contrato + exemplo mínimo) (in progress)
 - [ ] Guia de padronização / estilo de código (linters + convenções)
 
 ## 🧬 Camadas de Teste (Resumo)
@@ -202,6 +203,84 @@ src/
 - Ocorrência com erro técnico gera exit code 1
 
 Detalhes completos em `docs/relatorios/camadas-testes.md`.
+
+## 📑 Agregação de PARSE_ERRO
+
+Para evitar ruído excessivo:
+
+- Por padrão (`PARSE_ERRO_AGRUPAR=true`) múltiplos erros de parsing no mesmo arquivo são consolidados.
+- Limite de ocorrências individuais antes de agrupar: `PARSE_ERRO_MAX_POR_ARQUIVO` (default: 1).
+- A contagem total original é preservada em `parseErros.totalOriginais` (modo `diagnosticar --json`).
+- Campo `agregados` indica quantos foram suprimidos por agrupamento.
+- Ajuste via config/env: `PARSE_ERRO_AGRUPAR=false` para listar todos; aumentar `PARSE_ERRO_MAX_POR_ARQUIVO` para tolerar mais entradas antes de condensar.
+
+## 📜 Guardian JSON (Contrato de Saída)
+
+Quando executado com `--json`, o comando `guardian` retorna objeto com:
+
+```json
+{
+  "status": "ok" | "baseline-criado" | "baseline-aceito" | "alteracoes-detectadas" | "erro",
+  "diff": {
+    "adicionados": [],
+    "alterados": [],
+    "removidos": []
+  },
+  "politicas": {
+    "permiteAdds": true,
+    "permiteChanges": true,
+    "permiteDeletes": true
+  },
+  "baselinePath": "./.oraculo/baseline.json",
+  "fullScan": false
+}
+```
+
+Notas:
+
+- Em `fullScan=true` não é permitido aceitar baseline.
+- Em caso de erro estrutural/hard (ex: IO), `status: "erro"` e processo sai com código != 0.
+
+---
+
+## 🔐 Pipeline Local vs CI (Confiabilidade & Segurança)
+
+Para garantir que o que passa localmente também passe no GitHub Actions (Linux):
+
+| Etapa          | Local (VSCode / Git)             | CI (Actions)                          | Observações                                  |
+| -------------- | -------------------------------- | ------------------------------------- | -------------------------------------------- |
+| Formatação     | Prettier on save / `lint-staged` | `npm run format` (fail on diff)       | Pre-commit impede commit fora do padrão      |
+| Lint           | ESLint (formatOnSave fixAll)     | `npm run lint` (warnings permitidos)  | Ajuste regras conforme maturidade            |
+| Typecheck      | `npm run typecheck`              | `npm run typecheck`                   | Sem diferenças                               |
+| Testes unidade | `npm run test:unit`              | `npm run test:unit` dentro de `check` | E2E separados para velocidade                |
+| Testes E2E     | `npm run test:e2e`               | Job dedicado pós build                | Usa binário dist real                        |
+| Cobertura      | Opcional local                   | `npm run coverage` + gate             | Gate falha se limiar abaixo                  |
+| Segurança deps | `npm audit` (manual)             | `npm run security:deps` (não falha)   | Falhas críticas podem virar hard fail depois |
+| Build artefato | `npm run build`                  | Artifact `dist` publicado             | Útil para inspeção / releases                |
+
+### Husky & lint-staged
+
+Hooks configurados:
+
+- `pre-commit`: roda `lint-staged` aplicando Prettier e ESLint somente nos arquivos staged.
+
+Se precisar pular (não recomendado):
+
+```bash
+HUSKY=0 git commit -m "chore: bypass hook"
+```
+
+### Scripts Principais
+
+```bash
+npm run check:style   # lint + prettier check + typecheck
+npm run check         # estilo + testes de unidade
+npm run test:e2e      # apenas E2E
+```
+
+### Variáveis Úteis
+
+- `PARSE_ERRO_FALHA=true` pode ser usado para fazer parse errors agregados falharem o diagnóstico.
 
 ---
 

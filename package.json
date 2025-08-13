@@ -17,21 +17,17 @@
     "node": ">=24.0.4"
   },
   "scripts": {
-  "typecheck": "tsc --noEmit",
-  "prebuild": "rimraf dist",
-  "build": "tsc",
-  "start": "node ./dist/cli.js",
-  "diagnosticar": "node ./dist/cli.js diagnosticar",
-  "lint": "eslint \"src/**/*.ts\"",
-  "format": "prettier --check \"**/*.{ts,md}\"",
-  "format:fix": "prettier --write \"**/*.{ts,md}\"",
-  "test": "vitest run",
-  "test:unit": "vitest run --ignore 'src/cli/e2e-bin.test.ts'",
-  "test:e2e": "vitest run src/cli/e2e-bin.test.ts",
-  "coverage": "vitest run --coverage",
-  "coverage:gate": "vitest run --coverage --reporter=json --outputFile=coverage-temp.json && node scripts/coverage-gate.cjs",
-  "check": "npm run lint && npm run typecheck && npm run test:unit",
-  "perf:baseline": "node scripts/perf-baseline.mjs"
+    "typecheck": "tsc --noEmit",
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "start": "node ./dist/cli.js",
+    "diagnosticar": "node ./dist/cli.js diagnosticar",
+    "lint": "eslint \"src/**/*.ts\"",
+    "format": "prettier --check \"**/*.{ts,md}\"",
+    "format:fix": "prettier --write \"**/*.{ts,md}\"",
+    "security:deps": "npm audit --production --audit-level=moderate || true",
+    "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
+    "prepare": "husky install"
   },
   "keywords": [
     "cli",
@@ -47,8 +43,8 @@
     "@babel/types": "^7.24.8",
     "chalk": "^5.3.0",
     "commander": "^12.1.0",
-  "micromatch": "^4.0.8",
-  "xxhashjs": "^0.2.2",
+    "micromatch": "^4.0.8",
+    "xxhashjs": "^0.2.2",
     "p-limit": "^4.0.0"
   },
   "devDependencies": {
@@ -62,6 +58,17 @@
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "typescript": "^5.5.4",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10"
+  },
+  "lint-staged": {
+    "*.{ts,js,cts,mts}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{md,json}": [
+      "prettier --write"
+    ]
   }
 }

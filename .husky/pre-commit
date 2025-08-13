@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Husky v9 pre-commit: executa lint-staged
+echo "🔍 pre-commit: executando lint-staged"
+NODE_OPTIONS= npx lint-staged --config ./.lintstagedrc.mjs --cwd . --quiet

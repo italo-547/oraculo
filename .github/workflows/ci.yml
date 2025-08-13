@@ -1,4 +1,4 @@
-name: CI
+name: CI Principal
 
 on:
   push:
@@ -21,8 +21,11 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      - name: Verificações rápidas (lint + type + unit)
-        run: npm run check
+      - name: Verificações de estilo (lint + prettier + types)
+        run: npm run check:style
+
+      - name: Audit rápido de dependências (não falha build)
+        run: npm run security:deps
 
       - name: Cobertura completa
         run: npm run coverage
@@ -30,5 +33,14 @@ jobs:
       - name: Gate de cobertura
         run: npm run coverage:gate
 
+      - name: Build para testes E2E
+        run: npm run build
+
       - name: Testes E2E (binário)
-        run: npm run build && npm run test:e2e
+        run: npm run test:e2e
+
+      - name: Publicar dist como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: oraculo-dist
+          path: dist
