@@ -29,6 +29,7 @@
     "check:style": "npm run lint && npm run typecheck && npm run format",
     "coverage:gate": "npm run coverage:enforce",
     "test:e2e": "vitest run --dir src/cli --reporter dot",
+    "test:ci": "vitest run --reporter=json --outputFile .oraculo/last-test-report.json",
     "perf:baseline": "node dist/cli.js perf baseline --dir docs/perf",
     "perf:compare": "node dist/cli.js perf compare --dir docs/perf --json",
     "perf:gate": "node dist/cli.js perf compare --dir docs/perf --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);if(j.regressao){console.error('Regressao performance > limite');process.exit(1)}console.log('Perf OK')});\"",
@@ -55,7 +56,11 @@
     "commander": "^12.1.0",
     "micromatch": "^4.0.8",
     "xxhashjs": "^0.2.2",
-    "p-limit": "^4.0.0"
+    "p-limit": "^4.0.0",
+    "htmlparser2": "^9.1.0",
+    "fast-xml-parser": "^4.3.6",
+    "css-tree": "^2.3.1",
+    "java-parser": "^2.2.0"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.20.7",

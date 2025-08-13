@@ -10,16 +10,18 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Sanitização/validação de entradas da CLI (normalizar paths, validar números, rejeitar combinações inválidas cedo)
 - [x] Revisar logs DEBUG e consolidar flag (`--dev` vs `ORACULO_DEBUG` => unificar em `--debug` mantendo retrocompatibilidade)
 - [ ] Biblioteca de estruturas padrão (detecção + aconselhamento + auto-reorganização opcional)
-  - Tipos alvo iniciais: `cli-modular`, `landing-page`, `api-rest-express`, `fullstack` (pages/api/prisma), `bot`, `electron`, `lib-tsc`, `monorepo-packages`
-  - Taxonomia: definir contrato (nome, descrição, pastas esperadas, arquivos raiz permitidos, padrões proibidos, tolerâncias)
-  - Motor de detecção: heurísticas por presença/ausência de pastas (`src/cli.ts`, `pages/`, `api/`, `prisma/`, `electron.js`, `bin/`, `packages/`, etc) + dependências declaradas (express, electron, commander)
-  - Validação estrutural: listar arquivos "fora do lugar" (ex: componentes em raiz, scripts em `src/` indevidos, etc)
-  - Ação de correção simulada: sugerir novo caminho e exibir plano (dry-run); flag futura `--reorganizar` para aplicar
-  - Guard rails: nunca mover arquivos gerados / config / testes sem confirmação; gerar mapa reverso para evitar quebra de imports
-  - Relatório dedicado: seção "estrutura-identificada" com tipo, confiança (%), anomalias e plano sugerido
-  - Persistência: snapshot de estrutura detectada para comparar derivações futuras (baseline estrutural)
-  - Testes: fixtures mini de cada tipo + casos híbridos (ex: api + landing) garantindo escolha mais específica / ou múltiplas etiquetas
-  - Documentar em `docs/estruturas/README.md` (exemplos e critérios)
+  - [x] Tipos alvo iniciais definidos (`cli-modular`, `landing-page`, `api-rest-express`, `fullstack`, `bot`, `electron`, `lib-tsc`, `monorepo-packages`)
+  - [x] Taxonomia contratual (nome, descrição, pastas, rootFilesAllowed, forbidden, hints) implementada
+  - [x] Motor heurístico de detecção (pastas + dependências + padrões de arquivo)
+  - [x] Relatório: seção `estruturaIdentificada` com baseline + drift + melhores candidatos
+  - [x] Baseline estrutural + cálculo de drift
+  - [x] Plano de reorganização inicial (zona verde) gerado automaticamente (`planoSugestao`) – somente sugestões
+  - [x] Documentação detalhada em `docs/estruturas/README.md`
+  - [ ] Testes de fixtures por arquétipo (casos híbridos & conflito de confiança)
+  - [ ] Comando `reestruturar` (dry-run + `--aplicar`)
+  - [ ] Geração de mapa de reversão para moves aplicados
+  - [ ] Normalização de nomes de diretórios (case / plurais) opcional
+  - [ ] Regras adicionais (zona amarela) com opt-in
 
 ### Média Prioridade
 
@@ -57,6 +59,28 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Documentar contrato de saída para guardian (statuses) no README
 - [x] Licença final: MIT (sem restrições adicionais)
 - [x] Atualizar .gitignore para ignorar artefatos temporários (.oraculo, hist-\*.json, reports)
+- [x] Detecção de arquétipos inicial (heurística + baseline + drift JSON)
+- [x] Ampliação whitelist de arquivos raiz para reduzir falso-positivo de anomalias
+- [x] Limite de exibição de anomalias (máx 8 detalhadas em verbose)
+- [x] Suporte parsing leve multi-linguagem (kotlin, java, xml, html, css, gradle) com AST compat mínimo
+- [x] Inclusão de campo `drift` na saída JSON de `diagnosticar`
+- [x] Inclusão de campo `linguagens` (resumo extensões) na saída JSON de `diagnosticar`
+- [x] Escape unicode em saída `--json` para evitar artefatos em consoles Windows
+- [x] Documentação de arquétipos + regras reorganização (docs/estruturas/README.md)
+- [x] Plano de reorganização (zona verde) em `detector-arquetipos` + inclusão no JSON
+- [x] Refatoração para remover números mágicos (constantes de pesos & regex centralizadas)
+- [x] Skip de geração de plano em modo `--scan-only`
+
+## Refinamentos de Qualidade (Novos)
+
+- [x] Extrair lógica de geração de plano para módulo dedicado (`src/analistas/plano-reorganizacao.ts`)
+- [x] Adicionar limite configurável para tamanho de arquivo nos moves (default 256KB) via config (`ESTRUTURA_PLANO_MAX_FILE_SIZE`)
+- [x] Exibir resumo de plano em modo não-JSON (top 3 moves + contagem)
+- [x] Integrar comando `reestruturar` ao `planoSugestao` (flags `--somente-plano`, `--auto`/`--aplicar`)
+- [ ] Validar colisões de extensão (ex: mover `.test.ts` mantendo subpastas futuras)
+- [ ] Testar cenário sem candidatos (plano vazio) garantindo ausência de campos supérfluos
+- [ ] Flag experimental para mostrar diff simulado de imports quebrados
+- [ ] Geração de mapa de rollback para moves aplicados (persistir JSON)
 
 ## Feito
 

@@ -3,6 +3,7 @@
 [![CI](https://github.com/aynsken/oraculo/actions/workflows/ci.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/ci.yml)
 [![Build](https://github.com/aynsken/oraculo/actions/workflows/build.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/build.yml)
 [![Monitor Deps](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml)
+[![Testes](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/aynsken/oraculo/main/.oraculo/badge-test-stats.json)](docs/relatorios/RELATORIO.md)
 
 Oráculo é uma CLI modular para análise, diagnóstico e manutenção de projetos, com arquitetura extensível via plugins e comandos customizados. Focada em segurança evolutiva: alta cobertura de testes, arquitetura segmentada (analistas, arquitetos, zeladores, guardian) e geração de relatórios consistentes.
 
@@ -130,7 +131,7 @@ node dist/cli.js --help
 
 ## 🧪 Testes
 
-Estado atual: 358 testes passando (data: 2025-08-13). A contagem pode evoluir.
+Estado atual: 366 testes passando (data: 2025-08-13). A contagem pode evoluir.
 
 Rodar todos os testes:
 
@@ -208,6 +209,19 @@ Quando `--metricas` (default habilitado) está ativo, o comando `diagnosticar --
 Use `oraculo metricas --json` para histórico agregado e `--export` para salvar snapshot completo (auditorias de performance). A persistência fica em `.oraculo/metricas-historico.json` (ignorado no Git). Desabilite via `--no-metricas` se quiser reduzir overhead mínimo (~1–2ms em bases pequenas).
 
 Contrato JSON (`diagnosticar --json`) inclui `parseErros.totalOriginais` e `parseErros.agregados` para transparência.
+
+Bloco adicional `linguagens` fornece resumo das extensões analisadas ordenadas por frequência:
+
+```jsonc
+{
+  "linguagens": {
+    "total": 230,
+    "extensoes": { "ts": 120, "js": 40, "kt": 5, "java": 3, "xml": 2 },
+  },
+}
+```
+
+Isso facilita métricas de adoção multi-stack e priorização de analistas dedicados.
 
 ### Critério de Exit Codes
 

@@ -94,6 +94,37 @@ Este projeto é uma CLI modular para análise, diagnóstico e manutenção de pr
 - `--full-scan` (guardian): Ignora padrões de ignore para inspeção pontual (não persiste baseline).
 - `--json`: Saída estruturada em `diagnosticar` e `guardian` (consumível por CI/pipelines).
 
+## Linguagens / Parsing Suportado
+
+Parsing primário (AST Babel completo): `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs`.
+
+Parsing leve / heurístico (AST mínimo compat e extra em `oraculoExtra`):
+
+- Kotlin: `.kt`, `.kts` (extração de símbolos `class|object|fun`).
+- Java: `.java` (usa `java-parser`).
+- XML: `.xml` (fast-xml-parser).
+- HTML: `.html`, `.htm` (htmlparser2 DOM -> wrapper).
+- CSS: `.css` (css-tree AST).
+- Gradle (Groovy/KTS): `.gradle`, `.gradle.kts` (regex heurística para plugins e deps).
+
+Limitação: Analistas que dependem de nós Babel só atuam em linguagens suportadas pelo Babel. Outros arquivos ficam disponíveis para futuros analistas específicos via `oraculoExtra`.
+
+## Saída JSON (`diagnosticar --json`)
+
+Campo `estruturaIdentificada` agora inclui:
+
+- `melhores`: lista de arquétipos candidatos.
+- `baseline`: snapshot salvo.
+- `drift`: mudanças (alterouArquetipo, deltaConfidence, arquivos raiz novos/removidos).
+
+Campo raiz adicional:
+
+- `linguagens`: resumo agregando extensões analisadas (ex: `{ "total": 230, "extensoes": { "ts": 120, "js": 40, "kt": 5, ... } }`). Ordenado por quantidade desc. Útil para métricas de adoção multi-stack e futura decisão de analistas específicos.
+
+Notas de encoding:
+
+- A saída JSON aplica escape unicode (`\uXXXX`) para caracteres fora de ASCII básico quando `--json` é usado, mitigando artefatos de console Windows legado.
+
 ## Agregação de PARSE_ERRO
 
 Para reduzir ruído:

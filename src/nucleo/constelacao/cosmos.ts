@@ -102,6 +102,8 @@ export const configDefault = {
   STRUCTURE_AUTO_FIX: false,
   STRUCTURE_CONCURRENCY: 5,
   STRUCTURE_LAYERS: {},
+  // Limite de tamanho (bytes) para considerar mover arquivo em plano de reorganização
+  ESTRUTURA_PLANO_MAX_FILE_SIZE: 256 * 1024, // ~250KB
 
   // Compatibilidade/legado
   STATE_DIR: ORACULO_STATE,

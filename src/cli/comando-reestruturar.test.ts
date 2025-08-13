@@ -20,9 +20,9 @@ it('executa reestruturação com ocorrência sem relPath nem arquivo (arquivo de
   expect(corrigirEstrutura).toHaveBeenCalledWith(
     expect.arrayContaining([
       expect.objectContaining({
-        arquivo: 'arquivo_desconhecido',
+        arquivo: 'arquivo desconhecido',
         ideal: null,
-        atual: 'arquivo_desconhecido',
+        atual: 'arquivo desconhecido',
       }),
     ]),
     expect.anything(),
@@ -59,9 +59,17 @@ vi.mock('node:readline/promises', () => ({
 vi.mock('chalk', () => ({ default: { bold: (x: string) => x, yellow: (x: string) => x } }));
 vi.mock('../nucleo/constelacao/cosmos.js', () => ({ config: {} }));
 vi.mock('../nucleo/inquisidor.js', () => ({
-  iniciarInquisicao: vi.fn(async () => ({ fileEntries: [] })),
+  iniciarInquisicao: vi.fn(async () => ({
+    fileEntries: [{ fullPath: 'src/a.ts', relPath: 'src/a.ts' }],
+  })),
   executarInquisicao: vi.fn(async () => ({ ocorrencias: [] })),
+  prepararComAst: vi.fn(async (entries: any) => entries),
   tecnicas: [],
+}));
+vi.mock('../analistas/detector-arquetipos.js', () => ({
+  detectarArquetipos: vi.fn(async () => ({
+    melhores: [{ planoSugestao: { mover: [], conflitos: [], resumo: '' } }],
+  })),
 }));
 vi.mock('../zeladores/corretor-estrutura.js', () => ({
   corrigirEstrutura: vi.fn(async () => undefined),
@@ -86,6 +94,7 @@ describe('comandoReestruturar', () => {
     const { comandoReestruturar } = await import('./comando-reestruturar.js');
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
+    // detector retorna plano vazio e executarInquisicao retorna sem ocorrências
     const cmd = comandoReestruturar(aplicarFlagsGlobais);
     program.addCommand(cmd);
     await program.parseAsync(['node', 'cli', 'reestruturar']);

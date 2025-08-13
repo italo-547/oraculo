@@ -6,9 +6,21 @@ import type {
   ArquetipoDeteccaoAnomalia,
   SnapshotEstruturaBaseline,
   ArquetipoEstruturaDef,
+  ArquetipoDrift,
 } from '../tipos/tipos.js';
 import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
+import { gerarPlanoReorganizacao } from './plano-reorganizacao.js';
 import path from 'node:path';
+
+// Pesos e limites centralizados (evita números mágicos espalhados)
+const PESO_REQUIRED = 15;
+const PENALIDADE_MISSING_REQUIRED = 20;
+const PESO_OPTIONAL = 5;
+const PESO_DEPENDENCIA = 8;
+const PESO_PATTERN = 6;
+const PENALIDADE_FORBIDDEN = 10;
+
+// (Regex antigos removidos por não uso — ver histórico caso necessário restaurar)
 
 function scoreArquetipo(
   def: ArquetipoEstruturaDef,
@@ -33,19 +45,19 @@ function scoreArquetipo(
   );
   // Score heurístico
   let score = (def.pesoBase || 1) * 10;
-  score += matchedRequired.length * 15;
-  score -= missingRequired.length * 20; // penaliza forte
-  score += matchedOptional.length * 5;
-  score += dependencyMatches.length * 8;
-  score += filePatternMatches.length * 6;
-  score -= forbiddenPresent.length * 10;
+  score += matchedRequired.length * PESO_REQUIRED;
+  score -= missingRequired.length * PENALIDADE_MISSING_REQUIRED; // penaliza forte ausência
+  score += matchedOptional.length * PESO_OPTIONAL;
+  score += dependencyMatches.length * PESO_DEPENDENCIA;
+  score += filePatternMatches.length * PESO_PATTERN;
+  score -= forbiddenPresent.length * PENALIDADE_FORBIDDEN;
   if (score < 0) score = 0;
   const maxPossible =
     (def.pesoBase || 1) * 10 +
-    required.length * 15 +
-    optional.length * 5 +
-    (def.dependencyHints || []).length * 8 +
-    (def.filePresencePatterns || []).length * 6;
+    required.length * PESO_REQUIRED +
+    optional.length * PESO_OPTIONAL +
+    (def.dependencyHints || []).length * PESO_DEPENDENCIA +
+    (def.filePresencePatterns || []).length * PESO_PATTERN;
   const confidence = maxPossible > 0 ? Math.min(100, Math.round((score / maxPossible) * 100)) : 0;
 
   // Anomalias básicas: arquivos na raiz não permitidos
@@ -70,13 +82,14 @@ function scoreArquetipo(
     filePatternMatches,
     forbiddenPresent,
     anomalias,
-    planoSugestao: { mover: [] },
+    planoSugestao: { mover: [], conflitos: [], resumo: { total: 0, zonaVerde: 0, bloqueados: 0 } },
   };
 }
 
 export interface ResultadoBibliotecaArquetipos {
   melhores: ResultadoDeteccaoArquetipo[];
   baseline?: SnapshotEstruturaBaseline;
+  drift?: ArquetipoDrift;
 }
 
 export async function detectarArquetipos(
@@ -109,5 +122,30 @@ export async function detectarArquetipos(
     };
     await salvarEstado(baselinePath, baseline);
   }
-  return { melhores, baseline };
+  // Calcular drift se baseline existe
+  let drift: ArquetipoDrift | undefined;
+  if (baseline && melhores[0]) {
+    const atual = melhores[0];
+    const arquivosRaizAtuais = arquivos.filter((p) => !p.includes('/')).sort();
+    const setBase = new Set(baseline.arquivosRaiz);
+    const setAtual = new Set(arquivosRaizAtuais);
+    const novos: string[] = [];
+    const removidos: string[] = [];
+    for (const f of setAtual) if (!setBase.has(f)) novos.push(f);
+    for (const f of setBase) if (!setAtual.has(f)) removidos.push(f);
+    drift = {
+      alterouArquetipo: baseline.arquetipo !== atual.nome,
+      anterior: baseline.arquetipo,
+      atual: atual.nome,
+      deltaConfidence: atual.confidence - baseline.confidence,
+      arquivosRaizNovos: novos,
+      arquivosRaizRemovidos: removidos,
+    };
+  }
+  // Geração simples de planoSugestao (apenas para o top candidato) – versão conservadora
+  if (melhores[0]) {
+    const top = melhores[0];
+    top.planoSugestao = gerarPlanoReorganizacao(arquivos.map((relPath) => ({ relPath })));
+  }
+  return { melhores, baseline, drift };
 }

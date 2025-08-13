@@ -76,3 +76,5 @@ oraculo-reports/
 
 # Plugins de teste
 plugin-teste-*.js
+
+diag.json

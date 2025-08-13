@@ -217,12 +217,13 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                     if (c.forbiddenPresent.length) {
                       log.aviso(`     ├─ diretórios proibidos: ${c.forbiddenPresent.join(', ')}`);
                     }
-                    for (const a of c.anomalias.slice(0, 5)) {
+                    // Limita anomalias verbosas a 8 agora que whitelist ampliou
+                    for (const a of c.anomalias.slice(0, 8)) {
                       log.aviso(`     ├─ anomalia: ${a.path} (${a.motivo})`);
                     }
-                    if (c.anomalias.length > 5) {
+                    if (c.anomalias.length > 8) {
                       log.aviso(
-                        `     └─ (+${c.anomalias.length - 5} anomalia(s) ocultas — use --verbose para ver mais)`,
+                        `     └─ (+${c.anomalias.length - 8} anomalia(s) ocultas — use --verbose para ver mais)`,
                       );
                     }
                   }
@@ -237,6 +238,42 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                     ).toLocaleDateString()})`,
                   ),
                 );
+                if (arquetiposResultado.drift) {
+                  const d = arquetiposResultado.drift;
+                  if (
+                    d.alterouArquetipo ||
+                    d.deltaConfidence !== 0 ||
+                    d.arquivosRaizNovos.length ||
+                    d.arquivosRaizRemovidos.length
+                  ) {
+                    log.aviso(
+                      `  drift: arquetipo ${d.alterouArquetipo ? `${d.anterior}→${d.atual}` : b.arquetipo} Δconf ${d.deltaConfidence >= 0 ? '+' : ''}${d.deltaConfidence}%` +
+                        (d.arquivosRaizNovos.length
+                          ? ` novos:[${d.arquivosRaizNovos.slice(0, 3).join(', ')}${d.arquivosRaizNovos.length > 3 ? '…' : ''}]`
+                          : '') +
+                        (d.arquivosRaizRemovidos.length
+                          ? ` removidos:[${d.arquivosRaizRemovidos.slice(0, 3).join(', ')}${d.arquivosRaizRemovidos.length > 3 ? '…' : ''}]`
+                          : ''),
+                    );
+                  }
+                }
+                // Resumo plano de reorganização (top candidato)
+                const plano = arquetiposResultado.melhores[0]?.planoSugestao;
+                if (plano && plano.mover.length) {
+                  const preview = plano.mover
+                    .slice(0, 3)
+                    .map((m) => `${m.de}→${m.para}`)
+                    .join(', ');
+                  log.info(
+                    `  planoSugestao: ${plano.mover.length} move(s)` +
+                      (plano.mover.length > 3 ? ` (top3: ${preview} …)` : ` (${preview})`),
+                  );
+                  if (plano.conflitos?.length) {
+                    log.aviso(`  planoSugestao conflitos: ${plano.conflitos.length}`);
+                  }
+                } else if (plano && !plano.mover.length) {
+                  log.info('  planoSugestao: nenhum move sugerido (estrutura raiz ok)');
+                }
               }
             }
           } catch (e) {
@@ -363,6 +400,29 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           }
 
           if (opts.json) {
+            // Resumo de linguagens/extensões analisadas
+            const extensoesContagem: Record<string, number> = {};
+            for (const fe of fileEntriesComAst) {
+              const ext = path.extname(fe.relPath).toLowerCase().replace(/^\./, '') || 'sem_ext';
+              extensoesContagem[ext] = (extensoesContagem[ext] ?? 0) + 1;
+            }
+            const extensoesOrdenadas = Object.fromEntries(
+              Object.entries(extensoesContagem).sort((a, b) => b[1] - a[1]),
+            );
+
+            // Função para escapar caracteres não-ASCII evitando corrupção em consoles Windows legacy
+            const escapeNonAscii = (s: string) =>
+              s.replace(/[^\x20-\x7E]/g, (ch) => {
+                const cp = ch.codePointAt(0);
+                if (cp == null) return '';
+                const code = cp;
+                if (code <= 0xffff) return `\\u${code.toString(16).padStart(4, '0')}`;
+                // caracteres fora do BMP (surrogate pair)
+                const hi = Math.floor((code - 0x10000) / 0x400) + 0xd800;
+                const lo = ((code - 0x10000) % 0x400) + 0xdc00;
+                return `\\u${hi.toString(16)}\\u${lo.toString(16)}`;
+              });
+
             const saida = {
               status: temErro ? 'erro' : 'ok',
               guardian: guardianResultado ? guardianResultado.status : 'nao-verificado',
@@ -371,6 +431,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               tiposOcorrencias,
               parseErros: parseAggregatedMetric,
               metricas: (resultadoFinal as { metricas?: unknown }).metricas || undefined,
+              linguagens: {
+                total: fileEntriesComAst.length,
+                extensoes: extensoesOrdenadas,
+              },
               estruturaIdentificada: arquetiposResultado
                 ? {
                     melhores: arquetiposResultado.melhores.map((m) => ({
@@ -381,8 +445,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                       matchedRequired: m.matchedRequired,
                       forbiddenPresent: m.forbiddenPresent,
                       anomalias: m.anomalias,
+                      planoSugestao: m.planoSugestao,
                     })),
                     baseline: arquetiposResultado.baseline,
+                    drift: arquetiposResultado.drift,
                   }
                 : undefined,
               ocorrencias: resultadoFinal.ocorrencias.map((o) => ({
@@ -392,7 +458,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                 nivel: o.nivel,
               })),
             };
-            console.log(JSON.stringify(saida));
+            const jsonRaw = JSON.stringify(saida, (_k, v) => v, 0);
+            // Normaliza encoding (substitui caracteres fora ASCII por escapes \u)
+            const jsonSeguro = escapeNonAscii(jsonRaw);
+            console.log(jsonSeguro);
             if (temErro) {
               if (!process.env.VITEST) process.exit(1);
             } else if (!process.env.VITEST) process.exit(0);

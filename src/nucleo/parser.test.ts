@@ -46,27 +46,43 @@ describe('parser', () => {
       '.kts',
       '.java',
       '.xml',
+      '.html',
+      '.htm',
+      '.css',
+      '.gradle',
+      '.gradle.kts',
     ]);
   });
 
-  it('retorna null e loga para parser Kotlin', async () => {
+  it('parser Kotlin retorna wrapper File com oraculoExtra', async () => {
     const { log } = await import('./constelacao/log.js');
     const ast = await decifrarSintaxe('class X {}', '.kt');
-    expect(ast).toBeNull();
+    expect(ast).not.toBeNull();
+    expect(ast!.type).toBe('File');
+    // @ts-ignore
+    expect(ast!.oraculoExtra?.lang).toBe('kotlin');
     expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('Kotlin'));
   });
 
-  it('retorna null e loga para parser Java', async () => {
+  it('parser Java retorna wrapper File com oraculoExtra', async () => {
     const { log } = await import('./constelacao/log.js');
     const ast = await decifrarSintaxe('class X {}', '.java');
-    expect(ast).toBeNull();
+    expect(ast).not.toBeNull();
+    expect(ast!.type).toBe('File');
+    // @ts-ignore
+    expect(ast!.oraculoExtra?.lang).toBe('java');
     expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('Java'));
   });
 
-  it('retorna null e loga para parser XML', async () => {
+  it('parser XML retorna wrapper File com oraculoExtra', async () => {
     const { log } = await import('./constelacao/log.js');
     const ast = await decifrarSintaxe('<xml></xml>', '.xml');
-    expect(ast).toBeNull();
-    expect(log.debug).toHaveBeenCalledWith(expect.stringContaining('XML'));
+    expect(ast).not.toBeNull();
+    expect(ast!.type).toBe('File');
+    // @ts-ignore
+    expect(ast!.oraculoExtra?.lang).toBe('xml');
+    // Não exigimos log em caminho de sucesso; apenas garante que nenhuma chamada de erro foi feita
+    const debugMock = log.debug as unknown as { mock: { calls: any[][] } };
+    expect(debugMock.mock.calls.some((c: any[]) => String(c[0]).includes('Erro XML'))).toBeFalsy();
   });
 });

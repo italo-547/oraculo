@@ -247,7 +247,14 @@ export interface ResultadoDeteccaoArquetipo {
   filePatternMatches: string[];
   forbiddenPresent: string[];
   anomalias: ArquetipoDeteccaoAnomalia[];
-  planoSugestao?: { mover: { de: string; para: string }[] };
+  planoSugestao?: PlanoSugestaoEstrutura;
+}
+
+// Plano de reorganização estrutural sugerido (não executado automaticamente)
+export interface PlanoSugestaoEstrutura {
+  mover: { de: string; para: string; motivo?: string }[];
+  conflitos?: { alvo: string; motivo: string }[];
+  resumo?: { total: number; zonaVerde: number; bloqueados: number };
 }
 
 export interface SnapshotEstruturaBaseline {
@@ -256,6 +263,16 @@ export interface SnapshotEstruturaBaseline {
   arquetipo: string;
   confidence: number;
   arquivosRaiz: string[];
+}
+
+// Diferença entre baseline e detecção atual de arquétipos
+export interface ArquetipoDrift {
+  alterouArquetipo: boolean;
+  anterior?: string;
+  atual?: string;
+  deltaConfidence: number;
+  arquivosRaizNovos: string[];
+  arquivosRaizRemovidos: string[];
 }
 
 export interface ScanOptions {

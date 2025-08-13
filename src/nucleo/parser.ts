@@ -1,8 +1,19 @@
 import { parse as babelParse, ParserOptions } from '@babel/parser';
 import { File as BabelFile } from '@babel/types';
+// Parsers externos leves para outras linguagens
+import { parseDocument } from 'htmlparser2';
+import { XMLParser } from 'fast-xml-parser';
+import * as csstree from 'css-tree';
+import { parse as parseJava } from 'java-parser';
 import { log } from './constelacao/log.js';
 
-type ParserFunc = (codigo: string, plugins?: string[]) => BabelFile | null;
+// Mantemos a assinatura retornando BabelFile | null para não quebrar tipos externos, mas
+// para linguagens não-Babel geramos um objeto "compat" mínimo com File/Program vazio
+// e ast original em oraculoExtra.
+interface BabelFileExtra extends BabelFile {
+  oraculoExtra?: { lang: string; rawAst: unknown };
+}
+type ParserFunc = (codigo: string, plugins?: string[]) => BabelFile | BabelFileExtra | null;
 
 function parseComBabel(codigo: string, plugins?: string[]): BabelFile | null {
   const defaultPlugins = ['typescript', 'jsx', 'decorators-legacy'];
@@ -19,19 +30,75 @@ function parseComBabel(codigo: string, plugins?: string[]): BabelFile | null {
   }
 }
 
-function parseComKotlin(_codigo: string): null {
-  log.debug('🔧 Parser Kotlin ainda não implementado.');
-  return null;
+function wrapMinimal(lang: string, rawAst: unknown): BabelFileExtra {
+  return {
+    type: 'File',
+    program: { type: 'Program', body: [], sourceType: 'script', directives: [] },
+    comments: [],
+    tokens: [],
+    oraculoExtra: { lang, rawAst },
+  };
 }
 
-function parseComJava(_codigo: string): null {
-  log.debug('🔧 Parser Java ainda não implementado.');
-  return null;
+function parseComKotlin(codigo: string) {
+  // Heurística simples: extrai nomes de classes/objects/fun
+  const classes = Array.from(codigo.matchAll(/\b(class|object|fun)\s+([A-Za-z0-9_]+)/g)).map(
+    (m) => ({
+      tipo: m[1],
+      nome: m[2],
+    }),
+  );
+  log.debug(`🧪 Kotlin pseudo-parse: ${classes.length} símbolos`);
+  return wrapMinimal('kotlin', { symbols: classes });
 }
 
-function parseComXml(_codigo: string): null {
-  log.debug('🔧 Parser XML ainda não implementado.');
-  return null;
+function parseComJava(codigo: string) {
+  try {
+    const ast = parseJava(codigo);
+    log.debug('☕ Java parse realizado');
+    return wrapMinimal('java', ast);
+  } catch (e) {
+    log.debug(`⚠️ Erro Java parse: ${(e as Error).message}`);
+    return null;
+  }
+}
+
+function parseComXml(codigo: string) {
+  try {
+    const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@' });
+    const ast = parser.parse(codigo);
+    return wrapMinimal('xml', ast);
+  } catch (e) {
+    log.debug(`⚠️ Erro XML parse: ${(e as Error).message}`);
+    return null;
+  }
+}
+
+function parseComHtmlFunc(codigo: string) {
+  try {
+    const dom = parseDocument(codigo, { xmlMode: false });
+    return wrapMinimal('html', dom);
+  } catch (e) {
+    log.debug(`⚠️ Erro HTML parse: ${(e as Error).message}`);
+    return null;
+  }
+}
+
+function parseComCss(codigo: string) {
+  try {
+    const ast = csstree.parse(codigo, { positions: false });
+    return wrapMinimal('css', ast);
+  } catch (e) {
+    log.debug(`⚠️ Erro CSS parse: ${(e as Error).message}`);
+    return null;
+  }
+}
+
+function parseComGradle(codigo: string) {
+  // Gradle Groovy/KTS – heurística simples
+  const plugins = Array.from(codigo.matchAll(/id\s+['"]([A-Za-z0-9_.-]+)['"]/g)).map((m) => m[1]);
+  const deps = Array.from(codigo.matchAll(/implementation\s+['"]([^'"]+)['"]/g)).map((m) => m[1]);
+  return wrapMinimal('gradle', { plugins, deps });
 }
 
 export const PARSERS = new Map<string, ParserFunc>([
@@ -45,6 +112,11 @@ export const PARSERS = new Map<string, ParserFunc>([
   ['.kts', parseComKotlin],
   ['.java', parseComJava],
   ['.xml', parseComXml],
+  ['.html', parseComHtmlFunc],
+  ['.htm', parseComHtmlFunc],
+  ['.css', parseComCss],
+  ['.gradle', parseComGradle],
+  ['.gradle.kts', parseComGradle],
 ]);
 
 export const EXTENSOES_SUPORTADAS = Array.from(PARSERS.keys());
