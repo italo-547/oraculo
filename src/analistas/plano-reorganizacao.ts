@@ -15,7 +15,7 @@ interface ArquivoMeta {
 }
 
 export function gerarPlanoReorganizacao(arquivos: ArquivoMeta[]): PlanoSugestaoEstrutura {
-  if (config.SCAN_ONLY)
+  if (config.SCAN_ONLY || config.ANALISE_SCAN_ONLY)
     return { mover: [], conflitos: [], resumo: { total: 0, zonaVerde: 0, bloqueados: 0 } };
   const mover: { de: string; para: string; motivo: string }[] = [];
   const conflitos: { alvo: string; motivo: string }[] = [];
@@ -34,31 +34,36 @@ export function gerarPlanoReorganizacao(arquivos: ArquivoMeta[]): PlanoSugestaoE
     if (REGEX_TESTE_RAIZ.test(relPath))
       pushMove(
         relPath,
-        path.posix.join('src', relPath),
-        'teste disperso na raiz – mover para src/',
+        path.posix.join(config.ESTRUTURA_TARGETS.TESTS_RAIZ_DIR, relPath),
+        `teste disperso na raiz – mover para ${config.ESTRUTURA_TARGETS.TESTS_RAIZ_DIR}/`,
         size,
       );
     else if (REGEX_SCRIPT.test(relPath))
       pushMove(
         relPath,
-        path.posix.join('src', 'scripts', relPath.replace(/^script-/, '')),
-        'script operacional – consolidar em src/scripts/',
+        path.posix.join(config.ESTRUTURA_TARGETS.SCRIPTS_DIR, relPath.replace(/^script-/, '')),
+        `script operacional – consolidar em ${config.ESTRUTURA_TARGETS.SCRIPTS_DIR}/`,
         size,
       );
     else if (REGEX_CONFIG.test(relPath))
-      pushMove(relPath, path.posix.join('config', relPath), 'config centralizada em config/', size);
+      pushMove(
+        relPath,
+        path.posix.join(config.ESTRUTURA_TARGETS.CONFIG_DIR, relPath),
+        `config centralizada em ${config.ESTRUTURA_TARGETS.CONFIG_DIR}/`,
+        size,
+      );
     else if (REGEX_DECLARACAO_TIPOS.test(relPath))
       pushMove(
         relPath,
-        path.posix.join('types', relPath),
-        'declaração de tipos – mover para types/',
+        path.posix.join(config.ESTRUTURA_TARGETS.TYPES_DIR, relPath),
+        `declaração de tipos – mover para ${config.ESTRUTURA_TARGETS.TYPES_DIR}/`,
         size,
       );
     else if (REGEX_README_FRAGMENT.test(relPath))
       pushMove(
         relPath,
-        path.posix.join('docs', 'fragments', relPath),
-        'fragmento documental – organizar em docs/fragments/',
+        path.posix.join(config.ESTRUTURA_TARGETS.DOCS_FRAGMENTS_DIR, relPath),
+        `fragmento documental – organizar em ${config.ESTRUTURA_TARGETS.DOCS_FRAGMENTS_DIR}/`,
         size,
       );
   }

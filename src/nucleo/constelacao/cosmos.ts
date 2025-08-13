@@ -100,6 +100,15 @@ export const configDefault = {
   // Performance (snapshots sintéticos)
   PERF_SNAPSHOT_DIR: path.join('docs', 'perf'),
 
+  // Estrutura – diretórios alvo padronizados (evita literais dispersos)
+  ESTRUTURA_TARGETS: {
+    TESTS_RAIZ_DIR: 'src',
+    SCRIPTS_DIR: path.posix.join('src', 'scripts'),
+    CONFIG_DIR: 'config',
+    TYPES_DIR: 'types',
+    DOCS_FRAGMENTS_DIR: path.posix.join('docs', 'fragments'),
+  },
+
   // Estrutura (plugins, layers, auto-fix, concorrência)
   STRUCTURE_PLUGINS: [],
   STRUCTURE_AUTO_FIX: false,
@@ -114,6 +123,8 @@ export const configDefault = {
   COMPACT_MODE: false,
   // Modo somente varredura (sem AST, sem técnicas) quando ativado por flag
   SCAN_ONLY: false,
+  // Alias semântico (uniformização com ANALISE_*) – manter sincronizado com SCAN_ONLY
+  ANALISE_SCAN_ONLY: false,
   // Controle de ruído de erros de parsing
   PARSE_ERRO_AGRUPAR: true, // quando true, múltiplos erros no mesmo arquivo são consolidados
   PARSE_ERRO_MAX_POR_ARQUIVO: 1, // limite de ocorrências individuais por arquivo antes de agrupar
@@ -241,6 +252,9 @@ export async function inicializarConfigDinamica(overridesCli?: Record<string, un
       'cli',
       diffs,
     );
+  // Sincroniza alias de modo somente varredura
+  if (config.ANALISE_SCAN_ONLY && !config.SCAN_ONLY) config.SCAN_ONLY = true;
+  else if (config.SCAN_ONLY && !config.ANALISE_SCAN_ONLY) config.ANALISE_SCAN_ONLY = true;
   config.__OVERRIDES__ = diffs;
   return diffs;
 }
@@ -248,6 +262,8 @@ export async function inicializarConfigDinamica(overridesCli?: Record<string, un
 export function aplicarConfigParcial(partial: Record<string, unknown>) {
   const diffs: Record<string, DiffRegistro> = {};
   deepMerge(config as unknown as Record<string, unknown>, partial, 'programatico', diffs);
+  if (config.ANALISE_SCAN_ONLY && !config.SCAN_ONLY) config.SCAN_ONLY = true;
+  else if (config.SCAN_ONLY && !config.ANALISE_SCAN_ONLY) config.ANALISE_SCAN_ONLY = true;
   config.__OVERRIDES__ = { ...(config.__OVERRIDES__ || {}), ...diffs };
   return diffs;
 }

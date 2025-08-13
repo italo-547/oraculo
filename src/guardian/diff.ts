@@ -13,10 +13,22 @@ export function diffSnapshots(
   before: Record<string, string>,
   after: Record<string, string>,
 ): SnapshotDiff {
+  // Cache intra-processo para evitar recomputar diffs idênticos em execuções repetidas
+  const key = `${Object.keys(before).length}:${Object.keys(after).length}`;
+  const hashBefore = config.GUARDIAN_ENFORCE_PROTECTION ? Object.values(before).join('|') : '';
+  const hashAfter = config.GUARDIAN_ENFORCE_PROTECTION ? Object.values(after).join('|') : '';
+  const cacheKey = key + ':' + hashBefore + '>' + hashAfter;
+  const globalAny = global as unknown as { __ORACULO_DIFF_CACHE__?: Map<string, SnapshotDiff> };
+  if (!globalAny.__ORACULO_DIFF_CACHE__) globalAny.__ORACULO_DIFF_CACHE__ = new Map();
+  const cache = globalAny.__ORACULO_DIFF_CACHE__;
+  const cacheHit = cache.get(cacheKey);
+  if (cacheHit) return cacheHit;
   const removidos = Object.keys(before).filter((key) => !(key in after));
   const adicionados = Object.keys(after).filter((key) => !(key in before));
   const alterados = Object.keys(before).filter((key) => key in after && before[key] !== after[key]);
-  return { removidos, adicionados, alterados };
+  const resultado = { removidos, adicionados, alterados };
+  cache.set(cacheKey, resultado);
+  return resultado;
 }
 
 /**

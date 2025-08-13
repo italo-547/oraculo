@@ -3,15 +3,14 @@ import path from 'node:path';
 import { lerEstado, salvarEstado } from '../zeladores/util/persistencia.js';
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
+import { formatMs } from '../nucleo/constelacao/format.js';
 import type { MetricaExecucao } from '../tipos/tipos.js';
 
 interface RegistroHistorico extends MetricaExecucao {
   timestamp: number;
 }
 
-function formatarDuracao(ms: number) {
-  return `${ms}ms`;
-}
+const formatarDuracao = (ms: number) => formatMs(ms);
 
 function agregados(historico: RegistroHistorico[]) {
   if (!historico.length) return null;
@@ -110,13 +109,13 @@ export function comandoMetricas() {
           log.info('\n🧠 Top analistas (por tempo acumulado):');
           for (const a of agg.topAnalistas) {
             log.info(
-              `  • ${a.nome} total=${a.totalMs.toFixed(1)}ms média=${a.mediaMs.toFixed(1)}ms exec=${a.execucoes} ocorr=${a.ocorrencias}`,
+              `  • ${a.nome} total=${formatMs(a.totalMs)} média=${formatMs(a.mediaMs)} exec=${a.execucoes} ocorr=${a.ocorrencias}`,
             );
           }
         }
         if (agg) {
           log.info(
-            `\nMédias: análise=${agg.mediaAnaliseMs.toFixed(1)}ms parsing=${agg.mediaParsingMs.toFixed(1)}ms`,
+            `\nMédias: análise=${formatMs(agg.mediaAnaliseMs)} parsing=${formatMs(agg.mediaParsingMs)}`,
           );
         }
       },

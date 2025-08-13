@@ -1,6 +1,7 @@
 import { log } from './constelacao/log.js';
 import { MetricaAnalista, MetricaExecucao, ocorrenciaErroAnalista } from '../tipos/tipos.js';
 import { config } from './constelacao/cosmos.js';
+import { formatMs } from './constelacao/format.js';
 import { lerEstado, salvarEstado } from '../zeladores/util/persistencia.js';
 import crypto from 'node:crypto';
 import XXH from 'xxhashjs';
@@ -77,15 +78,15 @@ export async function executarInquisicao(
   // Técnicas globais
   for (const tecnica of tecnicas) {
     if (tecnica.global) {
-      const inicio = performance.now();
+      // início medido apenas por analista específico (inicioAnalista)
       try {
         const inicioAnalista = performance.now();
         const resultado = await tecnica.aplicar('', '', null, undefined, contextoGlobal);
         if (resultado) {
           ocorrencias.push(...(Array.isArray(resultado) ? resultado : [resultado]));
         }
-        const duracao = (performance.now() - inicio).toFixed(1);
         const duracaoMs = performance.now() - inicioAnalista;
+        const duracao = duracaoMs;
         if (config.ANALISE_METRICAS_ENABLED) {
           metricasAnalistas.push({
             nome: tecnica.nome || 'desconhecido',
@@ -95,7 +96,7 @@ export async function executarInquisicao(
           });
         }
         if (opts?.verbose) {
-          log.sucesso(`✅ Técnica global '${tecnica.nome}' executada em ${duracao}ms`);
+          log.sucesso(`✅ Técnica global '${tecnica.nome}' executada em ${formatMs(duracao)}`);
         }
         if (config.LOG_ESTRUTURADO) {
           log.info(
@@ -170,7 +171,7 @@ export async function executarInquisicao(
       if (tecnica.global) continue;
       if (tecnica.test && !tecnica.test(entry.relPath)) continue;
 
-      const inicio = performance.now();
+      // início medido apenas por analista específico (inicioAnalista)
       try {
         const inicioAnalista = performance.now();
         const resultado = await tecnica.aplicar(
@@ -184,8 +185,8 @@ export async function executarInquisicao(
           const arr = Array.isArray(resultado) ? resultado : [resultado];
           ocorrencias.push(...arr);
         }
-        const duracao = (performance.now() - inicio).toFixed(1);
         const duracaoMs = performance.now() - inicioAnalista;
+        const duracao = duracaoMs;
         if (config.ANALISE_METRICAS_ENABLED) {
           metricasAnalistas.push({
             nome: tecnica.nome || 'desconhecido',
@@ -195,7 +196,7 @@ export async function executarInquisicao(
           });
         }
         if (opts?.verbose) {
-          log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${duracao}ms`);
+          log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${formatMs(duracao)}`);
         }
         if (config.LOG_ESTRUTURADO) {
           log.info(
