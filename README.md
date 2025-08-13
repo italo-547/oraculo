@@ -189,7 +189,12 @@ Gate de performance (experimental): snapshots gerados via `npm run perf:baseline
 
 ### Métricas Internas (Execução)
 
-Quando `--metricas` (default habilitado) está ativo, o comando `diagnosticar --json` inclui o bloco `metricas` com:
+Quando `--metricas` (default habilitado) está ativo, o comando `diagnosticar --json` inclui agora dois níveis:
+
+1. Bloco `metricas` original (detalhado por execução) — preservado.
+2. Bloco `metricas` agregado simplificado (no root) com razões e top analistas.
+
+Exemplo (trecho simplificado):
 
 ```jsonc
 {
@@ -200,17 +205,35 @@ Quando `--metricas` (default habilitado) está ativo, o comando `diagnosticar --
     "cacheAstHits": 80,
     "cacheAstMiss": 43,
     "analistas": [
-      { "nome": "funcoes-longas", "duracaoMs": 12.3, "ocorrencias": 5, "global": false },
-    ],
+      { "nome": "funcoes-longas", "duracaoMs": 12.3, "ocorrencias": 5, "global": false }
+    ]
   },
+  "linguagens": { ... },
+  "estruturaIdentificada": { ... },
+  "guardianCacheDiffHits": 4,
+  "metricas": {
+    "totalArquivos": 123,
+    "tempoAnaliseMs": 1337,
+    "tempoParsingMs": 420,
+    "parsingSobreAnalisePct": 31.42,
+    "topAnalistas": [
+      { "nome": "funcoes-longas", "duracaoMs": 12.3, "ocorrencias": 5 }
+    ]
+  }
 }
 ```
+
+O campo `parsingSobreAnalisePct` é derivado (parsing/analise \* 100) e `topAnalistas` limita a 5.
 
 Use `oraculo metricas --json` para histórico agregado e `--export` para salvar snapshot completo (auditorias de performance). A persistência fica em `.oraculo/metricas-historico.json` (ignorado no Git). Desabilite via `--no-metricas` se quiser reduzir overhead mínimo (~1–2ms em bases pequenas).
 
 Contrato JSON (`diagnosticar --json`) inclui `parseErros.totalOriginais` e `parseErros.agregados` para transparência.
 
-Bloco adicional `linguagens` fornece resumo das extensões analisadas ordenadas por frequência:
+Blocos adicionais:
+
+- `linguagens`: resumo das extensões analisadas ordenadas por frequência.
+- `guardianCacheDiffHits`: número de hits do cache de diff intra-processo (otimização Guardian).
+- `estruturaIdentificada.melhores[].confidence` e deltas agora apresentados internamente com formatação padronizada (ex: `+92.0%`).
 
 ```jsonc
 {

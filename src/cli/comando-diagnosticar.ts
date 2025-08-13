@@ -26,6 +26,7 @@ import { emitirConselhoOracular } from '../relatorios/conselheiro-oracular.js';
 import { gerarRelatorioMarkdown } from '../relatorios/gerador-relatorio.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
+import { formatPct } from '../nucleo/constelacao/format.js';
 
 export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('diagnosticar')
@@ -204,7 +205,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               if (!config.COMPACT_MODE) log.info(header);
               // Linha compacta sempre disponível quando não em JSON
               if (config.COMPACT_MODE) {
-                const lista = candidatos.map((c) => `${c.nome}(${c.confidence}%)`).join(', ');
+                const lista = candidatos
+                  .map((c) => `${c.nome}(${formatPct(c.confidence)})`)
+                  .join(', ');
                 log.info(`🏗️  arquétipos: ${lista}`);
               } else {
                 for (const c of candidatos) {
@@ -212,7 +215,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                     ? ` faltando: ${c.missingRequired.join(', ')}`
                     : '';
                   const anom = c.anomalias.length ? ` anomalias: ${c.anomalias.length}` : '';
-                  const linha = `  • ${c.nome.padEnd(18)} ~${String(c.confidence).padStart(3)}%  score:${String(c.score).padStart(4)}${faltando}${anom}`;
+                  const linha = `  • ${c.nome.padEnd(18)} ~${formatPct(c.confidence).padStart(5)}  score:${String(c.score).padStart(4)}${faltando}${anom}`;
                   log.info(linha);
                   if (config.VERBOSE && (c.anomalias.length || c.forbiddenPresent.length)) {
                     if (c.forbiddenPresent.length) {
@@ -234,7 +237,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                 const b = arquetiposResultado.baseline;
                 log.info(
                   chalk.dim(
-                    `  baseline registrado: ${b.arquetipo} (${b.confidence}% em ${new Date(
+                    `  baseline registrado: ${b.arquetipo} (${formatPct(b.confidence)} em ${new Date(
                       b.timestamp,
                     ).toLocaleDateString()})`,
                   ),
@@ -248,7 +251,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                     d.arquivosRaizRemovidos.length
                   ) {
                     log.aviso(
-                      `  drift: arquetipo ${d.alterouArquetipo ? `${d.anterior}→${d.atual}` : b.arquetipo} Δconf ${d.deltaConfidence >= 0 ? '+' : ''}${d.deltaConfidence}%` +
+                      `  drift: arquetipo ${d.alterouArquetipo ? `${d.anterior}→${d.atual}` : b.arquetipo} Δconf ${formatPct(d.deltaConfidence)}` +
                         (d.arquivosRaizNovos.length
                           ? ` novos:[${d.arquivosRaizNovos.slice(0, 3).join(', ')}${d.arquivosRaizNovos.length > 3 ? '…' : ''}]`
                           : '') +

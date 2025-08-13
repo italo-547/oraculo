@@ -126,23 +126,54 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
           })();
           switch (statusNorm) {
             case IntegridadeStatus.Ok:
-              if (opts.json) console.log(JSON.stringify({ status: 'ok' }));
+              if (opts.json)
+                console.log(
+                  JSON.stringify({
+                    status: 'ok',
+                    cacheDiffHits:
+                      (globalThis as unknown as { __ORACULO_DIFF_CACHE_HITS__?: number })
+                        .__ORACULO_DIFF_CACHE_HITS__ || 0,
+                  }),
+                );
               else log.sucesso('🔒 Guardian: integridade preservada.');
               break;
             case IntegridadeStatus.Criado:
-              if (opts.json) console.log(JSON.stringify({ status: 'baseline-criado' }));
+              if (opts.json)
+                console.log(
+                  JSON.stringify({
+                    status: 'baseline-criado',
+                    cacheDiffHits:
+                      (globalThis as unknown as { __ORACULO_DIFF_CACHE_HITS__?: number })
+                        .__ORACULO_DIFF_CACHE_HITS__ || 0,
+                  }),
+                );
               else log.info('📘 Guardian: baseline inicial criado.');
               log.aviso(
                 'Execute `oraculo guardian --accept-baseline` para aceitá-lo ou `oraculo diagnosticar` novamente.',
               );
               break;
             case IntegridadeStatus.Aceito:
-              if (opts.json) console.log(JSON.stringify({ status: 'baseline-aceito' }));
+              if (opts.json)
+                console.log(
+                  JSON.stringify({
+                    status: 'baseline-aceito',
+                    cacheDiffHits:
+                      (globalThis as unknown as { __ORACULO_DIFF_CACHE_HITS__?: number })
+                        .__ORACULO_DIFF_CACHE_HITS__ || 0,
+                  }),
+                );
               else log.sucesso('🌀 Guardian: baseline atualizado e aceito.');
               break;
             case IntegridadeStatus.AlteracoesDetectadas: {
               if (opts.json) {
-                console.log(JSON.stringify({ status: 'alteracoes-detectadas' }));
+                console.log(
+                  JSON.stringify({
+                    status: 'alteracoes-detectadas',
+                    cacheDiffHits:
+                      (globalThis as unknown as { __ORACULO_DIFF_CACHE_HITS__?: number })
+                        .__ORACULO_DIFF_CACHE_HITS__ || 0,
+                  }),
+                );
               } else {
                 log.aviso(
                   '🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.',
