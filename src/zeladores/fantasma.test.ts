@@ -1,24 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import path from 'node:path';
 import { promises as fs } from 'node:fs';
+import os from 'node:os';
 
 // Mock do scanRepository para controlar o fileMap
+let __BASE_DIR_FANTASMA__ = '';
 vi.mock('../nucleo/scanner.js', () => ({
   scanRepository: vi.fn(async (_base: string) => {
+    const base = __BASE_DIR_FANTASMA__;
     return {
       'src/antigo.ts': {
         relPath: 'src/antigo.ts',
-        fullPath: path.resolve('temp-fantasma/src/antigo.ts'),
+        fullPath: path.join(base, 'src/antigo.ts'),
         content: '',
       },
       'src/recente.ts': {
         relPath: 'src/recente.ts',
-        fullPath: path.resolve('temp-fantasma/src/recente.ts'),
+        fullPath: path.join(base, 'src/recente.ts'),
         content: '',
       },
       'src/referenciado.ts': {
         relPath: 'src/referenciado.ts',
-        fullPath: path.resolve('temp-fantasma/src/referenciado.ts'),
+        fullPath: path.join(base, 'src/referenciado.ts'),
         content: '',
       },
     };
@@ -30,10 +33,12 @@ import { grafoDependencias } from '../analistas/detector-dependencias.js';
 import { detectarFantasmas } from './fantasma.js';
 
 describe('detectarFantasmas (heurística segura)', () => {
-  const baseDir = path.resolve('temp-fantasma');
+  let baseDir: string;
   const dias = 86_400_000;
 
   beforeEach(async () => {
+    baseDir = await fs.mkdtemp(path.join(os.tmpdir(), 'oraculo-fantasma-'));
+    __BASE_DIR_FANTASMA__ = baseDir;
     await fs.mkdir(path.join(baseDir, 'src'), { recursive: true });
     await fs.writeFile(path.join(baseDir, 'src/antigo.ts'), '');
     await fs.writeFile(path.join(baseDir, 'src/recente.ts'), '');

@@ -74,3 +74,23 @@ Via config (arquivo/env/CLI) sobrescreva `GUARDIAN_IGNORE_PATTERNS`. Exemplo em 
 - Agrupamento de mudanças por diretório.
 - Relatório Markdown de diffs.
 - Export explícito de contrato de saída (documentação README).
+
+## Cache de Diff (Desempenho)
+
+Para evitar recomputar diffs custosos em execuções sequenciais na mesma sessão do processo, o Guardian mantém um cache in-memory das comparações de snapshot. A chave do cache é composta pelos hashes agregados do estado atual e da baseline. Quando uma comparação idêntica é solicitada novamente, o resultado é reutilizado e o contador global `__ORACULO_DIFF_CACHE_HITS__` é incrementado.
+
+Campos expostos:
+
+- `guardianCacheDiffHits` (em `diagnosticar --json`)
+- `cacheDiffHits` (em `guardian --json`)
+
+Características:
+
+- Escopo: somente duração do processo atual (não persiste em disco).
+- Segurança: se qualquer arquivo relevante muda (hash diferente) a chave muda, impedindo falso hit.
+- Overhead: O lookup é O(1) em Map; custo amortizado desprezível.
+
+Limitações / Próximos Passos:
+
+- Não persiste entre execuções (possível futura estratégia opcional com TTL em disco).
+- Não há ainda métrica de tamanho máximo; se necessário, adicionar política LRU.

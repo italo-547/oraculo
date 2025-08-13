@@ -225,7 +225,19 @@ Exemplo (trecho simplificado):
 
 O campo `parsingSobreAnalisePct` é derivado (parsing/analise \* 100) e `topAnalistas` limita a 5.
 
-Use `oraculo metricas --json` para histórico agregado e `--export` para salvar snapshot completo (auditorias de performance). A persistência fica em `.oraculo/metricas-historico.json` (ignorado no Git). Desabilite via `--no-metricas` se quiser reduzir overhead mínimo (~1–2ms em bases pequenas).
+Use `oraculo metricas --json` para histórico agregado e `--export` para salvar snapshot completo (auditorias de performance). A persistência agora fica em `.oraculo/historico-metricas/metricas-historico.json` (ignorado no Git). Em execuções legacy, se esse diretório ainda não existir mas o arquivo antigo `.oraculo/metricas-historico.json` existir, ele será usado automaticamente via fallback de migração. Para limpar todo o histórico basta remover a pasta:
+
+```bash
+rm -rf .oraculo/historico-metricas
+```
+
+Ou no Windows PowerShell:
+
+```powershell
+Remove-Item -Recurse -Force .oraculo/historico-metricas
+```
+
+Pode ser adicionado um script npm (`cleanup:metricas`) futuramente se desejado.
 
 Contrato JSON (`diagnosticar --json`) inclui `parseErros.totalOriginais` e `parseErros.agregados` para transparência.
 

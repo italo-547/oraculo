@@ -142,6 +142,30 @@ describe('comandoGuardian', () => {
     );
   });
 
+  it('inclui cacheDiffHits no modo --json', async () => {
+    vi.doMock('../guardian/sentinela.js', () => ({
+      scanSystemIntegrity: vi.fn(async () => ({ status: 'ok' })),
+      acceptNewBaseline: vi.fn(async () => undefined),
+    }));
+    // Simula hits prévios
+    (
+      globalThis as unknown as { __ORACULO_DIFF_CACHE_HITS__?: number }
+    ).__ORACULO_DIFF_CACHE_HITS__ = 3;
+    const { comandoGuardian } = await import('./comando-guardian.js');
+    const program = new Command();
+    const aplicarFlagsGlobais = vi.fn();
+    const cmd = comandoGuardian(aplicarFlagsGlobais);
+    program.addCommand(cmd);
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    await program.parseAsync(['node', 'cli', 'guardian', '--json']);
+    const jsonStr = consoleSpy.mock.calls.map((c) => c[0]).join('\n');
+    const parsed = JSON.parse(jsonStr);
+    expect(parsed).toHaveProperty('cacheDiffHits');
+    expect(typeof parsed.cacheDiffHits).toBe('number');
+    expect(parsed.cacheDiffHits).toBeGreaterThanOrEqual(0);
+    consoleSpy.mockRestore();
+  });
+
   it('status AlteracoesDetectadas mostra alerta e sai', async () => {
     vi.doMock('../guardian/sentinela.js', () => ({
       scanSystemIntegrity: vi.fn(async () => ({ status: 'alteracoes-detectadas' })),

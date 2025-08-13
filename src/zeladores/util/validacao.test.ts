@@ -1,7 +1,25 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizarFlags, validarCombinacoes } from './validacao.js';
+import {
+  sanitizarFlags,
+  validarCombinacoes,
+  normalizarPathLocal,
+  validarNumeroPositivo,
+} from './validacao.js';
 
 describe('validacao util', () => {
+  it('normalizarPathLocal impede escape', () => {
+    const base = process.cwd();
+    expect(normalizarPathLocal('sub/dir')).toContain(base);
+    expect(normalizarPathLocal('../..')).toBe(base);
+  });
+  it('validarNumeroPositivo aceita valores válidos e retorna null para vazio', () => {
+    expect(validarNumeroPositivo(5, 'x')).toBe(5);
+    expect(validarNumeroPositivo('7', 'x')).toBe(7);
+    expect(validarNumeroPositivo('', 'x')).toBeNull();
+  });
+  it('validarNumeroPositivo rejeita negativo', () => {
+    expect(() => validarNumeroPositivo(-1, 'x')).toThrow(/Valor inválido/);
+  });
   it('rejeita combinação scan-only + incremental', () => {
     const erros = validarCombinacoes({ scanOnly: true, incremental: true });
     expect(erros.length).toBe(1);

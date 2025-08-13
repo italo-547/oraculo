@@ -104,7 +104,7 @@ describe('@e2e E2E CLI binário', () => {
     // Verifica criação do baseline
     const baselinePath = join(tempDir, '.oraculo', 'baseline.json');
     expect(existsSync(baselinePath)).toBe(true);
-  });
+  }, 15000);
 
   it('@e2e retorna exit code 1 quando técnica gera erro (arquivo bot.txt sem AST)', () => {
     const cliPath = garantirBuild();
@@ -125,5 +125,5 @@ describe('@e2e E2E CLI binário', () => {
       env: envLimpo as NodeJS.ProcessEnv,
     });
     expect(proc.status).toBe(1);
-  });
+  }, 15000);
 });

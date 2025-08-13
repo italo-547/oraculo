@@ -82,7 +82,12 @@ export const configDefault = {
   },
   ANALISE_AST_CACHE_ENABLED: true,
   ANALISE_METRICAS_ENABLED: true,
-  ANALISE_METRICAS_HISTORICO_PATH: path.join(ORACULO_STATE, 'metricas-historico.json'),
+  // Caminho de histórico de métricas (migrado para subdir dedicado; arquivo antigo na raiz ainda lido como fallback em runtime onde aplicável)
+  ANALISE_METRICAS_HISTORICO_PATH: path.join(
+    ORACULO_STATE,
+    'historico-metricas',
+    'metricas-historico.json',
+  ),
   ANALISE_METRICAS_HISTORICO_MAX: 200,
   // Priorização de arquivos (usa histórico incremental anterior)
   ANALISE_PRIORIZACAO_ENABLED: true,
@@ -252,6 +257,33 @@ export async function inicializarConfigDinamica(overridesCli?: Record<string, un
       'cli',
       diffs,
     );
+  // Fallback de migração: se novo caminho de histórico não existe mas arquivo antigo existe, aponta para antigo
+  try {
+    const novoHist = config.ANALISE_METRICAS_HISTORICO_PATH as string;
+    const antigoHist = path.join(ORACULO_STATE, 'metricas-historico.json');
+    if (novoHist && antigoHist !== novoHist) {
+      const [existeNovo, existeAntigo] = await Promise.all([
+        fs
+          .access(novoHist)
+          .then(() => true)
+          .catch(() => false),
+        fs
+          .access(antigoHist)
+          .then(() => true)
+          .catch(() => false),
+      ]);
+      if (!existeNovo && existeAntigo) {
+        config.ANALISE_METRICAS_HISTORICO_PATH = antigoHist;
+        diffs['ANALISE_METRICAS_HISTORICO_PATH'] = {
+          from: novoHist,
+          to: antigoHist,
+          fonte: 'fallback-migracao',
+        };
+      }
+    }
+  } catch {
+    /* ignore */
+  }
   // Sincroniza alias de modo somente varredura
   if (config.ANALISE_SCAN_ONLY && !config.SCAN_ONLY) config.SCAN_ONLY = true;
   else if (config.SCAN_ONLY && !config.ANALISE_SCAN_ONLY) config.ANALISE_SCAN_ONLY = true;

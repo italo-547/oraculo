@@ -250,8 +250,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                     d.arquivosRaizNovos.length ||
                     d.arquivosRaizRemovidos.length
                   ) {
+                    // Modo compacto já usa formatação de pct acima; aqui padronizamos também
                     log.aviso(
-                      `  drift: arquetipo ${d.alterouArquetipo ? `${d.anterior}→${d.atual}` : b.arquetipo} Δconf ${formatPct(d.deltaConfidence)}` +
+                      `  drift: arquétipo ${d.alterouArquetipo ? `${d.anterior}→${d.atual}` : b.arquetipo} Δconf ${formatPct(d.deltaConfidence)}` +
                         (d.arquivosRaizNovos.length
                           ? ` novos:[${d.arquivosRaizNovos.slice(0, 3).join(', ')}${d.arquivosRaizNovos.length > 3 ? '…' : ''}]`
                           : '') +

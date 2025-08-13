@@ -72,7 +72,8 @@ describe('executor branches adicionais', () => {
       aplicar: vi.fn().mockResolvedValue(null),
     } as any;
     const tmp = Date.now();
-    config.ANALISE_METRICAS_HISTORICO_PATH = `hist-${tmp}.json`;
+    // Usa subpasta dedicada para evitar poluir raiz do projeto com hist-*.json
+    config.ANALISE_METRICAS_HISTORICO_PATH = `.oraculo/historico-metricas/hist-${tmp}.json`;
     const salvarSpy = vi.spyOn(await import('../zeladores/util/persistencia.js'), 'salvarEstado');
     await executarInquisicao([entry('a.js', '1')], [tecnica], '/', {}, {});
     expect(salvarSpy).toHaveBeenCalled();

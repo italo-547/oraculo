@@ -251,11 +251,8 @@ export interface ResultadoDeteccaoArquetipo {
 }
 
 // Plano de reorganização estrutural sugerido (não executado automaticamente)
-export interface PlanoSugestaoEstrutura {
-  mover: { de: string; para: string; motivo?: string }[];
-  conflitos?: { alvo: string; motivo: string }[];
-  resumo?: { total: number; zonaVerde: number; bloqueados: number };
-}
+// PlanoSugestaoEstrutura movido para './plano-estrutura'
+export type { PlanoSugestaoEstrutura } from './plano-estrutura.js';
 
 export interface SnapshotEstruturaBaseline {
   version: 1;
@@ -347,6 +344,7 @@ export interface RelatorioCompacto {
 export type ComandoOraculo = 'diagnosticar' | 'guardian' | 'podar' | 'reestruturar' | 'atualizar'; //
 
 import type { NodePath } from '@babel/traverse';
+import type { PlanoSugestaoEstrutura } from './plano-estrutura.js';
 
 export type OrigemArquivo = 'local' | 'remoto' | 'gerado';
 
