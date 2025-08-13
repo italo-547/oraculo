@@ -97,6 +97,9 @@ export const configDefault = {
   ANALISE_INCREMENTAL_STATE_PATH: path.join(ORACULO_STATE, 'incremental-analise.json'),
   ANALISE_INCREMENTAL_VERSION: 1,
 
+  // Performance (snapshots sintéticos)
+  PERF_SNAPSHOT_DIR: path.join('docs', 'perf'),
+
   // Estrutura (plugins, layers, auto-fix, concorrência)
   STRUCTURE_PLUGINS: [],
   STRUCTURE_AUTO_FIX: false,

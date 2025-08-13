@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { log } from '../nucleo/constelacao/log.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 
 // Tipagens reutilizadas (espelho parcial de MetricaExecucao para evitar dependência circular leve)
 interface MetricaAnalistaLike {
@@ -126,7 +127,7 @@ function compararSnapshots(base: SnapshotPerf, atual: SnapshotPerf) {
 export function comandoPerf() {
   return new Command('perf')
     .description('Operações de baseline e comparação de performance sintética')
-    .option('-d, --dir <dir>', 'Diretório de snapshots', 'docs/perf')
+    .option('-d, --dir <dir>', 'Diretório de snapshots', config.PERF_SNAPSHOT_DIR)
     .option('-j, --json', 'Saída JSON')
     .option('-l, --limite <n>', 'Limite para regressão (%)', (v) => Number(v), 30)
     .addCommand(
@@ -136,7 +137,7 @@ export function comandoPerf() {
         )
         .action(async (opts, cmd) => {
           const parent = cmd.parent?.opts?.() || {};
-          const dir = parent.dir ? String(parent.dir) : 'docs/perf';
+          const dir = parent.dir ? String(parent.dir) : config.PERF_SNAPSHOT_DIR;
           const metricas = (
             globalThis as unknown as {
               __ULTIMAS_METRICAS_ORACULO__?: Partial<MetricaExecucaoLike> | null;
@@ -157,7 +158,7 @@ export function comandoPerf() {
         .description('Compara os dois últimos snapshots e sinaliza regressão')
         .action(async (opts, cmd) => {
           const parent = cmd.parent?.opts?.() || {};
-          const dir = parent.dir ? String(parent.dir) : 'docs/perf';
+          const dir = parent.dir ? String(parent.dir) : config.PERF_SNAPSHOT_DIR;
           const limite = parent.limite;
           const snaps = await carregarSnapshots(dir);
           if (snaps.length < 2) {
