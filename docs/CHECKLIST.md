@@ -9,6 +9,17 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Comparação automática de baseline e regressões (gerar diff entre últimos snapshots em `docs/perf/` e destacar variações > X%)
 - [x] Sanitização/validação de entradas da CLI (normalizar paths, validar números, rejeitar combinações inválidas cedo)
 - [x] Revisar logs DEBUG e consolidar flag (`--dev` vs `ORACULO_DEBUG` => unificar em `--debug` mantendo retrocompatibilidade)
+- [ ] Biblioteca de estruturas padrão (detecção + aconselhamento + auto-reorganização opcional)
+  - Tipos alvo iniciais: `cli-modular`, `landing-page`, `api-rest-express`, `fullstack` (pages/api/prisma), `bot`, `electron`, `lib-tsc`, `monorepo-packages`
+  - Taxonomia: definir contrato (nome, descrição, pastas esperadas, arquivos raiz permitidos, padrões proibidos, tolerâncias)
+  - Motor de detecção: heurísticas por presença/ausência de pastas (`src/cli.ts`, `pages/`, `api/`, `prisma/`, `electron.js`, `bin/`, `packages/`, etc) + dependências declaradas (express, electron, commander)
+  - Validação estrutural: listar arquivos "fora do lugar" (ex: componentes em raiz, scripts em `src/` indevidos, etc)
+  - Ação de correção simulada: sugerir novo caminho e exibir plano (dry-run); flag futura `--reorganizar` para aplicar
+  - Guard rails: nunca mover arquivos gerados / config / testes sem confirmação; gerar mapa reverso para evitar quebra de imports
+  - Relatório dedicado: seção "estrutura-identificada" com tipo, confiança (%), anomalias e plano sugerido
+  - Persistência: snapshot de estrutura detectada para comparar derivações futuras (baseline estrutural)
+  - Testes: fixtures mini de cada tipo + casos híbridos (ex: api + landing) garantindo escolha mais específica / ou múltiplas etiquetas
+  - Documentar em `docs/estruturas/README.md` (exemplos e critérios)
 
 ### Média Prioridade
 

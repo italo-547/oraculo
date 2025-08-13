@@ -29,19 +29,21 @@ export const detectorEstrutura = {
     if (!contexto) return [];
 
     const caminhos = contexto.arquivos.map((f) => f.relPath);
+    // Normaliza separadores para evitar falsos negativos em Windows (\\ vs /)
+    const caminhosNorm = caminhos.map((p) => p.replace(/\\/g, '/'));
 
     const sinais: SinaisProjeto & {
       ehFullstack?: boolean;
       ehMonorepo?: boolean;
     } = {
-      temPages: caminhos.some((p) => p.includes('pages/')),
-      temApi: caminhos.some((p) => p.includes('api/')),
-      temControllers: caminhos.some((p) => p.includes('controllers/')),
-      temComponents: caminhos.some((p) => p.includes('components/')),
-      temCli: caminhos.some((p) => p.endsWith('/cli.ts') || p.endsWith('/cli.js')),
-      temSrc: caminhos.some((p) => p.includes('/src/')),
-      temPrisma: caminhos.some((p) => p.includes('prisma/') || p.includes('schema.prisma')),
-      temPackages: caminhos.some((p) => p.includes('packages/') || p.includes('turbo.json')),
+      temPages: caminhosNorm.some((p) => p.includes('pages/')),
+      temApi: caminhosNorm.some((p) => p.includes('api/')),
+      temControllers: caminhosNorm.some((p) => p.includes('controllers/')),
+      temComponents: caminhosNorm.some((p) => p.includes('components/')),
+      temCli: caminhosNorm.some((p) => /(^|\/)cli\.(ts|js)$/.test(p)),
+      temSrc: caminhosNorm.some((p) => p.startsWith('src/') || p.includes('/src/')),
+      temPrisma: caminhosNorm.some((p) => p.includes('prisma/') || p.includes('schema.prisma')),
+      temPackages: caminhosNorm.some((p) => p.includes('packages/') || p.includes('turbo.json')),
       temExpress: grafoDependencias.has('express'),
     };
 
@@ -110,7 +112,7 @@ export const detectorEstrutura = {
     }
 
     // Muitos arquivos na raiz (considera apenas nível imediato sem subpastas)
-    const arquivosRaiz = caminhos.filter((p) => !p.includes('/') && p.trim() !== '');
+    const arquivosRaiz = caminhosNorm.filter((p) => !p.includes('/') && p.trim() !== '');
     if (arquivosRaiz.length > 10) {
       ocorrencias.push({
         tipo: 'estrutura-suspeita',
@@ -162,7 +164,7 @@ export const detectorEstrutura = {
     }
 
     // Múltiplos entrypoints
-    const entrypoints = caminhos.filter((p) => /(^|\/)(cli|index|main)\.(ts|js)$/.test(p));
+    const entrypoints = caminhosNorm.filter((p) => /(^|[\\/])(cli|index|main)\.(ts|js)$/.test(p));
     if (entrypoints.length > 1) {
       ocorrencias.push({
         tipo: 'estrutura-entrypoints',
@@ -175,7 +177,7 @@ export const detectorEstrutura = {
     }
 
     // Ausência de src/ em projetos grandes (verifica realmente se diretório src existe fisicamente)
-    if (!sinais.temSrc && caminhos.length > 30) {
+    if (!sinais.temSrc && caminhosNorm.length > 30) {
       ocorrencias.push({
         tipo: 'estrutura-sem-src',
         nivel: 'aviso',

@@ -10,6 +10,7 @@ const icons = {
 };
 
 function shouldSilence(): boolean {
+  if (process.env.ORACULO_FORCE_SILENT_JSON === '1') return true;
   return config.REPORT_SILENCE_LOGS;
 }
 
@@ -29,15 +30,13 @@ function getTimestamp(): string {
 
 export const log = {
   info(msg: string): void {
-    if (!shouldSilence()) {
-      console.log(`${getTimestamp()} ${chalk.cyan(icons.info)} ${msg}`);
-    }
+    if (shouldSilence()) return;
+    console.log(`${getTimestamp()} ${chalk.cyan(icons.info)} ${msg}`);
   },
 
   sucesso(msg: string): void {
-    if (!shouldSilence()) {
-      console.log(`${getTimestamp()} ${chalk.green(icons.sucesso)} ${msg}`);
-    }
+    if (shouldSilence()) return;
+    console.log(`${getTimestamp()} ${chalk.green(icons.sucesso)} ${msg}`);
   },
 
   erro(msg: string): void {
@@ -45,9 +44,8 @@ export const log = {
   },
 
   aviso(msg: string): void {
-    if (!shouldSilence()) {
-      console.log(`${getTimestamp()} ${chalk.yellow(icons.aviso)} ${msg}`);
-    }
+    if (shouldSilence()) return;
+    console.log(`${getTimestamp()} ${chalk.yellow(icons.aviso)} ${msg}`);
   },
 
   debug(msg: string): void {

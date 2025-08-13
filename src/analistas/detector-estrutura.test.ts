@@ -127,4 +127,16 @@ describe('detectorEstrutura', () => {
     expect(detectorEstrutura.test('qualquer-arquivo.ts')).toBe(true);
     expect(detectorEstrutura.test('outro.js')).toBe(true);
   });
+
+  it('não gera estrutura-sem-src quando há muitos arquivos com caminhos Windows (backslashes) dentro de src', () => {
+    // Simula projeto "grande": > 30 arquivos, todos dentro de src\ usando separador Windows
+    const arquivos = Array.from({ length: 35 }, (_, i) => ({
+      relPath: `src\\modulo\\arquivo${i}.ts`,
+    }));
+    const contexto = { arquivos };
+    const ocorrencias = detectorEstrutura.aplicar('', '', undefined, '', contexto as any);
+    const tipos = Array.isArray(ocorrencias) ? ocorrencias.map((o: any) => o.tipo) : [];
+    // Regressão: não deve marcar estrutura-sem-src pois temos src presente (mesmo com backslashes)
+    expect(tipos).not.toContain('estrutura-sem-src');
+  });
 });

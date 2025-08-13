@@ -57,12 +57,33 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         let guardianResultado: ResultadoGuardian | undefined;
         let fileEntries: FileEntryWithAst[] = [];
         let totalOcorrencias = 0;
-        // Tipagem segura de globais auxiliares usados para agregar erros de parsing
+        // Tipagem segura de globais auxiliares usados para agregar erros de parsing e restaurar logs
         interface OraculoGlobals {
           __ORACULO_PARSE_ERROS_ORIGINAIS__?: number;
           __ORACULO_PARSE_ERROS__?: unknown[];
+          __ORACULO_LOG_RESTORE__?: () => void;
         }
         const oraculoGlobals = globalThis as unknown as OraculoGlobals & Record<string, unknown>;
+        // Se saída JSON solicitada, silenciamos logs não-essenciais para garantir stdout limpo
+        const silencioOriginal = config.REPORT_SILENCE_LOGS;
+        if (opts.json) {
+          config.REPORT_SILENCE_LOGS = true; // garante que apenas o JSON final (ou erros) apareçam
+          // Fallback adicional: neutraliza métodos de log (caso algum bypass ocorra antes de flag ser checada)
+          const logObj = log as unknown as Record<string, unknown>;
+          const originalLogFns: Record<string, unknown> = {};
+          ['info', 'sucesso', 'aviso'].forEach((k) => {
+            if (typeof logObj[k] === 'function') {
+              originalLogFns[k] = logObj[k];
+              logObj[k] = () => undefined;
+            }
+          });
+          // Guarda para restauração
+          oraculoGlobals.__ORACULO_LOG_RESTORE__ = () => {
+            Object.entries(originalLogFns).forEach(([k, fn]) => {
+              logObj[k] = fn;
+            });
+          };
+        }
 
         try {
           if (opts.json) {
@@ -330,6 +351,13 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           );
           if (config.DEV_MODE) console.error(error);
           if (!process.env.VITEST) process.exit(1);
+        } finally {
+          // Restaura configuração de silêncio se alterada para modo JSON (somente quando não encerramos o processo)
+          if (opts.json) {
+            config.REPORT_SILENCE_LOGS = silencioOriginal;
+            const rest = (oraculoGlobals as Record<string, unknown>).__ORACULO_LOG_RESTORE__;
+            if (typeof rest === 'function') rest();
+          }
         }
       },
     );
