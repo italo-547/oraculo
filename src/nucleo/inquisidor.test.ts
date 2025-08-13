@@ -92,4 +92,30 @@ describe('inquisidor', () => {
   it('exporta executarInquisicao', () => {
     expect(typeof inquisidor.executarInquisicao).toBe('function');
   });
+
+  it('emite resumo de diretórios após varredura', async () => {
+    vi.resetModules();
+    const infoSpy = vi.fn();
+    vi.doMock('./constelacao/log.js', () => ({
+      log: { info: infoSpy, erro: vi.fn(), sucesso: vi.fn(), aviso: vi.fn() },
+    }));
+    vi.doMock('./scanner.js', () => ({
+      scanRepository: vi.fn(async (_: string, opts: any) => {
+        opts.onProgress?.(JSON.stringify({ tipo: 'diretorio', caminho: 'src', acao: 'ler' }));
+        return { 'a.ts': { relPath: 'a.ts', content: 'c', fullPath: undefined } };
+      }),
+    }));
+    vi.doMock('./parser.js', () => ({
+      decifrarSintaxe: vi.fn(async () => ({ node: {}, parent: {} })),
+    }));
+    vi.doMock('./executor.js', () => ({
+      executarInquisicao: vi.fn(async () => ({ totalArquivos: 1, ocorrencias: [] })),
+    }));
+    vi.doMock('./constelacao/cosmos.js', () => ({
+      config: { SCANNER_EXTENSOES_COM_AST: ['.ts'] },
+    }));
+    const { iniciarInquisicao } = await import('./inquisidor.js');
+    await iniciarInquisicao('/fake', { includeContent: true, incluirMetadados: true });
+    expect(infoSpy).toHaveBeenCalledWith(expect.stringContaining('Diretórios escaneados'));
+  });
 });

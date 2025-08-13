@@ -8,16 +8,17 @@ vi.mock('./cosmos.js', () => ({
     DEV_MODE: false,
   },
 }));
-vi.mock('chalk', () => ({
-  default: {
-    gray: (s: string) => s,
-    cyan: (s: string) => s,
-    green: (s: string) => s,
-    red: (s: string) => s,
-    yellow: (s: string) => s,
-    magenta: (s: string) => s,
-  },
-}));
+vi.mock('chalk', () => {
+  const fn = (s: string) => s;
+  (fn as any).gray = fn;
+  (fn as any).cyan = fn;
+  (fn as any).green = fn;
+  (fn as any).red = fn;
+  (fn as any).yellow = fn;
+  (fn as any).magenta = fn;
+  (fn as any).bold = fn;
+  return { default: fn };
+});
 
 describe('log util', () => {
   let originalEnv: NodeJS.ProcessEnv;

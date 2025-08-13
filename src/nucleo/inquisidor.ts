@@ -160,17 +160,21 @@ export async function iniciarInquisicao(
       try {
         const obj = JSON.parse(msg);
         if (obj.tipo === 'diretorio') {
-          if (!config.COMPACT_MODE) {
-            log.info(`Examinando diretório: ${obj.caminho}`);
-          } else {
-            // Em modo compacto, mostra apenas a cada N diretórios para reduzir ruído
-            const g = globalThis as unknown as { __ORACULO_DIR_COUNT__?: number };
-            g.__ORACULO_DIR_COUNT__ = (g.__ORACULO_DIR_COUNT__ || 0) + 1;
-            const n = g.__ORACULO_DIR_COUNT__;
-            const STEP = 10;
-            if (n % STEP === 1) {
-              log.info(`Examinando diretórios... (${n})`);
-            }
+          const g = globalThis as unknown as {
+            __ORACULO_DIR_COUNT__?: number;
+            __ORACULO_DIR_SAMPLES__?: string[];
+          };
+          g.__ORACULO_DIR_COUNT__ = (g.__ORACULO_DIR_COUNT__ || 0) + 1;
+          const n = g.__ORACULO_DIR_COUNT__;
+          // Armazena primeiros N diretórios como amostra
+          const SAMPLE_MAX = 5;
+          if (!g.__ORACULO_DIR_SAMPLES__) g.__ORACULO_DIR_SAMPLES__ = [];
+          if (g.__ORACULO_DIR_SAMPLES__.length < SAMPLE_MAX) {
+            g.__ORACULO_DIR_SAMPLES__.push(obj.caminho);
+          }
+          // Em modo verbose original podemos ainda mostrar cada, mas agora desativado para reduzir ruído.
+          if (config.VERBOSE && config.COMPACT_MODE) {
+            // já temos contagem progressiva suficiente
           }
         } else if (obj.tipo === 'erro') {
           log.erro(`Erro ao ${obj.acao} ${obj.caminho}: ${obj.mensagem}`);
@@ -288,6 +292,26 @@ export async function iniciarInquisicao(
       fullPath:
         typeof entry.fullPath === 'string' ? entry.fullPath : path.resolve(baseDir, entry.relPath),
     }));
+  }
+
+  // Emite resumo de diretórios escaneados (reduz spam de linhas)
+  try {
+    const g = globalThis as unknown as {
+      __ORACULO_DIR_COUNT__?: number;
+      __ORACULO_DIR_SAMPLES__?: string[];
+    };
+    if (g.__ORACULO_DIR_COUNT__) {
+      const totalDirs = g.__ORACULO_DIR_COUNT__;
+      const samples = (g.__ORACULO_DIR_SAMPLES__ || []).map((s) => s.replace(/\\/g, '/'));
+      const resto = totalDirs - samples.length;
+      const amostra = samples.join(', ');
+      log.info(
+        `📂 Diretórios escaneados: ${totalDirs}` +
+          (samples.length ? ` (ex: ${amostra}${resto > 0 ? ` +${resto}` : ''})` : ''),
+      );
+    }
+  } catch {
+    /* ignore */
   }
 
   // Agora fileEntries é FileEntryWithAst[]

@@ -57,7 +57,7 @@ describe('inquisidor extra', () => {
     const { iniciarInquisicao } = await import('./inquisidor.js');
     await iniciarInquisicao('/fake', { includeContent: true, incluirMetadados: true });
 
-    expect(info).toHaveBeenCalledWith(expect.stringContaining('Examinando diretório'));
+    expect(info).toHaveBeenCalledWith(expect.stringContaining('Diretórios escaneados'));
     expect(erro).toHaveBeenCalledWith(expect.stringContaining('Erro ao'));
     expect(aviso).toHaveBeenCalledWith(expect.stringContaining('⚠️'));
     expect(sucesso).toHaveBeenCalled();

@@ -25,32 +25,64 @@ function getTimestamp(): string {
     minute: '2-digit',
     second: '2-digit',
   });
-  return chalk.gray(`[${now}]`);
+  return `[${now}]`;
+}
+
+type Nivel = 'info' | 'sucesso' | 'erro' | 'aviso' | 'debug';
+
+interface FormatOptions {
+  nivel: Nivel;
+  mensagem: string;
+}
+
+function formatarLinha({ nivel, mensagem }: FormatOptions): string {
+  const ts = getTimestamp();
+  const colIcon = icons[nivel];
+  const colNivel = nivel.toUpperCase().padEnd(7);
+  let cor = (s: string) => s;
+  switch (nivel) {
+    case 'info':
+      cor = chalk.cyan;
+      break;
+    case 'sucesso':
+      cor = chalk.green;
+      break;
+    case 'erro':
+      cor = chalk.red;
+      break;
+    case 'aviso':
+      cor = chalk.yellow;
+      break;
+    case 'debug':
+      cor = chalk.magenta;
+      break;
+  }
+  return chalk.gray(ts) + ' ' + cor(colIcon) + ' ' + chalk.bold(colNivel) + ' ' + mensagem;
 }
 
 export const log = {
   info(msg: string): void {
     if (shouldSilence()) return;
-    console.log(`${getTimestamp()} ${chalk.cyan(icons.info)} ${msg}`);
+    console.log(formatarLinha({ nivel: 'info', mensagem: msg }));
   },
 
   sucesso(msg: string): void {
     if (shouldSilence()) return;
-    console.log(`${getTimestamp()} ${chalk.green(icons.sucesso)} ${msg}`);
+    console.log(formatarLinha({ nivel: 'sucesso', mensagem: msg }));
   },
 
   erro(msg: string): void {
-    console.error(`${getTimestamp()} ${chalk.red(icons.erro)} ${msg}`);
+    console.error(formatarLinha({ nivel: 'erro', mensagem: msg }));
   },
 
   aviso(msg: string): void {
     if (shouldSilence()) return;
-    console.log(`${getTimestamp()} ${chalk.yellow(icons.aviso)} ${msg}`);
+    console.log(formatarLinha({ nivel: 'aviso', mensagem: msg }));
   },
 
   debug(msg: string): void {
     if (isDebugMode()) {
-      console.log(`${getTimestamp()} ${chalk.magenta(icons.debug)} ${msg}`);
+      console.log(formatarLinha({ nivel: 'debug', mensagem: msg }));
     }
   },
 };
