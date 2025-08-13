@@ -4,6 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
+import { formatPct } from '../nucleo/constelacao/format.js';
 
 // Tipagens reutilizadas (espelho parcial de MetricaExecucao para evitar dependência circular leve)
 interface MetricaAnalistaLike {
@@ -191,7 +192,7 @@ export function comandoPerf() {
             log.info('Comparação entre snapshots:');
             diffs.forEach((d) => {
               log.info(
-                `  ${d.campo}: ${d.anterior ?? '-'} => ${d.novo ?? '-'} (${d.variacaoPct.toFixed(1)}%)`,
+                `  ${d.campo}: ${d.anterior ?? '-'} => ${d.novo ?? '-'} (${formatPct(d.variacaoPct)})`,
               );
             });
             if (regressao) log.aviso(`⚠️ Regressão acima de ${limite}% detectada.`);
