@@ -122,7 +122,8 @@ describe('comandoGuardian', () => {
     await program.parseAsync(['node', 'cli', 'guardian']);
     const infoCalls = log.info.mock.calls.flat().join('\n');
     const avisoCalls = log.aviso.mock.calls.flat().join('\n');
-    expect(infoCalls).toMatch(/baseline inicial criado/i);
+    // Aceita tanto mensagem antiga quanto nova forma simplificada
+    expect(infoCalls).toMatch(/(baseline (inicial )?criado|guardian baseline criado)/i);
     expect(avisoCalls).toMatch(/aceit[áa]-lo/i);
   });
 
