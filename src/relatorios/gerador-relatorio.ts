@@ -1,4 +1,5 @@
 import { salvarEstado } from '../zeladores/util/persistencia.js';
+import { formatMs } from '../nucleo/constelacao/format.js';
 import { ResultadoInquisicaoCompleto, Ocorrencia } from '../tipos/tipos.js';
 
 export async function gerarRelatorioMarkdown(
@@ -24,10 +25,10 @@ export async function gerarRelatorioMarkdown(
       ? String((guardian as Record<string, unknown>).totalArquivos)
       : '—';
 
-  const header = `# � Relatório Oráculo  
+  const header = `# 🧾 Relatório Oráculo  
 
 **Data:** ${dataISO}  
-**Duração:** ${duracaoMs.toFixed(1)}ms  
+**Duração:** ${formatMs(duracaoMs)}  
 **Arquivos escaneados:** ${totalArquivos}  
 **Ocorrências encontradas:** ${ocorrencias.length}  
 
