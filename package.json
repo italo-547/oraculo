@@ -38,7 +38,8 @@
     "prepare": "husky install",
     "test": "vitest run",
     "test:ui": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "cleanup:metricas": "node -e \"import('node:fs').then(fs=>fs.promises.rm('.oraculo/historico-metricas',{recursive:true,force:true}).then(()=>console.log('Histórico de métricas limpo.')).catch(e=>console.error('Falha limpeza:',e.message)))\""
   },
   "keywords": [
     "cli",
@@ -79,14 +80,25 @@
   },
   "vitest": {
     "coverage": {
+      "include": [
+        "src/**/*.ts"
+      ],
       "exclude": [
         "file1.ts",
         "file2.ts",
+        "tmp-cache-file.ts",
         "scripts/**",
-        "**/scripts/**",
-        "fora-do-src.js",
-        "tmp-cache-file.ts"
-      ]
+        "**/fixtures/**",
+        "**/mocks/**",
+        "**/__tests__/**",
+        "temp-fantasma/**"
+      ],
+      "thresholds": {
+        "lines": 90,
+        "statements": 90,
+        "branches": 88,
+        "functions": 90
+      }
     }
   },
   "lint-staged": {
