@@ -51,6 +51,13 @@ export default [
     },
   },
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      'coverage/**',
+      'file1.ts',
+      'file2.ts',
+      'tmp-cache-file.ts',
+    ],
   },
 ];

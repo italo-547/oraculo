@@ -18,11 +18,12 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [ ] Métricas internas opcionais (tempo por técnica, cache hits) exportáveis
 - [ ] Monitor de dependências (dependabot + script npm-check-updates) – documentar execução automática
 - [ ] Sanitização/validação de entradas da CLI
-- [ ] Documentar contrato de saída para guardian (statuses) no README
+- [x] Documentar contrato de saída para guardian (statuses) no README
 - [ ] Revisar logs DEBUG e consolidar flag
 - [ ] Documentar estratégia de mocks de AST (centralização)
 - [x] Licença final: MIT (sem restrições adicionais)
 - [ ] Guia de padronização de código / convenções
+- [x] Atualizar .gitignore para ignorar artefatos temporários (.oraculo, hist-\*.json, reports)
 
 ## Feito
 

@@ -33,5 +33,17 @@ Thumbs.db
 .idea/
 *.local
 
+# Estado / históricos gerados pelo Oráculo (não versionar)
+.oraculo/
+hist-*.json
+inc-state.json
+incremental-state.json
+incremental-analise.json
+incremental-test.json
+metricas-historico.json
+
+# Artefatos de execução temporários
+oraculo-reports/
+
 # Plugins de teste
 plugin-teste-*.js
