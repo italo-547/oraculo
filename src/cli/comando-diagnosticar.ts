@@ -188,10 +188,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           let arquetiposResultado: Awaited<ReturnType<typeof detectarArquetipos>> | undefined;
           try {
             arquetiposResultado = await detectarArquetipos(
-              { arquivos: fileEntriesComAst, baseDir } as unknown as {
-                arquivos: FileEntryWithAst[];
-                baseDir: string;
-              },
+              { arquivos: fileEntriesComAst, baseDir },
               baseDir,
             );
           } catch (e) {

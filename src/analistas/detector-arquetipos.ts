@@ -4,8 +4,8 @@ import type {
   ContextoExecucao,
   ResultadoDeteccaoArquetipo,
   ArquetipoDeteccaoAnomalia,
-  ArquetipoEstruturaDef,
   SnapshotEstruturaBaseline,
+  ArquetipoEstruturaDef,
 } from '../tipos/tipos.js';
 import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
 import path from 'node:path';
@@ -80,7 +80,7 @@ export interface ResultadoBibliotecaArquetipos {
 }
 
 export async function detectarArquetipos(
-  contexto: ContextoExecucao,
+  contexto: Pick<ContextoExecucao, 'arquivos' | 'baseDir'>,
   baseDir: string,
 ): Promise<ResultadoBibliotecaArquetipos> {
   const arquivos = contexto.arquivos.map((f) => f.relPath);
