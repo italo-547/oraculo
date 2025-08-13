@@ -1,4 +1,5 @@
 import type { SinaisProjeto, DiagnosticoProjeto } from '../tipos/tipos.js';
+import { formatPct } from '../nucleo/constelacao/format.js';
 
 /**
  * Recebe sinais coletados e devolve o diagnóstico
@@ -31,11 +32,8 @@ export function diagnosticarProjeto(sinais: SinaisProjeto): DiagnosticoProjeto {
     confianca = 0.8;
   }
 
-  return {
-    tipo,
-    sinais: positivos,
-    confiabilidade: parseFloat(confianca.toFixed(2)),
-  };
+  const pct = Number(formatPct(confianca).replace('%', '')) / 100; // manter número normalizado
+  return { tipo, sinais: positivos, confiabilidade: pct };
 }
 
 function ehLanding(s: SinaisProjeto): boolean {

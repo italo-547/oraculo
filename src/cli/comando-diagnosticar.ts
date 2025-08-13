@@ -13,6 +13,7 @@ import {
   tecnicas,
   prepararComAst,
 } from '../nucleo/inquisidor.js';
+import type { MetricaExecucao, MetricaAnalista } from '../tipos/tipos.js';
 import { scanSystemIntegrity } from '../guardian/sentinela.js';
 import { alinhamentoEstrutural } from '../arquitetos/analista-estrutura.js';
 import { diagnosticarProjeto } from '../arquitetos/diagnostico-projeto.js';
@@ -430,7 +431,27 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               totalOcorrencias: resultadoFinal.ocorrencias.length,
               tiposOcorrencias,
               parseErros: parseAggregatedMetric,
-              metricas: (resultadoFinal as { metricas?: unknown }).metricas || undefined,
+              metricas: (() => {
+                const metricasExec = (resultadoFinal as { metricas?: MetricaExecucao }).metricas;
+                if (!metricasExec) return undefined;
+                return {
+                  totalArquivos: metricasExec.totalArquivos,
+                  tempoAnaliseMs: metricasExec.tempoAnaliseMs,
+                  tempoParsingMs: metricasExec.tempoParsingMs,
+                  parsingSobreAnalisePct: metricasExec.tempoAnaliseMs
+                    ? Number(
+                        ((metricasExec.tempoParsingMs / metricasExec.tempoAnaliseMs) * 100).toFixed(
+                          2,
+                        ),
+                      )
+                    : 0,
+                  topAnalistas: metricasExec.analistas.slice(0, 5).map((a: MetricaAnalista) => ({
+                    nome: a.nome,
+                    duracaoMs: a.duracaoMs,
+                    ocorrencias: a.ocorrencias,
+                  })),
+                };
+              })(),
               linguagens: {
                 total: fileEntriesComAst.length,
                 extensoes: extensoesOrdenadas,
@@ -451,6 +472,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                     drift: arquetiposResultado.drift,
                   }
                 : undefined,
+              guardianCacheDiffHits:
+                (globalThis as unknown as { __ORACULO_DIFF_CACHE_HITS__?: number })
+                  .__ORACULO_DIFF_CACHE_HITS__ || 0,
               ocorrencias: resultadoFinal.ocorrencias.map((o) => ({
                 tipo: o.tipo,
                 relPath: o.relPath,

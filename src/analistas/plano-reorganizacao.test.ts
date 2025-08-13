@@ -14,11 +14,11 @@ describe('gerarPlanoReorganizacao', () => {
     const alvos = plano.mover.map((m) => m.para).sort();
     expect(alvos).toEqual(
       [
-        'config/custom.config.js',
-        'docs/fragments/README-fragment-intro.md',
-        'src/a.test.ts',
-        'src/scripts/build.ts',
-        'types/types.d.ts',
+        `${config.ESTRUTURA_TARGETS.CONFIG_DIR}/custom.config.js`,
+        `${config.ESTRUTURA_TARGETS.DOCS_FRAGMENTS_DIR}/README-fragment-intro.md`,
+        `${config.ESTRUTURA_TARGETS.TESTS_RAIZ_DIR}/a.test.ts`,
+        `${config.ESTRUTURA_TARGETS.SCRIPTS_DIR}/build.ts`,
+        `${config.ESTRUTURA_TARGETS.TYPES_DIR}/types.d.ts`,
       ].sort(),
     );
   });
