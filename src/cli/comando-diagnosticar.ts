@@ -191,6 +191,54 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               { arquivos: fileEntriesComAst, baseDir },
               baseDir,
             );
+            // Logs úteis sobre arquétipos (somente modo não-JSON e sem silêncio forçado)
+            if (
+              arquetiposResultado &&
+              !opts.json &&
+              !config.REPORT_SILENCE_LOGS &&
+              arquetiposResultado.melhores.length
+            ) {
+              const candidatos = arquetiposResultado.melhores;
+              const header = chalk.bold('\n🏗️  Arquétipos candidatos (estrutura do projeto)');
+              if (!config.COMPACT_MODE) log.info(header);
+              // Linha compacta sempre disponível quando não em JSON
+              if (config.COMPACT_MODE) {
+                const lista = candidatos.map((c) => `${c.nome}(${c.confidence}%)`).join(', ');
+                log.info(`🏗️  arquétipos: ${lista}`);
+              } else {
+                for (const c of candidatos) {
+                  const faltando = c.missingRequired.length
+                    ? ` faltando: ${c.missingRequired.join(', ')}`
+                    : '';
+                  const anom = c.anomalias.length ? ` anomalias: ${c.anomalias.length}` : '';
+                  const linha = `  • ${c.nome.padEnd(18)} ~${String(c.confidence).padStart(3)}%  score:${String(c.score).padStart(4)}${faltando}${anom}`;
+                  log.info(linha);
+                  if (config.VERBOSE && (c.anomalias.length || c.forbiddenPresent.length)) {
+                    if (c.forbiddenPresent.length) {
+                      log.aviso(`     ├─ diretórios proibidos: ${c.forbiddenPresent.join(', ')}`);
+                    }
+                    for (const a of c.anomalias.slice(0, 5)) {
+                      log.aviso(`     ├─ anomalia: ${a.path} (${a.motivo})`);
+                    }
+                    if (c.anomalias.length > 5) {
+                      log.aviso(
+                        `     └─ (+${c.anomalias.length - 5} anomalia(s) ocultas — use --verbose para ver mais)`,
+                      );
+                    }
+                  }
+                }
+              }
+              if (arquetiposResultado.baseline && !config.COMPACT_MODE) {
+                const b = arquetiposResultado.baseline;
+                log.info(
+                  chalk.dim(
+                    `  baseline registrado: ${b.arquetipo} (${b.confidence}% em ${new Date(
+                      b.timestamp,
+                    ).toLocaleDateString()})`,
+                  ),
+                );
+              }
+            }
           } catch (e) {
             if (config.DEV_MODE) log.erro('Falha detector arquetipos: ' + (e as Error).message);
           }
