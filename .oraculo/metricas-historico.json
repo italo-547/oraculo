@@ -23112,5 +23112,2721 @@
       }
     ],
     "timestamp": 1755058437072
+  },
+  {
+    "totalArquivos": 225,
+    "tempoParsingMs": 252,
+    "tempoAnaliseMs": 204,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 151,
+    "analistas": [
+      {
+        "nome": "detector-estrutura",
+        "duracaoMs": 1.3745000000000118,
+        "ocorrencias": 3,
+        "global": true
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.39459999999996853,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.1272999999999911,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.06969999999989795,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.004699999999957072,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.00479999999993197,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002100000000041291,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.04949999999996635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.005799999999908323,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0049999999999954525,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.01389999999992142,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003199999999992542,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0029999999999290594,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.031300000000101136,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004199999999968895,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.004000000000019099,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.013999999999896318,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0036000000000058208,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0036999999999807187,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.04650000000003729,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.007399999999961437,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.007399999999961437,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.019900000000006912,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0036000000000058208,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0037999999999556167,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.05750000000000455,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.025999999999953616,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.011200000000030741,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.05999999999994543,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.01670000000001437,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.00479999999993197,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.02909999999997126,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.008800000000064756,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.004599999999982174,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0322999999999638,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004800000000045657,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.014599999999973079,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.016999999999939064,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.005400000000008731,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.015599999999949432,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.020099999999956708,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.005499999999983629,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.3091999999999189,
+        "ocorrencias": 4,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.008199999999987995,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0038000000000693035,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.056199999999989814,
+        "ocorrencias": 6,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006699999999909778,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0029000000000678483,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003300000000081127,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.00659999999993488,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027999999999792635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003500000000030923,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.011499999999955435,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003599999999892134,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.005400000000008731,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.011499999999955435,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003399999999942338,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.005200000000058935,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.008199999999987995,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027000000000043656,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0029999999999290594,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.007100000000036744,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003400000000056025,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.007399999999961437,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027000000000043656,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.017099999999913962,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.011499999999955435,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0049999999999954525,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.014400000000023283,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.00760000000002492,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002200000000016189,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0061999999999216016,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.02070000000003347,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004000000000019099,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.004200000000082582,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.017600000000015825,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005599999999958527,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002100000000041291,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018000000000029104,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.013300000000072032,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004700000000070759,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.004000000000019099,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0072999999999865395,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002200000000016189,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.008900000000039654,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0072000000000116415,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018999999999778083,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.012299999999981992,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.005600000000072214,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.004800000000045657,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.009900000000016007,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004699999999957072,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0036999999999807187,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.008199999999987995,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027000000000043656,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.014999999999986358,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.012600000000020373,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004199999999968895,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.004500000000007276,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006900000000086948,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002499999999940883,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002399999999965985,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005499999999983629,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002200000000016189,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005600000000072214,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002200000000016189,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002100000000041291,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.011300000000005639,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003199999999992542,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003100000000017644,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005899999999996908,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002100000000041291,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.010300000000029286,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0028999999999541615,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0036000000000058208,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.008100000000013097,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.005499999999983629,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005300000000033833,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0020999999999276042,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002100000000041291,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005999999999971806,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0020999999999276042,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005400000000008731,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003100000000017644,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005200000000058935,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0019999999999527063,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0019000000000914952,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0050999999999703505,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0019999999999527063,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018000000000029104,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0050999999999703505,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0019000000000914952,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.011100000000055843,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003199999999992542,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002399999999965985,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.021500000000060027,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.006399999999985084,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.008800000000064756,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.02940000000000964,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.007500000000050022,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.007099999999923057,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.01089999999999236,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027999999999792635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003399999999942338,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.02070000000003347,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.005399999999895044,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0049999999999954525,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0262000000000171,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0049999999999954525,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.005500000000097316,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.011599999999930333,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027000000000043656,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002300000000104774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.01010000000007949,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.006900000000086948,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.007500000000050022,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.027399999999943248,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.006399999999985084,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003199999999992542,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.00940000000002783,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0028000000000929504,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0036999999999807187,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.018100000000004002,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0036999999999807187,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0029000000000678483,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005999999999971806,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0020999999999276042,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0019999999999527063,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005499999999983629,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002100000000041291,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018000000000029104,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.010400000000004184,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018000000000029104,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0060000000000854925,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0019999999999527063,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0036000000000058208,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006899999999973261,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002200000000016189,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0019000000000914952,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006400000000098771,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002399999999965985,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002000000000066393,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006300000000010186,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018000000000029104,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005899999999996908,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018999999999778083,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.017399999999952342,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0050999999999703505,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0037999999999556167,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.009300000000052933,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0029999999999290594,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006700000000023465,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006499999999959982,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.012200000000007094,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.005300000000033833,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.013699999999971624,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.00329999999996744,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003199999999992542,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.016200000000026193,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027000000000043656,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0028999999999541615,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.008499999999912689,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002399999999965985,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.010600000000067666,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027999999999792635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.010799999999903775,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002499999999940883,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.007699999999999818,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004700000000070759,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003400000000056025,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.018699999999967076,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.005199999999945248,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.008400000000051477,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.01160000000004402,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003499999999917236,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0028999999999541615,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.014400000000023283,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003199999999992542,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0027000000000043656,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.012200000000007094,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004899999999906868,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.012500000000045475,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.011200000000030741,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.005299999999920146,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.005700000000047112,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.010600000000067666,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.005199999999945248,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.005400000000008731,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.007999999999924512,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0049999999999954525,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.005200000000058935,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005700000000047112,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.007499999999936335,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.013199999999983447,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004199999999968895,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.004000000000019099,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.013399999999933243,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004500000000007276,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002399999999965985,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.009500000000002728,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003300000000081127,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002000000000066393,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006099999999946704,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002299999999991087,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018999999999778083,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005499999999983629,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.006700000000023465,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018999999999778083,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005300000000033833,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0020999999999276042,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0015999999999394277,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005400000000008731,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002200000000016189,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0019999999999527063,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005599999999958527,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002200000000016189,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005400000000008731,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0019999999999527063,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002100000000041291,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005300000000033833,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002100000000041291,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0016999999999143256,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005499999999983629,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0019999999999527063,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0036000000000058208,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.023300000000062937,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.004599999999982174,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.006600000000162254,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.011499999999841748,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003300000000081127,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0028999999999541615,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006499999999959982,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027000000000043656,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002300000000104774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006699999999909778,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002599999999802094,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003100000000131331,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005999999999858119,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005800000000135697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006200000000035288,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0022999999998774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006399999999985084,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.017699999999877036,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0037999999999556167,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0072999999999865395,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.007699999999886131,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027999999999792635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.007600000000138607,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027999999999792635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.010999999999967258,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0030999999999039574,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0028999999999541615,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.00659999999993488,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003300000000081127,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0060000000000854925,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0028999999999541615,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0060000000000854925,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002200000000129876,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0059000000001105946,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002399999999852298,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002200000000129876,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0060000000000854925,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0020999999999276042,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005800000000135697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0022999999998774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005800000000135697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006600000000162254,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005799999999908323,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.009900000000016007,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.003300000000081127,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0027999999999792635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006099999999833017,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005500000000211003,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002100000000154978,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006300000000010186,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002499999999827196,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005499999999983629,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002499999999827196,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0022999999998774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005799999999908323,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002300000000104774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005800000000135697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002100000000154978,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005699999999933425,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002399999999852298,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0022999999998774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006300000000010186,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0028999999999541615,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006899999999859574,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.009799999999813735,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002300000000104774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.007499999999936335,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0027999999999792635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005699999999933425,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002499999999827196,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005699999999933425,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002200000000129876,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006899999999859574,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0038999999999305146,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006499999999959982,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0041999999998552084,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006200000000035288,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003100000000131331,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005999999999858119,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002200000000129876,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005799999999908323,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0022999999998774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0022999999998774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0059000000001105946,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002300000000104774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.010799999999790089,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0028999999999541615,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0027999999999792635,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006300000000010186,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0024000000000796717,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006900000000086948,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.00430000000005748,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0061000000000603904,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002399999999852298,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005499999999983629,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002300000000104774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005800000000135697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0022999999998774,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005699999999933425,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.003200000000106229,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0061000000000603904,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0026000000000294676,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.005699999999933425,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0020999999999276042,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.006200000000035288,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0025000000000545697,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.002200000000129876,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.016499999999950887,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.002199999999902502,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0018999999999778083,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.0032999999998537533,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0018999999999778083,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0016000000000531145,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.004000000000132786,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.0020999999999276042,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.0020999999999276042,
+        "ocorrencias": 0,
+        "global": false
+      }
+    ],
+    "timestamp": 1755058968462
   }
 ]
