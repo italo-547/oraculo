@@ -407,5 +407,261 @@
       }
     ],
     "timestamp": 1755049912007
+  },
+  {
+    "totalArquivos": 2,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 7,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "global1",
+        "duracaoMs": 0.40039999999999054,
+        "ocorrencias": 1,
+        "global": true
+      },
+      {
+        "nome": "porArquivo",
+        "duracaoMs": 0.05480000000011387,
+        "ocorrencias": 1,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052491490
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 14,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755052491535
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 2,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755052491561
+  },
+  {
+    "totalArquivos": 2,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 1,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "semTest",
+        "duracaoMs": 0.0786000000000513,
+        "ocorrencias": 1,
+        "global": false
+      },
+      {
+        "nome": "semTest",
+        "duracaoMs": 0.06929999999988468,
+        "ocorrencias": 1,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052491597
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 1,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "semOcorrencia",
+        "duracaoMs": 0.05880000000001928,
+        "ocorrencias": 0,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052491609
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 5,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "globalX",
+        "duracaoMs": 0.363399999999956,
+        "ocorrencias": 1,
+        "global": true
+      },
+      {
+        "nome": "fileX",
+        "duracaoMs": 0.07729999999992287,
+        "ocorrencias": 0,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052492436
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 2,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755052492461
+  },
+  {
+    "totalArquivos": 3,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 2,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755052492472
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 0,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755052492477
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 1,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "withTest",
+        "duracaoMs": 0.03960000000006403,
+        "ocorrencias": 0,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052492480
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 6,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "t",
+        "duracaoMs": 0.13419999999996435,
+        "ocorrencias": 1,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052493913
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 2,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755052493922
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 2,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "t",
+        "duracaoMs": 0.05569999999988795,
+        "ocorrencias": 1,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052493939
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 1,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "t",
+        "duracaoMs": 0.031799999999975626,
+        "ocorrencias": 1,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052493944
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 7,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "detector-estrutura",
+        "duracaoMs": 0.995200000000068,
+        "ocorrencias": 0,
+        "global": true
+      },
+      {
+        "nome": "analista-padroes-uso",
+        "duracaoMs": 0.37229999999999563,
+        "ocorrencias": 0,
+        "global": true
+      },
+      {
+        "nome": "detector-dependencias",
+        "duracaoMs": 0.35979999999995016,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "analista-funcoes-longas",
+        "duracaoMs": 0.25529999999980646,
+        "ocorrencias": 0,
+        "global": false
+      },
+      {
+        "nome": "todo-comments",
+        "duracaoMs": 0.09740000000010696,
+        "ocorrencias": 0,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052497868
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 5,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "t1",
+        "duracaoMs": 0.15809999999999036,
+        "ocorrencias": 1,
+        "global": false
+      }
+    ],
+    "timestamp": 1755052498375
   }
 ]
