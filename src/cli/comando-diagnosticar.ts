@@ -109,7 +109,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           if (config.GUARDIAN_ENABLED) {
             log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
             try {
-              const resultado = await scanSystemIntegrity(fileEntries);
+              const resultado = await scanSystemIntegrity(fileEntries, { suppressLogs: true });
               guardianResultado = resultado;
               switch (resultado.status) {
                 case IntegridadeStatus.Ok:

@@ -21,6 +21,7 @@
     "prebuild": "rimraf dist",
     "build": "tsc",
     "build:pack": "npm run build && node scripts/prepare-pack.mjs",
+    "pack:publish": "npm run build:pack && cd dist-pack && npm publish --access public",
     "start": "node ./dist/cli.js",
     "diagnosticar": "node ./dist/cli.js diagnosticar",
     "lint": "eslint \"src/**/*.ts\"",

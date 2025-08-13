@@ -160,7 +160,18 @@ export async function iniciarInquisicao(
       try {
         const obj = JSON.parse(msg);
         if (obj.tipo === 'diretorio') {
-          log.info(`Examinando diretório: ${obj.caminho}`);
+          if (!config.COMPACT_MODE) {
+            log.info(`Examinando diretório: ${obj.caminho}`);
+          } else {
+            // Em modo compacto, mostra apenas a cada N diretórios para reduzir ruído
+            const g = globalThis as unknown as { __ORACULO_DIR_COUNT__?: number };
+            g.__ORACULO_DIR_COUNT__ = (g.__ORACULO_DIR_COUNT__ || 0) + 1;
+            const n = g.__ORACULO_DIR_COUNT__;
+            const STEP = 10;
+            if (n % STEP === 1) {
+              log.info(`Examinando diretórios... (${n})`);
+            }
+          }
         } else if (obj.tipo === 'erro') {
           log.erro(`Erro ao ${obj.acao} ${obj.caminho}: ${obj.mensagem}`);
         }

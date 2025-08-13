@@ -22,24 +22,38 @@ async function main() {
     }
     await copyDir(dist, path.join(outDir, 'dist'));
 
-    // package minimal
-    const pkgRaw = await fs.readFile(path.join(root, 'package.json'), 'utf-8');
-    const pkg = JSON.parse(pkgRaw);
-    const minimal = {
-        name: pkg.name,
-        version: pkg.version,
-        type: pkg.type,
-        bin: pkg.bin,
-        main: pkg.main,
-        exports: pkg.exports,
-        license: pkg.license,
-        description: pkg.description,
-        engines: pkg.engines,
-        dependencies: pkg.dependencies,
-    };
+    // package minimal: se existir package.runtime.json usamos como base; senão derivamos filtrando o original
+    let minimal;
+    const runtimePath = path.join(root, 'package.runtime.json');
+    if (await fs.access(runtimePath).then(() => true).catch(() => false)) {
+        const rRaw = await fs.readFile(runtimePath, 'utf-8');
+        const runtime = JSON.parse(rRaw);
+        const pkgRaw = await fs.readFile(path.join(root, 'package.json'), 'utf-8');
+        const full = JSON.parse(pkgRaw);
+        // Mescla dependencies se runtime.dependencies estiver vazio
+        if ((!runtime.dependencies || Object.keys(runtime.dependencies).length === 0) && full.dependencies) {
+            runtime.dependencies = full.dependencies;
+        }
+        minimal = runtime;
+    } else {
+        const pkgRaw = await fs.readFile(path.join(root, 'package.json'), 'utf-8');
+        const pkg = JSON.parse(pkgRaw);
+        minimal = {
+            name: pkg.name,
+            version: pkg.version,
+            type: pkg.type,
+            bin: pkg.bin,
+            main: pkg.main,
+            exports: pkg.exports,
+            license: pkg.license,
+            description: pkg.description,
+            engines: pkg.engines,
+            dependencies: pkg.dependencies,
+        };
+    }
     await fs.writeFile(path.join(outDir, 'package.json'), JSON.stringify(minimal, null, 2));
     // README básico
-    await fs.writeFile(path.join(outDir, 'README-runtime.md'), '# Oraculo Runtime\nPacote enxuto para execução do CLI já compilado.');
+    await fs.writeFile(path.join(outDir, 'README-runtime.md'), '# Oraculo Runtime\n\nBuild enxuto para publicação/consumo. Gerado via `npm run build:pack`.\n\nUso após publicar:\n```bash\nnpm install oraculo\n# ou\nyarn add oraculo\n# depois\nnpx oraculo diagnosticar --json\n```\n');
     console.log('dist-pack gerado em', outDir);
 }
 main().catch(e => { console.error(e); process.exit(1); });

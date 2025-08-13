@@ -65,7 +65,10 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
           }
         } else if (opts.diff) {
           log.info(chalk.bold('\n📊 Comparando integridade do Oráculo com o baseline...\n'));
-          const diffResult = await scanSystemIntegrity(fileEntries, { justDiff: true });
+          const diffResult = await scanSystemIntegrity(fileEntries, {
+            justDiff: true,
+            suppressLogs: opts.json,
+          });
           const statusDiff = String(
             (diffResult as { status?: string } | null)?.status || '',
           ).toLowerCase();
@@ -100,7 +103,9 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
           }
         } else {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
-          const guardianResultado = await scanSystemIntegrity(fileEntries);
+          const guardianResultado = await scanSystemIntegrity(fileEntries, {
+            suppressLogs: opts.json,
+          });
           const statusRaw = String(
             (guardianResultado as { status?: string } | null)?.status || '',
           ).toLowerCase();

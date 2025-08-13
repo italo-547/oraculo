@@ -28,7 +28,7 @@ function construirSnapshot(fileEntries: FileEntry[]): Snapshot {
 
 export async function scanSystemIntegrity(
   fileEntries: FileEntry[],
-  options?: { justDiff?: boolean },
+  options?: { justDiff?: boolean; suppressLogs?: boolean },
 ): Promise<{
   status: IntegridadeStatus;
   timestamp: string;
@@ -63,13 +63,17 @@ export async function scanSystemIntegrity(
   const snapshotAtual = construirSnapshot(filtrados);
 
   if (!baselineAnterior) {
-    log.info(`[Guardian] 🆕 ${agora} — Baseline inicial criado.`);
+    if (!options?.suppressLogs) {
+      log.info(`🆕 Guardian: baseline inicial criado.`);
+    }
     await salvarBaseline(snapshotAtual);
     return { status: IntegridadeStatus.Criado, timestamp: agora };
   }
 
   if (process.argv.includes('--aceitar')) {
-    log.info(`[Guardian] ✅ ${agora} — Baseline aceito manualmente (--aceitar).`);
+    if (!options?.suppressLogs) {
+      log.info(`✅ Guardian: baseline aceito manualmente (--aceitar).`);
+    }
     await salvarBaseline(snapshotAtual);
     return { status: IntegridadeStatus.Aceito, timestamp: agora };
   }
