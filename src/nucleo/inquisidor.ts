@@ -285,7 +285,9 @@ export async function iniciarInquisicao(
       .__ORACULO_PARSE_ERROS__ as OcorrenciaParseErro[]) || [];
   if (parseErros.length) {
     // Armazena contagem original para métricas (usado em saída JSON)
-    (globalThis as unknown as { __ORACULO_PARSE_ERROS_ORIGINAIS__?: number }).__ORACULO_PARSE_ERROS_ORIGINAIS__ = parseErros.length;
+    (
+      globalThis as unknown as { __ORACULO_PARSE_ERROS_ORIGINAIS__?: number }
+    ).__ORACULO_PARSE_ERROS_ORIGINAIS__ = parseErros.length;
     if (config.PARSE_ERRO_AGRUPAR) {
       const porArquivo: Record<string, OcorrenciaParseErro[]> = {};
       for (const pe of parseErros) {

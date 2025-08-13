@@ -91,11 +91,11 @@ export async function corrigirEstrutura(
       const pluginModule: unknown = await import(caminhoPlugin);
       let pluginFn:
         | ((args: {
-          mapa: ResultadoEstrutural[];
-          baseDir: string;
-          layers: typeof STRUCTURE_LAYERS;
-          fileEntries: FileEntryWithAst[];
-        }) => Promise<void> | void)
+            mapa: ResultadoEstrutural[];
+            baseDir: string;
+            layers: typeof STRUCTURE_LAYERS;
+            fileEntries: FileEntryWithAst[];
+          }) => Promise<void> | void)
         | undefined;
       if (
         pluginModule &&

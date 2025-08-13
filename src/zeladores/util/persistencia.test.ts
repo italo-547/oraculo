@@ -8,7 +8,9 @@ const TEST_FILE_TEXTO = './tmp-test-arquivo.txt';
 
 afterEach(async () => {
   for (const f of [TEST_FILE, TEST_FILE_ATOMICO, TEST_FILE_TEXTO, TEST_FILE + '-inexistente']) {
-    try { await fs.unlink(f); } catch { }
+    try {
+      await fs.unlink(f);
+    } catch {}
   }
 });
 
