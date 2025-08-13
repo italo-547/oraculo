@@ -74,7 +74,7 @@ metricas-historico.json
 # Artefatos de execução temporários
 oraculo-reports/
 
-# Plugins de teste
-plugin-teste-*.js
-
 diag.json
+
+# Relatórios temporários ESLint
+.eslint-report.json

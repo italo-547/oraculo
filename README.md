@@ -247,6 +247,10 @@ src/
   relatorios/           # Geração de relatórios
   tipos/                # Tipos e interfaces globais
   zeladores/util/       # Helpers utilitários e persistência
+tests/
+  fixtures/             # Arquivos sintéticos usados só em testes (plugins, exemplos de parsing, etc)
+    plugins/            # Plugins de teste carregados em cenários controlados
+    arquivos/           # Exemplos genéricos file1.ts / file2.ts movidos da raiz
 ```
 
 ## 🔌 Arquitetura Modular (Domínios)
