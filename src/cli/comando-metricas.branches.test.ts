@@ -82,16 +82,18 @@ describe('comando-metricas branches', () => {
       cacheAstMiss: 0,
       analistas: [{ nome: 'a', duracaoMs: 1, ocorrencias: 1, global: false }],
     }));
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
     const cli = build();
     await cli.parseAsync(['node', 'cli', 'metricas', '--json', '--limite', '2']);
-    const { log } = await import('../nucleo/constelacao/log.js');
-    const jsonCalls = (log.info as any).mock.calls.filter(
-      (c: any) => typeof c[0] === 'string' && c[0].trim().startsWith('{'),
-    );
-    expect(jsonCalls.length).toBe(1);
-    const payload = JSON.parse(jsonCalls[0][0]);
+    expect(spy).toHaveBeenCalled();
+    const jsonStr = spy.mock.calls.find(
+      (c) => typeof c[0] === 'string' && c[0].includes('historico'),
+    )?.[0];
+    expect(jsonStr).toBeTruthy();
+    const payload = JSON.parse(jsonStr as string);
     expect(payload.historico).toHaveLength(2);
     expect(payload.total).toBe(5);
     expect(payload.agregados).toBeTruthy();
+    spy.mockRestore();
   });
 });

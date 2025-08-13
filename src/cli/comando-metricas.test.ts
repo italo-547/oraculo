@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Command } from 'commander';
 import { comandoMetricas } from './comando-metricas.js';
 
@@ -44,10 +44,14 @@ describe('comando-metricas', () => {
   });
 
   it('exibe json', async () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
     const program = new Command();
     program.addCommand(comandoMetricas());
     await program.parseAsync(['node', 'cli', 'metricas', '--json']);
-    expect(log.info).toHaveBeenCalledWith(expect.stringContaining('"historico"'));
+    expect(spy).toHaveBeenCalled();
+    const payloadStr = (spy.mock.calls.at(-1)?.[0] as string) || '';
+    expect(payloadStr).toContain('"historico"');
+    spy.mockRestore();
   });
 
   it('exporta historico', async () => {

@@ -5,15 +5,16 @@
 [![Monitor Deps](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml)
 [![Testes](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/aynsken/oraculo/main/.oraculo/badge-test-stats.json)](docs/relatorios/RELATORIO.md)
 
-Oráculo é uma CLI modular para análise, diagnóstico e manutenção de projetos, com arquitetura extensível via plugins e comandos customizados. Focada em segurança evolutiva: alta cobertura de testes, arquitetura segmentada (analistas, arquitetos, zeladores, guardian) e geração de relatórios consistentes.
+Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaScript/TypeScript e multi-stack leve), oferecendo diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON consumíveis por CI.
 
-## 🚀 Visão Geral
+## ✨ Principais Capacidades
 
-- Diagnóstico de padrões, estrutura e saúde de projetos
-- Modular: analistas, arquitetos, zeladores, guardian, etc
-- Extensível via plugins e comandos
-- Tipagem rigorosa (TypeScript ESM)
-- Relatórios automatizados
+- Diagnóstico de padrões & estrutura (`diagnosticar`)
+- Verificação de integridade via hashes (`guardian`)
+- Sugestão de reorganização segura (`planoSugestao`)
+- Poda de arquivos órfãos (`podar`)
+- Relatórios & métricas agregadas (`metricas`)
+- Extensível com analistas / plugins (ESM)
 
 ## ⚙️ Requisitos
 
@@ -28,35 +29,22 @@ cd oraculo
 npm install
 ```
 
-## 🖥️ Como usar
-
-### Rodar a CLI (local)
+## 🖥️ Uso Rápido
 
 ```bash
 npm run build
-node dist/cli.js <comando>
+node dist/cli.js diagnosticar --json
+node dist/cli.js guardian --diff --json
 ```
 
-Exemplo:
+Instalação global opcional:
 
 ```bash
-node dist/cli.js diagnosticar
-node dist/cli.js podar
+npm install -g .
+oraculo diagnosticar
 ```
 
-### Fluxo de Desenvolvimento Rápido
-
-```bash
-npm run build        # build uma vez
-node dist/cli.js diagnosticar
-
-# Ou em modo watch de testes durante desenvolvimento
-npm run test:watch
-```
-
-### Variável de Ambiente de Teste
-
-Durante a execução dos testes a variável `VITEST=1` (ou já definida pelo runner) evita que a CLI chame `process.exit(...)`, permitindo inspeção de logs sem encerrar o processo. Em uso normal (fora de testes) a CLI poderá encerrar com códigos de saída quando houver erros críticos (ex: ocorrências nível erro ou falha do guardian).
+Durante testes (`process.env.VITEST`) a CLI não chama `process.exit`, permitindo inspeção controlada.
 
 ### Flags Globais
 
@@ -91,15 +79,11 @@ oraculo diagnosticar --export
 oraculo diagnosticar --export --verbose --silence
 ```
 
-### Plugins
+### Plugins & Extensões
 
-Plugins podem ser carregados (ex: corretores / zeladores) para aplicar transformações. Recomenda-se isolar lógica em módulos ESM e seguir a tipagem definida em `src/tipos/tipos.ts`. Falhas em plugins não interrompem a execução principal: são logadas com nível aviso.
+Guia completo: `docs/plugins/GUIA.md`.
 
-Guia completo de extensões e criação de técnicas: veja `docs/plugins/GUIA.md`.
-
-### Persistência e Helpers
-
-Toda leitura/escrita de estado, snapshots ou relatórios deve usar `lerEstado` / `salvarEstado` em `src/zeladores/util/persistencia.ts`. Nunca use `fs.readFile` / `fs.writeFile` diretamente fora desses helpers. Isso garante consistência, testabilidade e facilidade de evolução.
+Persistência sempre via helpers `lerEstado` / `salvarEstado` (ver `TOOLING.md`).
 
 ### Instalação global (opcional)
 
@@ -115,61 +99,23 @@ Assim, basta rodar:
 oraculo <comando>
 ```
 
-### Comandos disponíveis
+### Principais Comandos
 
-- `diagnosticar` — Analisa padrões e estrutura do projeto
-- `podar` — Remove arquivos órfãos
-- `reestruturar` — Corrige estrutura de pastas/arquivos
-- `guardian` — Verificações de integridade (baseline, diff de hashes, sentinela)
-- `perf baseline|compare` — Gera e compara snapshots sintéticos de performance (parsing/análise)
-- Documentação detalhada do Guardian: `docs/guardian.md`
-- ...e outros! Veja todos com:
+| Comando        | Descrição                                        |
+| -------------- | ------------------------------------------------ |
+| `diagnosticar` | Analisa padrões, estrutura e gera plano sugerido |
+| `guardian`     | Cria/atualiza/verifica baseline de integridade   |
+| `podar`        | Lista ou remove (seguro) arquivos órfãos         |
+| `metricas`     | Histórico agregado de métricas internas          |
+| `reestruturar` | (experimental) Aplicar plano de reorganização    |
 
-```bash
-node dist/cli.js --help
-```
+Lista completa: `node dist/cli.js --help`.
 
-## 🧪 Testes
+## 🧪 Qualidade & Política de Testes
 
-Estado atual: 366 testes passando (data: 2025-08-13). A contagem pode evoluir.
+Cobertura mínima: Statements/Lines 90%, Branches 88%, Functions 90% (gate em CI). Detalhes e racional completo em `docs/TOOLING.md`.
 
-Rodar todos os testes:
-
-```bash
-npm test
-```
-
-Ver cobertura:
-
-```bash
-npx vitest run --coverage
-```
-
-### Política de Cobertura (Gate) & Performance Opcional
-
-Limiar mínimo (enforced em CI/local via `npm run coverage:enforce`):
-
-| Métrica    | Limiar |
-| ---------- | ------ |
-| Statements | 90%    |
-| Lines      | 90%    |
-| Branches   | 88%    |
-| Functions  | 90%    |
-
-Arquivo de configuração: `package.json` (`vitest.coverage.exclude` + script `coverage:enforce`).
-
-Exclusões justificadas:
-
-- Scripts auxiliares / protótipos fora de `src/` (`scripts/**`, `fora-do-src.js`, placeholders `file1.ts`, `file2.ts`, `tmp-cache-file.ts`)
-- Arquivos sintéticos de testes (`tmp-cache-file.ts`) para simular cenários de cache
-
-Critérios para novas exclusões: só se não houver lógica de produção ou forem artefatos sintéticos usados unicamente em testes. Caso contrário, escreva testes.
-
-Processo para elevar limiares: aumentar uma métrica por vez quando o piso real estiver estável ≥ (limiar + 3%). Atualizado agora pois ultrapassamos 90% global (Statements/Lines ~91.3%). Próximo alvo potencial: Branches 90%+ após estabilizar acima de ~89% por alguns commits e reduzir pequenos clusters remanescentes.
-
-Pull Requests devem manter (ou aumentar) cobertura efetiva. Se reduzir, justificar em descrição com plano de recuperação.
-
-Gate de performance (experimental): snapshots gerados via `npm run perf:baseline` e comparados no CI (`perf:compare` + `perf:gate`). Regressões > limite configurado (default 30%) em parsing/analise são sinalizadas com aviso; pode evoluir para hard fail quando estabilizado.
+Rodar testes: `npm test` | Cobertura: `npx vitest run --coverage`.
 
 ### Estratégia de Testes
 
@@ -258,7 +204,7 @@ Blocos adicionais:
 
 Isso facilita métricas de adoção multi-stack e priorização de analistas dedicados.
 
-### Critério de Exit Codes
+### Exit Codes
 
 | Contexto                                                         | Exit Code |
 | ---------------------------------------------------------------- | --------- |
@@ -269,7 +215,7 @@ Isso facilita métricas de adoção multi-stack e priorização de analistas ded
 
 Durante testes (`process.env.VITEST` definido) não chamamos `process.exit`, permitindo inspeção.
 
-## 📁 Estrutura do Projeto
+## 📁 Estrutura (Resumo)
 
 ```text
 src/
@@ -288,7 +234,7 @@ tests/
     arquivos/           # Exemplos genéricos file1.ts / file2.ts movidos da raiz
 ```
 
-## 🔌 Arquitetura Modular (Domínios)
+## 🔌 Domínios
 
 - Analistas: identificam padrões, estruturas e potenciais problemas (somente leitura)
 - Arquitetos: consolidam diagnósticos de alto nível
@@ -296,44 +242,17 @@ tests/
 - Guardian: verifica integridade (hashes, baseline, diffs)
 - Relatórios: geração de artefatos (Markdown / JSON)
 
-## 🤝 Contribuição
+## 🤝 Contribuir
 
-- Siga o padrão de helpers centralizados (`src/zeladores/util/`)
-- Use aliases de importação do `tsconfig.json`
-- Sempre escreva testes para novos recursos
-- Sugestões? Abra uma issue ou PR!
+Leia `CONTRIBUTING.md` e `docs/TOOLING.md`.
 
-## 📋 Roadmap (recorte ativo)
+## �️ Roadmap & Checklist
 
-- [x] Implementar flag `--scan-only`
-- [x] Testes ponta-a-ponta executando binário buildado (E2E básicos + guardian + exit code erro)
-- [x] Integração contínua com lint + format + coverage gate (CI + build)
-- [x] Flags `--json` (diagnosticar/guardian) e `--full-scan` (guardian)
-- [x] Métricas de performance básicas exportáveis (JSON + histórico)
-- [ ] Baseline comparativa de performance por commit
-- [ ] Relatório de baseline de performance automatizado
-- [x] Guia de criação de plugins (contrato + exemplo mínimo)
-- [ ] Guia de padronização / estilo de código (linters + convenções)
+`docs/CHECKLIST.md` mantém backlog vivo. Este README não replica listas para evitar divergência.
 
-## 🧬 Camadas de Teste (Resumo)
+## 🧬 Camadas de Teste
 
-| Camada                | Objetivo                            | Exemplos              |
-| --------------------- | ----------------------------------- | --------------------- |
-| Unidade               | Validar funções/helpers isolados    | analistas individuais |
-| Integração            | Fluxos entre módulos                | inquisidor + executor |
-| Guardian/Persistência | Baseline, diff, hash                | `guardian/*`          |
-| CLI Commands          | Comportamento de comandos sem build | `comando-*.test.ts`   |
-| E2E Binário           | Execução real pós-build             | `e2e-bin.test.ts`     |
-
-### Cenários E2E Atuais
-
-- Modo `--scan-only` (exit 0)
-- `--scan-only --export` gera arquivo JSON
-- Diagnóstico completo benigno (exit 0)
-- Criação de baseline guardian (exit 0)
-- Ocorrência com erro técnico gera exit code 1
-
-Detalhes completos em `docs/relatorios/camadas-testes.md`.
+Resumo rápido em `docs/TOOLING.md` e detalhado em `docs/relatorios/camadas-testes.md`.
 
 ## 📑 Agregação de PARSE_ERRO
 
@@ -346,7 +265,7 @@ Para evitar ruído excessivo:
 - Ajuste via config/env: `PARSE_ERRO_AGRUPAR=false` para listar todos; aumentar `PARSE_ERRO_MAX_POR_ARQUIVO` para tolerar mais entradas antes de condensar.
 - Para tornar parsing errors blockers, defina `PARSE_ERRO_FALHA=true` (gate útil em pipelines mais rigorosos).
 
-## 🛡️ Segurança de Plugins & Caminhos
+## 🛡️ Segurança (Plugins & Caminhos)
 
 Medidas atuais:
 
@@ -368,7 +287,7 @@ Próximos reforços (sugeridos):
 - Métrica de tempo por plugin para detectar outliers de performance
 - Flag de modo estrito que falha em qualquer plugin com erro
 
-## 📜 Guardian JSON (Contrato de Saída)
+## 📜 Guardian JSON (Resumo)
 
 Quando executado com `--json`, o comando `guardian` retorna objeto com:
 
@@ -397,7 +316,7 @@ Notas:
 
 ---
 
-## 🔐 Pipeline Local vs CI (Confiabilidade & Segurança)
+## 🔐 Pipeline Local vs CI
 
 Para garantir que o que passa localmente também passe no GitHub Actions (Linux):
 
@@ -438,9 +357,6 @@ npm run test:e2e      # apenas E2E
 
 ---
 
-**Autor:** Italo C Lopes  
-**Licença:** MIT
-
 ## 🛡️ Licença
 
 Distribuído sob a licença MIT. Uso comercial, fork, modificação e redistribuição são permitidos. Atribuição é bem-vinda, mas não obrigatória.
@@ -456,22 +372,22 @@ Distribuído sob a licença MIT. Uso comercial, fork, modificação e redistribu
 
 Se surgir necessidade futura de oferecer extras proprietários, dá para fazer via modelo open-core sem alterar o core livre.
 
-## 🚀 Performance (Baseline Inicial)
+## 🚀 Performance
 
-Rode `npm run perf:baseline` para gerar snapshot sintético em `docs/perf/` contendo:
-
-- Tempo de parsing vs análise total
-- Contagem de arquivos e tamanhos agregados
-- Duração por analista (quando métricas habilitadas)
-- Versão Node e commit
-
-Em breve: comparação automática e alerta de regressões.
+Snapshots sintéticos: `npm run perf:baseline` (detalhes em `docs/perf/README.md`).
 
 ---
 
-Notas rápidas de manutenção:
+## 🔗 Documentação Adicional
 
-- Evite duplicar lógica de persistência
-- Prefira funções puras para analistas e relatórios
-- Use aliases sempre (ex: `@nucleo/*`) em vez de caminhos relativos longos
-- Mantenha testes alinhados a contratos claros (evitar mocks frágeis)
+- Guardian: `docs/guardian.md`
+- Arquétipos & Reestruturação: `docs/estruturas/README.md`
+- Plugins: `docs/plugins/GUIA.md`
+- Tooling & Qualidade: `docs/TOOLING.md`
+- Performance: `docs/perf/README.md`
+- Checklist / Roadmap Ativo: `docs/CHECKLIST.md`
+- Camadas de Teste: `docs/relatorios/camadas-testes.md`
+
+---
+
+Autor: Italo C Lopes — Licença MIT
