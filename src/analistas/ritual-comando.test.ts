@@ -86,7 +86,6 @@ describe('ritualComando', () => {
     const fakeAst = { node: { type: 'File' } };
     const ocorrencias = ritualComando.aplicar('', 'bot.js', fakeAst as any, '', undefined);
     // Log temporário para depuração
-    // eslint-disable-next-line no-console
     console.log('OCORRENCIAS handler anônimo:', JSON.stringify(ocorrencias, null, 2));
     // Deve haver pelo menos uma ocorrência padrao-problematico com mensagem de anônima
     const problematicas = (Array.isArray(ocorrencias) ? ocorrencias : []).filter(

@@ -63,8 +63,8 @@ export const configDefault = {
     'dist',
     'build',
     'coverage',
-  // Evita varredura de dependências externas – melhora performance e reduz ruído do Guardian
-  'node_modules',
+    // Evita varredura de dependências externas – melhora performance e reduz ruído do Guardian
+    'node_modules',
     'package-lock.json',
     'yarn.lock',
   ],
@@ -112,6 +112,8 @@ export const configDefault = {
   // Controle de ruído de erros de parsing
   PARSE_ERRO_AGRUPAR: true, // quando true, múltiplos erros no mesmo arquivo são consolidados
   PARSE_ERRO_MAX_POR_ARQUIVO: 1, // limite de ocorrências individuais por arquivo antes de agrupar
+  // Se verdadeiro, qualquer PARSE_ERRO (mesmo agregado) provoca exit code 1
+  PARSE_ERRO_FALHA: false,
 };
 
 // Clonamos para instância mutável

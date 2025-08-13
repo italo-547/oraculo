@@ -6,10 +6,7 @@ vi.mock('node:fs', () => ({
     mkdir: vi.fn().mockResolvedValue(undefined),
   },
 }));
-vi.mock('path', () => ({
-  default: { dirname: () => '/tmp' },
-  dirname: () => '/tmp',
-}));
+// Evita mock de path pois afeta módulos que usam path.join; apenas se precisarmos isolar dirname poderíamos stubar diretamente.
 vi.mock('../nucleo/constelacao/log.js', () => ({
   log: {
     info: vi.fn(),

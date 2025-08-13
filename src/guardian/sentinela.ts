@@ -56,7 +56,9 @@ export async function scanSystemIntegrity(
   });
   if (config.DEV_MODE) {
     const removidos = fileEntries.length - filtrados.length;
-    log.info(`⚙️ Guardian filtro aplicado: ${filtrados.length} arquivos considerados (removidos ${removidos}).`);
+    log.info(
+      `⚙️ Guardian filtro aplicado: ${filtrados.length} arquivos considerados (removidos ${removidos}).`,
+    );
   }
   const snapshotAtual = construirSnapshot(filtrados);
 

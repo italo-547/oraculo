@@ -21,11 +21,11 @@ Oráculo é uma CLI modular para análise, diagnóstico e manutenção de projet
 
 ## 📦 Instalação
 
-````bash
+```bash
 git clone https://github.com/aynsken/oraculo.git
 cd oraculo
 npm install
-```bash
+```
 
 ## 🖥️ Como usar
 
@@ -34,7 +34,7 @@ npm install
 ```bash
 npm run build
 node dist/cli.js <comando>
-````
+```
 
 Exemplo:
 
@@ -128,7 +128,7 @@ node dist/cli.js --help
 
 ## 🧪 Testes
 
-Estado atual: 309 testes passando (data: 2025-08-12). A contagem pode evoluir.
+Estado atual: 358 testes passando (data: 2025-08-13). A contagem pode evoluir.
 
 Rodar todos os testes:
 
@@ -141,6 +141,59 @@ Ver cobertura:
 ```bash
 npx vitest run --coverage
 ```
+
+### Política de Cobertura (Gate)
+
+Limiar mínimo (enforced em CI/local via `npm run coverage:enforce`):
+
+| Métrica    | Limiar |
+| ---------- | ------ |
+| Statements | 90%    |
+| Lines      | 90%    |
+| Branches   | 88%    |
+| Functions  | 90%    |
+
+Arquivo de configuração: `package.json` (`vitest.coverage.exclude` + script `coverage:enforce`).
+
+Exclusões justificadas:
+
+- Scripts auxiliares / protótipos fora de `src/` (`scripts/**`, `fora-do-src.js`, placeholders `file1.ts`, `file2.ts`, `tmp-cache-file.ts`)
+- Arquivos sintéticos de testes (`tmp-cache-file.ts`) para simular cenários de cache
+
+Critérios para novas exclusões: só se não houver lógica de produção ou forem artefatos sintéticos usados unicamente em testes. Caso contrário, escreva testes.
+
+Processo para elevar limiares: aumentar uma métrica por vez quando o piso real estiver estável ≥ (limiar + 3%). Atualizado agora pois ultrapassamos 90% global (Statements/Lines ~91.3%). Próximo alvo potencial: Branches 90%+ após estabilizar acima de ~89% por alguns commits e reduzir pequenos clusters remanescentes.
+
+Pull Requests devem manter (ou aumentar) cobertura efetiva. Se reduzir, justificar em descrição com plano de recuperação.
+
+### Estratégia de Testes
+
+1. Unidade: funções puras e helpers (preferir sem efeitos colaterais)
+2. Integração: fluxo entre inquisidor / executor / analistas
+3. Segurança: caminhos de falha e validações (plugins, glob, path)
+4. Branch coverage: cenários alternativos (flags `--json`, erros agregados, diffs, fallback de hash)
+5. E2E: execução real pós-build (contrato de CLI e códigos de saída)
+
+### Variáveis de Ambiente (Parsing & Falhas)
+
+| Variável                     | Default | Efeito                                                                     |
+| ---------------------------- | ------- | -------------------------------------------------------------------------- |
+| `PARSE_ERRO_AGRUPAR`         | `true`  | Agrupa múltiplos erros de parsing por arquivo após limite                  |
+| `PARSE_ERRO_MAX_POR_ARQUIVO` | `1`     | Qtde máxima antes de condensar em ocorrência agregada                      |
+| `PARSE_ERRO_FALHA`           | `false` | Se `true`, presença de parsing errors (após agregação) falha o diagnóstico |
+
+Contrato JSON (`diagnosticar --json`) inclui `parseErros.totalOriginais` e `parseErros.agregados` para transparência.
+
+### Critério de Exit Codes
+
+| Contexto                                                         | Exit Code |
+| ---------------------------------------------------------------- | --------- |
+| Execução bem-sucedida (sem erros críticos)                       | 0         |
+| Guardian detecta alterações sem política permissiva (`--diff`)   | 1         |
+| Falha técnica (ex: parse irreversível + `PARSE_ERRO_FALHA=true`) | 1         |
+| Erro estrutural inesperado (IO, crash)                           | 1         |
+
+Durante testes (`process.env.VITEST` definido) não chamamos `process.exit`, permitindo inspeção.
 
 ## 📁 Estrutura do Projeto
 
@@ -213,6 +266,29 @@ Para evitar ruído excessivo:
 - A contagem total original é preservada em `parseErros.totalOriginais` (modo `diagnosticar --json`).
 - Campo `agregados` indica quantos foram suprimidos por agrupamento.
 - Ajuste via config/env: `PARSE_ERRO_AGRUPAR=false` para listar todos; aumentar `PARSE_ERRO_MAX_POR_ARQUIVO` para tolerar mais entradas antes de condensar.
+- Para tornar parsing errors blockers, defina `PARSE_ERRO_FALHA=true` (gate útil em pipelines mais rigorosos).
+
+## 🛡️ Segurança de Plugins & Caminhos
+
+Medidas atuais:
+
+- Whitelist de extensões para carregamento de plugins (`.js`, `.mjs`, `.cjs`, `.ts`) — evita execução de binários ou formatos arbitrários.
+- Sanitização de paths relativos removendo sequências de escape (`../`, `~`) fora da raiz do projeto.
+- Validação defensiva de globs: limita número de `**` e padrões potencialmente explosivos (mitiga varreduras custosas).
+- Baseline Guardian não pode ser aceita em modo `--full-scan` (evita “fotografar” estado potencialmente inseguro / bypass de ignore temporário).
+- Fallback determinístico de hash se algoritmos criptográficos indisponíveis (garante integridade mínima para diff).
+
+Expectativas para contribuições:
+
+- Qualquer novo ponto de carregamento dinâmico deve validar extensão e residir dentro da raiz do repo.
+- Evitar `eval` / `Function` dinâmica; se inevitável, justificar em PR.
+- Acesso a FS sempre via helpers centralizados (`lerEstado` / `salvarEstado`).
+
+Próximos reforços (sugeridos):
+
+- Lista de blocklist para nomes de plugins comuns maliciosos
+- Métrica de tempo por plugin para detectar outliers de performance
+- Flag de modo estrito que falha em qualquer plugin com erro
 
 ## 📜 Guardian JSON (Contrato de Saída)
 

@@ -1,6 +1,6 @@
 # 📘 Relatório de Progresso — Projeto Oráculo CLI
 
-**Última atualização:** 2025-08-12 (atualizado com E2E ampliado e gate de cobertura)
+**Última atualização:** 2025-08-12 (E2E ampliado, gate de cobertura, flags `--json` e `--full-scan`, agregação PARSE_ERRO)
 
 ---
 
@@ -98,13 +98,13 @@
 ## 🔜 Sugestões Prioritárias (próxima etapa)
 
 1. Guia de criação de plugins (contrato + exemplo mínimo + melhores práticas de falha isolada).
-2. Baseline de performance (script gerador + coleta de tempos: scan, AST parse, técnicas).
-3. Observabilidade leve: log opcional de tempo por técnica (flag experimental).
-4. Métricas internas opcionais (cache hits, arquivos ignorados) agregadas a relatório JSON exportado.
-5. Sanitização/validação adicional de entrada (paths relativos, glob injection prevention).
-6. Pre-commit hooks (lint, typecheck rápido, test:unit) via Husky (opcional).
-7. Alinhamento de licença (README diz MIT, package.json está 'Restrita' – decidir e unificar).
-8. Guia de padronização de código (nomenclatura, diretórios, convenções de ocorrências).
+2. Comparação automática de baseline de performance e detecção de regressões.
+3. Observabilidade leve expandida: export de tempos por técnica e cache hits no JSON de `--json`.
+4. Sanitização/validação adicional de entrada (paths relativos, glob injection prevention).
+5. Pre-commit hooks (lint, typecheck rápido, test:unit) via Husky (opcional).
+6. Guia de padronização de código (nomenclatura, diretórios, convenções de ocorrências).
+7. Expor política e limites de agregação PARSE_ERRO no README.
+8. Contrato formal de saída do guardian (statuses + campos) documentado no README.
 
 > **Recomendação:** Priorize documentação e automação antes de expandir funcionalidades. Isso garante base sólida, facilita onboarding e reduz riscos ao entrar em produção.
 

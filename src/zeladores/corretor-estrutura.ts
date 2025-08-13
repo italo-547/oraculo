@@ -3,6 +3,7 @@ import path from 'node:path';
 import pLimit from 'p-limit';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
+import { resolverPluginSeguro } from '../nucleo/constelacao/seguranca.js';
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 
 const {
@@ -77,14 +78,24 @@ export async function corrigirEstrutura(
 
   for (const pluginRel of PLUGINS) {
     try {
-      const pluginModule: unknown = await import(path.resolve(baseDir, pluginRel));
+      const resolvido = resolverPluginSeguro(baseDir, String(pluginRel));
+      if (resolvido.erro) {
+        log.aviso(`⚠️ Plugin ignorado (${pluginRel}): ${resolvido.erro}`);
+        continue;
+      }
+      const caminhoPlugin = resolvido.caminho;
+      if (!caminhoPlugin) {
+        log.aviso(`⚠️ Caminho de plugin não resolvido: ${String(pluginRel)}`);
+        continue;
+      }
+      const pluginModule: unknown = await import(caminhoPlugin);
       let pluginFn:
         | ((args: {
-            mapa: ResultadoEstrutural[];
-            baseDir: string;
-            layers: typeof STRUCTURE_LAYERS;
-            fileEntries: FileEntryWithAst[];
-          }) => Promise<void> | void)
+          mapa: ResultadoEstrutural[];
+          baseDir: string;
+          layers: typeof STRUCTURE_LAYERS;
+          fileEntries: FileEntryWithAst[];
+        }) => Promise<void> | void)
         | undefined;
       if (
         pluginModule &&

@@ -37,7 +37,7 @@ Motivação: evitar arquivos voláteis, enormes ou gerados, tornando o diff sign
 
 - `--aceitar`: força aceitar snapshot atual como nova baseline.
 - `--full-scan`: executa varredura ignorando GUARDIAN_IGNORE_PATTERNS. Uso: inspeção pontual. Não é permitido aceitar baseline com esta flag.
-- `--json`: emite saída estruturada (status, detalhes) para pipelines CI.
+- `--json`: emite saída estruturada (status, diffs agregados, contagens) para pipelines CI.
 
 ## Status Possíveis
 
@@ -73,3 +73,4 @@ Via config (arquivo/env/CLI) sobrescreva `GUARDIAN_IGNORE_PATTERNS`. Exemplo em 
 - Modo leitura incremental.
 - Agrupamento de mudanças por diretório.
 - Relatório Markdown de diffs.
+- Export explícito de contrato de saída (documentação README).

@@ -9,7 +9,7 @@ beforeEach(() => {
 describe('sentinela (extra)', () => {
   it('justDiff sem erros retorna ok quando não há diffs', async () => {
     vi.doMock('node:fs', () => ({ promises: { mkdir: vi.fn().mockResolvedValue(undefined) } }));
-    vi.doMock('path', () => ({ default: { dirname: () => '/tmp' }, dirname: () => '/tmp' }));
+    // Não mockamos 'path' para evitar quebrar path.join
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: { info: vi.fn(), aviso: vi.fn() } }));
     vi.doMock('./hash.js', () => ({ gerarSnapshotDoConteudo: vi.fn((c: string) => 'h_' + c) }));
     vi.doMock('./baseline.js', () => ({
@@ -39,7 +39,7 @@ describe('sentinela (extra)', () => {
 
   it('acceptNewBaseline salva snapshot construído ignorando vazios', async () => {
     vi.doMock('node:fs', () => ({ promises: { mkdir: vi.fn().mockResolvedValue(undefined) } }));
-    vi.doMock('path', () => ({ default: { dirname: () => '/tmp' }, dirname: () => '/tmp' }));
+    // Não mockamos 'path' para evitar quebrar path.join
     const salvarBaseline = vi.fn();
     vi.doMock('./baseline.js', () => ({ carregarBaseline: vi.fn(), salvarBaseline }));
     const gerarSnapshotDoConteudo = vi.fn((c: string) => 'h_' + c);

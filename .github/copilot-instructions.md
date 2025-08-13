@@ -88,6 +88,31 @@ Este projeto é uma CLI modular para análise, diagnóstico e manutenção de pr
 - **Testes**: Já implementados (Vitest). Durante testes `process.env.VITEST` deve impedir chamadas a `process.exit`.
 - **Persistência**: Sempre utilize os helpers centralizados para leitura/escrita de arquivos de estado, relatórios e snapshots.
 
+## Flags Recentes / Comportamentos
+
+- `--scan-only`: Executa somente varredura + priorização (sem técnicas mutáveis).
+- `--full-scan` (guardian): Ignora padrões de ignore para inspeção pontual (não persiste baseline).
+- `--json`: Saída estruturada em `diagnosticar` e `guardian` (consumível por CI/pipelines).
+
+## Agregação de PARSE_ERRO
+
+Para reduzir ruído:
+
+- Erros de parsing por arquivo podem ser agregados após limite configurável (`PARSE_ERRO_MAX_POR_ARQUIVO`).
+- Contagem total original é preservada em campo interno (`__ORACULO_PARSE_ERROS_ORIG_TOTAL__`).
+- Objetivo: permitir análise de tendência sem inundar logs.
+- Próximo passo: expor limites e política no README.
+
+## Documentação — Fonte Única de Verdade
+
+- Roadmap operacional agora vive no `docs/CHECKLIST.md` (evitar múltiplos roadmaps divergentes).
+- Documentos removidos: `ROADMAP_ITERACOES.md`, `SUGESTOES-PRIORITARIAS.md`, `JSDOC.md` raiz (duplicado).
+- Guardian detalhado em `docs/guardian.md`.
+- Test layers em `docs/relatorios/camadas-testes.md`.
+- Performance baseline em `docs/perf/README.md`.
+
+Qualquer novo documento estratégico deve ser referenciado no CHECKLIST para rastreabilidade.
+
 ## Exemplos de Uso de Alias
 
 ```ts

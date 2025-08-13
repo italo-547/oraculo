@@ -38,10 +38,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
       'Modo compacto: logs ainda mais resumidos para projetos grandes',
       false,
     )
-  .option('--json', 'Saída JSON estruturada (para CI/integracoes)', false)
+    .option('--json', 'Saída JSON estruturada (para CI/integracoes)', false)
     .action(
       async (
-  opts: { guardianCheck?: boolean; verbose?: boolean; compact?: boolean; json?: boolean },
+        opts: { guardianCheck?: boolean; verbose?: boolean; compact?: boolean; json?: boolean },
         command: Command,
       ) => {
         aplicarFlagsGlobais(
@@ -56,6 +56,12 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         let guardianResultado: ResultadoGuardian | undefined;
         let fileEntries: FileEntryWithAst[] = [];
         let totalOcorrencias = 0;
+        // Tipagem segura de globais auxiliares usados para agregar erros de parsing
+        interface OraculoGlobals {
+          __ORACULO_PARSE_ERROS_ORIGINAIS__?: number;
+          __ORACULO_PARSE_ERROS__?: unknown[];
+        }
+        const oraculoGlobals = globalThis as unknown as OraculoGlobals & Record<string, unknown>;
 
         try {
           if (opts.json) {
@@ -140,9 +146,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               }
             }
             if (opts.json) {
-              console.log(
-                JSON.stringify({ modo: 'scan-only', totalArquivos: fileEntries.length }),
-              );
+              console.log(JSON.stringify({ modo: 'scan-only', totalArquivos: fileEntries.length }));
             }
             if (!process.env.VITEST) process.exit(0);
             return; // evita continuar
@@ -158,9 +162,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             { verbose: config.VERBOSE, compact: config.COMPACT_MODE },
           );
           // Anexa erros de parsing coletados durante prepararComAst (não incluídos em executarInquisicao)
-          const globalStore = globalThis as unknown as Record<string, unknown>;
           const parseErrosRaw =
-            (globalStore.__ORACULO_PARSE_ERROS__ as unknown[] | undefined) || [];
+            (oraculoGlobals.__ORACULO_PARSE_ERROS__ as unknown[] | undefined) || [];
           const parseErros: Ocorrencia[] = parseErrosRaw.filter(
             (e): e is Ocorrencia =>
               !!e && typeof e === 'object' && 'tipo' in e && 'mensagem' in e && 'relPath' in e,
@@ -168,7 +171,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           if (parseErros.length) {
             resultadoFinal.ocorrencias.push(...parseErros);
             // Limpa para evitar vazamento entre execuções
-            delete globalStore.__ORACULO_PARSE_ERROS__;
+            delete oraculoGlobals.__ORACULO_PARSE_ERROS__;
           }
           totalOcorrencias += resultadoFinal.ocorrencias.length;
 
@@ -181,9 +184,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             if (occ.nivel === 'erro') temErro = true;
           }
           // Métricas específicas de parse agregados
-          const totalParseErrosOriginais = (globalThis as any).__ORACULO_PARSE_ERROS_ORIGINAIS__ as
-            | number
-            | undefined;
+          const totalParseErrosOriginais = oraculoGlobals.__ORACULO_PARSE_ERROS_ORIGINAIS__;
           const parseAggregatedMetric = {
             totalOriginais: totalParseErrosOriginais || tiposOcorrencias['PARSE_ERRO'] || 0,
             totalExibidos: tiposOcorrencias['PARSE_ERRO'] || 0,
@@ -192,7 +193,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               : 0,
           };
           // Garantia: parse errors sempre elevam a severidade mesmo que nivel não tenha sido propagado
-          if (!temErro && tiposOcorrencias['PARSE_ERRO'] > 0) {
+          if (!temErro && tiposOcorrencias['PARSE_ERRO'] > 0 && config.PARSE_ERRO_FALHA) {
             temErro = true;
           }
 

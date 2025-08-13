@@ -1,0 +1,18 @@
+[
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 3,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "t",
+        "duracaoMs": 0.07549999999991996,
+        "ocorrencias": 0,
+        "global": false
+      }
+    ],
+    "timestamp": 1755047128205
+  }
+]

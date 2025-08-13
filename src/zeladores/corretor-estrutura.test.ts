@@ -98,7 +98,8 @@ describe('corrigirEstrutura', () => {
     const fileEntries: import('../tipos/tipos.js').FileEntryWithAst[] = [
       { relPath: 'src/d.ts', fullPath: '/tmp/src/d.ts', ast: undefined as any, content: '' },
     ];
-    await corrigirEstrutura(mapa, fileEntries, '/tmp');
+    const baseDir = (await import('node:path')).resolve(__dirname, '../..');
+    await corrigirEstrutura(mapa, fileEntries, baseDir);
     const { log } = await import('../nucleo/constelacao/log.js');
     // Verifica se alguma chamada de log.aviso contém 'Plugin falhou'
     const chamadasAviso = (log.aviso as any).mock.calls.flat();
@@ -186,7 +187,8 @@ describe('corrigirEstrutura - branches de erro e caminhos alternativos', () => {
     const fileEntries = [
       { relPath: 'src/i.ts', fullPath: '/tmp/src/i.ts', ast: undefined as any, content: '' },
     ];
-    await corrigirEstrutura(mapa, fileEntries, '/tmp');
+    const baseDir = path.resolve(__dirname, '../..');
+    await corrigirEstrutura(mapa, fileEntries, baseDir);
     // @ts-ignore
     expect(global.__pluginDiretoChamado).toBe(true);
     config.STRUCTURE_PLUGINS = [];
@@ -204,7 +206,8 @@ describe('corrigirEstrutura - branches de erro e caminhos alternativos', () => {
     const fileEntries = [
       { relPath: 'src/z.ts', fullPath: '/tmp/src/z.ts', ast: undefined as any, content: '' },
     ];
-    await corrigirEstrutura(mapa, fileEntries, '/tmp');
+    const baseDir = path.resolve(__dirname, '../..');
+    await corrigirEstrutura(mapa, fileEntries, baseDir);
     // @ts-ignore
     expect(global.__pluginDefaultChamado).toBe(true);
     config.STRUCTURE_PLUGINS = [];

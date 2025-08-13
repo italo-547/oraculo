@@ -26,11 +26,13 @@ export async function analisarEstrutura(
     fileEntries.map((entry) =>
       limit(() => {
         const rel = entry.relPath;
-        const atual = rel.split(path.sep)[0] || '';
+        // Normaliza para separador POSIX para evitar dependência de platform e necessidade de mock em testes
+        const normalizado = rel.replace(/\\/g, '/');
+        const atual = normalizado.split('/')[0] || '';
         let ideal: string | null = null;
 
         const matchDireta = Object.entries(CAMADAS).find(([, dir]) =>
-          rel.startsWith(dir + path.sep),
+          normalizado.startsWith(dir.replace(/\\/g, '/') + '/'),
         );
 
         if (matchDireta) {

@@ -9,7 +9,7 @@ export default [
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: './tsconfig.json',
+        project: './tsconfig.eslint.json',
         sourceType: 'module',
         ecmaVersion: 2022,
       },
@@ -27,7 +27,7 @@ export default [
       '@typescript-eslint': tsPlugin,
     },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
@@ -35,7 +35,7 @@ export default [
         },
       ],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/ban-ts-comment': 'warn',
       'no-console': 'off',
     },
@@ -51,6 +51,6 @@ export default [
     },
   },
   {
-  ignores: ['dist/**', 'node_modules/**', '**/*.test.ts', 'coverage/**'],
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
   },
 ];

@@ -2,44 +2,54 @@ import path from 'node:path';
 
 // Normaliza um caminho relativo eliminando tentativas de escape (..), barras duplicadas e separadores inconsistentes
 export function sanitizarRelPath(rel: string): string {
-  if (!rel) return '';
-  rel = rel.replace(/^[A-Za-z]:\\?/u, '').replace(/^\/+/, '');
-  const norm = rel.replace(/\\+/g, '/');
-  const collapsed = path.posix.normalize(norm);
-  if (collapsed.startsWith('..')) return collapsed.replace(/^\.+/g, '');
-  return collapsed;
+    if (!rel) return '';
+    rel = rel.replace(/^[A-Za-z]:\\?/u, '').replace(/^\/+/, '');
+    const norm = rel.replace(/\\+/g, '/');
+    const collapsed = path.posix.normalize(norm);
+    if (collapsed.startsWith('..')) {
+        // remove todos os prefixos de ../ e barras iniciais resultantes
+        const semDots = collapsed.replace(/^(\.\/?)+/, '');
+        return semDots.replace(/^\/+/, '');
+    }
+    return collapsed.replace(/^\/+/, '');
 }
 
 export function estaDentro(baseDir: string, alvo: string): boolean {
-  const rel = path.relative(baseDir, alvo);
-  return !!rel && !rel.startsWith('..') && !path.isAbsolute(rel);
+    const rel = path.relative(baseDir, alvo);
+    return !!rel && !rel.startsWith('..') && !path.isAbsolute(rel);
 }
 
 export function resolverPluginSeguro(
-  baseDir: string,
-  pluginRel: string,
+    baseDir: string,
+    pluginRel: string,
 ): { caminho?: string; erro?: string } {
-  try {
-    if (typeof pluginRel !== 'string' || !pluginRel.trim()) {
-      return { erro: 'entrada de plugin inválida (string vazia)' };
+    try {
+        if (typeof pluginRel !== 'string' || !pluginRel.trim()) {
+            return { erro: 'entrada de plugin inválida (string vazia)' };
+        }
+        const resolvido = path.resolve(baseDir, pluginRel);
+        if (!estaDentro(baseDir, resolvido)) {
+            return { erro: 'plugin fora da raiz do projeto (bloqueado)' };
+        }
+        // Restringe extensões para reduzir risco de execução arbitrária
+        const permitido = [/\.(c|m)?js$/i, /\.ts$/i];
+        if (!permitido.some((r) => r.test(resolvido))) {
+            return { erro: 'extensão de plugin não permitida' };
+        }
+        return { caminho: resolvido };
+    } catch (e) {
+        return { erro: (e as Error).message || String(e) };
     }
-    const resolvido = path.resolve(baseDir, pluginRel);
-    if (!estaDentro(baseDir, resolvido)) {
-      return { erro: 'plugin fora da raiz do projeto (bloqueado)' };
-    }
-    return { caminho: resolvido };
-  } catch (e) {
-    return { erro: (e as Error).message || String(e) };
-  }
 }
 
 export function validarGlobBasico(padrao: string): boolean {
-  if (padrao.length > 300) return false;
-  const repeticaoExcessiva = /(\*\*){5,}/.test(padrao);
-  if (repeticaoExcessiva) return false;
-  return true;
+    if (padrao.length > 300) return false;
+    // Bloqueia mais de 4 ocorrências de '**' mesmo não consecutivas
+    const ocorrencias = (padrao.match(/\*\*/g) || []).length;
+    if (ocorrencias >= 5) return false;
+    return true;
 }
 
 export function filtrarGlobSeguros(padroes: string[]): string[] {
-  return padroes.filter((p) => validarGlobBasico(p));
+    return padroes.filter((p) => validarGlobBasico(p));
 }

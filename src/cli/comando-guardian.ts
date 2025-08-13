@@ -13,10 +13,16 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
   return new Command('guardian')
     .description('Gerencia e verifica a integridade do ambiente do Oráculo.')
     .option('-a, --accept-baseline', 'Aceita o baseline atual como o novo baseline de integridade')
-  .option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline')
-  .option('--full-scan', 'Executa verificação sem aplicar GUARDIAN_IGNORE_PATTERNS (não persistir baseline)')
-  .option('--json', 'Saída em JSON estruturado (para CI/integracoes)')
-  .action(async function (this: Command, opts: { acceptBaseline?: boolean; diff?: boolean; fullScan?: boolean; json?: boolean }) {
+    .option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline')
+    .option(
+      '--full-scan',
+      'Executa verificação sem aplicar GUARDIAN_IGNORE_PATTERNS (não persistir baseline)',
+    )
+    .option('--json', 'Saída em JSON estruturado (para CI/integracoes)')
+    .action(async function (
+      this: Command,
+      opts: { acceptBaseline?: boolean; diff?: boolean; fullScan?: boolean; json?: boolean },
+    ) {
       aplicarFlagsGlobais(
         this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {},
       );
@@ -27,10 +33,15 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
       try {
         const resultadoInquisicao = await iniciarInquisicao(baseDir, { incluirMetadados: false });
         fileEntries = resultadoInquisicao.fileEntries;
-        const ignoradosOriginais = config.GUARDIAN_IGNORE_PATTERNS;
+        const ignoradosOriginaisRaw = (config as { GUARDIAN_IGNORE_PATTERNS?: string[] })
+          .GUARDIAN_IGNORE_PATTERNS;
+        const ignoradosOriginais = Array.isArray(ignoradosOriginaisRaw)
+          ? [...ignoradosOriginaisRaw]
+          : [];
         if (opts.fullScan) {
           // Temporariamente desabilita padrões ignorados
-          (config as any).GUARDIAN_IGNORE_PATTERNS = [];
+          (config as unknown as { GUARDIAN_IGNORE_PATTERNS: string[] }).GUARDIAN_IGNORE_PATTERNS =
+            [];
           if (!opts.acceptBaseline) {
             log.aviso('⚠️ --full-scan ativo: baseline NÃO será persistido com escopo expandido.');
           }
@@ -38,8 +49,11 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
 
         if (opts.acceptBaseline) {
           if (opts.fullScan) {
-            log.aviso('🚫 Não é permitido aceitar baseline em modo --full-scan. Remova a flag e repita.');
-            (config as any).GUARDIAN_IGNORE_PATTERNS = ignoradosOriginais;
+            log.aviso(
+              '🚫 Não é permitido aceitar baseline em modo --full-scan. Remova a flag e repita.',
+            );
+            (config as unknown as { GUARDIAN_IGNORE_PATTERNS: string[] }).GUARDIAN_IGNORE_PATTERNS =
+              ignoradosOriginais;
             process.exit(1);
           }
           log.info(chalk.bold('\n🔄 Aceitando novo baseline de integridade...\n'));
@@ -52,11 +66,14 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
         } else if (opts.diff) {
           log.info(chalk.bold('\n📊 Comparando integridade do Oráculo com o baseline...\n'));
           const diffResult = await scanSystemIntegrity(fileEntries, { justDiff: true });
-          if (
-            diffResult.status === IntegridadeStatus.AlteracoesDetectadas &&
-            diffResult.detalhes &&
-            diffResult.detalhes.length
-          ) {
+          const statusDiff = String(
+            (diffResult as { status?: string } | null)?.status || '',
+          ).toLowerCase();
+          const alteracoes =
+            statusDiff === String(IntegridadeStatus.AlteracoesDetectadas).toLowerCase() ||
+            statusDiff.includes('alterac') ||
+            statusDiff.includes('diferen');
+          if (alteracoes && diffResult.detalhes && diffResult.detalhes.length) {
             if (opts.json) {
               console.log(
                 JSON.stringify({
@@ -69,7 +86,9 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
               diffResult.detalhes?.forEach((d: string) => {
                 log.info(`  - ${d}`);
               });
-              log.aviso('Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.');
+              log.aviso(
+                'Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.',
+              );
             }
             process.exit(1);
           } else {
@@ -82,7 +101,30 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
         } else {
           log.info(chalk.bold('\n🛡️ Verificando integridade do Oráculo...\n'));
           const guardianResultado = await scanSystemIntegrity(fileEntries);
-          switch (guardianResultado.status) {
+          const statusRaw = String(
+            (guardianResultado as { status?: string } | null)?.status || '',
+          ).toLowerCase();
+          const statusNorm = (() => {
+            if (statusRaw === String(IntegridadeStatus.Ok).toLowerCase() || statusRaw === 'ok')
+              return IntegridadeStatus.Ok;
+            if (
+              statusRaw === String(IntegridadeStatus.Criado).toLowerCase() ||
+              statusRaw.includes('baseline-criado')
+            )
+              return IntegridadeStatus.Criado;
+            if (
+              statusRaw === String(IntegridadeStatus.Aceito).toLowerCase() ||
+              statusRaw.includes('baseline-aceito')
+            )
+              return IntegridadeStatus.Aceito;
+            if (
+              statusRaw === String(IntegridadeStatus.AlteracoesDetectadas).toLowerCase() ||
+              statusRaw.includes('alterac')
+            )
+              return IntegridadeStatus.AlteracoesDetectadas;
+            return IntegridadeStatus.Ok;
+          })();
+          switch (statusNorm) {
             case IntegridadeStatus.Ok:
               if (opts.json) console.log(JSON.stringify({ status: 'ok' }));
               else log.sucesso('🔒 Guardian: integridade preservada.');
@@ -98,23 +140,29 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
               if (opts.json) console.log(JSON.stringify({ status: 'baseline-aceito' }));
               else log.sucesso('🌀 Guardian: baseline atualizado e aceito.');
               break;
-            case IntegridadeStatus.AlteracoesDetectadas:
-              if (opts.json) console.log(JSON.stringify({ status: 'alteracoes-detectadas' }));
-              else
+            case IntegridadeStatus.AlteracoesDetectadas: {
+              if (opts.json) {
+                console.log(JSON.stringify({ status: 'alteracoes-detectadas' }));
+              } else {
                 log.aviso(
                   '🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.',
                 );
+              }
               process.exit(1);
+              break;
+            }
           }
         }
         if (opts.fullScan) {
           // Restaura padrões originais após execução
-          (config as any).GUARDIAN_IGNORE_PATTERNS = ignoradosOriginais;
+          (config as unknown as { GUARDIAN_IGNORE_PATTERNS: string[] }).GUARDIAN_IGNORE_PATTERNS =
+            ignoradosOriginais;
         }
       } catch (err) {
         log.erro(`❌ Erro no Guardian: ${(err as Error).message ?? String(err)}`);
         if (config.DEV_MODE) console.error(err);
-  if (opts.json) console.log(JSON.stringify({ status: 'erro', mensagem: (err as Error).message }));
+        if (opts.json)
+          console.log(JSON.stringify({ status: 'erro', mensagem: (err as Error).message }));
         process.exit(1);
       }
     });

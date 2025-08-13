@@ -25,9 +25,13 @@
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --check \"**/*.{ts,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,md}\"",
+    "coverage:enforce": "vitest run --coverage --coverage.enabled=true --coverage.thresholds='{\"lines\":90,\"statements\":90,\"branches\":88,\"functions\":90}'",
     "security:deps": "npm audit --production --audit-level=moderate || true",
     "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "vitest run",
+    "test:ui": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [
     "cli",
@@ -61,6 +65,18 @@
     "vitest": "^3.2.4",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10"
+  },
+  "vitest": {
+    "coverage": {
+      "exclude": [
+        "file1.ts",
+        "file2.ts",
+        "scripts/**",
+        "**/scripts/**",
+        "fora-do-src.js",
+        "tmp-cache-file.ts"
+      ]
+    }
   },
   "lint-staged": {
     "*.{ts,js,cts,mts}": [

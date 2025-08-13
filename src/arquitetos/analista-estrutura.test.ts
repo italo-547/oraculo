@@ -1,11 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { alinhamentoEstrutural } from './analista-estrutura.js';
-
-vi.mock('node:path', () => {
-  const path = require('path');
-  path.sep = '/';
-  return { ...path, default: path };
-});
 vi.mock('p-limit', () => ({ default: (n: number) => (fn: any) => fn() }));
 vi.mock('../nucleo/constelacao/cosmos.js', () => ({ config: {} }));
 

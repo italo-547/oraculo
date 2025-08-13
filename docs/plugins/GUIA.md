@@ -2,6 +2,8 @@
 
 Este guia descreve como estender o Oráculo adicionando novas técnicas (analistas) ou plugins de estrutura.
 
+> Atualizado em 2025-08-12 com suporte a flags `--scan-only`, `--json` e contexto de agregação de `PARSE_ERRO`.
+
 ## Visão Rápida
 
 Você pode estender o Oráculo de duas formas principais:
@@ -42,6 +44,7 @@ export interface Tecnica {
    - Uma `Ocorrencia` ou lista de ocorrências.
 3. Exportar o analista/técnica e adicioná-lo ao array `registroAnalistas` em `src/analistas/registry.ts`.
 4. Criar testes (unitários + se aplicável integração) validando entradas/saídas.
+5. Rodar `npm run gerar:analista <nome>` para scaffold automático (opcional) e ajustar template.
 
 ### Exemplo Mínimo
 
@@ -94,6 +97,16 @@ export const registroAnalistas = [
 - Sempre defina `origem` nas ocorrências (facilita rastreio e filtros).
 - Não realizar IO direto; se precisar, use helpers centralizados (persistência, etc.).
 - Em caso de erro, permita exceção ser capturada: será convertida em ocorrência de erro analista.
+
+#### Campos Recomendados Extras (quando usar Analista ao invés de Tecnica mínima)
+
+- `categoria`: agrupa por tipo (ex: 'complexidade', 'qualidade', 'estrutura').
+- `descricao`: pequena frase exibida em listagens e documentação automática.
+- `sempreAtivo`: se implementado no futuro, sinaliza que não deve ser filtrado.
+
+#### Uso com `--scan-only`
+
+No modo `--scan-only` apenas varredura e priorização ocorrem; técnicas não mutáveis continuam sendo executadas (análise de leitura). Evite dependências em efeitos de zeladores.
 
 ---
 
@@ -153,6 +166,26 @@ Registrar caminho no config (exemplo conceitual):
 - Envolva transformações complexas em try/catch interno somente se recuperar estado for seguro; caso contrário deixe erro propagar (será logado como aviso sem quebrar fluxo).
 - Não alterar campos inesperados em `fileEntries`; criar novas propriedades sob namespace (`_pluginX`) se precisar estender.
 
+### Carregamento Dinâmico e Resolução de Caminhos
+
+Ordem de resolução por item em `STRUCTURE_PLUGINS`:
+
+1. Caminho absoluto usado diretamente.
+2. Caminho relativo resolvido a partir do diretório de execução (raiz do projeto Oráculo).
+3. (Futuro) Nome de pacote npm (`oraculo-plugin-*`).
+
+Segurança: Caminhos são validados — plugins fora da raiz do projeto são ignorados e logados.
+
+Falhas de import são logadas como aviso; execução prossegue.
+
+### Config via Variáveis de Ambiente
+
+Você pode sobrescrever `STRUCTURE_PLUGINS` via env exportando JSON:
+
+`ORACULO_STRUCTURE_PLUGINS='["./plugins/marcar-infra.js"]'`
+
+O merge final considera (ordem de precedência crescente): defaults < arquivo config < env < flags CLI.
+
 ---
 
 ## 3. Testando sua Técnica / Plugin
@@ -161,6 +194,12 @@ Registrar caminho no config (exemplo conceitual):
 2. Criar teste de integração caso a técnica dependa de várias outras (ex: estatísticas globais).
 3. Opcional: E2E se comportamento pós-build for crítico.
 4. Garantir que falhas artificiais gerem ocorrência `ERRO_ANALISTA` (ver testes existentes em `analista-*` ou `executor.test.ts`).
+
+### Testando Saída JSON (`--json`)
+
+Para validar compatibilidade com pipelines, rode comando com `--json` e assegure que suas ocorrências aparecem com campos esperados (`tipo`, `mensagem`, `nivel`, `relPath`, etc.).
+
+Use snapshot test moderado (filtrar campos voláteis) para evitar fragilidade.
 
 ### Exemplo de Teste Simples
 
@@ -192,6 +231,9 @@ it('detecta TODO', () => {
 - [ ] Tipos reutilizados de `src/tipos/tipos.ts`
 - [ ] Registro atualizado (`registry.ts` ou config do plugin)
 - [ ] Documentação breve (1-2 linhas) adicionada onde relevante
+- [ ] Validação manual do modo `--json` (se aplicável)
+- [ ] Nenhuma dependência pesada desnecessária (avaliar impacto de build)
+- [ ] Teste de contrato (`analistas-contrato.test.ts`) permanece verde
 
 ---
 
@@ -201,6 +243,8 @@ it('detecta TODO', () => {
 - Cache incremental por técnica (guardar heurísticas de última execução).
 - Sandboxing leve (VM) para plugins não confiáveis.
 - Sistema de versão e compatibilidade para evitar quebra em upgrades.
+- Hooks de ciclo de vida (pré-scan, pós-scan, pré-relatorio) para extensões avançadas.
+- Cache granular por técnica (evitar reprocessar arquivos imutáveis com hash estável).
 
 ---
 
@@ -211,3 +255,7 @@ Abra uma Issue descrevendo intenção, exemplo de ocorrência e impacto esperado
 ---
 
 Licença do guia: MIT (seguir decisão final de licença do projeto).
+
+---
+
+Para exemplos reais, explore `src/analistas/` e testes associados. Qualquer padrão recorrente útil pode ser abstraído em helper utilitário compartilhado.

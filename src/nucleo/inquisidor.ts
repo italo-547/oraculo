@@ -272,7 +272,7 @@ export async function iniciarInquisicao(
 
   // Agora fileEntries é FileEntryWithAst[]
   let totalArquivos = fileEntries.length;
-  let ocorrencias: OcorrenciaParseErro[] | import('../tipos/tipos.js').Ocorrencia[] = [];
+  let ocorrencias: Array<OcorrenciaParseErro | import('../tipos/tipos.js').Ocorrencia> = [];
   if (!skipExec) {
     const execRes = await executarExecucao(fileEntries, tecnicas, baseDir, undefined);
     totalArquivos = execRes.totalArquivos;
@@ -284,8 +284,8 @@ export async function iniciarInquisicao(
     ((globalThis as unknown as Record<string, unknown>)
       .__ORACULO_PARSE_ERROS__ as OcorrenciaParseErro[]) || [];
   if (parseErros.length) {
-  // Armazena contagem original para métricas (usado em saída JSON)
-  (globalThis as any).__ORACULO_PARSE_ERROS_ORIGINAIS__ = parseErros.length;
+    // Armazena contagem original para métricas (usado em saída JSON)
+    (globalThis as unknown as { __ORACULO_PARSE_ERROS_ORIGINAIS__?: number }).__ORACULO_PARSE_ERROS_ORIGINAIS__ = parseErros.length;
     if (config.PARSE_ERRO_AGRUPAR) {
       const porArquivo: Record<string, OcorrenciaParseErro[]> = {};
       for (const pe of parseErros) {
@@ -297,7 +297,7 @@ export async function iniciarInquisicao(
           ocorrencias.push(...lista);
         } else {
           // Consolida em uma única ocorrência representativa
-            ocorrencias.push(
+          ocorrencias.push(
             ocorrenciaParseErro({
               mensagem: `Erros de parsing agregados: ${lista.length} ocorrências suprimidas neste arquivo (exibe 1).`,
               relPath: arq === '__desconhecido__' ? undefined : arq,

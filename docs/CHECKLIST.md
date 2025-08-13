@@ -11,12 +11,14 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Baseline de performance inicial (script `perf:baseline`)
 - [ ] Comparação automática de baseline e regressões
 - [x] Flag `--full-scan` para incluir `node_modules` controladamente (stress test) (baseline bloqueado)
-- [ ] Documentar política de ignores do Guardian (guardian.md)
-- [ ] Métricas internas opcionais (tempo por técnica, cache hits)
-- [ ] Monitor de dependências (dependabot + script npm-check-updates) – workflow existe, falta documentar resultado automático
+- [x] Documentar política de ignores do Guardian (guardian.md)
+- [x] Saída JSON estruturada (`diagnosticar --json`, `guardian --json`)
+- [x] Registro de contagem original vs agregada de PARSE_ERRO
+- [ ] Expor limites de agregação de PARSE_ERRO no README
+- [ ] Métricas internas opcionais (tempo por técnica, cache hits) exportáveis
+- [ ] Monitor de dependências (dependabot + script npm-check-updates) – documentar execução automática
 - [ ] Sanitização/validação de entradas da CLI
-- [ ] Documentar contrato de saída para guardian (statuses)
-- [ ] Agregação configurável de PARSE_ERRO na saída (limite por arquivo)
+- [ ] Documentar contrato de saída para guardian (statuses) no README
 - [ ] Revisar logs DEBUG e consolidar flag
 - [ ] Documentar estratégia de mocks de AST (centralização)
 - [x] Licença final: MIT (sem restrições adicionais)
@@ -31,6 +33,10 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Gating de `process.exit` via `process.env.VITEST` nos testes
 - [x] README atualizado com arquitetura modular e fluxo de desenvolvimento
 - [x] RELATORIO.md atualizado (data 2025-08-12, 309 testes verdes + E2E ampliado)
+- [x] guardian.md criado e referenciado no README
+- [x] Remoção de docs redundantes (ROADMAP_ITERACOES.md, SUGESTOES-PRIORITARIAS.md, JSDOC.md raiz)
+- [x] Flags `--json` e `--full-scan` implementadas e testadas
+- [x] Agregação de PARSE_ERRO (contagem original rastreada)
 
 ---
 
