@@ -177,7 +177,10 @@ describe('corrigirEstrutura - branches de erro e caminhos alternativos', () => {
 
   it('executa plugin como função direta (não default)', async () => {
     const path = await import('node:path');
-    const pluginPath = path.resolve(__dirname, '../../plugin-teste-direto.js');
+    const pluginPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/plugins/plugin-teste-direto.js',
+    );
     (config.STRUCTURE_PLUGINS as any) = [pluginPath];
     // Limpa variável global
     // @ts-ignore
@@ -196,7 +199,10 @@ describe('corrigirEstrutura - branches de erro e caminhos alternativos', () => {
 
   it('executa plugin como objeto com default', async () => {
     const path = await import('node:path');
-    const pluginPath = path.resolve(__dirname, '../../plugin-teste-default.js');
+    const pluginPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/plugins/plugin-teste-default.js',
+    );
     (config.STRUCTURE_PLUGINS as any) = [pluginPath];
     // Limpa variável global
     // @ts-ignore
