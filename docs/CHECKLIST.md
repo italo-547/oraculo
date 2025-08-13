@@ -2,27 +2,48 @@
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
-## Para Fazer
+## Para Fazer (Backlog Atual)
+
+### Alta Prioridade
+
+- [ ] Comparação automática de baseline e regressões (gerar diff entre últimos snapshots em `docs/perf/` e destacar variações > X%)
+- [ ] Sanitização/validação de entradas da CLI (normalizar paths, validar números, rejeitar combinações inválidas cedo)
+- [ ] Revisar logs DEBUG e consolidar flag (`--dev` vs `ORACULO_DEBUG` => unificar em `--debug` mantendo retrocompatibilidade)
+
+### Média Prioridade
+
+- [ ] Monitor de dependências: documentar fluxo automatizado + workflow agendado (usar `npm outdated` + `npm audit` não-blocking)
+- [ ] Documentar estratégia de mocks de AST (arquivo guia em `docs/tests/AST_MOCKS.md` centralizando padrões)
+- [ ] Guia de padronização de código / convenções (estilo, naming, estrutura de analistas, limites de complexidade)
+- [ ] Gate de regressão de performance opcional (falhar CI se parsing/análise > +30% vs baseline referência)
+
+### Baixa Prioridade / Futuro Próximo
+
+- [ ] Export Markdown consolidado de performance (comparando N snapshots)
+- [ ] Modo estrito de plugins (falha em qualquer plugin com erro)
+- [ ] Métrica de tempo por plugin estrutura (detectar outliers)
+- [ ] Flag `--metricas-export <arquivo>` para salvar métricas isoladas sem relatório completo
+
+### Observações
+
+- Limites de PARSE_ERRO já expostos; considerar parametrize via flag futura (`--parse-erros-max=<n>`)
+- Métricas internas disponíveis em `diagnosticar --json` (`metricas`) e histórico via `oraculo metricas`
+
+## Concluídos Recentes (Sessão Atual)
 
 - [x] Implementar flag `--scan-only`
 - [x] Testes ponta-a-ponta executando binário buildado (CLI real) – 5 cenários
 - [x] Automação: adicionar lint/format ao CI e gate de cobertura
-- [ ] Guia de criação de plugins (exemplos práticos)
+- [x] Guia de criação de plugins (exemplos práticos) (`docs/plugins/GUIA.md` com exemplo analista + plugin estrutura)
 - [x] Baseline de performance inicial (script `perf:baseline`)
-- [ ] Comparação automática de baseline e regressões
-- [x] Flag `--full-scan` para incluir `node_modules` controladamente (stress test) (baseline bloqueado)
+- [x] Flag `--full-scan` para incluir `node_modules` controladamente (baseline bloqueado)
 - [x] Documentar política de ignores do Guardian (guardian.md)
 - [x] Saída JSON estruturada (`diagnosticar --json`, `guardian --json`)
 - [x] Registro de contagem original vs agregada de PARSE_ERRO
 - [x] Expor limites de agregação de PARSE_ERRO no README
-- [x] Métricas internas opcionais (tempo por técnica, cache hits) exportáveis (saída JSON `diagnosticar.metricas` + comando `metricas`)
-- [ ] Monitor de dependências (dependabot + script npm-check-updates) – documentar execução automática
-- [ ] Sanitização/validação de entradas da CLI
+- [x] Métricas internas opcionais exportáveis (campo `metricas` + comando `metricas`)
 - [x] Documentar contrato de saída para guardian (statuses) no README
-- [ ] Revisar logs DEBUG e consolidar flag
-- [ ] Documentar estratégia de mocks de AST (centralização)
 - [x] Licença final: MIT (sem restrições adicionais)
-- [ ] Guia de padronização de código / convenções
 - [x] Atualizar .gitignore para ignorar artefatos temporários (.oraculo, hist-\*.json, reports)
 
 ## Feito
@@ -38,6 +59,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Remoção de docs redundantes (ROADMAP_ITERACOES.md, SUGESTOES-PRIORITARIAS.md, JSDOC.md raiz)
 - [x] Flags `--json` e `--full-scan` implementadas e testadas
 - [x] Agregação de PARSE_ERRO (contagem original rastreada)
+- [x] Exposição de métricas em `diagnosticar --json` (campo `metricas`)
 
 ---
 
