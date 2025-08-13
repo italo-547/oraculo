@@ -182,6 +182,27 @@ Pull Requests devem manter (ou aumentar) cobertura efetiva. Se reduzir, justific
 | `PARSE_ERRO_MAX_POR_ARQUIVO` | `1`     | Qtde máxima antes de condensar em ocorrência agregada                      |
 | `PARSE_ERRO_FALHA`           | `false` | Se `true`, presença de parsing errors (após agregação) falha o diagnóstico |
 
+### Métricas Internas (Execução)
+
+Quando `--metricas` (default habilitado) está ativo, o comando `diagnosticar --json` inclui o bloco `metricas` com:
+
+```jsonc
+{
+  "metricas": {
+    "totalArquivos": 123,
+    "tempoParsingMs": 420,
+    "tempoAnaliseMs": 1337,
+    "cacheAstHits": 80,
+    "cacheAstMiss": 43,
+    "analistas": [
+      { "nome": "funcoes-longas", "duracaoMs": 12.3, "ocorrencias": 5, "global": false },
+    ],
+  },
+}
+```
+
+Use `oraculo metricas --json` para histórico agregado e `--export` para salvar snapshot completo (auditorias de performance). A persistência fica em `.oraculo/metricas-historico.json` (ignorado no Git). Desabilite via `--no-metricas` se quiser reduzir overhead mínimo (~1–2ms em bases pequenas).
+
 Contrato JSON (`diagnosticar --json`) inclui `parseErros.totalOriginais` e `parseErros.agregados` para transparência.
 
 ### Critério de Exit Codes
@@ -197,7 +218,7 @@ Durante testes (`process.env.VITEST` definido) não chamamos `process.exit`, per
 
 ## 📁 Estrutura do Projeto
 
-```
+```text
 src/
   cli.ts                # Entrada principal da CLI
   cli/                  # Comandos individuais
@@ -231,10 +252,10 @@ src/
 - [x] Testes ponta-a-ponta executando binário buildado (E2E básicos + guardian + exit code erro)
 - [x] Integração contínua com lint + format + coverage gate (CI + build)
 - [x] Flags `--json` (diagnosticar/guardian) e `--full-scan` (guardian)
-- [ ] Métricas de performance (scan grande / memória) exportáveis
+- [x] Métricas de performance básicas exportáveis (JSON + histórico)
 - [ ] Baseline comparativa de performance por commit
 - [ ] Relatório de baseline de performance automatizado
-- [ ] Guia de criação de plugins (contrato + exemplo mínimo) (in progress)
+- [x] Guia de criação de plugins (contrato + exemplo mínimo)
 - [ ] Guia de padronização / estilo de código (linters + convenções)
 
 ## 🧬 Camadas de Teste (Resumo)

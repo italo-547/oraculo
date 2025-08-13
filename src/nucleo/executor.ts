@@ -311,5 +311,6 @@ export async function executarInquisicao(
     ocorrencias,
     timestamp: Date.now(),
     duracaoMs,
+    metricas: metricasExecucao || undefined,
   };
 }

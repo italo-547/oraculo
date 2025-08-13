@@ -14,8 +14,8 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Documentar política de ignores do Guardian (guardian.md)
 - [x] Saída JSON estruturada (`diagnosticar --json`, `guardian --json`)
 - [x] Registro de contagem original vs agregada de PARSE_ERRO
-- [ ] Expor limites de agregação de PARSE_ERRO no README
-- [ ] Métricas internas opcionais (tempo por técnica, cache hits) exportáveis
+- [x] Expor limites de agregação de PARSE_ERRO no README
+- [x] Métricas internas opcionais (tempo por técnica, cache hits) exportáveis (saída JSON `diagnosticar.metricas` + comando `metricas`)
 - [ ] Monitor de dependências (dependabot + script npm-check-updates) – documentar execução automática
 - [ ] Sanitização/validação de entradas da CLI
 - [x] Documentar contrato de saída para guardian (statuses) no README

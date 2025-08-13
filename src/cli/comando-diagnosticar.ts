@@ -285,6 +285,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               totalOcorrencias: resultadoFinal.ocorrencias.length,
               tiposOcorrencias,
               parseErros: parseAggregatedMetric,
+              metricas: (resultadoFinal as { metricas?: unknown }).metricas || undefined,
               ocorrencias: resultadoFinal.ocorrencias.map((o) => ({
                 tipo: o.tipo,
                 relPath: o.relPath,

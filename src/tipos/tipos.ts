@@ -190,6 +190,8 @@ export interface ResultadoInquisicao {
   arquivosAnalisados: string[];
   timestamp: number;
   duracaoMs: number;
+  /** Métricas detalhadas da execução quando ANALISE_METRICAS_ENABLED. */
+  metricas?: MetricaExecucao;
 }
 
 export interface MetricaAnalista {
