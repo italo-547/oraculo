@@ -216,6 +216,48 @@ export interface ResultadoInquisicaoCompleto extends ResultadoInquisicao {
   guardian: unknown;
 }
 
+// Arquétipos de estrutura (biblioteca de estruturas padrão)
+export interface ArquetipoEstruturaDef {
+  nome: string;
+  descricao: string;
+  requiredDirs?: string[]; // diretórios obrigatórios (ex: ['src'])
+  optionalDirs?: string[]; // diretórios que aumentam score se presentes
+  forbiddenDirs?: string[]; // diretórios que penalizam se presentes
+  rootFilesAllowed?: string[]; // arquivos permitidos na raiz (ex: package.json, tsconfig.json)
+  dependencyHints?: string[]; // dependências cujo presence aumenta score
+  filePresencePatterns?: string[]; // padrões glob simples (substring match) que aumentam score
+  pesoBase?: number; // peso para desempate
+}
+
+export interface ArquetipoDeteccaoAnomalia {
+  path: string;
+  motivo: string;
+  sugerido?: string;
+}
+
+export interface ResultadoDeteccaoArquetipo {
+  nome: string;
+  descricao: string;
+  score: number;
+  confidence: number; // 0-100
+  matchedRequired: string[];
+  missingRequired: string[];
+  matchedOptional: string[];
+  dependencyMatches: string[];
+  filePatternMatches: string[];
+  forbiddenPresent: string[];
+  anomalias: ArquetipoDeteccaoAnomalia[];
+  planoSugestao?: { mover: { de: string; para: string }[] };
+}
+
+export interface SnapshotEstruturaBaseline {
+  version: 1;
+  timestamp: string;
+  arquetipo: string;
+  confidence: number;
+  arquivosRaiz: string[];
+}
+
 export interface ScanOptions {
   includeContent?: boolean;
   includeAst?: boolean;

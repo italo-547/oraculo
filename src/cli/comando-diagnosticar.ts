@@ -17,6 +17,7 @@ import { scanSystemIntegrity } from '../guardian/sentinela.js';
 import { alinhamentoEstrutural } from '../arquitetos/analista-estrutura.js';
 import { diagnosticarProjeto } from '../arquitetos/diagnostico-projeto.js';
 import { sinaisDetectados } from '../analistas/detector-estrutura.js';
+import { detectarArquetipos } from '../analistas/detector-arquetipos.js';
 import { gerarRelatorioEstrutura } from '../relatorios/relatorio-estrutura.js';
 import { exibirRelatorioZeladorSaude } from '../relatorios/relatorio-zelador-saude.js';
 import { exibirRelatorioPadroesUso } from '../relatorios/relatorio-padroes-uso.js';
@@ -183,6 +184,19 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             guardianResultado,
             { verbose: config.VERBOSE, compact: config.COMPACT_MODE },
           );
+          // Detecção de arquétipos (biblioteca de estruturas)
+          let arquetiposResultado: Awaited<ReturnType<typeof detectarArquetipos>> | undefined;
+          try {
+            arquetiposResultado = await detectarArquetipos(
+              { arquivos: fileEntriesComAst, baseDir } as unknown as {
+                arquivos: FileEntryWithAst[];
+                baseDir: string;
+              },
+              baseDir,
+            );
+          } catch (e) {
+            if (config.DEV_MODE) log.erro('Falha detector arquetipos: ' + (e as Error).message);
+          }
           // Evita falhas em testes onde registrarUltimasMetricas não é mockado
           if (typeof registrarUltimasMetricas === 'function' && resultadoFinal.metricas) {
             registrarUltimasMetricas(resultadoFinal.metricas);
@@ -312,6 +326,20 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               tiposOcorrencias,
               parseErros: parseAggregatedMetric,
               metricas: (resultadoFinal as { metricas?: unknown }).metricas || undefined,
+              estruturaIdentificada: arquetiposResultado
+                ? {
+                    melhores: arquetiposResultado.melhores.map((m) => ({
+                      nome: m.nome,
+                      confidence: m.confidence,
+                      score: m.score,
+                      missingRequired: m.missingRequired,
+                      matchedRequired: m.matchedRequired,
+                      forbiddenPresent: m.forbiddenPresent,
+                      anomalias: m.anomalias,
+                    })),
+                    baseline: arquetiposResultado.baseline,
+                  }
+                : undefined,
               ocorrencias: resultadoFinal.ocorrencias.map((o) => ({
                 tipo: o.tipo,
                 relPath: o.relPath,
