@@ -149933,5 +149933,48 @@
       }
     ],
     "timestamp": 1755154216737
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 2,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755201638987
+  },
+  {
+    "totalArquivos": 3,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 2,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755201639104
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 0,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755201639194
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 1,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "withTest",
+        "duracaoMs": 0.031099999999923966,
+        "ocorrencias": 0,
+        "global": false
+      }
+    ],
+    "timestamp": 1755201639295
   }
 ]
