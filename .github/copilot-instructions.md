@@ -79,6 +79,24 @@ Este projeto é uma CLI modular para análise, diagnóstico e manutenção de pr
 - **Modularização**: Cada domínio tem arquivos e funções bem separados.
 - **ESM puro**: Não use `require`; apenas `import`/`export`.
 - **Sem comentários removidos**: `removeComments: false` no build.
+- **Molduras (blocos multi-linha)**: Sempre gere o texto do bloco com `formatarBloco` (exposto via `log.bloco`) e imprima o resultado diretamente com `console.log(bloco)`. Não use `log.info/aviso/...` para imprimir linhas do bloco, pois os prefixos (timestamp/nível) quebram o alinhamento das bordas.
+
+Exemplo:
+
+```ts
+import { log } from '@nucleo/constelacao/log';
+
+const linhas = [
+  'Tipo                   Quantidade',
+  '---------------------  ----------',
+  'TODO_PENDENTE           214',
+];
+const bloco = (log as unknown as { bloco: Function }).bloco(
+  'Resumo dos tipos de problemas',
+  linhas,
+);
+console.log(bloco); // impressão direta, sem prefixo
+```
 
 ## Fluxos de Trabalho
 

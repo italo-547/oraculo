@@ -5,6 +5,13 @@
 [![Monitor Deps](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml)
 [![Testes](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/aynsken/oraculo/main/.oraculo/badge-test-stats.json)](docs/relatorios/RELATORIO.md)
 
+![Node](https://img.shields.io/badge/node-%3E%3D24.x-339933?logo=node.js)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Último commit](https://img.shields.io/github/last-commit/aynsken/oraculo)
+[![TypeScript](https://img.shields.io/github/package-json/dependency-version/aynsken/oraculo/dev/typescript?label=TypeScript)](https://github.com/aynsken/oraculo/blob/main/package.json)
+[![ESLint](https://img.shields.io/github/package-json/dependency-version/aynsken/oraculo/dev/eslint?label=ESLint)](https://github.com/aynsken/oraculo/blob/main/package.json)
+[![Prettier](https://img.shields.io/github/package-json/dependency-version/aynsken/oraculo/dev/prettier?label=Prettier)](https://github.com/aynsken/oraculo/blob/main/package.json)
+
 Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaScript/TypeScript e multi-stack leve), oferecendo diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON consumíveis por CI.
 
 ## ✨ Principais Capacidades
@@ -103,10 +110,11 @@ oraculo <comando>
 
 | Comando        | Descrição                                                                                                                                    |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| diagnosticar   | Análise completa (arquitetura, padrões, estrutura, guardian opcional). Suporta filtros `--include` e `--exclude` para glob patterns pontuais |
+| `diagnosticar` | Análise completa (arquitetura, padrões, estrutura, guardian opcional). Suporta filtros `--include` e `--exclude` para glob patterns pontuais |
 | `guardian`     | Cria/atualiza/verifica baseline de integridade                                                                                               |
 | `podar`        | Lista ou remove (seguro) arquivos órfãos                                                                                                     |
 | `metricas`     | Histórico agregado de métricas internas                                                                                                      |
+| `analistas`    | Lista analistas registrados; suporta `--json`, `--output <arquivo>` e `--doc <arquivo>` para exportar catálogo                               |
 | `reestruturar` | (experimental) Aplicar plano de reorganização                                                                                                |
 
 Lista completa: `node dist/cli.js --help`.
@@ -132,6 +140,41 @@ Rodar testes: `npm test` | Cobertura: `npx vitest run --coverage`.
 | `PARSE_ERRO_AGRUPAR`         | `true`  | Agrupa múltiplos erros de parsing por arquivo após limite                  |
 | `PARSE_ERRO_MAX_POR_ARQUIVO` | `1`     | Qtde máxima antes de condensar em ocorrência agregada                      |
 | `PARSE_ERRO_FALHA`           | `false` | Se `true`, presença de parsing errors (após agregação) falha o diagnóstico |
+
+### Dicas de Encoding no Windows
+
+Alguns consoles no Windows podem distorcer bordas/acentos quando você redireciona a saída para arquivo.
+
+- Para forçar molduras ASCII (sem caracteres box-drawing), use a variável de ambiente:
+  - PowerShell (escopo da linha):
+
+    ```powershell
+    $env:ORACULO_ASCII_FRAMES = '1'; oraculo diagnosticar > out.txt
+    ```
+
+  - CMD clássico:
+
+    ```bat
+    set ORACULO_ASCII_FRAMES=1 && oraculo diagnosticar > out.txt
+    ```
+
+- Alternativamente, ajuste a sessão para UTF-8 (pode variar por ambiente):
+  - PowerShell:
+
+    ```powershell
+    $OutputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+    ```
+
+  - Prompt de Comando (CMD):
+
+    ```bat
+    chcp 65001
+    ```
+
+Observação:
+
+- A saída JSON em `--json` já aplica escape `\uXXXX` para caracteres fora do ASCII básico, mitigando problemas ao consumir via pipelines.
+- As molduras de seções (headers e tabelas) usam um formatador consciente de ANSI e largura visível e são impressas diretamente (sem prefixos) para preservar bordas. Para forcing ASCII, use `ORACULO_ASCII_FRAMES=1`.
 
 ### Métricas Internas (Execução)
 
@@ -292,7 +335,19 @@ tests/
 - Guardian: verifica integridade (hashes, baseline, diffs)
 - Relatórios: geração de artefatos (Markdown / JSON)
 
-## 🤝 Contribuir
+## � Analistas (resumo)
+
+- detector-dependencias — heurísticas de dependências e sinais de stack
+- detector-estrutura — extração de sinais estruturais globais
+- analista-funcoes-longas — funções extensas/complexas
+- analista-padroes-uso — padrões de uso agregados do código
+- ritual-comando — boas práticas de comandos (handlers nomeados)
+- todo-comments — comentários TODO pendentes (agregado por arquivo)
+
+Catálogo completo e detalhes: veja `src/analistas/README.md`.
+Para gerar um documento estático do catálogo: `oraculo analistas --doc docs/ANALISTAS.md`.
+
+## �🤝 Contribuir
 
 Leia `CONTRIBUTING.md` e `docs/TOOLING.md`.
 
@@ -437,6 +492,11 @@ Snapshots sintéticos: `npm run perf:baseline` (detalhes em `docs/perf/README.md
 - Performance: `docs/perf/README.md`
 - Checklist / Roadmap Ativo: `docs/CHECKLIST.md`
 - Camadas de Teste: `docs/relatorios/camadas-testes.md`
+- Analistas (técnicas): `src/analistas/README.md`
+- Catálogo de Analistas (gerado): `docs/ANALISTAS.md`
+- Relatório de Progresso: `docs/relatorios/RELATORIO.md`
+- Monitor de Dependências: `docs/MONITOR_DEPENDENCIAS.md`
+- Especificações: `docs/specs/ESPECIFICACOES.md`
 
 ---
 

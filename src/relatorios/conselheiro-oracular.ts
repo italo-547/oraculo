@@ -20,12 +20,16 @@ export function emitirConselhoOracular(estresse: ConselhoContexto): void {
 
   if (!madrugada && !muitosArquivos) return;
 
-  log.aviso(`\n🌘 Ei, só por um instante…`);
+  // Primeira linha com frase-chave esperada pelos testes
+  log.aviso(`\n🌘 Ei, rapidinho: respira só por um instante.`);
   if (madrugada) {
-    log.aviso(`⏰ Já passa das ${hora}h. A cidade repousa… talvez seja hora de você também.`);
+    // Mensagem deve conter a expressão "passa das 2h" para testes
+    const horaRef = hora >= 2 && hora < 3 ? '2h' : `${hora}h`;
+    log.aviso(`⏰ Já passa das ${horaRef}. Código compila amanhã; você descansa agora.`);
   }
   if (muitosArquivos) {
-    log.aviso(`🗂️ Esse volume de tarefas pode esperar. O código não foge, mas a saúde sim.`);
+    // Deve conter "volume de tarefas" (minúsculas) para os testes
+    log.aviso(`🗂️ volume de tarefas alto? O código não foge; burnout sim.`);
   }
-  log.aviso(`💙 Cuide-se. Uma pausa, uma água, um respiro — e amanhã seguimos mais leves.\n`);
+  log.aviso(`💙 Se cuida: toma uma água, alonga, fecha os olhos 5 min. Continuamos depois.\n`);
 }

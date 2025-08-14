@@ -134,16 +134,70 @@ export function formatarBloco(
   titulo: string,
   linhas: string[],
   corTitulo: (s: string) => string = chalk.bold,
+  larguraMax?: number,
 ): string {
-  const width = Math.min(100, Math.max(titulo.length + 4, ...linhas.map((l) => l.length + 4), 20));
+  // Utilitários conscientes de ANSI para medir/compor por largura visível
+  const ANSI_REGEX = /[\u001B\u009B][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+  const visLen = (s: string) => (s || '').replace(ANSI_REGEX, '').length;
+  const padEndVisible = (s: string, target: number) => {
+    const diff = target - visLen(s);
+    return diff > 0 ? s + ' '.repeat(diff) : s;
+  };
+  const truncateVisible = (s: string, max: number) => {
+    if (visLen(s) <= max) return s;
+    // Preserva sequências ANSI, contando apenas largura visível
+    let out = '';
+    let count = 0;
+    let i = 0;
+    while (i < s.length && count < max - 1) {
+      const ch = s[i];
+      if (ch === '\u001B' || ch === '\u009B') {
+        // Copia sequência ANSI inteira
+        const m = s.slice(i).match(ANSI_REGEX);
+        if (m && m.index === 0) {
+          out += m[0];
+          i += m[0].length;
+          continue;
+        }
+      }
+      out += ch;
+      i++;
+      count++;
+    }
+    return out + '…';
+  };
+
+  const widthAuto = Math.min(
+    100,
+    Math.max(visLen(titulo) + 4, ...linhas.map((l) => visLen(l) + 4), 20),
+  );
+  const width =
+    typeof larguraMax === 'number' ? Math.max(20, Math.min(larguraMax, 120)) : widthAuto;
   const barra = '─'.repeat(Math.max(10, width - 2));
   const topo = '┌' + barra + '┐';
   const base = '└' + barra + '┘';
-  const corpo = linhas.map((l) => '│ ' + l.padEnd(barra.length - 1, ' ') + '│').join('\n');
-  const headTxt = '│ ' + titulo.padEnd(barra.length - 1, ' ') + '│';
+  const maxInner = barra.length - 1;
+  const normalizar = (s: string) => truncateVisible(s, maxInner);
+  const corpo = linhas.map((l) => '│ ' + padEndVisible(normalizar(l), maxInner) + '│').join('\n');
+  const headTxt = '│ ' + padEndVisible(normalizar(titulo), maxInner) + '│';
   return [chalk.gray(topo), corTitulo(headTxt), chalk.gray(corpo), chalk.gray(base)]
     .filter(Boolean)
     .join('\n');
+}
+
+// Fallback opcional de moldura ASCII (evita mojibake em redirecionamentos no Windows)
+function deveUsarAsciiFrames(): boolean {
+  return process.env.ORACULO_ASCII_FRAMES === '1';
+}
+
+function converterMolduraParaAscii(bloco: string): string {
+  return bloco
+    .replaceAll('┌', '+')
+    .replaceAll('┐', '+')
+    .replaceAll('└', '+')
+    .replaceAll('┘', '+')
+    .replaceAll('─', '-')
+    .replaceAll('│', '|');
 }
 
 export function fase(titulo: string) {
@@ -151,7 +205,7 @@ export function fase(titulo: string) {
   console.log(
     formatarLinha({
       nivel: 'info',
-      mensagem: chalk.bold(`${LOG_SIMBOLOS.fase} ${titulo}`),
+      mensagem: chalk.cyan.bold(`${LOG_SIMBOLOS.fase} ${titulo}`),
       sanitize: false,
     }),
   );
@@ -172,6 +226,20 @@ export const log = {
   info(msg: string): void {
     if (shouldSilence()) return;
     console.log(formatarLinha({ nivel: 'info', mensagem: msg }));
+  },
+
+  // Variante de INFO que preserva estilos/cores inline (sem sanitização de símbolos),
+  // útil para alinhar colunas mantendo números coloridos.
+  infoSemSanitizar(msg: string): void {
+    if (shouldSilence()) return;
+    console.log(formatarLinha({ nivel: 'info', mensagem: msg, sanitize: false }));
+  },
+
+  // Mensagem INFO com corpo estilizado (negrito + azul) e sem sanitização,
+  // preservando cores dentro do corpo. Útil para títulos curtos e resumos.
+  infoDestaque(msg: string): void {
+    if (shouldSilence()) return;
+    console.log(formatarLinha({ nivel: 'info', mensagem: chalk.cyan.bold(msg), sanitize: false }));
   },
 
   sucesso(msg: string): void {
@@ -196,5 +264,17 @@ export const log = {
   fase,
   passo,
   bloco: formatarBloco,
+  // Imprime um bloco moldurado diretamente (sem prefixo de logger) e com fallback ASCII opcional
+  imprimirBloco(
+    titulo: string,
+    linhas: string[],
+    corTitulo: (s: string) => string = chalk.bold,
+    larguraMax?: number,
+  ): void {
+    if (shouldSilence()) return;
+    const bloco = formatarBloco(titulo, linhas, corTitulo, larguraMax);
+    const out = deveUsarAsciiFrames() ? converterMolduraParaAscii(bloco) : bloco;
+    console.log(out);
+  },
   simbolos: LOG_SIMBOLOS,
 };

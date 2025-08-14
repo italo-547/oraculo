@@ -41,6 +41,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 - Limites de PARSE_ERRO já expostos; considerar parametrize via flag futura (`--parse-erros-max=<n>`)
 - Métricas internas disponíveis em `diagnosticar --json` (`metricas`) e histórico via `oraculo metricas`
+- O catálogo `docs/ANALISTAS.md` deve ser gerado via comando: `oraculo analistas --doc docs/ANALISTAS.md`
 
 ## Concluídos Recentes (Sessão Atual)
 
@@ -70,6 +71,13 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Plano de reorganização (zona verde) em `detector-arquetipos` + inclusão no JSON
 - [x] Refatoração para remover números mágicos (constantes de pesos & regex centralizadas)
 - [x] Skip de geração de plano em modo `--scan-only`
+- [x] UX de logs: molduras com formatador ANSI-aware e impressão direta (sem prefixos); fallback ASCII via `ORACULO_ASCII_FRAMES=1` documentado
+- [x] Resumo em tabela com moldura no final do diagnóstico (tipos de problemas x quantidade)
+- [x] Normalização de filtros `--include/--exclude` com precedência (include sobrepõe ignores, inclusive `node_modules` quando explicitado)
+- [x] Comando `analistas` adicionado (listar, `--json`, `--output`, `--doc`) e catálogo gerado em `docs/ANALISTAS.md`
+- [x] Flag `diagnosticar --listar-analistas` (uso opcional) para depuração rápida do registro
+- [x] Documentação sincronizada: correções de nomes em `docs/relatorios/RELATORIO.md` e atualização do README raiz com o comando `analistas`
+- [x] Agregação de `TODO_PENDENTE` por arquivo no resumo para reduzir ruído (mensagem consolidada)
 
 ## Refinamentos de Qualidade (Novos)
 

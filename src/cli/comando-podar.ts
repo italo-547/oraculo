@@ -1,18 +1,39 @@
-import { Command } from 'commander';
 import chalk from 'chalk';
+import { Command } from 'commander';
 
 import type { ArquivoFantasma, ResultadoPoda } from '../tipos/tipos.js';
 
+import { config } from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
 import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 import { removerArquivosOrfaos } from '../zeladores/poda.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
 
 export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('podar')
     .description('Remove arquivos órfãos e lixo do repositório.')
     .option('-f, --force', 'Remove arquivos sem confirmação (CUIDADO!)', false)
-    .action(async function (this: Command, opts: { force?: boolean }) {
+    .option(
+      '--include <padrao>',
+      'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)',
+      (val: string, prev: string[]) => {
+        prev.push(val);
+        return prev;
+      },
+      [] as string[],
+    )
+    .option(
+      '--exclude <padrao>',
+      'Glob pattern a EXCLUIR adicionalmente (pode repetir a flag ou usar vírgulas / espaços)',
+      (val: string, prev: string[]) => {
+        prev.push(val);
+        return prev;
+      },
+      [] as string[],
+    )
+    .action(async function (
+      this: Command,
+      opts: { force?: boolean; include?: string[]; exclude?: string[] },
+    ) {
       aplicarFlagsGlobais(
         this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {},
       );
@@ -21,6 +42,45 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
       const baseDir = process.cwd();
 
       try {
+        // Normaliza padrões de include/exclude para sincronizar filtros com o scanner
+        const processPatternList = (raw: string[] | undefined) => {
+          if (!raw || !raw.length) return [] as string[];
+          return Array.from(
+            new Set(
+              raw
+                .flatMap((r) => r.split(/[\s,]+/))
+                .map((s) => s.trim())
+                .filter(Boolean),
+            ),
+          );
+        };
+        const expandIncludes = (list: string[]) => {
+          const META = /[\\*\?\{\}\[\]]/;
+          const out = new Set<string>();
+          for (const p of list) {
+            out.add(p);
+            if (!META.test(p)) {
+              out.add(p.replace(/\\+$/, '').replace(/\/+$/, '') + '/**');
+              if (!p.includes('/') && !p.includes('\\')) out.add('**/' + p + '/**');
+            }
+          }
+          return Array.from(out);
+        };
+        const includeListRaw = processPatternList(opts.include);
+        const includeList = includeListRaw.length ? expandIncludes(includeListRaw) : [];
+        const excludeList = processPatternList(opts.exclude);
+        if (includeList.length) config.CLI_INCLUDE_PATTERNS = includeList;
+        if (excludeList.length) config.CLI_EXCLUDE_PATTERNS = excludeList;
+        const incluiNodeModules = includeList.some((p) => /node_modules/.test(p));
+        if (incluiNodeModules) {
+          config.ZELADOR_IGNORE_PATTERNS = config.ZELADOR_IGNORE_PATTERNS.filter(
+            (p) => !/node_modules/.test(p),
+          );
+          config.GUARDIAN_IGNORE_PATTERNS = config.GUARDIAN_IGNORE_PATTERNS.filter(
+            (p) => !/node_modules/.test(p),
+          );
+        }
+
         const { fileEntries } = await iniciarInquisicao(baseDir, { incluirMetadados: false });
         const resultadoPoda: ResultadoPoda = await removerArquivosOrfaos(fileEntries);
         if (resultadoPoda.arquivosOrfaos.length === 0) {

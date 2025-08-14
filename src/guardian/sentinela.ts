@@ -1,13 +1,13 @@
+import micromatch from 'micromatch';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { log } from '../nucleo/constelacao/log.js';
-import { gerarSnapshotDoConteudo } from './hash.js';
-import { carregarBaseline, salvarBaseline } from './baseline.js';
-import { diffSnapshots, verificarErros } from './diff.js';
-import { BASELINE_PATH } from './constantes.js';
-import { IntegridadeStatus, GuardianError, FileEntry } from '../tipos/tipos.js';
-import micromatch from 'micromatch';
 import { config } from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
+import { FileEntry, GuardianError, IntegridadeStatus } from '../tipos/tipos.js';
+import { carregarBaseline, salvarBaseline } from './baseline.js';
+import { BASELINE_PATH } from './constantes.js';
+import { diffSnapshots, verificarErros } from './diff.js';
+import { gerarSnapshotDoConteudo } from './hash.js';
 
 type Snapshot = Record<string, string>;
 
@@ -51,7 +51,6 @@ export async function scanSystemIntegrity(
   const ignorados = config.GUARDIAN_IGNORE_PATTERNS || [];
   const filtrados = fileEntries.filter((f) => {
     const rel = f.relPath.replace(/\\/g, '/');
-    if (rel.includes('node_modules/')) return false; // fallback defensivo
     return !micromatch.isMatch(rel, ignorados);
   });
   if (config.DEV_MODE) {
@@ -100,7 +99,6 @@ export async function acceptNewBaseline(fileEntries: FileEntry[]): Promise<void>
   const ignorados = config.GUARDIAN_IGNORE_PATTERNS || [];
   const filtrados = fileEntries.filter((f) => {
     const rel = f.relPath.replace(/\\/g, '/');
-    if (rel.includes('node_modules/')) return false; // fallback defensivo
     return !micromatch.isMatch(rel, ignorados);
   });
   const snapshotAtual = construirSnapshot(filtrados);

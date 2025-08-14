@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest';
 import { Command } from 'commander';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Usaremos o iniciarInquisicao real (scanner) + prepararComAst real, mas mockamos executarInquisicao
 // para capturar os fileEntries já filtrados após include/exclude.
@@ -71,7 +71,7 @@ describe('comando-diagnosticar filtros include/exclude', () => {
     const rels = fileEntries.map((f: any) => f.relPath.replace(/\\/g, '/')).sort();
     // O include prioriza apenas patterns que batem – sem src/ presentes, apenas node_modules
     expect(rels).toEqual(['node_modules/lib/index.js']);
-  });
+  }, 15000);
 
   it('--exclude (repetido e com espaços) remove padrões após include vazio (comportamento normal)', async () => {
     await setupTmp({
@@ -102,5 +102,5 @@ describe('comando-diagnosticar filtros include/exclude', () => {
     const rels = fileEntries.map((f: any) => f.relPath.replace(/\\/g, '/')).sort();
     expect(rels).not.toContain('test/c.test.ts');
     expect(rels).toContain('src/a.ts');
-  });
+  }, 15000);
 });

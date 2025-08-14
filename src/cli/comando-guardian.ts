@@ -1,13 +1,13 @@
-import { Command } from 'commander';
 import chalk from 'chalk';
+import { Command } from 'commander';
 
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 import { IntegridadeStatus } from '../tipos/tipos.js';
 
-import { iniciarInquisicao } from '../nucleo/inquisidor.js';
-import { scanSystemIntegrity, acceptNewBaseline } from '../guardian/sentinela.js';
-import { log } from '../nucleo/constelacao/log.js';
+import { acceptNewBaseline, scanSystemIntegrity } from '../guardian/sentinela.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
+import { log } from '../nucleo/constelacao/log.js';
+import { iniciarInquisicao } from '../nucleo/inquisidor.js';
 
 export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('guardian')
@@ -185,7 +185,6 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
                 );
               }
               process.exit(1);
-              break;
             }
           }
         }

@@ -11,9 +11,11 @@
 - Tipagem aplicada a todas as funções.
 - Corrigidos:
   - `analista-padroes-uso.ts`
-  - `analista-dependencias.ts`
+  - `detector-dependencias.ts`
   - `detector-estrutura.ts`
-  - `ritual-comandos.ts`
+  - `ritual-comando.ts`
+  - `analista-funcoes-longas.ts`
+  - `analista-todo-comments.ts`
 
 ### 📁 `src/arquitetos/`
 
@@ -68,7 +70,7 @@
 
 ### 📦 `package.json`
 
-- Versão mínima do Node ajustada para `>=20.11.0`
+- Versão mínima do Node ajustada para `>=24.x`
 - Todas as dependências alinhadas e estáveis
 - `"type": "module"` com ESM puro
 

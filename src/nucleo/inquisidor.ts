@@ -1,9 +1,12 @@
-import { registroAnalistas } from '../analistas/registry.js';
+import { promises as fs } from 'node:fs';
 import * as path from 'path';
-import { scanRepository } from './scanner.js';
-import { decifrarSintaxe } from './parser.js';
-import { executarInquisicao as executarExecucao, registrarUltimasMetricas } from './executor.js';
+import { registroAnalistas } from '../analistas/registry.js';
+import { lerEstado } from '../zeladores/util/persistencia.js';
+import { config } from './constelacao/cosmos.js';
 import { log } from './constelacao/log.js';
+import { executarInquisicao as executarExecucao, registrarUltimasMetricas } from './executor.js';
+import { decifrarSintaxe } from './parser.js';
+import { scanRepository } from './scanner.js';
 // Fallback de símbolos para cenários de teste onde o mock de log não inclui `simbolos`.
 interface SimbolosLog {
   info: string;
@@ -33,16 +36,19 @@ const S: SimbolosLog =
   typeof (log as unknown as { simbolos?: SimbolosLog }).simbolos === 'object'
     ? (log as unknown as { simbolos: SimbolosLog }).simbolos
     : SIMBOLOS_FALLBACK;
-import { config } from './constelacao/cosmos.js';
-import { lerEstado } from '../zeladores/util/persistencia.js';
-import { promises as fs } from 'node:fs';
+// Fallback seguro para infoDestaque quando mocks de teste não expõem o método
+const __infoDestaque = (mensagem: string) => {
+  const l = log as unknown as { infoDestaque?: (m: string) => void; info: (m: string) => void };
+  if (typeof l.infoDestaque === 'function') return l.infoDestaque(mensagem);
+  return l.info(mensagem);
+};
 
 import type {
-  FileEntryWithAst,
   FileEntry,
+  FileEntryWithAst,
   InquisicaoOptions,
-  Tecnica,
   ResultadoInquisicaoCompleto,
+  Tecnica,
 } from '../tipos/tipos.js';
 import { ocorrenciaParseErro, OcorrenciaParseErro } from '../tipos/tipos.js';
 
@@ -323,7 +329,7 @@ export async function iniciarInquisicao(
     }));
   }
 
-  // Emite resumo de diretórios escaneados (reduz spam de linhas)
+  // Emite resumo de diretórios escaneados (compacto e estilizado)
   try {
     const g = globalThis as unknown as {
       __ORACULO_DIR_COUNT__?: number;
@@ -331,13 +337,7 @@ export async function iniciarInquisicao(
     };
     if (g.__ORACULO_DIR_COUNT__) {
       const totalDirs = g.__ORACULO_DIR_COUNT__;
-      const samples = (g.__ORACULO_DIR_SAMPLES__ || []).map((s) => s.replace(/\\/g, '/'));
-      const resto = totalDirs - samples.length;
-      const amostra = samples.join(', ');
-      log.info(
-        `${S.pasta} Diretórios escaneados: ${totalDirs}` +
-          (samples.length ? ` (ex: ${amostra}${resto > 0 ? ` +${resto}` : ''})` : ''),
-      );
+      __infoDestaque(`Diretórios escaneados: ${totalDirs}`);
     }
   } catch {
     /* ignore */
@@ -389,9 +389,7 @@ export async function iniciarInquisicao(
   if (!skipExec) {
     log.sucesso(`🔮 Inquisição concluída. Total de ocorrências: ${ocorrencias.length}`);
   } else if (!config.COMPACT_MODE) {
-    log.info(
-      `${S.scan} Varredura concluída (execução de técnicas saltada). Arquivos: ${fileEntries.length}`,
-    );
+    __infoDestaque(`Varredura concluída: total de arquivos: ${fileEntries.length}`);
   }
 
   return {

@@ -1,5 +1,5 @@
-import path from 'node:path';
 import { promises as fs } from 'node:fs';
+import path from 'node:path';
 
 // Diretório atual do usuário (base do projeto)
 const CWD = process.cwd();
@@ -48,6 +48,11 @@ export const configDefault = {
   REPORT_SILENCE_LOGS: false,
   REPORT_EXPORT_ENABLED: false,
   REPORT_OUTPUT_DIR: path.join(CWD, 'relatorios'),
+  // Relatório de Saúde (controle de exibição)
+  // Quando true, usa tabela com moldura no modo normal/compact (ruído reduzido)
+  RELATORIO_SAUDE_TABELA_ENABLED: true,
+  // Quando true, em modo VERBOSE a tabela é desativada e exibimos lista detalhada
+  RELATORIO_SAUDE_DETALHADO_VERBOSE: true,
 
   // 📂 Zelador
   ORACULO_STATE_DIR: ORACULO_STATE,

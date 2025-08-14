@@ -1,17 +1,23 @@
-import { log } from './constelacao/log.js';
-import { MetricaAnalista, MetricaExecucao, ocorrenciaErroAnalista } from '../tipos/tipos.js';
-import { config } from './constelacao/cosmos.js';
-import { formatMs } from './constelacao/format.js';
-import { lerEstado, salvarEstado } from '../zeladores/util/persistencia.js';
 import crypto from 'node:crypto';
 import XXH from 'xxhashjs';
 import type {
+  ContextoExecucao,
   FileEntryWithAst,
   Ocorrencia,
-  Tecnica,
-  ContextoExecucao,
   ResultadoInquisicao,
+  Tecnica,
 } from '../tipos/tipos.js';
+import { MetricaAnalista, MetricaExecucao, ocorrenciaErroAnalista } from '../tipos/tipos.js';
+import { lerEstado, salvarEstado } from '../zeladores/util/persistencia.js';
+import { config } from './constelacao/cosmos.js';
+import { formatMs } from './constelacao/format.js';
+import { log } from './constelacao/log.js';
+// Fallback para infoDestaque quando mock de log não implementa
+const __infoD = (msg: string) => {
+  const l = log as unknown as { infoDestaque?: (m: string) => void; info: (m: string) => void };
+  if (typeof l.infoDestaque === 'function') return l.infoDestaque(msg);
+  return l.info(msg);
+};
 
 export async function executarInquisicao(
   fileEntriesComAst: FileEntryWithAst[],
@@ -96,7 +102,7 @@ export async function executarInquisicao(
           });
         }
         if (opts?.verbose) {
-          log.sucesso(`✅ Técnica global '${tecnica.nome}' executada em ${formatMs(duracao)}`);
+          log.sucesso(`Técnica global "${tecnica.nome}"`);
         }
         if (config.LOG_ESTRUTURADO) {
           log.info(
@@ -127,6 +133,9 @@ export async function executarInquisicao(
   // Técnicas por arquivo
   let arquivoAtual = 0;
   const totalArquivos = fileEntriesComAst.length;
+  // Limiar para logs detalhados por arquivo
+  const LIMIAR_DETALHE_TOTAL = 100; // até aqui permite detalhar por arquivo
+  const LIMIAR_DETALHE_THROTTLED_MAX = 250; // até aqui permite "Arquivo X/Y" com throttle
   // Define passo de logging quando em modo verbose para evitar spam massivo
   function passoDeLog(total: number): number {
     // Assumimos faixas: até 100 => cada arquivo; 101-250 => a cada 10; 251-500 => a cada 25; >500 => a cada 100
@@ -137,6 +146,9 @@ export async function executarInquisicao(
   }
   const frames = ['->', '=>', '>>', '=>'] as const;
   const stepVerbose = passoDeLog(totalArquivos);
+  const detalharPorArquivo = (opts?.verbose ?? false) && totalArquivos <= LIMIAR_DETALHE_TOTAL;
+  const permitirArquivoXY =
+    (opts?.verbose ?? false) && totalArquivos <= LIMIAR_DETALHE_THROTTLED_MAX;
   for (const entry of fileEntriesComAst) {
     arquivoAtual++;
     if (opts?.compact) {
@@ -144,17 +156,31 @@ export async function executarInquisicao(
         log.info(`Arquivos analisados: ${totalArquivos}`);
       }
     } else if (opts?.verbose) {
-      // Throttle de logs em modo verbose conforme total de arquivos
-      if (
-        arquivoAtual === 1 ||
-        arquivoAtual % stepVerbose === 0 ||
-        arquivoAtual === totalArquivos
-      ) {
-        const seta = frames[arquivoAtual % frames.length];
-        log.info(`${seta} Arquivo ${arquivoAtual}/${totalArquivos}: ${entry.relPath}`);
+      // Em verbose: detalha por arquivo somente até o limiar; entre 101-250 mostra "Arquivo X/Y" com throttle; acima disso, só resumo de progresso.
+      if (permitirArquivoXY) {
+        if (
+          arquivoAtual === 1 ||
+          arquivoAtual % stepVerbose === 0 ||
+          arquivoAtual === totalArquivos
+        ) {
+          const seta = frames[arquivoAtual % frames.length];
+          log.info(`${seta} Arquivo ${arquivoAtual}/${totalArquivos}: ${entry.relPath}`);
+        }
+      } else {
+        if (
+          arquivoAtual === 1 ||
+          arquivoAtual % stepVerbose === 0 ||
+          arquivoAtual === totalArquivos
+        ) {
+          log.info(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
+        }
       }
     } else if (arquivoAtual % 10 === 0 || arquivoAtual === totalArquivos) {
-      log.info(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
+      if (arquivoAtual === totalArquivos) {
+        __infoD(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
+      } else {
+        log.info(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
+      }
     }
     // Verifica incremento
     const conteudo = entry.content ?? '';
@@ -172,7 +198,7 @@ export async function executarInquisicao(
           (novoEstado.estatisticas.totalReaproveitamentos || 0) + 1;
       }
       reaproveitou = true;
-      if (opts?.verbose) log.info(`♻️ Reaproveitado ${entry.relPath} (incremental)`);
+      if (detalharPorArquivo) log.info(`♻️ Reaproveitado ${entry.relPath} (incremental)`);
       if (config.LOG_ESTRUTURADO) {
         log.info(
           JSON.stringify({
@@ -213,7 +239,7 @@ export async function executarInquisicao(
             global: false,
           });
         }
-        if (opts?.verbose) {
+        if (detalharPorArquivo) {
           log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${formatMs(duracao)}`);
         }
         if (config.LOG_ESTRUTURADO) {
