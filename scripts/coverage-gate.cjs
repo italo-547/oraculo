@@ -10,7 +10,9 @@ const path = require('node:path');
 const root = process.cwd();
 const summaryPath = path.join(root, 'coverage', 'coverage-summary.json');
 if (!fs.existsSync(summaryPath)) {
-  console.error('[coverage-gate] Arquivo coverage-summary.json não encontrado. Rode `npm run coverage` antes.');
+  console.error(
+    '[coverage-gate] Arquivo coverage-summary.json não encontrado. Rode `npm run coverage` antes.',
+  );
   process.exit(2);
 }
 const json = JSON.parse(fs.readFileSync(summaryPath, 'utf-8'));
@@ -24,13 +26,13 @@ const min = {
   statements: Number(process.env.COV_STATEMENTS || 90),
   branches: Number(process.env.COV_BRANCHES || 85),
   functions: Number(process.env.COV_FUNCTIONS || 90),
-  lines: Number(process.env.COV_LINES || 90)
+  lines: Number(process.env.COV_LINES || 90),
 };
 const current = {
   statements: total.statements.pct,
   branches: total.branches.pct,
   functions: total.functions.pct,
-  lines: total.lines.pct
+  lines: total.lines.pct,
 };
 let ok = true;
 for (const k of Object.keys(min)) {

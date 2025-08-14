@@ -113779,5 +113779,61 @@
       }
     ],
     "timestamp": 1755132850601
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 10,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755142001873
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 2,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [],
+    "timestamp": 1755142001967
+  },
+  {
+    "totalArquivos": 2,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 1,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "semTest",
+        "duracaoMs": 0.10540000000003147,
+        "ocorrencias": 1,
+        "global": false
+      },
+      {
+        "nome": "semTest",
+        "duracaoMs": 0.027000000000043656,
+        "ocorrencias": 1,
+        "global": false
+      }
+    ],
+    "timestamp": 1755142002066
+  },
+  {
+    "totalArquivos": 1,
+    "tempoParsingMs": 0,
+    "tempoAnaliseMs": 1,
+    "cacheAstHits": 0,
+    "cacheAstMiss": 0,
+    "analistas": [
+      {
+        "nome": "semOcorrencia",
+        "duracaoMs": 0.045200000000022555,
+        "ocorrencias": 0,
+        "global": false
+      }
+    ],
+    "timestamp": 1755142002148
   }
 ]

@@ -10,7 +10,9 @@ const root = path.resolve(__dirname, '..');
 const docsPerfDir = path.join(root, 'docs', 'perf');
 await fs.mkdir(docsPerfDir, { recursive: true });
 
-function tempo() { return performance.now(); }
+function tempo() {
+  return performance.now();
+}
 
 async function coletarArquivos(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -49,17 +51,19 @@ const snapshot = {
   temposMs: {
     scan: +(mid - inicio).toFixed(2),
     analiseSimulada: +(fim - mid).toFixed(2),
-    total: +(fim - inicio).toFixed(2)
+    total: +(fim - inicio).toFixed(2),
   },
   host: { plataforma: os.platform(), cpus: os.cpus().length },
-  metricsSchemaVersion: 1
+  metricsSchemaVersion: 1,
 };
 
 const filePath = path.join(docsPerfDir, `baseline-${Date.now()}.json`);
 await fs.writeFile(filePath, JSON.stringify(snapshot, null, 2), 'utf-8');
 
 // Diff simples com penúltimo snapshot
-const arquivosPerf = (await fs.readdir(docsPerfDir)).filter(f => f.startsWith('baseline-') && f.endsWith('.json')).sort();
+const arquivosPerf = (await fs.readdir(docsPerfDir))
+  .filter((f) => f.startsWith('baseline-') && f.endsWith('.json'))
+  .sort();
 if (arquivosPerf.length > 1) {
   const anteriorPath = path.join(docsPerfDir, arquivosPerf[arquivosPerf.length - 2]);
   try {
@@ -69,9 +73,12 @@ if (arquivosPerf.length > 1) {
       anterior: path.basename(anteriorPath),
       variacoes: {
         scanPct: percentual(anterior.temposMs.scan, snapshot.temposMs.scan),
-        analiseSimuladaPct: percentual(anterior.temposMs.analiseSimulada, snapshot.temposMs.analiseSimulada),
-        totalPct: percentual(anterior.temposMs.total, snapshot.temposMs.total)
-      }
+        analiseSimuladaPct: percentual(
+          anterior.temposMs.analiseSimulada,
+          snapshot.temposMs.analiseSimulada,
+        ),
+        totalPct: percentual(anterior.temposMs.total, snapshot.temposMs.total),
+      },
     };
     const diffPath = path.join(docsPerfDir, 'ultimo-diff.json');
     await fs.writeFile(diffPath, JSON.stringify(diff, null, 2), 'utf-8');

@@ -33,7 +33,15 @@ async function main() {
 }
 
 function camelCase(str) {
-  return str.split('-').map((s, i) => i === 0 ? s.charAt(0).toUpperCase() + s.slice(1) : s.charAt(0).toUpperCase() + s.slice(1)).join('');
+  return str
+    .split('-')
+    .map((s, i) =>
+      i === 0 ? s.charAt(0).toUpperCase() + s.slice(1) : s.charAt(0).toUpperCase() + s.slice(1),
+    )
+    .join('');
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
