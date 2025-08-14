@@ -9,7 +9,7 @@ import type {
   ArquetipoDrift,
 } from '../tipos/tipos.js';
 import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
-import { gerarPlanoReorganizacao } from './plano-reorganizacao.js';
+import { OperarioEstrutura } from '../zeladores/operario-estrutura.js';
 import path from 'node:path';
 
 // Pesos e limites centralizados (evita números mágicos espalhados)
@@ -142,10 +142,19 @@ export async function detectarArquetipos(
       arquivosRaizRemovidos: removidos,
     };
   }
-  // Geração simples de planoSugestao (apenas para o top candidato) – versão conservadora
+  // Geração de planoSugestao centralizada via Operário (apenas para o top)
   if (melhores[0]) {
     const top = melhores[0];
-    top.planoSugestao = gerarPlanoReorganizacao(arquivos.map((relPath) => ({ relPath })));
+    try {
+      const { plano } = await OperarioEstrutura.planejar(
+        baseDir,
+        contexto.arquivos,
+        { preferEstrategista: true }, // evita recursão e usa núcleo unificado
+      );
+      if (plano) top.planoSugestao = plano;
+    } catch {
+      // mantém default vazio se falhar
+    }
   }
   return { melhores, baseline, drift };
 }

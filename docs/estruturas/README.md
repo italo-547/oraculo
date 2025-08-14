@@ -19,6 +19,19 @@ Este documento descreve os arquétipos suportados, critérios de detecção, cá
 | Drift              | Mudança estrutural (novos/removidos, alteração de confiança). |
 | planoSugestao      | Ações propostas (ex: mover arquivos soltos para `src/`).      |
 
+### Orquestração central (Operário de Estrutura)
+
+Para evitar código duplicado e decisões paralelas, a geração e a aplicação do plano de reestruturação foram unificadas em um orquestrador:
+
+- Operário: `src/zeladores/operario-estrutura.ts`
+  - planejar: escolhe a fonte do plano (arquétipos ou estrategista), considerando presets e overrides.
+  - aplicar: executa via `corretor-estrutura` com segurança (dry-run controlado por flags/config).
+  - utilitários: conversões de plano/ocorrências para mapa de movimentos.
+
+O detector de arquétipos consulta o Operário para popular o `planoSugestao` do top candidato. O estrategista concentra a heurística de nomeação e presets, sem consultar arquétipos (evita ciclos).
+
+Status: o analista `plano-reorganizacao.ts` está em depreciação gradual; permanece para compatibilidade de testes.
+
 ## Arquétipos Suportados (Resumo)
 
 cli-modular, landing-page, api-rest-express, fullstack, bot, electron, lib-tsc, monorepo-packages. Ver definições completas em `src/analistas/arquetipos-defs.ts`.
@@ -112,10 +125,10 @@ Estrutura de `planoSugestao`:
 
 ## Roadmap Próximo
 
-1. Implementar geração efetiva do plano (mover) – fase atual.
+1. Concluir a unificação: redirecionar usos internos para o Operário e remover dependências do plano legado.
 2. Expor `planoSugestao` em `diagnosticar --json`.
-3. Novo comando `reestruturar` (dry-run + `--aplicar`).
-4. Testes de fixtures para cada arquétipo + cenários de anomalia.
+3. Aprofundar presets (padrões de comunidade) e tokens/categorias adicionais.
+4. Testes de fixtures por preset, com cenários de conflito e merge seguro.
 5. Evolução: normalização de nomes de diretórios e merges seguros.
 
 ## Testes Sugeridos

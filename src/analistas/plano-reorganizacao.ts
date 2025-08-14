@@ -2,6 +2,12 @@ import path from 'node:path';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import type { PlanoSugestaoEstrutura } from '../tipos/tipos.js';
 
+/**
+ * @deprecated Fonte legada de plano estrutural.
+ * Mantido para compatibilidade de testes. A orquestração unificada vive em
+ * `src/zeladores/operario-estrutura.ts` (planejar/aplicar).
+ */
+
 // Regex (zona verde) – sincronizar com docs/estruturas/README.md
 const REGEX_TESTE_RAIZ = /\.test\.ts$/i;
 const REGEX_SCRIPT = /^script-.+\.(?:js|ts)$/i;
@@ -19,8 +25,10 @@ export function gerarPlanoReorganizacao(arquivos: ArquivoMeta[]): PlanoSugestaoE
     return { mover: [], conflitos: [], resumo: { total: 0, zonaVerde: 0, bloqueados: 0 } };
   const mover: { de: string; para: string; motivo: string }[] = [];
   const conflitos: { alvo: string; motivo: string }[] = [];
-  const relPaths = arquivos.map((a) => a.relPath);
-  const raizFiles = arquivos.filter((a) => !a.relPath.includes('/'));
+  // Normaliza separadores para POSIX e usa cópia local para evitar efeitos colaterais
+  const arquivosNorm = arquivos.map((a) => ({ ...a, relPath: a.relPath.replace(/\\/g, '/') }));
+  const relPaths = arquivosNorm.map((a) => a.relPath);
+  const raizFiles = arquivosNorm.filter((a) => !a.relPath.includes('/'));
   const maxSize = config.ESTRUTURA_PLANO_MAX_FILE_SIZE || 256 * 1024;
 
   const pushMove = (de: string, para: string, motivo: string, size?: number) => {
@@ -77,7 +85,11 @@ export function gerarPlanoReorganizacao(arquivos: ArquivoMeta[]): PlanoSugestaoE
   });
 
   return {
-    mover: moverFiltrado,
+    mover: moverFiltrado.map((m) => ({
+      ...m,
+      de: m.de.replace(/\\/g, '/'),
+      para: m.para.replace(/\\/g, '/'),
+    })),
     conflitos,
     resumo: {
       total: moverFiltrado.length + conflitos.length,

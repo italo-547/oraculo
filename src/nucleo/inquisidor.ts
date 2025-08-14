@@ -200,7 +200,7 @@ export async function iniciarInquisicao(
             __ORACULO_DIR_SAMPLES__?: string[];
           };
           g.__ORACULO_DIR_COUNT__ = (g.__ORACULO_DIR_COUNT__ || 0) + 1;
-          const n = g.__ORACULO_DIR_COUNT__;
+          // contador atualizado em g.__ORACULO_DIR_COUNT__ (não usado diretamente aqui)
           // Armazena primeiros N diretórios como amostra
           const SAMPLE_MAX = 5;
           if (!g.__ORACULO_DIR_SAMPLES__) g.__ORACULO_DIR_SAMPLES__ = [];

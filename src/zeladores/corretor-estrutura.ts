@@ -4,14 +4,8 @@ import pLimit from 'p-limit';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
 import { resolverPluginSeguro } from '../nucleo/constelacao/seguranca.js';
+import { reescreverImports } from './util/imports.js';
 import type { FileEntryWithAst } from '../tipos/tipos.js';
-
-const {
-  STRUCTURE_PLUGINS: PLUGINS = [],
-  STRUCTURE_AUTO_FIX: AUTO_FIX = false,
-  STRUCTURE_CONCURRENCY: CONCORRENCIA = 5,
-  STRUCTURE_LAYERS,
-} = config;
 
 interface ResultadoEstrutural {
   arquivo: string;
@@ -24,6 +18,12 @@ export async function corrigirEstrutura(
   fileEntries: FileEntryWithAst[],
   baseDir: string = process.cwd(),
 ): Promise<void> {
+  // Captura dinâmica das configs (evita congelar valores em tempo de import)
+  const CONCORRENCIA = Number(config.STRUCTURE_CONCURRENCY ?? 5);
+  const AUTO_FIX = Boolean(config.STRUCTURE_AUTO_FIX);
+  const PLUGINS = (config.STRUCTURE_PLUGINS as unknown[]) || [];
+  const STRUCTURE_LAYERS = config.STRUCTURE_LAYERS;
+
   const limit = pLimit(CONCORRENCIA);
 
   await Promise.all(
@@ -33,8 +33,9 @@ export async function corrigirEstrutura(
         if (!ideal || ideal === atual) return;
 
         const origem = path.join(baseDir, arquivo);
-        const destinoRelativo = path.relative(atual || '', arquivo);
-        const destino = path.join(baseDir, ideal, destinoRelativo);
+        // Preserva o nome do arquivo ao mover para a pasta ideal
+        const nomeArquivo = path.basename(arquivo);
+        const destino = path.join(baseDir, ideal, nomeArquivo);
 
         if (!AUTO_FIX) {
           log.info(`→ Simular: ${arquivo} → ${path.relative(baseDir, destino)}`);
@@ -63,7 +64,20 @@ export async function corrigirEstrutura(
             return;
           }
 
-          await fs.rename(origem, destino);
+          // Reescrever imports relativos (opcional; somente quando AUTO_FIX)
+          try {
+            const conteudo = await fs.readFile(origem, 'utf-8');
+            const { novoConteudo } = reescreverImports(
+              conteudo,
+              path.posix.normalize(arquivo.replace(/\\/g, '/')),
+              path.posix.normalize(path.relative(baseDir, destino).replace(/\\/g, '/')),
+            );
+            await fs.writeFile(destino, novoConteudo, 'utf-8');
+            await fs.unlink(origem);
+          } catch {
+            // fallback: mover arquivo sem reescrita se algo falhar na leitura/escrita
+            await fs.rename(origem, destino);
+          }
           log.sucesso(`✅ Movido: ${arquivo} → ${path.relative(baseDir, destino)}`);
         } catch (err) {
           const msg =

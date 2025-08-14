@@ -92,7 +92,6 @@ export async function executarInquisicao(
           ocorrencias.push(...(Array.isArray(resultado) ? resultado : [resultado]));
         }
         const duracaoMs = performance.now() - inicioAnalista;
-        const duracao = duracaoMs;
         if (config.ANALISE_METRICAS_ENABLED) {
           metricasAnalistas.push({
             nome: tecnica.nome || 'desconhecido',
@@ -230,7 +229,6 @@ export async function executarInquisicao(
           ocorrencias.push(...arr);
         }
         const duracaoMs = performance.now() - inicioAnalista;
-        const duracao = duracaoMs;
         if (config.ANALISE_METRICAS_ENABLED) {
           metricasAnalistas.push({
             nome: tecnica.nome || 'desconhecido',
@@ -240,7 +238,7 @@ export async function executarInquisicao(
           });
         }
         if (detalharPorArquivo) {
-          log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${formatMs(duracao)}`);
+          log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${formatMs(duracaoMs)}`);
         }
         if (config.LOG_ESTRUTURADO) {
           log.info(

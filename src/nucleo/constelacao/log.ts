@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import tty from 'node:tty';
 import { config } from './cosmos.js';
 
 // Exportamos símbolos/emojis em um único objeto para reutilização centralizada.
@@ -123,13 +124,74 @@ function formatarLinha({ nivel, mensagem, sanitize = true }: FormatOptions): str
   const corpo = sanitize ? stripLeadingSimbolos(mensagem) : mensagem;
   // Colorimos mensagens de destaque (erro/aviso/sucesso) para reforçar visibilidade.
   const corpoFmt = nivel === 'info' || nivel === 'debug' ? corpo : cor(corpo);
-  return chalk.gray(ts) + ' ' + colNivel + ' ' + corpoFmt;
+  const linha = chalk.gray(ts) + ' ' + colNivel + ' ' + corpoFmt;
+  // Centraliza linhas soltas somente com opt-in explícito (ORACULO_CENTER=1)
+  if (!process.env.VITEST && process.env.ORACULO_CENTER === '1') {
+    try {
+      const cols = obterColunasTerm();
+      const out: tty.WriteStream | undefined =
+        process.stdout && typeof (process.stdout as tty.WriteStream).isTTY !== 'undefined'
+          ? (process.stdout as tty.WriteStream)
+          : undefined;
+      const isTty = !!out && out.isTTY !== false;
+      if (isTty && cols && cols > 0) {
+        const ANSI_REGEX =
+          /[\u001B\u009B][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+        const visLen = (s: string) => (s || '').replace(ANSI_REGEX, '').length;
+        const pad = Math.floor(Math.max(0, cols - visLen(linha)) / 2);
+        if (pad > 0) return ' '.repeat(pad) + linha;
+      }
+    } catch {
+      // Se centralização falhar, retorna linha normal
+    }
+  }
+  return linha;
 }
 
 /**
  * Formata um bloco multi-linha com indentação consistente e moldura leve.
  * Útil para seções (fases) ou resumos compactos.
  */
+function obterColunasTerm(): number | undefined {
+  // Tenta obter largura do terminal de forma segura
+  try {
+    const out: tty.WriteStream | undefined =
+      process.stdout && typeof (process.stdout as tty.WriteStream).columns !== 'undefined'
+        ? (process.stdout as tty.WriteStream)
+        : undefined;
+    const cols = out?.columns;
+    if (typeof cols === 'number' && cols > 0) return cols;
+  } catch {}
+  // Permite override explícito via env e fallback de variáveis comuns
+  const envOverride = Number(process.env.ORACULO_FRAME_MAX_COLS || '0');
+  if (Number.isFinite(envOverride) && envOverride > 0) return envOverride;
+  const envCols = Number(process.env.COLUMNS || process.env.TERM_COLUMNS || '0');
+  return Number.isFinite(envCols) && envCols > 0 ? envCols : undefined;
+}
+
+function calcularLarguraInterna(
+  titulo: string,
+  linhas: string[],
+  larguraMax?: number,
+): { width: number; maxInner: number; visLen: (s: string) => number; ANSI_REGEX: RegExp } {
+  const ANSI_REGEX = /[\u001B\u009B][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+  const visLen = (s: string) => (s || '').replace(ANSI_REGEX, '').length;
+  // Largura desejada pelo conteúdo, com teto padrão (100) caso não especificado
+  const desejada = Math.min(
+    100,
+    Math.max(visLen(titulo) + 4, ...linhas.map((l) => visLen(l) + 4), 20),
+  );
+  const preferida =
+    typeof larguraMax === 'number' ? Math.max(20, Math.min(larguraMax, 120)) : desejada;
+  // Limite superior pela largura do terminal (responsivo)
+  const cols = obterColunasTerm();
+  const tetoTela = typeof cols === 'number' && cols > 0 ? Math.max(20, Math.min(cols, 120)) : 120;
+  const width = Math.max(20, Math.min(preferida, tetoTela));
+  const barraLen = Math.max(10, width - 2);
+  const maxInner = barraLen - 1;
+  return { width, maxInner, visLen, ANSI_REGEX };
+}
+
 export function formatarBloco(
   titulo: string,
   linhas: string[],
@@ -137,8 +199,11 @@ export function formatarBloco(
   larguraMax?: number,
 ): string {
   // Utilitários conscientes de ANSI para medir/compor por largura visível
-  const ANSI_REGEX = /[\u001B\u009B][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
-  const visLen = (s: string) => (s || '').replace(ANSI_REGEX, '').length;
+  const { width, maxInner, visLen, ANSI_REGEX } = calcularLarguraInterna(
+    titulo,
+    linhas,
+    larguraMax,
+  );
   const padEndVisible = (s: string, target: number) => {
     const diff = target - visLen(s);
     return diff > 0 ? s + ' '.repeat(diff) : s;
@@ -167,16 +232,9 @@ export function formatarBloco(
     return out + '…';
   };
 
-  const widthAuto = Math.min(
-    100,
-    Math.max(visLen(titulo) + 4, ...linhas.map((l) => visLen(l) + 4), 20),
-  );
-  const width =
-    typeof larguraMax === 'number' ? Math.max(20, Math.min(larguraMax, 120)) : widthAuto;
   const barra = '─'.repeat(Math.max(10, width - 2));
   const topo = '┌' + barra + '┐';
   const base = '└' + barra + '┘';
-  const maxInner = barra.length - 1;
   const normalizar = (s: string) => truncateVisible(s, maxInner);
   const corpo = linhas.map((l) => '│ ' + padEndVisible(normalizar(l), maxInner) + '│').join('\n');
   const headTxt = '│ ' + padEndVisible(normalizar(titulo), maxInner) + '│';
@@ -264,6 +322,9 @@ export const log = {
   fase,
   passo,
   bloco: formatarBloco,
+  calcularLargura(titulo: string, linhas: string[], larguraMax?: number): number {
+    return calcularLarguraInterna(titulo, linhas, larguraMax).width;
+  },
   // Imprime um bloco moldurado diretamente (sem prefixo de logger) e com fallback ASCII opcional
   imprimirBloco(
     titulo: string,
@@ -274,6 +335,37 @@ export const log = {
     if (shouldSilence()) return;
     const bloco = formatarBloco(titulo, linhas, corTitulo, larguraMax);
     const out = deveUsarAsciiFrames() ? converterMolduraParaAscii(bloco) : bloco;
+    // Centraliza o bloco somente com opt-in explícito (ORACULO_CENTER=1)
+    if (!process.env.VITEST && process.env.ORACULO_CENTER === '1') {
+      try {
+        const lines = out.split('\n');
+        if (!lines.length) {
+          console.log(out);
+          return;
+        }
+        // mede largura visível da moldura (linha do topo)
+        const ANSI_REGEX =
+          /[\u001B\u009B][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+        const visibleLen = (s: string) => s.replace(ANSI_REGEX, '').length;
+        const frameWidth = Math.max(...lines.map((l) => visibleLen(l)));
+        const cols = obterColunasTerm() || 0;
+        const outStream: tty.WriteStream | undefined =
+          process.stdout && typeof (process.stdout as tty.WriteStream).isTTY !== 'undefined'
+            ? (process.stdout as tty.WriteStream)
+            : undefined;
+        const isTty = !!outStream && outStream.isTTY !== false;
+        if (isTty) {
+          const pad = Math.floor(Math.max(0, cols - frameWidth) / 2);
+          if (pad > 0) {
+            const pref = ' '.repeat(pad);
+            console.log(lines.map((l) => pref + l).join('\n'));
+            return;
+          }
+        }
+      } catch {
+        // Se centralização falhar, imprime normalmente
+      }
+    }
     console.log(out);
   },
   simbolos: LOG_SIMBOLOS,

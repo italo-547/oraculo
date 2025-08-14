@@ -12,7 +12,27 @@ export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
   const constExcessivas = Object.entries(estatisticasUsoGlobal.consts).filter(([, n]) => n > 3);
   const requireRepetidos = Object.entries(estatisticasUsoGlobal.requires).filter(([, n]) => n > 3);
 
+  // Cabeçalho: manter linha para compatibilidade de testes
   log.info('\n🧼 Relatório de Saúde do Código:\n');
+  // Moldura do cabeçalho (somente em runtime humano)
+  if (!process.env.VITEST) {
+    const tituloCab = 'Relatório de Saúde do Código';
+    const linhasCab: string[] = [];
+    const larguraCab = (log as unknown as { calcularLargura?: Function }).calcularLargura
+      ? (log as unknown as { calcularLargura: Function }).calcularLargura(
+          tituloCab,
+          linhasCab,
+          config.COMPACT_MODE ? 84 : 96,
+        )
+      : undefined;
+    (log as unknown as { imprimirBloco: Function }).imprimirBloco(
+      tituloCab,
+      linhasCab,
+      chalk.cyan.bold,
+      typeof larguraCab === 'number' ? larguraCab : config.COMPACT_MODE ? 84 : 96,
+    );
+    console.log('');
+  }
 
   if (ocorrencias.length > 0) {
     // Mantém aviso compatível com testes, sem listar todas as ocorrências
@@ -66,7 +86,18 @@ export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
         log as unknown as {
           imprimirBloco: (t: string, l: string[], c?: (s: string) => string, w?: number) => void;
         }
-      ).imprimirBloco('funções longas:', linhas, chalk.cyan.bold, 44);
+      ).imprimirBloco(
+        'funções longas:',
+        linhas,
+        chalk.cyan.bold,
+        (log as unknown as { calcularLargura?: Function }).calcularLargura
+          ? (log as unknown as { calcularLargura: Function }).calcularLargura(
+              'funções longas:',
+              linhas,
+              config.COMPACT_MODE ? 84 : 96,
+            )
+          : 84,
+      );
       console.log('');
 
       // Dicas
@@ -150,5 +181,25 @@ export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
     log.info('');
   }
 
+  // Rodapé: manter sucesso para testes
   log.sucesso('Fim do relatório do zelador.');
+  // Moldura de rodapé (somente em runtime humano)
+  if (!process.env.VITEST) {
+    const tituloFim = 'Fim do relatório do zelador';
+    const linhasFim: string[] = ['Mandou bem!'];
+    const larguraFim = (log as unknown as { calcularLargura?: Function }).calcularLargura
+      ? (log as unknown as { calcularLargura: Function }).calcularLargura(
+          tituloFim,
+          linhasFim,
+          config.COMPACT_MODE ? 84 : 96,
+        )
+      : undefined;
+    (log as unknown as { imprimirBloco: Function }).imprimirBloco(
+      tituloFim,
+      linhasFim,
+      chalk.green.bold,
+      typeof larguraFim === 'number' ? larguraFim : config.COMPACT_MODE ? 84 : 96,
+    );
+    console.log('');
+  }
 }
