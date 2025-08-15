@@ -37,7 +37,7 @@
     "perf:gate": "node dist/cli.js perf compare --dir docs/perf --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);if(j.regressao){console.error('Regressao performance > limite');process.exit(1)}console.log('Perf OK')});\"",
     "security:deps": "npm audit --production --audit-level=moderate || true",
     "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
-    "prepare": "husky install",
+    "prepare": "husky",
     "test": "vitest run",
     "test:ui": "vitest",
     "coverage": "vitest run --coverage",
@@ -83,7 +83,7 @@
     "vitest": "^3.2.4",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
-    "license-checker-rseidelsohn": "^4.4.5"
+    "license-checker-rseidelsohn": "^4.4.2"
   },
   "vitest": {
     "coverage": {
@@ -103,7 +103,7 @@
       "thresholds": {
         "lines": 90,
         "statements": 90,
-        "branches": 88,
+        "branches": 90,
         "functions": 90
       }
     }
