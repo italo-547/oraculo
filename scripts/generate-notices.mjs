@@ -18,7 +18,11 @@ try {
 } catch {}
 
 const ROOT = process.cwd();
-const OUTPUT = path.join(ROOT, 'THIRD-PARTY-NOTICES.txt');
+const isPtBr = process.argv.includes('--pt-br') || process.env.PT_BR === '1';
+const OUTPUT = path.join(
+    ROOT,
+    isPtBr ? 'AVISOS-DE-TERCEIROS.pt-BR.txt' : 'THIRD-PARTY-NOTICES.txt'
+);
 
 /** Retorna string segura (sem undefined/null) */
 function s(v) {
@@ -33,19 +37,36 @@ function nl(txt) {
 /**
  * Monta cabeçalho do arquivo de avisos
  */
-function header({ projectName, license }) {
+function header({ projectName, license, ptBr }) {
   const now = new Date().toISOString();
-  return [
-    'THIRD-PARTY NOTICES',
-    '====================',
-    '',
-    `${projectName} — Licença do projeto: ${license}`,
-    `Este arquivo lista componentes de terceiros incluídos (produção) e seus respectivos avisos/licenças.`,
-    `Gerado em: ${now}`,
-    '',
-    'Observações:',
-    '- Este arquivo é gerado automaticamente; não edite manualmente.',
-    '- Para atualizar, execute: npm run licenses:notice',
+    if (ptBr) {
+      return [
+        'AVISOS DE TERCEIROS',
+        '====================',
+        '',
+        `${projectName} — Licença do projeto: ${license}`,
+        `Este arquivo lista componentes de terceiros incluídos (produção) e seus respectivos avisos/licenças.`,
+        `Gerado em: ${now}`,
+        '',
+        'Observações:',
+        '- Este arquivo é gerado automaticamente; não edite manualmente.',
+        '- Para atualizar, execute: npm run licenses:notice',
+            '- Os textos de licença de terceiros são reproduzidos no idioma original para preservar validade jurídica.',
+            '',
+        ].join('\n');
+    }
+    return [
+        'THIRD-PARTY NOTICES',
+        '====================',
+        '',
+        `${projectName} — Project license: ${license}`,
+        `This file lists third-party components included (production) and their notices/licenses.`,
+        `Generated at: ${now}`,
+        '',
+        'Notes:',
+        '- This file is generated automatically; do not edit manually.',
+        '- To update, run: npm run licenses:notice',
+        '- Third-party license texts are reproduced in their original language to preserve legal validity.',
     '',
   ].join('\n');
 }
@@ -168,7 +189,7 @@ async function main() {
     .filter(([id]) => !id.startsWith(`${pkg.name}@`))
     .sort(([a], [b]) => a.localeCompare(b));
 
-  const parts = [header({ projectName, license: projectLicense })];
+    const parts = [header({ projectName, license: projectLicense, ptBr: isPtBr })];
 
   for (const [id, meta] of entries) {
     parts.push(await renderPackageBlock(id, meta));

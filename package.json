@@ -44,7 +44,8 @@
     "cleanup:metricas": "node -e \"import('node:fs').then(fs=>fs.promises.rm('.oraculo/historico-metricas',{recursive:true,force:true}).then(()=>console.log('Histórico de métricas limpo.')).catch(e=>console.error('Falha limpeza:',e.message)))\"",
     "licenses:list": "npx license-checker-rseidelsohn --production --csv",
     "licenses:json": "npx license-checker-rseidelsohn --production --json > .oraculo/licenses.json",
-    "licenses:notice": "node scripts/generate-notices.mjs"
+    "licenses:notice": "node scripts/generate-notices.mjs",
+    "licenses:notice:pt-br": "node scripts/generate-notices.mjs --pt-br"
   },
   "keywords": [
     "cli",
