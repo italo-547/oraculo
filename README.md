@@ -491,7 +491,15 @@ Isso gera/atualiza os arquivos com base nas dependências de produção instalad
 
 Se surgir necessidade futura de oferecer extras proprietários, dá para fazer via modelo open-core sem alterar o core livre.
 
-## 🚀 Performance
+## � Agradecimentos
+
+Este projeto se apoia em software livre mantido por uma comunidade incrível.
+
+- Avisos e licenças de terceiros: consulte `THIRD-PARTY-NOTICES.txt` (EN) e `AVISOS-DE-TERCEIROS.pt-BR.txt` (cabeçalho em pt-BR).
+- Os textos legais das licenças são reproduzidos no idioma original para preservar a validade jurídica.
+- A todas as pessoas mantenedoras e contribuidoras de OSS: obrigado pelo trabalho e pela distribuição aberta que torna este projeto possível.
+
+## �🚀 Performance
 
 Snapshots sintéticos: `npm run perf:baseline` (detalhes em `docs/perf/README.md`).
 
