@@ -106,11 +106,28 @@ console.log(bloco); // impressão direta, sem prefixo
 - **Testes**: Já implementados (Vitest). Durante testes `process.env.VITEST` deve impedir chamadas a `process.exit`.
 - **Persistência**: Sempre utilize os helpers centralizados para leitura/escrita de arquivos de estado, relatórios e snapshots.
 
+## Cobertura e Testes (Vitest)
+
+- Limiares atuais (V8): linhas/declarações/funções 90% e ramos 88% no projeto. Evite regressões e, quando possível, mantenha ≥ 90% também para ramos nos arquivos críticos de CLI (ex.: `src/cli/comando-diagnosticar.ts`).
+- Priorização de ramos: adicione micro-testes que acionem early-returns (`--scan-only`), caminhos de erro/catch, e combinações de flags que mudam o fluxo (verbose, compacto, guardian full-scan, exportações de relatório).
+- Execução em testes: durante Vitest, `process.env.VITEST` deve desabilitar saídas que encerram o processo. Use spies em `process.exit` e restaure no teardown.
+- Mocks úteis: isole formatação de terminal (chalk/width), IO (helpers de persistência), e relógio quando necessário. Não faça mock de `fs` direto: sempre dos helpers (`lerEstado`/`salvarEstado`).
+- Estabilidade: evite flakiness controlando flags/ambiente explicitamente nos testes (ex.: `COMPACT_MODE`, `VERBOSE`, `SCAN_ONLY`).
+
 ## Flags Recentes / Comportamentos
 
 - `--scan-only`: Executa somente varredura + priorização (sem técnicas mutáveis).
 - `--full-scan` (guardian): Ignora padrões de ignore para inspeção pontual (não persiste baseline).
 - `--json`: Saída estruturada em `diagnosticar` e `guardian` (consumível por CI/pipelines).
+
+### Saída JSON e política de logs
+
+- Em modo `--json`, silencie logs verbosos durante a montagem do objeto e emita apenas o JSON final; restaure o estado do logger após imprimir.
+- Escapes Unicode: toda saída JSON deve escapar caracteres fora de ASCII básico via `\uXXXX`. Garanta cobertura para:
+  - BMP não-ASCII (acentos, símbolos).
+  - Pares substitutos para caracteres fora do BMP (ex.: emojis) — representados como dois `\uXXXX` válidos.
+  - Caminhos de fallback quando o code point não for identificável (ex.: `cp == null`) — sempre retorne escape seguro.
+- Guardian no JSON: quando o Guardian não for executado, retorne status padrão coerente (ex.: `"nao-verificado"`) e mantenha o shape estável para consumidores.
 
 ## Linguagens / Parsing Suportado
 
@@ -142,6 +159,7 @@ Campo raiz adicional:
 Notas de encoding:
 
 - A saída JSON aplica escape unicode (`\uXXXX`) para caracteres fora de ASCII básico quando `--json` é usado, mitigando artefatos de console Windows legado.
+- Inclui suporte a pares substitutos (caracteres fora do BMP) e caminhos de fallback seguros quando o ponto de código não puder ser determinado.
 
 ## Agregação de PARSE_ERRO
 
@@ -151,6 +169,10 @@ Para reduzir ruído:
 - Contagem total original é preservada em campo interno (`__ORACULO_PARSE_ERROS_ORIG_TOTAL__`).
 - Objetivo: permitir análise de tendência sem inundar logs.
 - Próximo passo: expor limites e política no README.
+
+Observações de testes:
+
+- Cubra a agregação com casos-limite garantindo que o limite por arquivo é respeitado e que a contagem total preservada é reportada no campo interno.
 
 ## Documentação — Fonte Única de Verdade
 
@@ -174,6 +196,12 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 - Separação clara entre análise (analistas), diagnóstico (arquitetos), correção (zeladores) e verificação (guardian).
 - Relatórios e persistência de estado sempre via helpers centralizados.
 - Tipos centralizados para garantir consistência entre domínios.
+
+### Molduras e largura de exibição
+
+- Gere molduras multi-linha com `formatarBloco` via `log.bloco` e imprima com `console.log(bloco)` para preservar bordas/alinhamento.
+- Largura: use o cálculo dinâmico; se falhar, aplique fallbacks determinísticos — modo compacto: 84 colunas; modo padrão: 96 colunas. Em ambientes de DEV/CI onde `chalk.columns` não está disponível, trate exceções e caia no fallback.
+- Logs verbosos de filtros (include/exclude) não devem quebrar molduras; em `--json` devem estar silenciados.
 
 ## Dependências e Requisitos
 

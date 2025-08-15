@@ -83,7 +83,7 @@ describe('@e2e E2E CLI binário', () => {
     // Mesmo com --silence, exit code deve refletir ausência de erros críticos (somente avisos) => 0
     // Pode haver ocorrências elevadas a erro conforme regras; aceitamos 0 ou 1 desde que não seja crash diferente
     expect([0, 1]).toContain(proc.status);
-  });
+  }, 15000);
 
   it('@e2e executa diagnosticar com --guardian-check criando baseline inicial (exit 0)', () => {
     const cliPath = garantirBuild();

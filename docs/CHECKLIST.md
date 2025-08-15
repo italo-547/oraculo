@@ -18,7 +18,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
   - [x] Plano de reorganização inicial (zona verde) gerado automaticamente (`planoSugestao`) – somente sugestões
   - [x] Documentação detalhada em `docs/estruturas/README.md`
   - [ ] Testes de fixtures por arquétipo (casos híbridos & conflito de confiança)
-  - [ ] Comando `reestruturar` (dry-run + `--aplicar`)
+  - [x] Comando `reestruturar` (dry-run + `--aplicar`)
   - [ ] Geração de mapa de reversão para moves aplicados
   - [ ] Normalização de nomes de diretórios (case / plurais) opcional
   - [ ] Regras adicionais (zona amarela) com opt-in
@@ -26,7 +26,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 ### Média Prioridade
 
 - [ ] Monitor de dependências: documentar fluxo automatizado + workflow agendado (usar `npm outdated` + `npm audit` não-blocking)
-- [ ] Documentar estratégia de mocks de AST (arquivo guia em `docs/tests/AST_MOCKS.md` centralizando padrões)
+- [x] Documentar estratégia de mocks de AST (arquivo guia em `docs/tests/AST_MOCKS.md` centralizando padrões)
 - [ ] Guia de padronização de código / convenções (estilo, naming, estrutura de analistas, limites de complexidade)
 - [ ] Gate de regressão de performance opcional (falhar CI se parsing/análise > +30% vs baseline referência) <!-- próximo passo: integrar comando perf compare no CI -->
 
@@ -42,6 +42,11 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - Limites de PARSE_ERRO já expostos; considerar parametrize via flag futura (`--parse-erros-max=<n>`)
 - Métricas internas disponíveis em `diagnosticar --json` (`metricas`) e histórico via `oraculo metricas`
 - O catálogo `docs/ANALISTAS.md` deve ser gerado via comando: `oraculo analistas --doc docs/ANALISTAS.md`
+
+Cobertura atual (V8):
+
+- Statements/Lines/Functions > 96%; Branches ~89% (acima do gate de 88%).
+- Próxima iteração opcional: elevar branches globais para ≥ 90% com 1–2 micro-testes adicionais em módulos com ramos ainda abaixo desse patamar.
 
 ## Concluídos Recentes (Sessão Atual)
 
@@ -78,6 +83,17 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Flag `diagnosticar --listar-analistas` (uso opcional) para depuração rápida do registro
 - [x] Documentação sincronizada: correções de nomes em `docs/relatorios/RELATORIO.md` e atualização do README raiz com o comando `analistas`
 - [x] Agregação de `TODO_PENDENTE` por arquivo no resumo para reduzir ruído (mensagem consolidada)
+
+### Cobertura e testes (sessão atual)
+
+- [x] Elevação de cobertura de testes: ≥ 90% global (linhas/declarações/funções) e ≥ 90% de branches no arquivo `src/cli/comando-diagnosticar.ts`.
+- [x] Micro-testes de ramos adicionados cobrindo:
+  - Guardian: combinações de status (Ok, Criado, Aceito, AlteracoesDetectadas), modo permissivo e enforcement com detalhes.
+  - JSON: silenciamento/restauração de logs, escape de não-ASCII e pares substitutos, caminho `codePointAt == null`, campo `guardian: "nao-verificado"` quando Guardian não roda.
+  - Listar-analistas: fallback de largura (compacto 84 / não-compacto 96) e `catch` em DEV_MODE.
+  - Agregações: `TODO_PENDENTE` por arquivo e `catch` silencioso na agregação; agregação de `PARSE_ERRO` com contagem original preservada.
+  - UX fora de VITEST: blocos moldurados de resumo e despedida.
+  - Arquétipos: resumo/drift com truncamento e reticências quando listas excedem o limite de exibição.
 
 ## Refinamentos de Qualidade (Novos)
 

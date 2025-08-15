@@ -41,13 +41,20 @@ describe('detectorEstrutura', () => {
     ).toBe(true);
   });
 
-  it('detecta muitos arquivos na raiz', () => {
-    const arquivos = Array.from({ length: 12 }, (_, i) => ({ relPath: `arquivo${i}.js` }));
-    const contexto = { arquivos };
-    const ocorrencias = detectorEstrutura.aplicar('', '', undefined, '', contexto as any);
-    expect(
-      Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'estrutura-suspeita'),
-    ).toBe(true);
+  it('detecta muitos arquivos na raiz', async () => {
+    const cosmos = await import('../nucleo/constelacao/cosmos.js');
+    const original = cosmos.config.ESTRUTURA_ARQUIVOS_RAIZ_MAX;
+    cosmos.config.ESTRUTURA_ARQUIVOS_RAIZ_MAX = 10; // força limite baixo
+    try {
+      const arquivos = Array.from({ length: 20 }, (_, i) => ({ relPath: `arquivo${i}.js` }));
+      const contexto = { arquivos };
+      const ocorrencias = detectorEstrutura.aplicar('', '', undefined, '', contexto as any);
+      expect(
+        Array.isArray(ocorrencias) && ocorrencias.some((o: any) => o.tipo === 'estrutura-suspeita'),
+      ).toBe(true);
+    } finally {
+      cosmos.config.ESTRUTURA_ARQUIVOS_RAIZ_MAX = original;
+    }
   });
 
   it('detecta sinais de backend', () => {

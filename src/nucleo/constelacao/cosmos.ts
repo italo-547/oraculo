@@ -129,6 +129,8 @@ export const configDefault = {
   STRUCTURE_LAYERS: {},
   // Limite de tamanho (bytes) para considerar mover arquivo em plano de reorganização
   ESTRUTURA_PLANO_MAX_FILE_SIZE: 256 * 1024, // ~250KB
+  // Limite de arquivos considerados "muitos arquivos na raiz" (ajustável por repo)
+  ESTRUTURA_ARQUIVOS_RAIZ_MAX: 10,
 
   // Compatibilidade/legado
   STATE_DIR: ORACULO_STATE,

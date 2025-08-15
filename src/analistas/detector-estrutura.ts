@@ -1,4 +1,5 @@
 import { grafoDependencias } from './detector-dependencias.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 import type {
   TecnicaAplicarResultado,
   ContextoExecucao,
@@ -113,7 +114,8 @@ export const detectorEstrutura = {
 
     // Muitos arquivos na raiz (considera apenas nível imediato sem subpastas)
     const arquivosRaiz = caminhosNorm.filter((p) => !p.includes('/') && p.trim() !== '');
-    if (arquivosRaiz.length > 10) {
+    const LIMITE_RAIZ = Number(config.ESTRUTURA_ARQUIVOS_RAIZ_MAX || 10);
+    if (arquivosRaiz.length > LIMITE_RAIZ) {
       ocorrencias.push({
         tipo: 'estrutura-suspeita',
         nivel: 'aviso',

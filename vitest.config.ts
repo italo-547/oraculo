@@ -16,7 +16,7 @@ export default defineConfig({
         'temp-fantasma/**',
         'scripts/**',
       ],
-      thresholds: { lines: 80, statements: 80, branches: 80, functions: 80 },
+      thresholds: { lines: 90, statements: 90, branches: 90, functions: 90 },
     },
   },
 });

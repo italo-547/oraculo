@@ -36,7 +36,11 @@ export function exibirRelatorioZeladorSaude(ocorrencias: Ocorrencia[]): void {
 
   if (ocorrencias.length > 0) {
     // Mantém aviso compatível com testes, sem listar todas as ocorrências
-    log.aviso('⚠️ Funções longas encontradas:');
+    // Usa fallback para ambientes de teste/mocks que não exponham `aviso`
+    const logAviso = (log as unknown as { aviso?: (m: string) => void; info: (m: string) => void })
+      .aviso;
+    if (typeof logAviso === 'function') logAviso('⚠️ Funções longas encontradas:');
+    else log.info('⚠️ Funções longas encontradas:');
     // Agrega por arquivo
     const porArquivo = new Map<string, number>();
     for (const o of ocorrencias) {
