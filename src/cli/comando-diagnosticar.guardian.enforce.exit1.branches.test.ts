@@ -10,13 +10,20 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  if (saved.VITEST === undefined) delete (process.env as any).VITEST; else process.env.VITEST = saved.VITEST;
+  if (saved.VITEST === undefined) delete (process.env as any).VITEST;
+  else process.env.VITEST = saved.VITEST;
 });
 
 describe('comando-diagnosticar — guardian enforce chama exit(1)', () => {
   it('quando scanSystemIntegrity lança com detalhes e ENFORCE=true', async () => {
     const aplicar = vi.fn();
-    const log: any = { info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn(), fase: vi.fn() };
+    const log: any = {
+      info: vi.fn(),
+      sucesso: vi.fn(),
+      aviso: vi.fn(),
+      erro: vi.fn(),
+      fase: vi.fn(),
+    };
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log }));
     vi.doMock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: [{ relPath: 'a' }] })),
@@ -26,7 +33,11 @@ describe('comando-diagnosticar — guardian enforce chama exit(1)', () => {
       tecnicas: [],
     }));
     vi.doMock('../guardian/sentinela.js', () => ({
-      scanSystemIntegrity: vi.fn(async () => { const e: any = new Error('blk'); e.detalhes = ['d1','d2']; throw e; }),
+      scanSystemIntegrity: vi.fn(async () => {
+        const e: any = new Error('blk');
+        e.detalhes = ['d1', 'd2'];
+        throw e;
+      }),
     }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
       config: {

@@ -39,7 +39,9 @@ describe('comando-diagnosticar – JSON metricas undefined (branches)', () => {
 
     const logs: string[] = [];
     const origLog = console.log;
-    console.log = (msg?: any) => { if (typeof msg === 'string') logs.push(msg); };
+    console.log = (msg?: any) => {
+      if (typeof msg === 'string') logs.push(msg);
+    };
 
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
     const program = new Command();

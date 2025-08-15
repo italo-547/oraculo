@@ -32,7 +32,7 @@ describe('comando-diagnosticar — scan-only exporta para diretório padrão qua
     // salvarEstado para capturar caminho de saída
     vi.mock('../zeladores/util/persistencia.js', () => ({
       salvarEstado: vi.fn(async (dest: string) => {
-  hoisted.saved.push(dest);
+        hoisted.saved.push(dest);
       }),
     }));
 
@@ -62,9 +62,13 @@ describe('comando-diagnosticar — scan-only exporta para diretório padrão qua
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
 
     // Deve ter criado diretório padrão
-  expect(hoisted.createdDirs.some((d) => d.includes('oraculo-reports'))).toBe(true);
+    expect(hoisted.createdDirs.some((d) => d.includes('oraculo-reports'))).toBe(true);
     // E salvado um .json dentro dele
-  expect(hoisted.saved.some((p) => p.includes('oraculo-reports') && p.endsWith('.json'))).toBe(true);
-  expect(hoisted.logMock.sucesso).toHaveBeenCalledWith(expect.stringContaining('Relatório de scan salvo'));
+    expect(hoisted.saved.some((p) => p.includes('oraculo-reports') && p.endsWith('.json'))).toBe(
+      true,
+    );
+    expect(hoisted.logMock.sucesso).toHaveBeenCalledWith(
+      expect.stringContaining('Relatório de scan salvo'),
+    );
   });
 });

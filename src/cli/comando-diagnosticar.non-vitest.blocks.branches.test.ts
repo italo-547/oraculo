@@ -42,7 +42,14 @@ describe('comando-diagnosticar — blocos não-VITEST (resumo estrutura e desped
     } as any;
 
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
-  vi.doMock('chalk', () => ({ default: { bold: (x: any) => x, cyan: { bold: (x: any) => x }, yellow: { bold: (x: any) => x }, green: { bold: (x: any) => x } } }));
+    vi.doMock('chalk', () => ({
+      default: {
+        bold: (x: any) => x,
+        cyan: { bold: (x: any) => x },
+        yellow: { bold: (x: any) => x },
+        green: { bold: (x: any) => x },
+      },
+    }));
 
     // Mock do fluxo de inquisição: 1 ocorrência não-erro para cair no caminho de problemas
     const fakeEntries = [
@@ -50,8 +57,13 @@ describe('comando-diagnosticar — blocos não-VITEST (resumo estrutura e desped
     ];
     vi.doMock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: fakeEntries })),
-      prepararComAst: vi.fn(async (entries: any) => entries.map((e: any) => ({ ...e, ast: undefined }))),
-      executarInquisicao: vi.fn(async () => ({ ocorrencias: [{ tipo: 'X', mensagem: 'm', relPath: 'src/a.ts', nivel: 'info' }], fileEntries: fakeEntries })),
+      prepararComAst: vi.fn(async (entries: any) =>
+        entries.map((e: any) => ({ ...e, ast: undefined })),
+      ),
+      executarInquisicao: vi.fn(async () => ({
+        ocorrencias: [{ tipo: 'X', mensagem: 'm', relPath: 'src/a.ts', nivel: 'info' }],
+        fileEntries: fakeEntries,
+      })),
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
@@ -60,10 +72,32 @@ describe('comando-diagnosticar — blocos não-VITEST (resumo estrutura e desped
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
         melhores: [
-          { nome: 'cli-modular', confidence: 0.7, score: 70, anomalias: [], missingRequired: [], matchedRequired: ['src'], forbiddenPresent: [], planoSugestao: { mover: [], conflitos: [] } },
+          {
+            nome: 'cli-modular',
+            confidence: 0.7,
+            score: 70,
+            anomalias: [],
+            missingRequired: [],
+            matchedRequired: ['src'],
+            forbiddenPresent: [],
+            planoSugestao: { mover: [], conflitos: [] },
+          },
         ],
-        baseline: { version: 1, timestamp: new Date().toISOString(), arquetipo: 'cli-modular', confidence: 0.7, arquivosRaiz: ['README.md'] },
-        drift: { alterouArquetipo: false, anterior: 'cli-modular', atual: 'cli-modular', deltaConfidence: 0, arquivosRaizNovos: [], arquivosRaizRemovidos: [] },
+        baseline: {
+          version: 1,
+          timestamp: new Date().toISOString(),
+          arquetipo: 'cli-modular',
+          confidence: 0.7,
+          arquivosRaiz: ['README.md'],
+        },
+        drift: {
+          alterouArquetipo: false,
+          anterior: 'cli-modular',
+          atual: 'cli-modular',
+          deltaConfidence: 0,
+          arquivosRaizNovos: [],
+          arquivosRaizRemovidos: [],
+        },
       })),
     }));
 
@@ -82,8 +116,12 @@ describe('comando-diagnosticar — blocos não-VITEST (resumo estrutura e desped
 
     // Relatórios auxiliares chamados no modo não-compacto
     vi.doMock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
+    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({
+      exibirRelatorioZeladorSaude: vi.fn(),
+    }));
+    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({
+      exibirRelatorioPadroesUso: vi.fn(),
+    }));
     vi.doMock('../arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
     vi.doMock('../relatorios/conselheiro-oracular.js', () => ({ emitirConselhoOracular: vi.fn() }));
 
@@ -94,7 +132,9 @@ describe('comando-diagnosticar — blocos não-VITEST (resumo estrutura e desped
 
     // Deve ter imprimido blocos moldurados (Resumo da estrutura e Resumo de tipos)
     const titulos = (imprimirBloco.mock.calls || []).map((c: any[]) => c[0]);
-    expect(titulos.some((t: string) => /Resumo da estrutura|Resumo rápido da estrutura/.test(t))).toBe(true);
+    expect(
+      titulos.some((t: string) => /Resumo da estrutura|Resumo rápido da estrutura/.test(t)),
+    ).toBe(true);
     expect(titulos.some((t: string) => /Resumo dos tipos de problemas/.test(t))).toBe(true);
     // Mensagem final amigável ocorre apenas fora de VITEST
     expect(logMock.imprimirBloco).toHaveBeenCalledWith(

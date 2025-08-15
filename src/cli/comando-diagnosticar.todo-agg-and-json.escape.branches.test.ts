@@ -8,9 +8,18 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
   });
 
   it('agrupa TODO_PENDENTE por arquivo e eleva severidade quando PARSE_ERRO_FALHA', async () => {
-    const logMock = { info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn(), imprimirBloco: vi.fn(), infoDestaque: vi.fn() } as any;
+    const logMock = {
+      info: vi.fn(),
+      sucesso: vi.fn(),
+      aviso: vi.fn(),
+      erro: vi.fn(),
+      imprimirBloco: vi.fn(),
+      infoDestaque: vi.fn(),
+    } as any;
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
-    vi.doMock('chalk', () => ({ default: { bold: (x: string) => x, cyan: { bold: (x: string) => x } } }));
+    vi.doMock('chalk', () => ({
+      default: { bold: (x: string) => x, cyan: { bold: (x: string) => x } },
+    }));
     const configObj: any = {
       GUARDIAN_ENABLED: false,
       GUARDIAN_ENFORCE_PROTECTION: false,
@@ -46,7 +55,9 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
     // Deve ter agregado TODOs e marcado erro pela regra PARSE_ERRO_FALHA
     const joinedAviso = logMock.aviso.mock.calls.map((c: any[]) => c[0]).join('\n');
     expect(joinedAviso).toMatch(/Diagnóstico concluído/);
-    const chamadasBloco = logMock.imprimirBloco.mock.calls.map((c: any[]) => String(c[0])).join('\n');
+    const chamadasBloco = logMock.imprimirBloco.mock.calls
+      .map((c: any[]) => String(c[0]))
+      .join('\n');
     expect(chamadasBloco).toMatch(/Resumo dos tipos de problemas/);
   });
 
@@ -77,7 +88,26 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
     }));
     // Detector de arquétipos com unicode para forçar escape
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
-      detectarArquetipos: vi.fn(async () => ({ melhores: [{ nome: 'módulo-α', confidence: 0.9, score: 1, missingRequired: [], matchedRequired: [], forbiddenPresent: [], anomalias: [], planoSugestao: { mover: [], conflitos: [], resumo: { total: 0, zonaVerde: 0, bloqueados: 0 } } }], baseline: undefined, drift: undefined })),
+      detectarArquetipos: vi.fn(async () => ({
+        melhores: [
+          {
+            nome: 'módulo-α',
+            confidence: 0.9,
+            score: 1,
+            missingRequired: [],
+            matchedRequired: [],
+            forbiddenPresent: [],
+            anomalias: [],
+            planoSugestao: {
+              mover: [],
+              conflitos: [],
+              resumo: { total: 0, zonaVerde: 0, bloqueados: 0 },
+            },
+          },
+        ],
+        baseline: undefined,
+        drift: undefined,
+      })),
     }));
 
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');

@@ -15,7 +15,9 @@ vi.mock('../nucleo/inquisidor.js', () => ({
   tecnicas: [],
 }));
 vi.mock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-vi.mock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
+vi.mock('../relatorios/relatorio-zelador-saude.js', () => ({
+  exibirRelatorioZeladorSaude: vi.fn(),
+}));
 vi.mock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
 vi.mock('../arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
 vi.mock('../relatorios/gerador-relatorio.js', () => ({ gerarRelatorioMarkdown: vi.fn() }));
@@ -35,7 +37,18 @@ vi.mock('../nucleo/constelacao/log.js', () => ({
     aviso: avisoSpy,
     sucesso: sucessoSpy,
     imprimirBloco: imprimirBlocoSpy,
-    simbolos: { info: 'ℹ️', sucesso: '✅', erro: '❌', aviso: '⚠️', debug: '🐞', fase: '🔶', passo: '▫️', scan: '🔍', guardian: '🛡️', pasta: '📂' },
+    simbolos: {
+      info: 'ℹ️',
+      sucesso: '✅',
+      erro: '❌',
+      aviso: '⚠️',
+      debug: '🐞',
+      fase: '🔶',
+      passo: '▫️',
+      scan: '🔍',
+      guardian: '🛡️',
+      pasta: '📂',
+    },
   },
 }));
 

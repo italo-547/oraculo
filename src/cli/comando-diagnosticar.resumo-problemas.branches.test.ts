@@ -67,10 +67,10 @@ describe('comando diagnosticar – resumo e despedida', () => {
     const spyExit = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as any);
     const cli = await buildCLI(true);
     await cli.parseAsync(['node', 'cli', 'diagnosticar']);
-  // Deve ter impresso algum bloco moldurado (independente do título específico)
-  expect(imprimirBloco.mock.calls.length).toBeGreaterThan(0);
-  // Não deve encerrar o teste (o CLI chamaria exit fora do VITEST; aqui interceptamos)
-  expect(spyExit).toHaveBeenCalled();
+    // Deve ter impresso algum bloco moldurado (independente do título específico)
+    expect(imprimirBloco.mock.calls.length).toBeGreaterThan(0);
+    // Não deve encerrar o teste (o CLI chamaria exit fora do VITEST; aqui interceptamos)
+    expect(spyExit).toHaveBeenCalled();
     spyExit.mockRestore();
   });
 });

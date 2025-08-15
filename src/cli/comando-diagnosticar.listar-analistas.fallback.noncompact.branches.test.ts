@@ -9,7 +9,13 @@ describe('comando-diagnosticar — listar-analistas largura fallback não-compac
   it('quando calcularLargura não existe e sem --compact, usa largura 96', async () => {
     const hoisted = vi.hoisted(() => ({
       imprimirBloco: vi.fn(),
-      logMock: { info: vi.fn(), aviso: vi.fn(), erro: vi.fn(), sucesso: vi.fn(), imprimirBloco: vi.fn() } as any,
+      logMock: {
+        info: vi.fn(),
+        aviso: vi.fn(),
+        erro: vi.fn(),
+        sucesso: vi.fn(),
+        imprimirBloco: vi.fn(),
+      } as any,
     }));
     // Sem calcularLargura
     vi.mock('../nucleo/constelacao/log.js', () => ({ log: hoisted.logMock }));
@@ -25,9 +31,7 @@ describe('comando-diagnosticar — listar-analistas largura fallback não-compac
       },
     }));
     vi.mock('../analistas/registry.js', () => ({
-      listarAnalistas: () => ([
-        { nome: '', categoria: '', descricao: 'd' },
-      ]),
+      listarAnalistas: () => [{ nome: '', categoria: '', descricao: 'd' }],
     }));
     vi.mock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: async () => ({ fileEntries: [{ relPath: 'a.ts', content: 'x' }] }),
@@ -36,10 +40,16 @@ describe('comando-diagnosticar — listar-analistas largura fallback não-compac
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
-    vi.mock('../arquitetos/analista-estrutura.js', () => ({ alinhamentoEstrutural: vi.fn(() => []) }));
+    vi.mock('../arquitetos/analista-estrutura.js', () => ({
+      alinhamentoEstrutural: vi.fn(() => []),
+    }));
     vi.mock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-    vi.mock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
-    vi.mock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
+    vi.mock('../relatorios/relatorio-zelador-saude.js', () => ({
+      exibirRelatorioZeladorSaude: vi.fn(),
+    }));
+    vi.mock('../relatorios/relatorio-padroes-uso.js', () => ({
+      exibirRelatorioPadroesUso: vi.fn(),
+    }));
     vi.mock('../relatorios/conselheiro-oracular.js', () => ({ emitirConselhoOracular: vi.fn() }));
 
     const program = new Command();

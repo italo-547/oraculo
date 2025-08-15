@@ -26,14 +26,17 @@ describe('relatorio-zelador-saude – ramos adicionais', () => {
     vi.mock('../analistas/analista-padroes-uso.js', () => ({
       estatisticasUsoGlobal: { consts: {}, requires: {} },
     }));
-  const { exibirRelatorioZeladorSaude } = await import('./relatorio-zelador-saude.js');
-  const { log } = await import('../nucleo/constelacao/log.js');
-  exibirRelatorioZeladorSaude([]);
-  const titles = (log as any).imprimirBloco.mock.calls.map((c: any[]) => String(c[0])).join('\n');
-  expect(titles).toMatch(/Relatório de Saúde do Código/);
-  expect(titles).toMatch(/Fim do relatório do zelador/);
-  // Mensagem de sem problemas
-  const joined = (log as any).info.mock.calls.flat().join('\n') + '\n' + (log as any).sucesso.mock.calls.flat().join('\n');
+    const { exibirRelatorioZeladorSaude } = await import('./relatorio-zelador-saude.js');
+    const { log } = await import('../nucleo/constelacao/log.js');
+    exibirRelatorioZeladorSaude([]);
+    const titles = (log as any).imprimirBloco.mock.calls.map((c: any[]) => String(c[0])).join('\n');
+    expect(titles).toMatch(/Relatório de Saúde do Código/);
+    expect(titles).toMatch(/Fim do relatório do zelador/);
+    // Mensagem de sem problemas
+    const joined =
+      (log as any).info.mock.calls.flat().join('\n') +
+      '\n' +
+      (log as any).sucesso.mock.calls.flat().join('\n');
     expect(joined).toMatch(/Nenhuma função acima do limite/);
   });
 });

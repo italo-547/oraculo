@@ -58,7 +58,7 @@ describe('comandoReestruturar branches adicionais', () => {
         origem: 'nenhum' as const,
       })),
     }));
-  // operario-estrutura já mockado no topo via `shared`
+    // operario-estrutura já mockado no topo via `shared`
 
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as any);
     const { log } = await import('../nucleo/constelacao/log.js');
@@ -83,14 +83,12 @@ describe('comandoReestruturar branches adicionais', () => {
     ]);
 
     // Aviso de conflito domains+flat
-    expect(log.aviso).toHaveBeenCalledWith(
-      expect.stringContaining('domains e --flat informados'),
-    );
+    expect(log.aviso).toHaveBeenCalledWith(expect.stringContaining('domains e --flat informados'));
     // Dry-run informado
     expect(log.info).toHaveBeenCalledWith(
       expect.stringContaining('Dry-run solicitado (--somente-plano)'),
     );
-  // planejar foi utilizado (via mock do topo); não deve encerrar o processo
+    // planejar foi utilizado (via mock do topo); não deve encerrar o processo
     expect(exitSpy).not.toHaveBeenCalled();
   });
 
@@ -99,15 +97,19 @@ describe('comandoReestruturar branches adicionais', () => {
     vi.mock('../nucleo/constelacao/cosmos.js', () => ({ config: { DEV_MODE: true } }));
     vi.mock('../nucleo/constelacao/log.js', () => {
       const blocoFn = vi.fn((titulo: string, linhas: string[]) => [titulo, ...linhas].join('\n'));
-      return { log: { info: vi.fn(), aviso: vi.fn(), erro: vi.fn(), sucesso: vi.fn(), bloco: blocoFn } };
+      return {
+        log: { info: vi.fn(), aviso: vi.fn(), erro: vi.fn(), sucesso: vi.fn(), bloco: blocoFn },
+      };
     });
     vi.mock('../nucleo/inquisidor.js', () => ({
-      iniciarInquisicao: vi.fn(async () => ({ fileEntries: [{ relPath: 'src/a.ts', fullPath: 'x' }] })),
+      iniciarInquisicao: vi.fn(async () => ({
+        fileEntries: [{ relPath: 'src/a.ts', fullPath: 'x' }],
+      })),
       executarInquisicao: vi.fn(async () => ({ ocorrencias: [] })),
       prepararComAst: vi.fn(async (e: any) => e),
       tecnicas: [],
     }));
-  // operario-estrutura já mockado no topo via `shared`
+    // operario-estrutura já mockado no topo via `shared`
 
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as any);

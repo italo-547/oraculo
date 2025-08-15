@@ -59,8 +59,8 @@ describe('comando-diagnosticar — guardian enforce com detalhes e exit em camin
 
     await program.parseAsync(['node', 'cli', 'diagnosticar', '--guardian-check']);
 
-  expect(hoisted.logMock.erro).toHaveBeenCalled();
-  expect(hoisted.logMock.aviso).toHaveBeenCalledWith(expect.stringContaining('det1'));
-  expect(hoisted.logMock.aviso).toHaveBeenCalledWith(expect.stringContaining('det2'));
+    expect(hoisted.logMock.erro).toHaveBeenCalled();
+    expect(hoisted.logMock.aviso).toHaveBeenCalledWith(expect.stringContaining('det1'));
+    expect(hoisted.logMock.aviso).toHaveBeenCalledWith(expect.stringContaining('det2'));
   });
 });

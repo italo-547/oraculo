@@ -29,9 +29,7 @@ describe('comandoDiagnosticar – JSON com erro retorna status erro', () => {
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: [{ relPath: 'a.ts', content: 'x' }] })),
       prepararComAst: vi.fn(async (fes: any) => fes.map((f: any) => ({ ...f, ast: {} }))),
       executarInquisicao: vi.fn(async () => ({
-        ocorrencias: [
-          { tipo: 'PARSE_ERRO', relPath: 'a.ts', mensagem: 'x', nivel: 'aviso' },
-        ],
+        ocorrencias: [{ tipo: 'PARSE_ERRO', relPath: 'a.ts', mensagem: 'x', nivel: 'aviso' }],
         metricas: {
           analistas: [],
           totalArquivos: 1,

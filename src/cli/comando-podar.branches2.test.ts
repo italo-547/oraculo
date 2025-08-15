@@ -28,11 +28,13 @@ describe('comandoPodar branches adicionais', () => {
         arquivosOrfaos: [{ arquivo: 'a.tmp', referenciado: false, diasInativo: 1 }],
       })),
     }));
-    vi.mock('../zeladores/poda.js', () => ({ removerArquivosOrfaos: hoisted.removerArquivosOrfaosMock }));
+    vi.mock('../zeladores/poda.js', () => ({
+      removerArquivosOrfaos: hoisted.removerArquivosOrfaosMock,
+    }));
 
-  const { comandoPodar } = await import('./comando-podar.js');
-  const { log } = await import('../nucleo/constelacao/log.js');
-  const { config } = await import('../nucleo/constelacao/cosmos.js');
+    const { comandoPodar } = await import('./comando-podar.js');
+    const { log } = await import('../nucleo/constelacao/log.js');
+    const { config } = await import('../nucleo/constelacao/cosmos.js');
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
     program.addCommand(comandoPodar(aplicarFlagsGlobais));
@@ -50,15 +52,15 @@ describe('comandoPodar branches adicionais', () => {
       '--force',
     ]);
 
-  // Patterns configurados
-  expect(config.CLI_INCLUDE_PATTERNS.length).toBeGreaterThan(0);
-  expect(config.CLI_EXCLUDE_PATTERNS).toEqual(expect.arrayContaining(['dist', 'coverage']));
+    // Patterns configurados
+    expect(config.CLI_INCLUDE_PATTERNS.length).toBeGreaterThan(0);
+    expect(config.CLI_EXCLUDE_PATTERNS).toEqual(expect.arrayContaining(['dist', 'coverage']));
     // Incluiu node_modules -> remove de ignores
     expect(config.ZELADOR_IGNORE_PATTERNS.some((p: string) => /node_modules/.test(p))).toBe(false);
     expect(config.GUARDIAN_IGNORE_PATTERNS.some((p: string) => /node_modules/.test(p))).toBe(false);
 
     // Teve órfãos e como --force, removeu diretamente e sucesso foi logado
-  expect(hoisted.removerArquivosOrfaosMock).toHaveBeenCalledTimes(2); // listar + remover
+    expect(hoisted.removerArquivosOrfaosMock).toHaveBeenCalledTimes(2); // listar + remover
     expect(log.sucesso).toHaveBeenCalledWith(
       expect.stringContaining('Arquivos órfãos removidos com sucesso'),
     );

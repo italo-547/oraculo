@@ -35,7 +35,9 @@ describe('comando-diagnosticar — json: surrogate pair e sem_ext + metricas.top
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
-    vi.doMock('../analistas/detector-arquetipos.js', () => ({ detectarArquetipos: vi.fn(async () => undefined) }));
+    vi.doMock('../analistas/detector-arquetipos.js', () => ({
+      detectarArquetipos: vi.fn(async () => undefined),
+    }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
       config: {
         GUARDIAN_ENABLED: false,

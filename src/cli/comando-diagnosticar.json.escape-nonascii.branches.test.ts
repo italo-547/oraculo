@@ -22,12 +22,27 @@ describe('comando-diagnosticar – JSON escape de não-ASCII', () => {
       tecnicas: [],
     }));
     vi.doMock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
+    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({
+      exibirRelatorioZeladorSaude: vi.fn(),
+    }));
+    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({
+      exibirRelatorioPadroesUso: vi.fn(),
+    }));
     vi.doMock('../arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
-    vi.doMock('../analistas/detector-arquetipos.js', () => ({ detectarArquetipos: vi.fn(async () => undefined) }));
+    vi.doMock('../analistas/detector-arquetipos.js', () => ({
+      detectarArquetipos: vi.fn(async () => undefined),
+    }));
     vi.doMock('../relatorios/gerador-relatorio.js', () => ({ gerarRelatorioMarkdown: vi.fn() }));
-    vi.doMock('../nucleo/constelacao/log.js', () => ({ log: { info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn(), imprimirBloco: vi.fn(), simbolos: { info: 'i', sucesso: 's', erro: 'e', aviso: 'a' } } }));
+    vi.doMock('../nucleo/constelacao/log.js', () => ({
+      log: {
+        info: vi.fn(),
+        sucesso: vi.fn(),
+        aviso: vi.fn(),
+        erro: vi.fn(),
+        imprimirBloco: vi.fn(),
+        simbolos: { info: 'i', sucesso: 's', erro: 'e', aviso: 'a' },
+      },
+    }));
 
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
     const program = new Command();
@@ -43,6 +58,6 @@ describe('comando-diagnosticar – JSON escape de não-ASCII', () => {
     }
 
     const texto = out.join('\n');
-  expect(texto).toMatch(/\\u00e1/); // "á" deve estar escapado como \u00e1
+    expect(texto).toMatch(/\\u00e1/); // "á" deve estar escapado como \u00e1
   });
 });

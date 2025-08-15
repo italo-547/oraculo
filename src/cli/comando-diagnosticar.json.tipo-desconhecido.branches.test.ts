@@ -15,7 +15,9 @@ describe('comando-diagnosticar — json: tipo desconhecido agregado', () => {
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
-    vi.doMock('../analistas/detector-arquetipos.js', () => ({ detectarArquetipos: vi.fn(async () => undefined) }));
+    vi.doMock('../analistas/detector-arquetipos.js', () => ({
+      detectarArquetipos: vi.fn(async () => undefined),
+    }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
       config: {
         DEV_MODE: true,

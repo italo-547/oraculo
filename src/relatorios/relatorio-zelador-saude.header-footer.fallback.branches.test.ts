@@ -20,7 +20,9 @@ describe('relatorio-zelador-saude – fallback de largura no cabeçalho/rodapé'
       const sucesso = vi.fn();
       return { log: { imprimirBloco, info, sucesso } };
     });
-    vi.mock('../analistas/analista-padroes-uso.js', () => ({ estatisticasUsoGlobal: { consts: {}, requires: {} } }));
+    vi.mock('../analistas/analista-padroes-uso.js', () => ({
+      estatisticasUsoGlobal: { consts: {}, requires: {} },
+    }));
     const { exibirRelatorioZeladorSaude } = await import('./relatorio-zelador-saude.js');
     const { log } = await import('../nucleo/constelacao/log.js');
     exibirRelatorioZeladorSaude([]);

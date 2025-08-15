@@ -8,9 +8,17 @@ describe('comandoDiagnosticar – scan-only export erro', () => {
   });
 
   it('quando export falha em scan-only, registra log.erro e prossegue', async () => {
-    const logMock = { info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn(), infoDestaque: vi.fn() } as any;
+    const logMock = {
+      info: vi.fn(),
+      sucesso: vi.fn(),
+      aviso: vi.fn(),
+      erro: vi.fn(),
+      infoDestaque: vi.fn(),
+    } as any;
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
-    vi.doMock('chalk', () => ({ default: { bold: (x: string) => x, dim: (x: string) => x, cyan: { bold: (x: string) => x } } }));
+    vi.doMock('chalk', () => ({
+      default: { bold: (x: string) => x, dim: (x: string) => x, cyan: { bold: (x: string) => x } },
+    }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
       config: {
         GUARDIAN_ENABLED: false,
@@ -30,12 +38,19 @@ describe('comandoDiagnosticar – scan-only export erro', () => {
     vi.doMock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: [{ relPath: 'a.ts', content: 'x' }] })),
       prepararComAst: vi.fn(async (fes: any) => fes.map((f: any) => ({ ...f, ast: {} }))),
-      executarInquisicao: vi.fn(async () => ({ ocorrencias: [], metricas: { analistas: [], totalArquivos: 1, tempoAnaliseMs: 1, tempoParsingMs: 1 } })),
+      executarInquisicao: vi.fn(async () => ({
+        ocorrencias: [],
+        metricas: { analistas: [], totalArquivos: 1, tempoAnaliseMs: 1, tempoParsingMs: 1 },
+      })),
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
     // Força falha ao salvar export
-    vi.doMock('../zeladores/util/persistencia.js', () => ({ salvarEstado: vi.fn(async () => { throw new Error('falha escrever'); }) }));
+    vi.doMock('../zeladores/util/persistencia.js', () => ({
+      salvarEstado: vi.fn(async () => {
+        throw new Error('falha escrever');
+      }),
+    }));
     vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
 
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');

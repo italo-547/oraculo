@@ -42,7 +42,9 @@ describe('comando-diagnosticar — listar-analistas fallbacks e largura compacta
     vi.mock('../analistas/registry.js', () => ({
       listarAnalistas: () => [
         { nome: undefined, categoria: undefined, descricao: undefined },
-        { /* item vazio para reforçar fallbacks */ } as any,
+        {
+          /* item vazio para reforçar fallbacks */
+        } as any,
       ],
     }));
     // Inquisidor mínimo para deixar o fluxo seguir sem ocorrências
@@ -54,20 +56,26 @@ describe('comando-diagnosticar — listar-analistas fallbacks e largura compacta
       tecnicas: [],
     }));
     // Dependências chamadas no caminho não-JSON quando não-compacto (aqui não usaremos)
-    vi.mock('../arquitetos/analista-estrutura.js', () => ({ alinhamentoEstrutural: vi.fn(() => []) }));
+    vi.mock('../arquitetos/analista-estrutura.js', () => ({
+      alinhamentoEstrutural: vi.fn(() => []),
+    }));
     vi.mock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-    vi.mock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
-    vi.mock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
+    vi.mock('../relatorios/relatorio-zelador-saude.js', () => ({
+      exibirRelatorioZeladorSaude: vi.fn(),
+    }));
+    vi.mock('../relatorios/relatorio-padroes-uso.js', () => ({
+      exibirRelatorioPadroesUso: vi.fn(),
+    }));
     vi.mock('../relatorios/conselheiro-oracular.js', () => ({ emitirConselhoOracular: vi.fn() }));
 
     const program = new Command();
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
     program.addCommand(comandoDiagnosticar(() => {}));
 
-  await program.parseAsync(['node', 'cli', 'diagnosticar', '--listar-analistas', '--compact']);
+    await program.parseAsync(['node', 'cli', 'diagnosticar', '--listar-analistas', '--compact']);
 
-  expect(hoisted.imprimirBloco).toHaveBeenCalled();
-  const call = (hoisted.imprimirBloco as any).mock.calls.find(Boolean) as any[];
+    expect(hoisted.imprimirBloco).toHaveBeenCalled();
+    const call = (hoisted.imprimirBloco as any).mock.calls.find(Boolean) as any[];
     // [titulo, linhas, cor, largura]
     const linhas = call[1] as string[];
     const largura = call[3] as number;

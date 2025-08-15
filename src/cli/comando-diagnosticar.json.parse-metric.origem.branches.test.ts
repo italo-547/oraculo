@@ -6,26 +6,43 @@ vi.mock('../nucleo/inquisidor.js', () => ({
   iniciarInquisicao: async () => ({ fileEntries: [{ relPath: 'a.ts', conteudo: '' }] }),
   prepararComAst: async (fe: any[]) => fe,
   executarInquisicao: async () => ({
-    ocorrencias: [
-      { tipo: 'PARSE_ERRO', relPath: 'a.ts', mensagem: 'x', nivel: 'aviso' },
-    ],
+    ocorrencias: [{ tipo: 'PARSE_ERRO', relPath: 'a.ts', mensagem: 'x', nivel: 'aviso' }],
     metricas: undefined,
   }),
   registrarUltimasMetricas: vi.fn(),
   tecnicas: [],
 }));
 vi.mock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-vi.mock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
+vi.mock('../relatorios/relatorio-zelador-saude.js', () => ({
+  exibirRelatorioZeladorSaude: vi.fn(),
+}));
 vi.mock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
 vi.mock('../arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
 vi.mock('../relatorios/gerador-relatorio.js', () => ({ gerarRelatorioMarkdown: vi.fn() }));
-vi.mock('../analistas/detector-arquetipos.js', () => ({ detectarArquetipos: vi.fn(async () => undefined) }));
+vi.mock('../analistas/detector-arquetipos.js', () => ({
+  detectarArquetipos: vi.fn(async () => undefined),
+}));
 
 // log no-op
 vi.mock('../nucleo/constelacao/log.js', () => ({
   log: {
-    info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn(), imprimirBloco: vi.fn(),
-    simbolos: { info: 'ℹ️', sucesso: '✅', erro: '❌', aviso: '⚠️', debug: '🐞', fase: '🔶', passo: '▫️', scan: '🔍', guardian: '🛡️', pasta: '📂' },
+    info: vi.fn(),
+    sucesso: vi.fn(),
+    aviso: vi.fn(),
+    erro: vi.fn(),
+    imprimirBloco: vi.fn(),
+    simbolos: {
+      info: 'ℹ️',
+      sucesso: '✅',
+      erro: '❌',
+      aviso: '⚠️',
+      debug: '🐞',
+      fase: '🔶',
+      passo: '▫️',
+      scan: '🔍',
+      guardian: '🛡️',
+      pasta: '📂',
+    },
   },
 }));
 
@@ -46,7 +63,9 @@ describe('comando-diagnosticar – JSON parse metric originais', () => {
 
     const logs: string[] = [];
     const origLog = console.log;
-    console.log = (s: any) => { logs.push(String(s)); };
+    console.log = (s: any) => {
+      logs.push(String(s));
+    };
 
     try {
       await program.parseAsync(['node', 'cli', 'diagnosticar', '--json']);

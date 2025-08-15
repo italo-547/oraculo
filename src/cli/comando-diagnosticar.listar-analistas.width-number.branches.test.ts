@@ -10,12 +10,18 @@ describe('comando-diagnosticar — listar-analistas com calcularLargura numéric
   it('usa o valor retornado por log.calcularLargura quando disponível', async () => {
     const imprimirBloco = vi.fn();
     const logMock = {
-      info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn(), debug: vi.fn(),
+      info: vi.fn(),
+      sucesso: vi.fn(),
+      aviso: vi.fn(),
+      erro: vi.fn(),
+      debug: vi.fn(),
       imprimirBloco,
       calcularLargura: vi.fn(() => 70),
     } as any;
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
-    vi.doMock('chalk', () => ({ default: { bold: (x: string) => x, cyan: { bold: (x: string) => x } } }));
+    vi.doMock('chalk', () => ({
+      default: { bold: (x: string) => x, cyan: { bold: (x: string) => x } },
+    }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
       config: {
         GUARDIAN_ENABLED: false,
@@ -40,7 +46,7 @@ describe('comando-diagnosticar — listar-analistas com calcularLargura numéric
     }));
     // Sucesso no import dinâmico com uma técnica simples
     vi.doMock('../analistas/registry.js', () => ({
-      listarAnalistas: () => [ { nome: 'A', categoria: 'X', descricao: 'd' } ],
+      listarAnalistas: () => [{ nome: 'A', categoria: 'X', descricao: 'd' }],
     }));
 
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');

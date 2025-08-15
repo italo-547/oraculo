@@ -9,7 +9,10 @@ describe('comando-diagnosticar — listar-analistas largura default 96 (não-com
   it('usa 96 colunas quando COMPACT_MODE=false e calcularLargura indefinida retorna undefined', async () => {
     const aplicar = vi.fn();
     const log: any = {
-      info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn(),
+      info: vi.fn(),
+      sucesso: vi.fn(),
+      aviso: vi.fn(),
+      erro: vi.fn(),
       imprimirBloco: vi.fn(),
       calcularLargura: (titulo: string, linhas: string[], base: number) => {
         expect(base).toBe(96);
@@ -17,7 +20,9 @@ describe('comando-diagnosticar — listar-analistas largura default 96 (não-com
       },
     };
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log }));
-    vi.doMock('../analistas/registry.js', () => ({ listarAnalistas: () => ([{ nome: 'X', categoria: 'core', descricao: 'd' }]) }));
+    vi.doMock('../analistas/registry.js', () => ({
+      listarAnalistas: () => [{ nome: 'X', categoria: 'core', descricao: 'd' }],
+    }));
     vi.doMock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: [] })),
       prepararComAst: vi.fn(async () => []),
@@ -37,7 +42,9 @@ describe('comando-diagnosticar — listar-analistas largura default 96 (não-com
         ZELADOR_STATE_DIR: '.oraculo',
       },
     }));
-    vi.doMock('chalk', () => ({ default: { bold: (x: any) => x, cyan: Object.assign((x: any) => x, { bold: (y: any) => y }) } }));
+    vi.doMock('chalk', () => ({
+      default: { bold: (x: any) => x, cyan: Object.assign((x: any) => x, { bold: (y: any) => y }) },
+    }));
 
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
     const cmd = comandoDiagnosticar(aplicar);

@@ -29,7 +29,7 @@ describe('exibirRelatorioPadroesUso', () => {
     const old = process.env.VITEST;
     // Simula ambiente fora do Vitest para cobrir o ramo de moldura
     // Atenção: restaura após execução
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+
     delete (process.env as any).VITEST;
     try {
       exibirRelatorioPadroesUso();

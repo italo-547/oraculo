@@ -38,11 +38,11 @@ describe('relatorio-zelador-saude ramos extras', () => {
 
   it('modo verbose: imprime detalhes por arquivo (sem moldura)', async () => {
     vi.mock('../nucleo/constelacao/log.js', () => {
-  const info = vi.fn();
-  const infoSemSanitizar = vi.fn();
-  const sucesso = vi.fn();
-  const aviso = vi.fn();
-  return { log: { info, infoSemSanitizar, sucesso, aviso } };
+      const info = vi.fn();
+      const infoSemSanitizar = vi.fn();
+      const sucesso = vi.fn();
+      const aviso = vi.fn();
+      return { log: { info, infoSemSanitizar, sucesso, aviso } };
     });
     const cosmos = await import('../nucleo/constelacao/cosmos.js');
     cosmos.config.VERBOSE = true;
@@ -53,11 +53,11 @@ describe('relatorio-zelador-saude ramos extras', () => {
       { tipo: 'FUNCAO_LONGA', nivel: 'aviso', mensagem: 'm', relPath: 'x/long.ts', linha: 1 },
       { tipo: 'FUNCAO_LONGA', nivel: 'aviso', mensagem: 'm', relPath: 'y/long.ts', linha: 2 },
     ] as any);
-  const joinedInfo = (log as any).info.mock.calls.flat().join('\n');
-  const joinedRaw = (log as any).infoSemSanitizar.mock.calls.flat().join('\n');
-  const joined = [joinedInfo, joinedRaw].join('\n');
-  expect(joined).toContain('Detalhes de funções longas por arquivo');
-  expect(joined).toMatch(/long\.ts|x\/long\.ts|y\/long\.ts/);
+    const joinedInfo = (log as any).info.mock.calls.flat().join('\n');
+    const joinedRaw = (log as any).infoSemSanitizar.mock.calls.flat().join('\n');
+    const joined = [joinedInfo, joinedRaw].join('\n');
+    expect(joined).toContain('Detalhes de funções longas por arquivo');
+    expect(joined).toMatch(/long\.ts|x\/long\.ts|y\/long\.ts/);
   });
 
   it('lista consts e requires repetidos quando acima do limite', async () => {
@@ -68,11 +68,11 @@ describe('relatorio-zelador-saude ramos extras', () => {
       },
     }));
     vi.mock('../nucleo/constelacao/log.js', () => {
-  const info = vi.fn();
-  const infoSemSanitizar = vi.fn();
-  const sucesso = vi.fn();
-  const aviso = vi.fn();
-  return { log: { info, infoSemSanitizar, sucesso, aviso } };
+      const info = vi.fn();
+      const infoSemSanitizar = vi.fn();
+      const sucesso = vi.fn();
+      const aviso = vi.fn();
+      return { log: { info, infoSemSanitizar, sucesso, aviso } };
     });
     const { exibirRelatorioZeladorSaude } = await import('./relatorio-zelador-saude.js');
     const { log } = await import('../nucleo/constelacao/log.js');

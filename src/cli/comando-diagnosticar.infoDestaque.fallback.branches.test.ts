@@ -10,10 +10,20 @@ describe('comando-diagnosticar – infoDestaque fallback (branches)', () => {
   });
 
   it('usa log.info quando infoDestaque está ausente', async () => {
-    const logMock = { info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn(), fase: vi.fn(), imprimirBloco: vi.fn(), calcularLargura: vi.fn(() => 84) } as any;
+    const logMock = {
+      info: vi.fn(),
+      sucesso: vi.fn(),
+      aviso: vi.fn(),
+      erro: vi.fn(),
+      fase: vi.fn(),
+      imprimirBloco: vi.fn(),
+      calcularLargura: vi.fn(() => 84),
+    } as any;
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
 
-    vi.doMock('chalk', () => ({ default: { bold: (x: string) => x, cyan: { bold: (x: string) => x } } }));
+    vi.doMock('chalk', () => ({
+      default: { bold: (x: string) => x, cyan: { bold: (x: string) => x } },
+    }));
 
     const cfg = {
       DEV_MODE: false,
@@ -32,7 +42,10 @@ describe('comando-diagnosticar – infoDestaque fallback (branches)', () => {
     vi.doMock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: [] })),
       prepararComAst: vi.fn(async () => []),
-      executarInquisicao: vi.fn(async () => ({ ocorrencias: [], metricas: { analistas: [], totalArquivos: 0, tempoAnaliseMs: 0, tempoParsingMs: 0 } })),
+      executarInquisicao: vi.fn(async () => ({
+        ocorrencias: [],
+        metricas: { analistas: [], totalArquivos: 0, tempoAnaliseMs: 0, tempoParsingMs: 0 },
+      })),
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
@@ -40,16 +53,50 @@ describe('comando-diagnosticar – infoDestaque fallback (branches)', () => {
     // Força candidatos de arquétipos para exercer __infoDestaque
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
-        melhores: [ { nome: 'cli-modular', confidence: 0.73, score: 100, anomalias: [], missingRequired: ['src'], matchedRequired: [], forbiddenPresent: [], planoSugestao: { mover: [], conflitos: [], resumo: { total: 0, zonaVerde: 0, bloqueados: 0 } } } ],
-        baseline: { version: 1, timestamp: new Date().toISOString(), arquetipo: 'cli-modular', confidence: 73, arquivosRaiz: [] },
-        drift: { alterouArquetipo: false, anterior: 'cli-modular', atual: 'cli-modular', deltaConfidence: -73, arquivosRaizNovos: [], arquivosRaizRemovidos: [] },
-      }))
+        melhores: [
+          {
+            nome: 'cli-modular',
+            confidence: 0.73,
+            score: 100,
+            anomalias: [],
+            missingRequired: ['src'],
+            matchedRequired: [],
+            forbiddenPresent: [],
+            planoSugestao: {
+              mover: [],
+              conflitos: [],
+              resumo: { total: 0, zonaVerde: 0, bloqueados: 0 },
+            },
+          },
+        ],
+        baseline: {
+          version: 1,
+          timestamp: new Date().toISOString(),
+          arquetipo: 'cli-modular',
+          confidence: 73,
+          arquivosRaiz: [],
+        },
+        drift: {
+          alterouArquetipo: false,
+          anterior: 'cli-modular',
+          atual: 'cli-modular',
+          deltaConfidence: -73,
+          arquivosRaizNovos: [],
+          arquivosRaizRemovidos: [],
+        },
+      })),
     }));
-    vi.doMock('../arquitetos/analista-estrutura.js', () => ({ alinhamentoEstrutural: vi.fn(async () => []) }));
+    vi.doMock('../arquitetos/analista-estrutura.js', () => ({
+      alinhamentoEstrutural: vi.fn(async () => []),
+    }));
     vi.doMock('../arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
     vi.doMock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
+    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({
+      exibirRelatorioZeladorSaude: vi.fn(),
+    }));
+    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({
+      exibirRelatorioPadroesUso: vi.fn(),
+    }));
     vi.doMock('../relatorios/conselheiro-oracular.js', () => ({ emitirConselhoOracular: vi.fn() }));
 
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');

@@ -9,7 +9,8 @@ describe('relatorio-zelador-saude branches extra', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     for (const k of Object.keys(process.env)) delete (process.env as any)[k];
-    for (const [k, v] of Object.entries(ORIGINALS)) if (v !== undefined) (process.env as any)[k] = v;
+    for (const [k, v] of Object.entries(ORIGINALS))
+      if (v !== undefined) (process.env as any)[k] = v;
   });
 
   it('usa fallback quando log.aviso não existe e cobre require/consts zero', async () => {

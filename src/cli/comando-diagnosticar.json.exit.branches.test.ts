@@ -48,31 +48,38 @@ describe('comandoDiagnosticar – JSON exits (branches)', () => {
     vi.doMock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: [] })),
       prepararComAst: vi.fn(async (fes: any) => fes),
-      executarInquisicao: vi.fn(async () => ({ ocorrencias: [], metricas: { analistas: [], totalArquivos: 0, tempoAnaliseMs: 0, tempoParsingMs: 0 } })),
+      executarInquisicao: vi.fn(async () => ({
+        ocorrencias: [],
+        metricas: { analistas: [], totalArquivos: 0, tempoAnaliseMs: 0, tempoParsingMs: 0 },
+      })),
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
     vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
-    vi.doMock('../arquitetos/analista-estrutura.js', () => ({ alinhamentoEstrutural: vi.fn(() => []) }));
+    vi.doMock('../arquitetos/analista-estrutura.js', () => ({
+      alinhamentoEstrutural: vi.fn(() => []),
+    }));
     vi.doMock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
+    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({
+      exibirRelatorioZeladorSaude: vi.fn(),
+    }));
+    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({
+      exibirRelatorioPadroesUso: vi.fn(),
+    }));
     vi.doMock('../relatorios/conselheiro-oracular.js', () => ({ emitirConselhoOracular: vi.fn() }));
 
     // Garante que resíduos de globais de parse errors não contaminem o teste
     (globalThis as any).__ORACULO_PARSE_ERROS__ = [];
     (globalThis as any).__ORACULO_PARSE_ERROS_ORIGINAIS__ = 0;
-    const exitSpy = vi
-      .spyOn(process, 'exit')
-      .mockImplementation(((code?: number) => {
-        // no-op: apenas registra chamada para asserção
-      }) as any);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
+      // no-op: apenas registra chamada para asserção
+    }) as any);
     const { comandoDiagnosticar } = await import('./comando-diagnosticar.js');
     const program = new Command();
     program.addCommand(comandoDiagnosticar(() => {}));
-  await program.parseAsync(['node', 'cli', 'diagnosticar', '--json']);
-  expect(exitSpy).toHaveBeenCalled();
-  expect(exitSpy.mock.calls.at(-1)?.[0]).toBe(0);
+    await program.parseAsync(['node', 'cli', 'diagnosticar', '--json']);
+    expect(exitSpy).toHaveBeenCalled();
+    expect(exitSpy.mock.calls.at(-1)?.[0]).toBe(0);
 
     // Segundo run: temErro (uma ocorrência nível erro)
     vi.resetModules();
@@ -97,24 +104,33 @@ describe('comandoDiagnosticar – JSON exits (branches)', () => {
     vi.doMock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: [] })),
       prepararComAst: vi.fn(async (fes: any) => fes),
-      executarInquisicao: vi.fn(async () => ({ ocorrencias: [{ tipo: 'X', nivel: 'erro', relPath: 'a.ts', mensagem: 'm' }], metricas: { analistas: [], totalArquivos: 1, tempoAnaliseMs: 1, tempoParsingMs: 1 } })),
+      executarInquisicao: vi.fn(async () => ({
+        ocorrencias: [{ tipo: 'X', nivel: 'erro', relPath: 'a.ts', mensagem: 'm' }],
+        metricas: { analistas: [], totalArquivos: 1, tempoAnaliseMs: 1, tempoParsingMs: 1 },
+      })),
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
     vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
-    vi.doMock('../arquitetos/analista-estrutura.js', () => ({ alinhamentoEstrutural: vi.fn(() => []) }));
+    vi.doMock('../arquitetos/analista-estrutura.js', () => ({
+      alinhamentoEstrutural: vi.fn(() => []),
+    }));
     vi.doMock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
+    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({
+      exibirRelatorioZeladorSaude: vi.fn(),
+    }));
+    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({
+      exibirRelatorioPadroesUso: vi.fn(),
+    }));
     vi.doMock('../relatorios/conselheiro-oracular.js', () => ({ emitirConselhoOracular: vi.fn() }));
-  // Limpa globais antes do segundo run
-  (globalThis as any).__ORACULO_PARSE_ERROS__ = [];
-  (globalThis as any).__ORACULO_PARSE_ERROS_ORIGINAIS__ = 0;
-  const { comandoDiagnosticar: comando2 } = await import('./comando-diagnosticar.js');
-  const program2 = new Command();
-  program2.addCommand(comando2(() => {}));
-  await program2.parseAsync(['node', 'cli', 'diagnosticar', '--json']);
-  expect(exitSpy.mock.calls.at(-1)?.[0]).toBe(1);
+    // Limpa globais antes do segundo run
+    (globalThis as any).__ORACULO_PARSE_ERROS__ = [];
+    (globalThis as any).__ORACULO_PARSE_ERROS_ORIGINAIS__ = 0;
+    const { comandoDiagnosticar: comando2 } = await import('./comando-diagnosticar.js');
+    const program2 = new Command();
+    program2.addCommand(comando2(() => {}));
+    await program2.parseAsync(['node', 'cli', 'diagnosticar', '--json']);
+    expect(exitSpy.mock.calls.at(-1)?.[0]).toBe(1);
     exitSpy.mockRestore();
   });
 });

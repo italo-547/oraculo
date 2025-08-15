@@ -17,8 +17,8 @@ describe('comando-diagnosticar – agregação TODO_PENDENTE no JSON (branches)'
     const cfg = {
       DEV_MODE: false,
       GUARDIAN_ENABLED: false,
-  GUARDIAN_BASELINE: 'guardian-baseline.json',
-  ZELADOR_STATE_DIR: '.oraculo',
+      GUARDIAN_BASELINE: 'guardian-baseline.json',
+      ZELADOR_STATE_DIR: '.oraculo',
       VERBOSE: false,
       COMPACT_MODE: true,
       REPORT_SILENCE_LOGS: false,

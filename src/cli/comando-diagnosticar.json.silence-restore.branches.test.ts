@@ -48,11 +48,19 @@ describe('comandoDiagnosticar – modo JSON silencia e restaura logs', () => {
       tecnicas: [],
     }));
     vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
-    vi.doMock('../arquitetos/analista-estrutura.js', () => ({ alinhamentoEstrutural: vi.fn(() => []) }));
-    vi.doMock('../arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn(() => ({})) }));
+    vi.doMock('../arquitetos/analista-estrutura.js', () => ({
+      alinhamentoEstrutural: vi.fn(() => []),
+    }));
+    vi.doMock('../arquitetos/diagnostico-projeto.js', () => ({
+      diagnosticarProjeto: vi.fn(() => ({})),
+    }));
     vi.doMock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({ exibirRelatorioZeladorSaude: vi.fn() }));
-    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({ exibirRelatorioPadroesUso: vi.fn() }));
+    vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({
+      exibirRelatorioZeladorSaude: vi.fn(),
+    }));
+    vi.doMock('../relatorios/relatorio-padroes-uso.js', () => ({
+      exibirRelatorioPadroesUso: vi.fn(),
+    }));
     vi.doMock('../relatorios/conselheiro-oracular.js', () => ({ emitirConselhoOracular: vi.fn() }));
     vi.doMock('../relatorios/gerador-relatorio.js', () => ({ gerarRelatorioMarkdown: vi.fn() }));
 
