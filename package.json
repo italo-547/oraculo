@@ -1,6 +1,6 @@
 {
   "name": "oraculo",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "Oráculo: Análise, limpeza e organização de repositórios",
@@ -20,14 +20,13 @@
     "typecheck": "tsc --noEmit",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "build:pack": "npm run build && node scripts/prepare-pack.mjs",
-    "pack:publish": "npm run build:pack && cd dist-pack && npm publish --access public",
+    "pre-public": "node scripts/pre-public.mjs",
     "start": "node ./dist/cli.js",
     "diagnosticar": "node ./dist/cli.js diagnosticar",
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --check \"**/*.{ts,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,md}\"",
-    "coverage:enforce": "vitest run --coverage --coverage.enabled=true --coverage.thresholds='{\"lines\":90,\"statements\":90,\"branches\":88,\"functions\":90}'",
+    "coverage:enforce": "vitest run --coverage --coverage.enabled=true --coverage.thresholds='{\\\"lines\\\":90,\\\"statements\\\":90,\\\"branches\\\":88,\\\"functions\\\":90}'",
     "check:style": "npm run lint && npm run typecheck && npm run format",
     "coverage:gate": "npm run coverage:enforce",
     "test:e2e": "vitest run --dir src/cli --reporter dot",
@@ -45,7 +44,8 @@
     "licenses:list": "npx license-checker-rseidelsohn --production --csv",
     "licenses:json": "npx license-checker-rseidelsohn --production --json > .oraculo/licenses.json",
     "licenses:notice": "node scripts/generate-notices.mjs",
-    "licenses:notice:pt-br": "node scripts/generate-notices.mjs --pt-br"
+    "licenses:notice:pt-br": "node scripts/generate-notices.mjs --pt-br",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "cli",
