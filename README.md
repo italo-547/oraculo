@@ -462,9 +462,19 @@ npm run test:e2e      # apenas E2E
 
 ---
 
-## 🛡️ Licença
+## 🛡️ Licença e Terceiros
 
-Distribuído sob a licença MIT. Uso comercial, fork, modificação e redistribuição são permitidos. Atribuição é bem-vinda, mas não obrigatória.
+Distribuído sob a licença MIT. Uso comercial, fork, modificação e redistribuição são permitidos.
+
+Avisos de terceiros: este projeto inclui dependências open source cujas licenças e, quando aplicável, textos de licença completos são listados em `THIRD-PARTY-NOTICES.txt`.
+
+Como atualizar o arquivo de avisos:
+
+```bash
+npm run licenses:notice
+```
+
+Isto gera/atualiza `THIRD-PARTY-NOTICES.txt` com base nas dependências de produção instaladas.
 
 ### Por que MIT?
 
