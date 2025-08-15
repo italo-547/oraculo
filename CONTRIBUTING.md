@@ -42,6 +42,26 @@ Formato sugerido (inspirado em Conventional Commits, sem rigidez extrema):
 
 Sugestões de IA (ex: GitHub Copilot) são bem-vindas para acelerar, mas cada trecho deve ser revisado manualmente. Não aceite código que você não compreende. Mencione no PR se um trecho substancial foi assistido por IA.
 
+### Copilot — Bloquear sugestões que correspondem a código público
+
+Para reduzir risco de sugerir trechos idênticos a código público, ative o bloqueio de correspondência:
+
+- No GitHub (conta/org):
+  1.  Acesse Settings → GitHub Copilot → Políticas.
+  2.  Marque “Block suggestions matching public code”.
+  3.  Em organizações, um admin pode impor a política para todos os membros.
+
+- No VS Code:
+  1.  Abra Settings (Ctrl+,) → pesquise “Copilot”.
+  2.  Habilite “Block Suggestions Matching Public Code”.
+  3.  Reinicie a janela do VS Code, se necessário.
+
+Boas práticas adicionais:
+
+- Revise trechos longos ou “bons demais para ser verdade”.
+- Rode verificações de licença/terceiros (ex.: `npm run licenses:notice`).
+- Se suspeitar de reprodução, reescreva o trecho com sua própria implementação.
+
 ## Checklist Final no PR
 
 Copie e marque no corpo do PR:
