@@ -466,15 +466,19 @@ npm run test:e2e      # apenas E2E
 
 Distribuído sob a licença MIT. Uso comercial, fork, modificação e redistribuição são permitidos.
 
-Avisos de terceiros: este projeto inclui dependências open source cujas licenças e, quando aplicável, textos de licença completos são listados em `THIRD-PARTY-NOTICES.txt`.
+Avisos de terceiros: este projeto inclui dependências open source cujas licenças e, quando aplicável, textos de licença completos são listados em `THIRD-PARTY-NOTICES.txt` (EN) e `AVISOS-DE-TERCEIROS.pt-BR.txt` (cabeçalho em pt-BR; textos legais mantidos no idioma original).
 
 Como atualizar o arquivo de avisos:
 
 ```bash
+# Gera/atualiza a versão padrão (EN)
 npm run licenses:notice
+
+# Gera/atualiza a versão com cabeçalho em português
+npm run licenses:notice:pt-br
 ```
 
-Isto gera/atualiza `THIRD-PARTY-NOTICES.txt` com base nas dependências de produção instaladas.
+Isso gera/atualiza os arquivos com base nas dependências de produção instaladas.
 
 ### Por que MIT?
 
