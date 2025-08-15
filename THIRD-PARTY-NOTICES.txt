@@ -1,13 +1,14 @@
 THIRD-PARTY NOTICES
 ====================
 
-oraculo@0.0.0 — Licença do projeto: MIT
-Este arquivo lista componentes de terceiros incluídos (produção) e seus respectivos avisos/licenças.
-Gerado em: 2025-08-15T07:13:17.573Z
+oraculo@0.0.0 — Project license: MIT
+This file lists third-party components included (production) and their notices/licenses.
+Generated at: 2025-08-15T07:45:16.705Z
 
-Observações:
-- Este arquivo é gerado automaticamente; não edite manualmente.
-- Para atualizar, execute: npm run licenses:notice
+Notes:
+- This file is generated automatically; do not edit manually.
+- To update, run: npm run licenses:notice
+- Third-party license texts are reproduced in their original language to preserve legal validity.
 
 ----------------------------------------------------------------
 Pacote: @babel/code-frame@7.27.1

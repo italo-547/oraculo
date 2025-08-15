@@ -3,7 +3,7 @@ AVISOS DE TERCEIROS
 
 oraculo@0.0.0 — Licença do projeto: MIT
 Este arquivo lista componentes de terceiros incluídos (produção) e seus respectivos avisos/licenças.
-Gerado em: 2025-08-15T07:38:47.673Z
+Gerado em: 2025-08-15T07:46:01.365Z
 
 Observações:
 - Este arquivo é gerado automaticamente; não edite manualmente.
