@@ -1,5 +1,18 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*.ts", "tests/fixtures/**/*.ts", "vitest.config.ts"],
-  "exclude": ["dist", ".oraculo"]
+  "include": [
+    "src/**/*.ts",
+    "tests/fixtures/**/*.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "vitest.config.ts",
+    "exemplos-testes-implementacoes-2/src/**/*.ts",
+    "exemplos-testes-implementacoes-2/tests/**/*.ts",
+    "exemplos-testes-implementacoes/src/**/*.ts",
+    "exemplos-testes-implementacoes/tests/**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    ".oraculo"
+  ]
 }

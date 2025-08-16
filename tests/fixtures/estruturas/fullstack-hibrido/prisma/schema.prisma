@@ -1,0 +1,5 @@
+// Mock schema.prisma para sinalizar uso de Prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String
+}

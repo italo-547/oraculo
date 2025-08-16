@@ -1,14 +1,14 @@
 # Análise de Sincronização: copilot-instructions.md vs CHECKLIST.md
 
-**Data da Análise:** 2025-01-17  
-**Branch Analisada:** develop  
-**Commit:** 82e2684918d78fd8792500df739c2b548c0e29fc  
+**Data da Análise:** 2025-01-17
+**Branch Analisada:** develop
+**Commit:** 82e2684918d78fd8792500df739c2b548c0e29fc
 
 ## Resumo Executivo
 
-✅ **Status Geral:** Os documentos estão **bem sincronizados** com pequenas divergências pontuais  
-📊 **Projeto:** Em estágio **avançado** de desenvolvimento com alta cobertura de testes  
-⚡ **Atividade:** Alta atividade recente com múltiplas funcionalidades implementadas  
+✅ **Status Geral:** Os documentos estão **bem sincronizados** com pequenas divergências pontuais
+📊 **Projeto:** Em estágio **avançado** de desenvolvimento com alta cobertura de testes
+⚡ **Atividade:** Alta atividade recente com múltiplas funcionalidades implementadas
 
 ## 1. Análise de Sincronização
 
@@ -84,6 +84,7 @@
 ### 🚀 Estágio de Desenvolvimento: **AVANÇADO**
 
 **Evidências:**
+
 - Cobertura de testes > 96% (excepcional)
 - 309+ testes implementados
 - E2E completo com binário real
@@ -92,40 +93,42 @@
 
 ### 📊 Funcionalidades Principais
 
-| Área | Status | Detalhes |
-|------|--------|----------|
-| **Core CLI** | ✅ Completo | Todos comandos principais implementados |
-| **Análise & Diagnóstico** | ✅ Completo | Múltiplos analistas, saída JSON estruturada |
-| **Guardian** | ✅ Completo | Baseline, diff, políticas, `--full-scan` |
-| **Poda** | ✅ Completo | Detecção e remoção segura de órfãos |
-| **Reestruturação** | 🔄 Parcial | Plano de reorganização implementado, aplicação experimental |
-| **Performance** | ✅ Completo | Baseline, compare, métricas históricas |
-| **Testes** | ✅ Robusto | Unit + Integration + E2E, >96% cobertura |
+| Área                      | Status      | Detalhes                                                    |
+| ------------------------- | ----------- | ----------------------------------------------------------- |
+| **Core CLI**              | ✅ Completo | Todos comandos principais implementados                     |
+| **Análise & Diagnóstico** | ✅ Completo | Múltiplos analistas, saída JSON estruturada                 |
+| **Guardian**              | ✅ Completo | Baseline, diff, políticas, `--full-scan`                    |
+| **Poda**                  | ✅ Completo | Detecção e remoção segura de órfãos                         |
+| **Reestruturação**        | 🔄 Parcial  | Plano de reorganização implementado, aplicação experimental |
+| **Performance**           | ✅ Completo | Baseline, compare, métricas históricas                      |
+| **Testes**                | ✅ Robusto  | Unit + Integration + E2E, >96% cobertura                    |
 
 ### 🎯 Próximas Prioridades (Based on CHECKLIST.md)
 
 #### Alta Prioridade:
+
 1. **Biblioteca de estruturas padrão** (80% completo)
-   - ✅ Tipos alvo definidos  
+   - ✅ Tipos alvo definidos
    - ✅ Motor heurístico implementado
    - ⏳ Testes de fixtures por arquétipo
    - ⏳ Geração de mapa de rollback
 
 #### Média Prioridade:
+
 1. Monitor de dependências automatizado
 2. Guia de padronização de código
 3. Gate de regressão de performance
 
 ### 📈 Métricas de Qualidade
 
-| Métrica | Valor Atual | Status |
-|---------|-------------|---------|
-| **Test Coverage (Lines)** | >96% | 🟢 Excepcional |
-| **Test Coverage (Branches)** | ~89% | 🟢 Bom |
-| **Total de Testes** | 309+ | 🟢 Robusto |
-| **E2E Tests** | 5 cenários | 🟢 Adequado |
-| **Lint Issues** | 0 | 🟢 Clean |
-| **Type Errors** | 0 | 🟢 Clean |
+| Métrica                      | Valor Atual | Status         |
+| ---------------------------- | ----------- | -------------- |
+| **Test Coverage (Lines)**    | >96%        | 🟢 Excepcional |
+| **Test Coverage (Branches)** | ~89%        | 🟢 Bom         |
+| **Total de Testes**          | 309+        | 🟢 Robusto     |
+| **E2E Tests**                | 5 cenários  | 🟢 Adequado    |
+| **Lint Issues**              | 0           | 🟢 Clean       |
+| **Type Errors**              | 0           | 🟢 Clean       |
 
 ## 3. Capacidades e Limitações da Análise
 
@@ -157,15 +160,17 @@
 ### Para Sincronização Imediata:
 
 1. **Atualizar copilot-instructions.md** com funcionalidades recentes:
+
    ```diff
    + ## Agregação de PARSE_ERRO
    + Para reduzir ruído: erros de parsing podem ser agregados via `PARSE_ERRO_AGRUPAR=true`
-   + 
+   +
    + ## Comando analistas
    + Lista analistas registrados: `oraculo analistas --json --output arquivo.json --doc docs/ANALISTAS.md`
    ```
 
 2. **Sync cobertura de testes:**
+
    ```diff
    - Limiares atuais (V8): linhas/declarações/funções 90% e ramos 88%
    + Cobertura atual (V8): statements/lines/functions >96%; branches ~89%
@@ -190,5 +195,5 @@
 
 ---
 
-**Análise realizada por:** Claude (Anthropic AI)  
+**Análise realizada por:** Claude (Anthropic AI)
 **Limitações:** Esta análise é baseada em documentação estática e não inclui execução de código ou testes em tempo real.

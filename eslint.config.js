@@ -58,6 +58,7 @@ export default [
       'file1.ts',
       'file2.ts',
       'tmp-cache-file.ts',
+      '.deprecados/**',
       'tests/fixtures/**',
     ],
   },

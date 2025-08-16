@@ -1,0 +1,33 @@
+{
+    "name": "fullstack-hibrido",
+    "version": "1.0.0",
+    "description": "Fixture para testes de arquétipo fullstack-hibrido (React + Express + Next).",
+    "keywords": [
+        "fullstack",
+        "react",
+        "nextjs",
+        "frontend",
+        "backend",
+        "typescript",
+        "express",
+        "oraculo-arquetipo:fullstack-hibrido"
+    ],
+    "main": "src/index.ts",
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "api": "ts-node src/index.ts"
+    },
+    "dependencies": {
+        "next": "^13.4.19",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "express": "^4.18.2",
+        "body-parser": "^1.20.2"
+    },
+    "devDependencies": {
+        "typescript": "^5.4.5",
+        "ts-node": "^10.9.2"
+    }
+}
