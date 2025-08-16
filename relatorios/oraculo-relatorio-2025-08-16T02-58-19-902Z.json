@@ -1,0 +1,1631 @@
+{
+  "resumo": {
+    "totalArquivos": 8989,
+    "totalOcorrencias": 277,
+    "tiposOcorrencias": {
+      "TODO_PENDENTE": 220,
+      "PARSE_ERRO": 52,
+      "estrutura-monorepo": 1,
+      "estrutura-monorepo-incompleto": 1,
+      "estrutura-mista": 1,
+      "estrutura-backend": 1,
+      "estrutura-entrypoints": 1
+    },
+    "arquivosComProblemas": 260,
+    "integridadeGuardian": "nao-verificado",
+    "baselineModificado": false,
+    "arquivosOrfaosDetectados": 0
+  },
+  "detalhesOcorrencias": [
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-monorepo",
+      "mensagem": "Estrutura de monorepo detectada.",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-monorepo-incompleto",
+      "mensagem": "Monorepo sem pasta packages/.",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-mista",
+      "mensagem": "Projeto possui src/ e packages/ (monorepo) ao mesmo tempo. Avalie a organização.",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-backend",
+      "mensagem": "Sinais de backend detectados (controllers/, prisma/, api/).",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-entrypoints",
+      "mensagem": "Projeto possui múltiplos entrypoints: node_modules/@babel/code-frame/lib/index.js, node_modules/@babel/generator/lib/generators/index.js, node_modules/@babel/generator/lib/index.js, node_modules/@babel/generator/lib/node/index.js, node_modules/@babel/helper-string-parser/lib/index.js, node_modules/@babel/helper-validator-identifier/lib/index.js, node_modules/@babel/parser/lib/index.js, node_modules/@babel/template/lib/index.js, node_modules/@babel/traverse/lib/index.js, node_modules/@babel/traverse/lib/path/index.js, node_modules/@babel/traverse/lib/path/inference/index.js, node_modules/@babel/traverse/lib/scope/index.js, node_modules/@babel/types/lib/asserts/generated/index.js, node_modules/@babel/types/lib/ast-types/generated/index.js, node_modules/@babel/types/lib/builders/generated/index.js, node_modules/@babel/types/lib/constants/generated/index.js, node_modules/@babel/types/lib/constants/index.js, node_modules/@babel/types/lib/definitions/index.js, node_modules/@babel/types/lib/index.js, node_modules/@babel/types/lib/validators/generated/index.js, node_modules/@bcoe/v8-coverage/src/lib/index.js, node_modules/@eslint/config-array/dist/esm/index.js, node_modules/@eslint/config-array/node_modules/brace-expansion/index.js, node_modules/@eslint/config-helpers/dist/esm/index.js, node_modules/@eslint/eslintrc/lib/config-array/index.js, node_modules/@eslint/eslintrc/lib/index.js, node_modules/@eslint/eslintrc/node_modules/brace-expansion/index.js, node_modules/@eslint/eslintrc/node_modules/ignore/index.js, node_modules/@eslint/js/src/index.js, node_modules/@eslint/object-schema/dist/esm/index.js, node_modules/@eslint/plugin-kit/dist/esm/index.js, node_modules/@eslint-community/eslint-utils/index.js, node_modules/@eslint-community/regexpp/index.js, node_modules/@humanfs/core/src/index.js, node_modules/@humanfs/node/src/index.js, node_modules/@isaacs/balanced-match/dist/commonjs/index.js, node_modules/@isaacs/balanced-match/dist/esm/index.js, node_modules/@isaacs/brace-expansion/dist/commonjs/index.js, node_modules/@isaacs/brace-expansion/dist/esm/index.js, node_modules/@isaacs/cliui/build/lib/index.js, node_modules/@istanbuljs/schema/index.js, node_modules/@nodelib/fs.scandir/out/index.js, node_modules/@nodelib/fs.scandir/out/types/index.js, node_modules/@nodelib/fs.scandir/out/utils/index.js, node_modules/@nodelib/fs.stat/out/index.js, node_modules/@nodelib/fs.stat/out/types/index.js, node_modules/@nodelib/fs.walk/out/index.js, node_modules/@nodelib/fs.walk/out/providers/index.js, node_modules/@nodelib/fs.walk/out/types/index.js, node_modules/@npmcli/fs/lib/cp/index.js, node_modules/@npmcli/fs/lib/index.js, node_modules/@pkgjs/parseargs/index.js, node_modules/@typescript-eslint/eslint-plugin/dist/index.js, node_modules/@typescript-eslint/eslint-plugin/dist/rules/index.js, node_modules/@typescript-eslint/eslint-plugin/dist/rules/naming-convention-utils/index.js, node_modules/@typescript-eslint/eslint-plugin/dist/util/index.js, node_modules/@typescript-eslint/parser/dist/index.js, node_modules/@typescript-eslint/project-service/dist/index.js, node_modules/@typescript-eslint/scope-manager/dist/definition/index.js, node_modules/@typescript-eslint/scope-manager/dist/index.js, node_modules/@typescript-eslint/scope-manager/dist/lib/index.js, node_modules/@typescript-eslint/scope-manager/dist/referencer/index.js, node_modules/@typescript-eslint/scope-manager/dist/scope/index.js, node_modules/@typescript-eslint/scope-manager/dist/variable/index.js, node_modules/@typescript-eslint/tsconfig-utils/dist/index.js, node_modules/@typescript-eslint/type-utils/dist/index.js, node_modules/@typescript-eslint/types/dist/index.js, node_modules/@typescript-eslint/typescript-estree/dist/index.js, node_modules/@typescript-eslint/typescript-estree/dist/parseSettings/index.js, node_modules/@typescript-eslint/typescript-estree/dist/ts-estree/index.js, node_modules/@typescript-eslint/utils/dist/ast-utils/eslint-utils/index.js, node_modules/@typescript-eslint/utils/dist/ast-utils/index.js, node_modules/@typescript-eslint/utils/dist/eslint-utils/index.js, node_modules/@typescript-eslint/utils/dist/index.js, node_modules/@typescript-eslint/utils/dist/ts-eslint/index.js, node_modules/@typescript-eslint/utils/dist/ts-utils/index.js, node_modules/@typescript-eslint/visitor-keys/dist/index.js, node_modules/@typescript-eslint/visitor-keys/node_modules/eslint-visitor-keys/lib/index.js, node_modules/@vitest/coverage-v8/dist/index.js, node_modules/@vitest/expect/dist/index.js, node_modules/@vitest/mocker/dist/index.js, node_modules/@vitest/pretty-format/dist/index.js, node_modules/@vitest/runner/dist/index.js, node_modules/@vitest/snapshot/dist/index.js, node_modules/@vitest/spy/dist/index.js, node_modules/@vitest/utils/dist/index.js, node_modules/abbrev/lib/index.js, node_modules/acorn-jsx/index.js, node_modules/ajv/lib/compile/index.js, node_modules/ajv/lib/dotjs/index.js, node_modules/ansi-escapes/index.js, node_modules/ansi-regex/index.js, node_modules/ansi-styles/index.js, node_modules/array-find-index/index.js, node_modules/assertion-error/index.js, node_modules/ast-v8-to-istanbul/dist/index.js, node_modules/ast-v8-to-istanbul/node_modules/js-tokens/index.js, node_modules/balanced-match/index.js, node_modules/brace-expansion/index.js, node_modules/braces/index.js, node_modules/cac/deno/index.ts, node_modules/cac/dist/index.js, node_modules/callsites/index.js, node_modules/chai/index.js, node_modules/chai/lib/chai/utils/index.js, node_modules/chalk/source/index.js, node_modules/chalk/source/vendor/ansi-styles/index.js, node_modules/chalk/source/vendor/supports-color/index.js, node_modules/check-error/index.js, node_modules/chevrotain/diagrams/src/main.js, node_modules/chevrotain-allstar/lib/index.js, node_modules/chevrotain-allstar/src/index.ts, node_modules/cli-cursor/index.js, node_modules/cli-truncate/index.js, node_modules/cli-truncate/node_modules/emoji-regex/index.js, node_modules/cli-truncate/node_modules/string-width/index.js, node_modules/color-convert/index.js, node_modules/color-name/index.js, node_modules/colorette/index.js, node_modules/commander/index.js, node_modules/concat-map/index.js, node_modules/cross-spawn/index.js, node_modules/css-tree/lib/convertor/index.js, node_modules/css-tree/lib/definition-syntax/index.js, node_modules/css-tree/lib/generator/index.js, node_modules/css-tree/lib/index.js, node_modules/css-tree/lib/lexer/index.js, node_modules/css-tree/lib/parser/index.js, node_modules/css-tree/lib/syntax/atrule/index.js, node_modules/css-tree/lib/syntax/index.js, node_modules/css-tree/lib/syntax/node/index.js, node_modules/css-tree/lib/syntax/pseudo/index.js, node_modules/css-tree/lib/syntax/scope/index.js, node_modules/css-tree/lib/tokenizer/index.js, node_modules/css-tree/lib/utils/index.js, node_modules/css-tree/lib/walker/index.js, node_modules/cuint/index.js, node_modules/debug/src/index.js, node_modules/deep-eql/index.js, node_modules/deep-is/index.js, node_modules/dom-serializer/lib/esm/index.js, node_modules/dom-serializer/lib/index.js, node_modules/domelementtype/lib/esm/index.js, node_modules/domelementtype/lib/index.js, node_modules/domhandler/lib/esm/index.js, node_modules/domhandler/lib/index.js, node_modules/domutils/lib/esm/index.js, node_modules/domutils/lib/index.js, node_modules/emoji-regex/es2015/index.js, node_modules/emoji-regex/index.js, node_modules/entities/lib/esm/index.js, node_modules/entities/lib/index.js, node_modules/environment/index.js, node_modules/esbuild/lib/main.js, node_modules/escape-string-regexp/index.js, node_modules/eslint/lib/cli-engine/index.js, node_modules/eslint/lib/cli.js, node_modules/eslint/lib/eslint/index.js, node_modules/eslint/lib/languages/js/index.js, node_modules/eslint/lib/languages/js/source-code/index.js, node_modules/eslint/lib/languages/js/source-code/token-store/index.js, node_modules/eslint/lib/linter/index.js, node_modules/eslint/lib/rule-tester/index.js, node_modules/eslint/lib/rules/index.js, node_modules/eslint/lib/rules/utils/unicode/index.js, node_modules/eslint/node_modules/ansi-styles/index.js, node_modules/eslint/node_modules/brace-expansion/index.js, node_modules/eslint/node_modules/chalk/source/index.js, node_modules/eslint/node_modules/eslint-visitor-keys/lib/index.js, node_modules/eslint/node_modules/ignore/index.js, node_modules/eslint-scope/lib/index.js, node_modules/eslint-visitor-keys/lib/index.js, node_modules/espree/node_modules/eslint-visitor-keys/lib/index.js, node_modules/estree-walker/src/index.js, node_modules/eventemitter3/index.js, node_modules/execa/index.js, node_modules/expect-type/dist/index.js, node_modules/fast-deep-equal/es6/index.js, node_modules/fast-deep-equal/index.js, node_modules/fast-glob/node_modules/glob-parent/index.js, node_modules/fast-glob/out/index.js, node_modules/fast-glob/out/types/index.js, node_modules/fast-glob/out/utils/index.js, node_modules/fast-json-stable-stringify/benchmark/index.js, node_modules/fast-json-stable-stringify/index.js, node_modules/fast-xml-parser/src/cli/cli.js, node_modules/fill-range/index.js, node_modules/find-up/index.js, node_modules/flatted/cjs/index.js, node_modules/flatted/esm/index.js, node_modules/flatted/index.js, node_modules/foreground-child/dist/commonjs/index.js, node_modules/foreground-child/dist/esm/index.js, node_modules/function-bind/index.js, node_modules/function-bind/test/index.js, node_modules/get-east-asian-width/index.js, node_modules/get-stream/source/index.js, node_modules/glob/dist/commonjs/index.js, node_modules/glob/dist/esm/index.js, node_modules/glob/node_modules/minimatch/dist/commonjs/index.js, node_modules/glob/node_modules/minimatch/dist/esm/index.js, node_modules/glob-parent/index.js, node_modules/globals/index.js, node_modules/graphemer/lib/index.js, node_modules/has-flag/index.js, node_modules/hasown/index.js, node_modules/hosted-git-info/lib/index.js, node_modules/hosted-git-info/node_modules/lru-cache/index.js, node_modules/html-escaper/cjs/index.js, node_modules/html-escaper/esm/index.js, node_modules/html-escaper/index.js, node_modules/html-escaper/test/index.js, node_modules/htmlparser2/lib/esm/index.js, node_modules/htmlparser2/lib/index.js, node_modules/human-signals/build/src/main.js, node_modules/husky/index.js, node_modules/ignore/index.js, node_modules/import-fresh/index.js, node_modules/is-core-module/index.js, node_modules/is-core-module/test/index.js, node_modules/is-extglob/index.js, node_modules/is-fullwidth-code-point/index.js, node_modules/is-glob/index.js, node_modules/is-number/index.js, node_modules/is-stream/index.js, node_modules/isexe/index.js, node_modules/istanbul-lib-coverage/index.js, node_modules/istanbul-lib-report/index.js, node_modules/istanbul-lib-source-maps/index.js, node_modules/istanbul-reports/index.js, node_modules/istanbul-reports/lib/clover/index.js, node_modules/istanbul-reports/lib/cobertura/index.js, node_modules/istanbul-reports/lib/html/index.js, node_modules/istanbul-reports/lib/html-spa/index.js, node_modules/istanbul-reports/lib/html-spa/src/index.js, node_modules/istanbul-reports/lib/json/index.js, node_modules/istanbul-reports/lib/json-summary/index.js, node_modules/istanbul-reports/lib/lcov/index.js, node_modules/istanbul-reports/lib/lcovonly/index.js, node_modules/istanbul-reports/lib/none/index.js, node_modules/istanbul-reports/lib/teamcity/index.js, node_modules/istanbul-reports/lib/text/index.js, node_modules/istanbul-reports/lib/text-lcov/index.js, node_modules/istanbul-reports/lib/text-summary/index.js, node_modules/jackspeak/dist/commonjs/index.js, node_modules/jackspeak/dist/esm/index.js, node_modules/java-parser/src/index.js, node_modules/js-tokens/index.js, node_modules/js-yaml/index.js, node_modules/json-buffer/index.js, node_modules/json-buffer/test/index.js, node_modules/json-parse-even-better-errors/lib/index.js, node_modules/json-schema-traverse/index.js, node_modules/json-stable-stringify-without-jsonify/index.js, node_modules/keyv/src/index.js, node_modules/levn/lib/index.js, node_modules/license-checker-rseidelsohn/lib/index.js, node_modules/license-checker-rseidelsohn/node_modules/ansi-styles/index.js, node_modules/license-checker-rseidelsohn/node_modules/chalk/source/index.js, node_modules/lilconfig/src/index.js, node_modules/lint-staged/lib/index.js, node_modules/lint-staged/node_modules/commander/index.js, node_modules/listr2/dist/index.js, node_modules/listr2/node_modules/emoji-regex/index.js, node_modules/listr2/node_modules/string-width/index.js, node_modules/listr2/node_modules/wrap-ansi/index.js, node_modules/locate-path/index.js, node_modules/lodash/index.js, node_modules/lodash.clonedeep/index.js, node_modules/lodash.merge/index.js, node_modules/log-update/index.js, node_modules/log-update/node_modules/emoji-regex/index.js, node_modules/log-update/node_modules/is-fullwidth-code-point/index.js, node_modules/log-update/node_modules/slice-ansi/index.js, node_modules/log-update/node_modules/string-width/index.js, node_modules/log-update/node_modules/wrap-ansi/index.js, node_modules/loupe/lib/index.js, node_modules/lru-cache/dist/commonjs/index.js, node_modules/lru-cache/dist/esm/index.js, node_modules/make-dir/index.js, node_modules/mdn-data/api/index.js, node_modules/mdn-data/css/index.js, node_modules/mdn-data/index.js, node_modules/mdn-data/l10n/index.js, node_modules/merge-stream/index.js, node_modules/merge2/index.js, node_modules/micromatch/index.js, node_modules/mimic-fn/index.js, node_modules/mimic-function/index.js, node_modules/minimatch/dist/commonjs/index.js, node_modules/minimatch/dist/esm/index.js, node_modules/minipass/dist/commonjs/index.js, node_modules/minipass/dist/esm/index.js, node_modules/mkdirp/index.js, node_modules/ms/index.js, node_modules/nanoid/async/index.js, node_modules/nanoid/index.js, node_modules/nanoid/non-secure/index.js, node_modules/nanoid/url-alphabet/index.js, node_modules/natural-compare/index.js, node_modules/npm-normalize-package-bin/lib/index.js, node_modules/npm-run-path/index.js, node_modules/npm-run-path/node_modules/path-key/index.js, node_modules/onetime/index.js, node_modules/optionator/lib/index.js, node_modules/p-limit/index.js, node_modules/p-locate/index.js, node_modules/p-locate/node_modules/p-limit/index.js, node_modules/p-locate/node_modules/yocto-queue/index.js, node_modules/package-json-from-dist/dist/commonjs/index.js, node_modules/package-json-from-dist/dist/esm/index.js, node_modules/parent-module/index.js, node_modules/path-exists/index.js, node_modules/path-key/index.js, node_modules/path-scurry/dist/commonjs/index.js, node_modules/path-scurry/dist/esm/index.js, node_modules/pathval/index.js, node_modules/picomatch/index.js, node_modules/pidtree/index.js, node_modules/prelude-ls/lib/index.js, node_modules/queue-microtask/index.js, node_modules/read-package-json/node_modules/glob/dist/commonjs/index.js, node_modules/read-package-json/node_modules/glob/dist/esm/index.js, node_modules/read-package-json/node_modules/jackspeak/dist/commonjs/index.js, node_modules/read-package-json/node_modules/jackspeak/dist/esm/index.js, node_modules/read-package-json/node_modules/lru-cache/dist/commonjs/index.js, node_modules/read-package-json/node_modules/lru-cache/dist/esm/index.js, node_modules/read-package-json/node_modules/path-scurry/dist/commonjs/index.js, node_modules/read-package-json/node_modules/path-scurry/dist/esm/index.js, node_modules/resolve-from/index.js, node_modules/restore-cursor/index.js, node_modules/restore-cursor/node_modules/onetime/index.js, node_modules/rfdc/index.js, node_modules/rfdc/test/index.js, node_modules/rimraf/dist/commonjs/index.js, node_modules/rimraf/dist/esm/index.js, node_modules/rollup/dist/shared/index.js, node_modules/run-parallel/index.js, node_modules/semver/classes/index.js, node_modules/semver/index.js, node_modules/shebang-command/index.js, node_modules/shebang-regex/index.js, node_modules/siginfo/index.js, node_modules/signal-exit/dist/cjs/index.js, node_modules/signal-exit/dist/mjs/index.js, node_modules/slice-ansi/index.js, node_modules/slice-ansi/node_modules/is-fullwidth-code-point/index.js, node_modules/slide/index.js, node_modules/spdx-compare/index.js, node_modules/spdx-correct/index.js, node_modules/spdx-expression-parse/index.js, node_modules/spdx-satisfies/index.js, node_modules/stackback/index.js, node_modules/string-argv/commonjs/index.js, node_modules/string-argv/index.js, node_modules/string-width/index.js, node_modules/string-width-cjs/index.js, node_modules/string-width-cjs/node_modules/ansi-regex/index.js, node_modules/string-width-cjs/node_modules/emoji-regex/es2015/index.js, node_modules/string-width-cjs/node_modules/emoji-regex/index.js, node_modules/string-width-cjs/node_modules/strip-ansi/index.js, node_modules/strip-ansi/index.js, node_modules/strip-ansi-cjs/index.js, node_modules/strip-ansi-cjs/node_modules/ansi-regex/index.js, node_modules/strip-final-newline/index.js, node_modules/strip-json-comments/index.js, node_modules/strip-literal/node_modules/js-tokens/index.js, node_modules/supports-color/index.js, node_modules/test-exclude/index.js, node_modules/test-exclude/node_modules/glob/dist/commonjs/index.js, node_modules/test-exclude/node_modules/glob/dist/esm/index.js, node_modules/test-exclude/node_modules/jackspeak/dist/commonjs/index.js, node_modules/test-exclude/node_modules/jackspeak/dist/esm/index.js, node_modules/test-exclude/node_modules/lru-cache/dist/commonjs/index.js, node_modules/test-exclude/node_modules/lru-cache/dist/esm/index.js, node_modules/test-exclude/node_modules/path-scurry/dist/commonjs/index.js, node_modules/test-exclude/node_modules/path-scurry/dist/esm/index.js, node_modules/tinybench/dist/index.js, node_modules/tinyexec/dist/main.js, node_modules/tinyglobby/dist/index.js, node_modules/tinyglobby/node_modules/fdir/dist/builder/index.js, node_modules/tinyglobby/node_modules/fdir/dist/index.js, node_modules/tinyglobby/node_modules/picomatch/index.js, node_modules/tinypool/dist/index.js, node_modules/tinyspy/dist/index.js, node_modules/to-regex-range/index.js, node_modules/ts-api-utils/lib/index.js, node_modules/type-check/lib/index.js, node_modules/uri-js/dist/esnext/index.js, node_modules/validate-npm-package-license/index.js, node_modules/vite/dist/node/cli.js, node_modules/vite/dist/node/index.js, node_modules/vite/node_modules/fdir/dist/builder/index.js, node_modules/vite/node_modules/fdir/dist/index.js, node_modules/vite/node_modules/picomatch/index.js, node_modules/vitest/dist/cli.js, node_modules/vitest/dist/index.js, node_modules/vitest/node_modules/picomatch/index.js, node_modules/why-is-node-running/cli.js, node_modules/why-is-node-running/index.js, node_modules/word-wrap/index.js, node_modules/wrap-ansi/index.js, node_modules/wrap-ansi-cjs/index.js, node_modules/wrap-ansi-cjs/node_modules/ansi-regex/index.js, node_modules/wrap-ansi-cjs/node_modules/ansi-styles/index.js, node_modules/wrap-ansi-cjs/node_modules/emoji-regex/es2015/index.js, node_modules/wrap-ansi-cjs/node_modules/emoji-regex/index.js, node_modules/wrap-ansi-cjs/node_modules/string-width/index.js, node_modules/wrap-ansi-cjs/node_modules/strip-ansi/index.js, node_modules/xxhashjs/lib/index.js, node_modules/yaml/browser/dist/index.js, node_modules/yaml/browser/index.js, node_modules/yaml/dist/index.js, node_modules/yocto-queue/index.js",
+      "linha": 0
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\gast\\src\\helpers.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\gast\\src\\model.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\types\\api.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@eslint-community\\regexpp\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@humanfs\\node\\dist\\node-fsx.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@humanfs\\node\\dist\\node-hfs.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@humanwhocodes\\module-importer\\dist\\module-importer.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\chai\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\buffer.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\dns.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\events.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\fs.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\readline.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\stream.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\test.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\timers.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\util.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\acorn\\dist\\acorn.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\ansi-escapes\\base.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\ansi-styles\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chalk\\source\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chalk\\source\\vendor\\ansi-styles\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\cst\\cst_visitor.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\checks.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\first.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\interpreter.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\lookahead.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\rest.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\gast_recorder.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\looksahead.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\parser_traits.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\perf_tracer.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\recognizer_engine.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\recoverable.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\tree_builder.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\scan\\lexer_public.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\scan\\lexer.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\scan\\reg_exp.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\scan\\tokens_public.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\scan\\tokens.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\commander\\typings\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\environment\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\eslint\\lib\\types\\use-at-your-own-risk.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\execa\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\java-parser\\api.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\lint-staged\\node_modules\\commander\\typings\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\nanoid\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\prettier\\doc.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\prettier\\index.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\rollup\\dist\\parseAst.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\rollup\\dist\\rollup.d.ts",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\slide\\lib\\async-map-ordered.js",
+      "tipoOcorrencia": "PARSE_ERRO",
+      "mensagem": "Erro de parsing: AST não gerada (código possivelmente inválido)."
+    },
+    {
+      "filePath": "node_modules\\@ampproject\\remapping\\dist\\remapping.umd.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 40
+    },
+    {
+      "filePath": "node_modules\\@babel\\parser\\typings\\babel-parser.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 235
+    },
+    {
+      "filePath": "node_modules\\@bcoe\\v8-coverage\\src\\lib\\normalize.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 71
+    },
+    {
+      "filePath": "node_modules\\@bcoe\\v8-coverage\\src\\lib\\range-tree.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 111
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\gast\\lib\\src\\model.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 2
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\gast\\src\\model.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 10
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\regexp-to-ast\\lib\\src\\regexp-parser.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 375
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\regexp-to-ast\\src\\regexp-parser.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 447
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\types\\api.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 1278
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\utils\\lib\\src\\print.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 10
+    },
+    {
+      "filePath": "node_modules\\@chevrotain\\utils\\src\\print.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 11
+    },
+    {
+      "filePath": "node_modules\\@eslint\\config-array\\dist\\esm\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 778
+    },
+    {
+      "filePath": "node_modules\\@eslint\\config-array\\node_modules\\minimatch\\minimatch.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 491
+    },
+    {
+      "filePath": "node_modules\\@eslint\\eslintrc\\node_modules\\ignore\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 72
+    },
+    {
+      "filePath": "node_modules\\@eslint\\eslintrc\\node_modules\\ignore\\legacy.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 82
+    },
+    {
+      "filePath": "node_modules\\@eslint\\eslintrc\\node_modules\\minimatch\\minimatch.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 491
+    },
+    {
+      "filePath": "node_modules\\@eslint-community\\eslint-utils\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 816
+    },
+    {
+      "filePath": "node_modules\\@jridgewell\\gen-mapping\\src\\gen-mapping.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 308
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\compatibility\\disposable.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 2
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\compatibility\\iterators.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 6
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\fs\\promises.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 94
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\perf_hooks.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 99
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\test.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 906
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\util.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 107
+    },
+    {
+      "filePath": "node_modules\\@types\\node\\wasi.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 159
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\configs\\eslint-recommended-raw.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 24
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\no-floating-promises.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 110
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\no-inferrable-types.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 128
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\no-misused-promises.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 481
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\no-mixed-enums.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 154
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\no-unnecessary-type-arguments.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 79
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\no-unnecessary-type-assertion.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 237
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\no-unsafe-argument.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 199
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\prefer-nullish-coalescing.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 365
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\prefer-optional-chain-utils\\analyzeChain.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 208
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\prefer-optional-chain-utils\\compareNodes.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 145
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\rules\\strict-boolean-expressions.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 650
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\eslint-plugin\\dist\\util\\getOperatorPrecedence.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 123
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\project-service\\dist\\createProjectService.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 40
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\type-utils\\dist\\getContextualType.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 74
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\type-utils\\dist\\isUnsafeAssignment.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 74
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\typescript-estree\\dist\\clear-caches.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 26
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\typescript-estree\\dist\\convert.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 1553
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\typescript-estree\\dist\\create-program\\createIsolatedProgram.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 66
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\typescript-estree\\dist\\create-program\\getWatchProgramsForProjects.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 208
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\utils\\dist\\eslint-utils\\RuleCreator.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 13
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\utils\\dist\\ts-eslint\\ESLint.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 9
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\utils\\dist\\ts-eslint\\SourceCode.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 272
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\visitor-keys\\node_modules\\eslint-visitor-keys\\lib\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 29
+    },
+    {
+      "filePath": "node_modules\\@typescript-eslint\\visitor-keys\\node_modules\\eslint-visitor-keys\\lib\\visitor-keys.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 2
+    },
+    {
+      "filePath": "node_modules\\@vitest\\coverage-v8\\dist\\provider.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 2245
+    },
+    {
+      "filePath": "node_modules\\@vitest\\mocker\\dist\\node.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 15
+    },
+    {
+      "filePath": "node_modules\\@vitest\\mocker\\dist\\node.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 264
+    },
+    {
+      "filePath": "node_modules\\@vitest\\runner\\dist\\chunk-hooks.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1538
+    },
+    {
+      "filePath": "node_modules\\@vitest\\snapshot\\dist\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1677
+    },
+    {
+      "filePath": "node_modules\\ajv\\dist\\ajv.bundle.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 6248
+    },
+    {
+      "filePath": "node_modules\\callsites\\index.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 90
+    },
+    {
+      "filePath": "node_modules\\callsites\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 12
+    },
+    {
+      "filePath": "node_modules\\chalk\\source\\index.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 1
+    },
+    {
+      "filePath": "node_modules\\chalk\\source\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 213
+    },
+    {
+      "filePath": "node_modules\\chalk\\source\\utilities.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\diagrams\\src\\diagrams_builder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 4
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\constants.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\errors_public.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 18
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\grammar\\checks.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 114
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\grammar\\interpreter.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "7 TODOs pendentes no arquivo (agregado)",
+      "linha": 147
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\grammar\\keys.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 10
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\grammar\\lookahead.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 399
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\parser\\traits\\context_assist.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 12
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\parser\\traits\\error_handler.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 34
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\parser\\traits\\recognizer_engine.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 17
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\parse\\parser\\traits\\recoverable.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 43
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\scan\\lexer_public.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "8 TODOs pendentes no arquivo (agregado)",
+      "linha": 82
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\scan\\lexer.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 709
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\lib\\src\\scan\\reg_exp.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 17
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\constants.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\errors_public.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 44
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\checks.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 248
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\interpreter.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "7 TODOs pendentes no arquivo (agregado)",
+      "linha": 234
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\keys.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 11
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\grammar\\lookahead.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 614
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\context_assist.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 36
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\error_handler.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 60
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\recognizer_engine.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 91
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\parse\\parser\\traits\\recoverable.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 102
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\scan\\lexer_public.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "8 TODOs pendentes no arquivo (agregado)",
+      "linha": 129
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\scan\\lexer.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 88
+    },
+    {
+      "filePath": "node_modules\\chevrotain\\src\\scan\\reg_exp.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 35
+    },
+    {
+      "filePath": "node_modules\\cli-truncate\\node_modules\\string-width\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 72
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\lexer\\generic.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 144
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\lexer\\structure.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 131
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\syntax\\node\\Atrule.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 72
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\syntax\\node\\Declaration.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 136
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\syntax\\node\\IdSelector.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 11
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\syntax\\scope\\default.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 73
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\tokenizer\\char-code-definitions.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 74
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\tokenizer\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 282
+    },
+    {
+      "filePath": "node_modules\\css-tree\\lib\\tokenizer\\utils.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 169
+    },
+    {
+      "filePath": "node_modules\\cuint\\build\\uint32.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 135
+    },
+    {
+      "filePath": "node_modules\\cuint\\lib\\uint32.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 135
+    },
+    {
+      "filePath": "node_modules\\debug\\src\\browser.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 111
+    },
+    {
+      "filePath": "node_modules\\eslint\\lib\\cli-engine\\cli-engine.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1056
+    },
+    {
+      "filePath": "node_modules\\eslint\\lib\\eslint\\eslint.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 1014
+    },
+    {
+      "filePath": "node_modules\\eslint\\lib\\languages\\js\\source-code\\token-store\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 450
+    },
+    {
+      "filePath": "node_modules\\eslint\\lib\\linter\\esquery.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 209
+    },
+    {
+      "filePath": "node_modules\\eslint\\lib\\linter\\linter.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 877
+    },
+    {
+      "filePath": "node_modules\\eslint\\lib\\rules\\capitalized-comments.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 19
+    },
+    {
+      "filePath": "node_modules\\eslint\\lib\\rules\\indent-legacy.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 844
+    },
+    {
+      "filePath": "node_modules\\eslint\\node_modules\\eslint-visitor-keys\\lib\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 29
+    },
+    {
+      "filePath": "node_modules\\eslint\\node_modules\\eslint-visitor-keys\\lib\\visitor-keys.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 2
+    },
+    {
+      "filePath": "node_modules\\eslint\\node_modules\\ignore\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 72
+    },
+    {
+      "filePath": "node_modules\\eslint\\node_modules\\ignore\\legacy.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 82
+    },
+    {
+      "filePath": "node_modules\\eslint\\node_modules\\minimatch\\minimatch.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 491
+    },
+    {
+      "filePath": "node_modules\\eslint-scope\\lib\\referencer.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 623
+    },
+    {
+      "filePath": "node_modules\\eslint-scope\\lib\\scope.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 677
+    },
+    {
+      "filePath": "node_modules\\espree\\lib\\token-translator.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 108
+    },
+    {
+      "filePath": "node_modules\\espree\\node_modules\\eslint-visitor-keys\\lib\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 29
+    },
+    {
+      "filePath": "node_modules\\espree\\node_modules\\eslint-visitor-keys\\lib\\visitor-keys.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 2
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\inputSource\\BufferSource.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 64
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\inputSource\\StringSource.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 98
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\OutputBuilders\\BaseOutputBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 8
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\OutputBuilders\\JsArrBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 37
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\OutputBuilders\\JsMinArrBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 38
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\OutputBuilders\\JsObjBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 84
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\OutputBuilders\\ParserOptionsBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 43
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\valueParsers\\booleanParser.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 15
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\Xml2JsParser.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "7 TODOs pendentes no arquivo (agregado)",
+      "linha": 45
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\XmlPartReader.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 138
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v5\\XmlSpecialTagsReader.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 18
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\inputSource\\BufferSource.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 64
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\inputSource\\StringSource.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 98
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\OutputBuilders\\BaseOutputBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 8
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\OutputBuilders\\JsArrBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 37
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\OutputBuilders\\JsMinArrBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 38
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\OutputBuilders\\JsObjBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 84
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\OutputBuilders\\ParserOptionsBuilder.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 43
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\valueParsers\\booleanParser.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 15
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\Xml2JsParser.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "7 TODOs pendentes no arquivo (agregado)",
+      "linha": 45
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\XmlPartReader.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 138
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\v6\\XmlSpecialTagsReader.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 18
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\xmlparser\\DocTypeReader.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 3
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\xmlparser\\node2json.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 55
+    },
+    {
+      "filePath": "node_modules\\fast-xml-parser\\src\\xmlparser\\OrderedObjParser.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 125
+    },
+    {
+      "filePath": "node_modules\\get-stream\\source\\array-buffer.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 64
+    },
+    {
+      "filePath": "node_modules\\glob\\node_modules\\minimatch\\dist\\commonjs\\ast.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 347
+    },
+    {
+      "filePath": "node_modules\\glob\\node_modules\\minimatch\\dist\\esm\\ast.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 344
+    },
+    {
+      "filePath": "node_modules\\hosted-git-info\\lib\\hosts.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 207
+    },
+    {
+      "filePath": "node_modules\\htmlparser2\\lib\\esm\\Tokenizer.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 261
+    },
+    {
+      "filePath": "node_modules\\htmlparser2\\lib\\Tokenizer.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 266
+    },
+    {
+      "filePath": "node_modules\\ignore\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 81
+    },
+    {
+      "filePath": "node_modules\\ignore\\legacy.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 91
+    },
+    {
+      "filePath": "node_modules\\istanbul-lib-report\\lib\\report-base.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 3
+    },
+    {
+      "filePath": "node_modules\\java-parser\\src\\parser.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 36
+    },
+    {
+      "filePath": "node_modules\\java-parser\\src\\productions\\blocks-and-statements.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 124
+    },
+    {
+      "filePath": "node_modules\\java-parser\\src\\productions\\classes.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "5 TODOs pendentes no arquivo (agregado)",
+      "linha": 256
+    },
+    {
+      "filePath": "node_modules\\java-parser\\src\\productions\\expressions.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "6 TODOs pendentes no arquivo (agregado)",
+      "linha": 121
+    },
+    {
+      "filePath": "node_modules\\java-parser\\src\\productions\\names.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 25
+    },
+    {
+      "filePath": "node_modules\\java-parser\\src\\productions\\packages-and-modules.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 64
+    },
+    {
+      "filePath": "node_modules\\java-parser\\src\\productions\\types-values-and-variables.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 101
+    },
+    {
+      "filePath": "node_modules\\java-parser\\src\\tokens.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 112
+    },
+    {
+      "filePath": "node_modules\\js-yaml\\dist\\js-yaml.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 267
+    },
+    {
+      "filePath": "node_modules\\js-yaml\\lib\\loader.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 659
+    },
+    {
+      "filePath": "node_modules\\js-yaml\\lib\\type.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 47
+    },
+    {
+      "filePath": "node_modules\\json-buffer\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1
+    },
+    {
+      "filePath": "node_modules\\license-checker-rseidelsohn\\lib\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 91
+    },
+    {
+      "filePath": "node_modules\\license-checker-rseidelsohn\\lib\\indexHelpers.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 12
+    },
+    {
+      "filePath": "node_modules\\license-checker-rseidelsohn\\lib\\license-files.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 10
+    },
+    {
+      "filePath": "node_modules\\listr2\\node_modules\\string-width\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 72
+    },
+    {
+      "filePath": "node_modules\\log-update\\node_modules\\string-width\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 72
+    },
+    {
+      "filePath": "node_modules\\magic-string\\dist\\magic-string.cjs.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 131
+    },
+    {
+      "filePath": "node_modules\\magic-string\\dist\\magic-string.umd.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "4 TODOs pendentes no arquivo (agregado)",
+      "linha": 133
+    },
+    {
+      "filePath": "node_modules\\minimatch\\dist\\commonjs\\ast.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 347
+    },
+    {
+      "filePath": "node_modules\\minimatch\\dist\\esm\\ast.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 344
+    },
+    {
+      "filePath": "node_modules\\nopt\\lib\\nopt.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 8
+    },
+    {
+      "filePath": "node_modules\\p-locate\\node_modules\\yocto-queue\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 8
+    },
+    {
+      "filePath": "node_modules\\path-key\\index.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 34
+    },
+    {
+      "filePath": "node_modules\\path-key\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 15
+    },
+    {
+      "filePath": "node_modules\\path-scurry\\dist\\commonjs\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 33
+    },
+    {
+      "filePath": "node_modules\\path-scurry\\dist\\esm\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 7
+    },
+    {
+      "filePath": "node_modules\\prettier\\doc.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1255
+    },
+    {
+      "filePath": "node_modules\\read-installed-packages\\read-installed.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 83
+    },
+    {
+      "filePath": "node_modules\\read-package-json\\lib\\read-json.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 515
+    },
+    {
+      "filePath": "node_modules\\read-package-json\\node_modules\\path-scurry\\dist\\commonjs\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 33
+    },
+    {
+      "filePath": "node_modules\\read-package-json\\node_modules\\path-scurry\\dist\\esm\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 7
+    },
+    {
+      "filePath": "node_modules\\rollup\\dist\\es\\shared\\node-entry.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "5 TODOs pendentes no arquivo (agregado)",
+      "linha": 330
+    },
+    {
+      "filePath": "node_modules\\rollup\\dist\\es\\shared\\watch.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "6 TODOs pendentes no arquivo (agregado)",
+      "linha": 6874
+    },
+    {
+      "filePath": "node_modules\\rollup\\dist\\shared\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "5 TODOs pendentes no arquivo (agregado)",
+      "linha": 6870
+    },
+    {
+      "filePath": "node_modules\\rollup\\dist\\shared\\rollup.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "5 TODOs pendentes no arquivo (agregado)",
+      "linha": 4136
+    },
+    {
+      "filePath": "node_modules\\rollup\\dist\\shared\\watch.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 139
+    },
+    {
+      "filePath": "node_modules\\semver\\classes\\range.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 489
+    },
+    {
+      "filePath": "node_modules\\slice-ansi\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 44
+    },
+    {
+      "filePath": "node_modules\\spdx-expression-parse\\parse.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 46
+    },
+    {
+      "filePath": "node_modules\\stackback\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 36
+    },
+    {
+      "filePath": "node_modules\\string-width-cjs\\index.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 23
+    },
+    {
+      "filePath": "node_modules\\string-width-cjs\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 46
+    },
+    {
+      "filePath": "node_modules\\test-exclude\\node_modules\\path-scurry\\dist\\commonjs\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 33
+    },
+    {
+      "filePath": "node_modules\\test-exclude\\node_modules\\path-scurry\\dist\\esm\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 7
+    },
+    {
+      "filePath": "node_modules\\ts-api-utils\\lib\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1195
+    },
+    {
+      "filePath": "node_modules\\typescript\\lib\\_tsc.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "20 TODOs pendentes no arquivo (agregado)",
+      "linha": 10390
+    },
+    {
+      "filePath": "node_modules\\typescript\\lib\\typescript.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "49 TODOs pendentes no arquivo (agregado)",
+      "linha": 13802
+    },
+    {
+      "filePath": "node_modules\\undici-types\\webidl.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 204
+    },
+    {
+      "filePath": "node_modules\\uri-js\\dist\\es5\\uri.all.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 1013
+    },
+    {
+      "filePath": "node_modules\\uri-js\\dist\\esnext\\uri.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 327
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\chunks\\cli-api.BkDphVBG.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "6 TODOs pendentes no arquivo (agregado)",
+      "linha": 5670
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\chunks\\config.d.D2ROskhv.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 97
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\chunks\\coverage.DL5VHqXY.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 2086
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\chunks\\creator.GK6I-cL4.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 595
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\chunks\\index.CdQS2e2Q.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 10
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\chunks\\index.CmSc2RE5.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 354
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\chunks\\index.X0nbfr6-.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "6 TODOs pendentes no arquivo (agregado)",
+      "linha": 447
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\chunks\\vm.BThCzidc.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "6 TODOs pendentes no arquivo (agregado)",
+      "linha": 239
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\execute.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 53
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\index.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 71
+    },
+    {
+      "filePath": "node_modules\\vitest\\dist\\workers\\forks.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 24
+    },
+    {
+      "filePath": "node_modules\\wrap-ansi-cjs\\node_modules\\string-width\\index.d.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 23
+    },
+    {
+      "filePath": "node_modules\\wrap-ansi-cjs\\node_modules\\string-width\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 46
+    },
+    {
+      "filePath": "node_modules\\xxhashjs\\build\\xxhash.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "2 TODOs pendentes no arquivo (agregado)",
+      "linha": 198
+    },
+    {
+      "filePath": "node_modules\\yaml\\browser\\dist\\nodes\\addPairToJSMap.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 10
+    },
+    {
+      "filePath": "node_modules\\yaml\\dist\\nodes\\addPairToJSMap.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 12
+    },
+    {
+      "filePath": "node_modules\\yocto-queue\\index.js",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "Comentário TODO encontrado",
+      "linha": 56
+    }
+  ]
+}
