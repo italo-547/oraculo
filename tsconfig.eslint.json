@@ -11,8 +11,5 @@
     "exemplos-testes-implementacoes/src/**/*.ts",
     "exemplos-testes-implementacoes/tests/**/*.ts"
   ],
-  "exclude": [
-    "dist",
-    ".oraculo"
-  ]
+  "exclude": ["dist", ".oraculo"]
 }
