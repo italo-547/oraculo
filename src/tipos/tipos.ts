@@ -248,6 +248,9 @@ export interface ResultadoDeteccaoArquetipo {
   forbiddenPresent: string[];
   anomalias: ArquetipoDeteccaoAnomalia[];
   planoSugestao?: PlanoSugestaoEstrutura;
+  sugestaoPadronizacao?: string;
+  explicacaoSimilaridade?: string;
+  candidatoExtra?: string;
 }
 
 // Plano de reorganização estrutural sugerido (não executado automaticamente)
