@@ -13,16 +13,16 @@
       "analistas": {
         "t": {
           "ocorrencias": 1,
-          "duracaoMs": 0.028999999999996362
+          "duracaoMs": 0.03520000000003165
         }
       },
-      "ultimaExecucaoMs": 1755292800895,
+      "ultimaExecucaoMs": 1755305274543,
       "reaproveitadoCount": 0
     }
   },
   "estatisticas": {
     "totalReaproveitamentos": 0,
     "totalArquivosProcessados": 1,
-    "ultimaDuracaoMs": 1
+    "ultimaDuracaoMs": 2
   }
 }
