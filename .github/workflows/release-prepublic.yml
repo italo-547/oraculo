@@ -1,9 +1,16 @@
 name: release-prepublic
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag para o Release (ex.: v0.1.0-alpha.0)"
+        required: true
+        type: string
+      release_name:
+        description: "Nome do Release (opcional)"
+        required: false
+        type: string
 
 jobs:
   build-and-attach:
@@ -34,10 +41,14 @@ jobs:
           cd pre-public
           zip -r ../pre-public.zip .
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release (draft)
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
           files: pre-public.zip
+          tag_name: ${{ github.event.inputs.tag_name }}
+          name: ${{ github.event.inputs.release_name }}
+          draft: true
+          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

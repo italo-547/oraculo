@@ -42,6 +42,9 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - Limites de PARSE_ERRO já expostos; considerar parametrize via flag futura (`--parse-erros-max=<n>`)
 - Métricas internas disponíveis em `diagnosticar --json` (`metricas`) e histórico via `oraculo metricas`
 - O catálogo `docs/ANALISTAS.md` deve ser gerado via comando: `oraculo analistas --doc docs/ANALISTAS.md`
+- Fluxo de PR: abrir de `develop` → `main`; marcar o check "ci" como obrigatório nas proteções da `main`.
+- Pré-visualização local: `npm run pre-public` monta a árvore final prevista para publicação em `pre-public/`.
+- Release manual: acione o workflow `release-prepublic` em Actions informando `tag_name` (ex.: `v0.1.0-alpha.0`); um Release draft com `pre-public.zip` será gerado.
 
 Cobertura atual (V8):
 

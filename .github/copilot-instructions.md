@@ -105,6 +105,9 @@ console.log(bloco); // impressão direta, sem prefixo
 - **Aliases**: Sempre importe módulos usando os aliases do `tsconfig.json`.
 - **Testes**: Já implementados (Vitest). Durante testes `process.env.VITEST` deve impedir chamadas a `process.exit`.
 - **Persistência**: Sempre utilize os helpers centralizados para leitura/escrita de arquivos de estado, relatórios e snapshots.
+- **Branches**: `develop` é a branch padrão para desenvolvimento; `main` é protegida e recebe merge via PR + checks do CI.
+- **Pré-visualização**: `npm run pre-public` monta a pasta `pre-public/` com artefatos que seriam publicados (sem publicar nada).
+- **Release manual**: Workflow `release-prepublic` (Actions → workflow_dispatch) cria um Release draft anexando `pre-public.zip` para a tag informada.
 
 ## Cobertura e Testes (Vitest)
 
