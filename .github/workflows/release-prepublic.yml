@@ -1,0 +1,43 @@
+name: release-prepublic
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-attach:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm i
+          fi
+
+      - name: Build pre-public
+        run: npm run pre-public
+
+      - name: Zip pre-public
+        run: |
+          cd pre-public
+          zip -r ../pre-public.zip .
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pre-public.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

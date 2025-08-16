@@ -61,13 +61,13 @@
     "@babel/types": "^7.28.2",
     "chalk": "^5.5.0",
     "commander": "^12.1.0",
-    "micromatch": "^4.0.8",
-    "xxhashjs": "^0.2.2",
-    "p-limit": "^4.0.0",
-    "htmlparser2": "^9.1.0",
-    "fast-xml-parser": "^4.5.3",
     "css-tree": "^2.3.1",
-    "java-parser": "^2.3.4"
+    "fast-xml-parser": "^4.5.3",
+    "htmlparser2": "^9.1.0",
+    "java-parser": "^2.3.4",
+    "micromatch": "^4.0.8",
+    "p-limit": "^4.0.0",
+    "xxhashjs": "^0.2.2"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.28.0",
@@ -77,13 +77,13 @@
     "@typescript-eslint/parser": "^8.39.1",
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.33.0",
+    "husky": "^9.1.7",
+    "license-checker-rseidelsohn": "^4.4.2",
+    "lint-staged": "^15.5.2",
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.5.2",
-    "license-checker-rseidelsohn": "^4.4.2"
+    "vitest": "^3.2.4"
   },
   "vitest": {
     "coverage": {
