@@ -80,6 +80,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
     .alias('diag')
     .description('Executa uma análise completa do repositório');
 
+  // Em modo padrão, ignoramos opções desconhecidas para evitar saídas forçadas do Commander
+  // (comportamento desejado também pelos testes de opções inválidas)
+  cmd.allowUnknownOption(true);
+
   // Adiciona opções centralizadas
   for (const opt of optionsDiagnosticar) {
     if (opt.parser) {
