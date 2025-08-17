@@ -13,10 +13,10 @@
       "analistas": {
         "t": {
           "ocorrencias": 1,
-          "duracaoMs": 0.02760000000000673
+          "duracaoMs": 0.030000000000086402
         }
       },
-      "ultimaExecucaoMs": 1755396297579,
+      "ultimaExecucaoMs": 1755396649138,
       "reaproveitadoCount": 0
     }
   },

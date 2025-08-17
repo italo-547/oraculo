@@ -191,7 +191,7 @@ export async function detectarArquetipos(
   const arquivos = contexto.arquivos.map((f) => f.relPath);
   // Novo fluxo: delega para orquestrador central
   const { detectarArquetipo } = await import('./orquestrador-arquetipos.js');
-  const melhor = detectarArquetipo(arquivos);
+  let melhor = detectarArquetipo(arquivos);
   const melhores = [melhor];
   const baselinePath = path.join(baseDir, '.oraculo', 'baseline-estrutura.json');
   let baseline: SnapshotEstruturaBaseline | undefined;
@@ -213,6 +213,26 @@ export async function detectarArquetipos(
       arquivosRaiz: arquivos.filter((p) => !p.includes('/')).sort(),
     };
     await salvarEstado(baselinePath, baseline);
+  }
+  // Compatibilidade: se detecção apontar desconhecido mas baseline existente tiver arquetipo conhecido, usa baseline
+  if (melhores[0]?.nome === 'desconhecido' && baseline && baseline.arquetipo !== 'desconhecido') {
+    melhor = {
+      nome: baseline.arquetipo,
+      score: 0,
+      confidence: baseline.confidence,
+      matchedRequired: [],
+      missingRequired: [],
+      matchedOptional: [],
+      dependencyMatches: [],
+      filePatternMatches: [],
+      forbiddenPresent: [],
+      anomalias: [],
+      sugestaoPadronizacao: '',
+      explicacaoSimilaridade:
+        'Detectado via baseline existente (.oraculo/baseline-estrutura.json).',
+      descricao: 'Arquétipo determinado pelo baseline',
+    };
+    melhores[0] = melhor;
   }
   let drift: ArquetipoDrift | undefined;
   if (baseline && melhores[0]) {

@@ -62,7 +62,7 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
     dependencyHints: ['telegraf', 'discord.js'],
     rootFilesAllowed: ['package.json', 'tsconfig.json'],
     // Estruturas típicas de frontend/monorepo não são esperadas em bots
-    forbiddenDirs: ['pages', 'prisma', 'packages'],
+    forbiddenDirs: ['pages', 'prisma', 'packages', 'electron-app'],
     pesoBase: 0.9,
   },
   {
@@ -95,6 +95,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
     optionalDirs: ['apps', 'packages/*'],
     dependencyHints: [],
     rootFilesAllowed: ['package.json', 'tsconfig.json', 'turbo.json', 'pnpm-workspace.yaml'],
+    // Penaliza estrutura de código na raiz em monorepos (esperado ficar em apps/ ou packages/)
+    forbiddenDirs: ['src', 'pages', 'api', 'prisma'],
     pesoBase: 1.4,
   },
 ];
