@@ -294,6 +294,7 @@ Limitações atuais:
 
 - Apenas separação por vírgula suportada (futuramente avaliar suporte a repetir `--include`).
 - Não há feedback explícito listando padrões aplicados (pode ser adicionado em modo `--verbose`).
+- Mesmo com `--scan-only` e `--include`, `node_modules` pode ser ignorado em alguns cenários por guard-rails. Ver detalhes e próximos passos em `docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md`.
 
 Se precisar resetar filtros programaticamente, não passe as flags (elas não persistem em config).
 
