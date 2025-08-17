@@ -23,7 +23,7 @@
     "pre-public": "node scripts/pre-public.mjs",
     "start": "node ./dist/cli.js",
     "diagnosticar": "node ./dist/cli.js diagnosticar",
-    "lint": "eslint \"src/**/*.ts\"",
+    "lint": "eslint \"{src,tests,temp-fantasma}/**/*.ts\"",
     "format": "prettier --check \"**/*.{ts,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,md}\"",
     "coverage:enforce": "vitest run --coverage --coverage.enabled=true --coverage.thresholds='{\\\"lines\\\":90,\\\"statements\\\":90,\\\"branches\\\":88,\\\"functions\\\":90}'",

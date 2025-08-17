@@ -69,6 +69,14 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Ajuste: cobertura habilitada por env (`COVERAGE=true`) com thresholds preservados para CI/gate (finalizado em 2025-08-16)
 - [x] Alinhamento de testes para Vitest (mocks/fixtures; remoção de mistura Jest/Vitest) (finalizado em 2025-08-16)
 
+### Notas de Lint (Mapa para futura implementação)
+
+- Mantidos 3 avisos em `src/analistas/detector-arquetipos.ts` como marcadores de melhoria futura:
+  - `ARQUETIPOS` declarado e não usado (linha 1)
+  - `scoreArquetipo` declarado e não usado (linha 22)
+  - `isHibridoParcial` atribuído e não utilizado (linha 88)
+    Esses avisos servirão como guia para evolução do detector (integração total com orquestrador e uso ampliado do scorer/híbridos).
+
 ---
 
 Sempre consulte e atualize este checklist após cada mudança relevante.

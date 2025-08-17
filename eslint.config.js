@@ -40,9 +40,9 @@ export default [
       'no-console': 'off',
     },
   },
-  // Override para testes: desabilita avisos comuns
+  // Override para testes/specs: desabilita avisos comuns
   {
-    files: ['**/*.test.ts', '**/*.test.tsx'],
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
@@ -60,6 +60,8 @@ export default [
       'tmp-cache-file.ts',
       '.deprecados/**',
       'tests/fixtures/**',
+      'pre-public/**',
+      'relatorios/**',
     ],
   },
 ];
