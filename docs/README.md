@@ -10,3 +10,13 @@ Sugestão de estrutura para documentação e histórico do projeto:
 - `docs/RELATORIO.md`: Relatório principal do projeto (pode ser movido para `relatorios/` se preferir).
 
 Adapte e expanda conforme o crescimento do projeto.
+
+## Referências úteis
+
+- Guardian: `docs/guardian.md`
+- Relatórios: `docs/relatorios/RELATORIO.md`
+- Estruturas/Arquétipos: `docs/estruturas/README.md`
+- Decisões do scanner e filtros: `docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md`
+
+> Nota:
+> Mesmo com `--scan-only` e `--include`, `node_modules` pode ser ignorado em alguns cenários. Isso está documentado na decisão acima e registrado como ajuste futuro no `docs/CHECKLIST.md`.

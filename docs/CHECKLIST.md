@@ -1,6 +1,6 @@
 # Checklist de Melhorias e Ajustes
 
-**Última atualização: 2025-08-16**
+**Última atualização: 2025-08-17**
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
@@ -41,6 +41,10 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [ ] Modo estrito de plugins
 - [ ] Métrica de tempo por plugin estrutura
 - [ ] Flag `--metricas-export <arquivo>` para salvar métricas isoladas
+
+### Limitações conhecidas (registradas)
+
+- [ ] `--scan-only` + `--include` ainda ignora `node_modules` em alguns cenários. Precisamos harmonizar a regra de "inclusão explícita" para permitir inspeção pontual sem desmontar guard-rails. (registrado em 2025-08-17)
 
 ### Observações
 
