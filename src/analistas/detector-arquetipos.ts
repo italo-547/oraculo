@@ -215,24 +215,31 @@ export async function detectarArquetipos(
     await salvarEstado(baselinePath, baseline);
   }
   // Compatibilidade: se detecção apontar desconhecido mas baseline existente tiver arquetipo conhecido, usa baseline
+  // Somente aplica quando houver alguma interseção entre arquivos de raiz atuais e os do baseline,
+  // evitando que um baseline global contamine cenários sem correspondência real (ex.: testes de "desconhecido").
   if (melhores[0]?.nome === 'desconhecido' && baseline && baseline.arquetipo !== 'desconhecido') {
-    melhor = {
-      nome: baseline.arquetipo,
-      score: 0,
-      confidence: baseline.confidence,
-      matchedRequired: [],
-      missingRequired: [],
-      matchedOptional: [],
-      dependencyMatches: [],
-      filePatternMatches: [],
-      forbiddenPresent: [],
-      anomalias: [],
-      sugestaoPadronizacao: '',
-      explicacaoSimilaridade:
-        'Detectado via baseline existente (.oraculo/baseline-estrutura.json).',
-      descricao: 'Arquétipo determinado pelo baseline',
-    };
-    melhores[0] = melhor;
+    const arquivosRaizAtuais = arquivos.filter((p) => !p.includes('/'));
+    const setBase = new Set(baseline.arquivosRaiz || []);
+    const temIntersecao = arquivosRaizAtuais.some((f) => setBase.has(f));
+    if (temIntersecao) {
+      melhor = {
+        nome: baseline.arquetipo,
+        score: 0,
+        confidence: baseline.confidence,
+        matchedRequired: [],
+        missingRequired: [],
+        matchedOptional: [],
+        dependencyMatches: [],
+        filePatternMatches: [],
+        forbiddenPresent: [],
+        anomalias: [],
+        sugestaoPadronizacao: '',
+        explicacaoSimilaridade:
+          'Detectado via baseline existente (.oraculo/baseline-estrutura.json).',
+        descricao: 'Arquétipo determinado pelo baseline',
+      };
+      melhores[0] = melhor;
+    }
   }
   let drift: ArquetipoDrift | undefined;
   if (baseline && melhores[0]) {
