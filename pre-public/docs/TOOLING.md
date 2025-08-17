@@ -1,20 +1,25 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Tooling & Transparência
 
 Este documento centraliza as ferramentas, políticas de qualidade e práticas de transparência do projeto.
 
 ## Stack Principal
 
-| Área           | Ferramenta / Política                                  | Notas                                                          |
-| -------------- | ------------------------------------------------------ | -------------------------------------------------------------- |
-| Build          | TypeScript (ESM puro)                                  | `tsconfig.json` com aliases `@nucleo/*`, etc.                  |
-| Testes         | Vitest + V8 Coverage                                   | Gate mínimo: Statements/Lines 90%, Branches 88%, Functions 90% |
-| Lint / Estilo  | ESLint + Prettier                                      | Executados em pre-commit via `lint-staged`                     |
-| Formatação     | Prettier (sem remoção de comentários)                  | Intocado para preservar contexto em relatórios                 |
-| Integração CI  | GitHub Actions (`ci.yml`, `build.yml`, `monitor-deps`) | Badge de testes e monitoramento de deps no README              |
-| Dependências   | Dependabot + (manual) `npm-check-updates`              | Guia: `docs/MONITOR_DEPENDENCIAS.md`                           |
-| Segurança leve | Ignore patterns Guardian + sanitização de paths        | Ver `docs/guardian.md`                                         |
-| Performance    | Scripts `perf:baseline` (snapshot sintético)           | Evolução futura para gate regressão                            |
-| Persistência   | Helpers `lerEstado` / `salvarEstado` centralizados     | Proibido usar `fs.readFile` direto fora deles                  |
+| Área           | Ferramenta / Política                                  | Notas                                                                                                |
+| -------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Build          | TypeScript (ESM puro)                                  | `tsconfig.json` com aliases `@nucleo/*`, etc.                                                        |
+| Testes         | Vitest + V8 Coverage                                   | Gate mínimo: Statements/Lines 90%, Branches 88%, Functions 90%                                       |
+| Lint / Estilo  | ESLint + Prettier                                      | Executados em pre-commit via `lint-staged`; `npm run lint` cobre `src/`, `tests/` e `temp-fantasma/` |
+| Formatação     | Prettier (sem remoção de comentários)                  | Intocado para preservar contexto em relatórios                                                       |
+| Integração CI  | GitHub Actions (`ci.yml`, `build.yml`, `monitor-deps`) | Badge de testes e monitoramento de deps no README                                                    |
+| Dependências   | Dependabot + (manual) `npm-check-updates`              | Guia: `docs/MONITOR_DEPENDENCIAS.md`                                                                 |
+| Segurança leve | Ignore patterns Guardian + sanitização de paths        | Ver `docs/guardian.md`                                                                               |
+| Performance    | Scripts `perf:baseline` (snapshot sintético)           | Evolução futura para gate regressão                                                                  |
+| Persistência   | Helpers `lerEstado` / `salvarEstado` centralizados     | Proibido usar `fs.readFile` direto fora deles                                                        |
 
 ## Política de Cobertura
 
@@ -44,7 +49,11 @@ O desenvolvimento contou com assistência pontual de ferramentas como GitHub Cop
 
 1. Criar/alterar código seguindo aliases e helpers de persistência.
 2. Adicionar/atualizar testes (unidade + integração quando aplicável).
-3. Rodar `npm run check` (lint + typecheck + testes) localmente.
+3. Rodar checagens locais:
+   - Lint: `npm run lint` (cobre src/tests/temp-fantasma)
+   - Typecheck: `npm run typecheck`
+   - Prettier (check): `npm run format`
+   - Prettier (fix): `npm run format:fix`
 4. Se afetar contratos JSON, atualizar docs relevantes.
 5. Commit: hooks garantem formatação e lint. Se necessário (evite), `HUSKY=0 git commit ...` para bypass emergencial.
 6. Abrir PR descrevendo motivação, impacto e se há alteração de contrato.

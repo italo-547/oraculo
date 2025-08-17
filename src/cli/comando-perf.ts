@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { formatPct } from '../nucleo/constelacao/format.js';
+import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
 
 // Tipagens reutilizadas (espelho parcial de MetricaExecucao para evitar dependência circular leve)
 interface MetricaAnalistaLike {
@@ -78,7 +79,7 @@ async function gerarBaseline(destDir: string, metricas?: Partial<MetricaExecucao
   const snapshot: SnapshotPerf = { ...base, hashConteudo };
   await fs.mkdir(destDir, { recursive: true });
   const nome = `baseline-${Date.now()}.json`;
-  await fs.writeFile(path.join(destDir, nome), JSON.stringify(snapshot, null, 2), 'utf-8');
+  await salvarEstado(path.join(destDir, nome), snapshot);
   return snapshot;
 }
 
@@ -89,8 +90,7 @@ async function carregarSnapshots(dir: string): Promise<SnapshotPerf[]> {
     const out: SnapshotPerf[] = [];
     for (const f of jsons) {
       try {
-        const conteudo = await fs.readFile(path.join(dir, f), 'utf-8');
-        const parsed = JSON.parse(conteudo);
+        const parsed = await lerEstado<SnapshotPerf>(path.join(dir, f));
         if (parsed && parsed.tipo === 'baseline') out.push(parsed);
       } catch {
         /* ignore */
