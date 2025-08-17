@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # 📘 Relatório de Progresso — Projeto Oráculo CLI
 
 **Última atualização:** 2025-08-12 (E2E ampliado, gate de cobertura, flags `--json` e `--full-scan`, agregação PARSE_ERRO)

@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 ## Helpers Utilitários e Persistência de Estado
 
 Para evitar duplicidade e facilitar manutenção, **todas as funções auxiliares recorrentes** (persistência, manipulação de pendências, leitura/escrita de estado, etc.) devem ser centralizadas em arquivos utilitários, preferencialmente em `src/zeladores/util/`.
@@ -56,6 +61,42 @@ await salvarEstado(caminho, json); // para json
 ---
 
 # Copilot Instructions for Oráculo CLI
+
+## Hardening + Proveniência
+
+Estas diretrizes reforçam originalidade, licenças, privacidade e segurança operacional.
+
+### Configuração do Copilot e Política de Originalidade
+
+- Ative: “Bloquear sugestões que correspondam a código público” (quando disponível).
+- Revise sugestões para evitar trechos idênticos/substancialmente semelhantes a código público.
+- Prefira soluções autorais a partir de princípios; não copie de blogs, SO ou repositórios.
+- Para algoritmos clássicos, implemente a partir da especificação, não de uma implementação pública.
+- Evite inserir blocos longos (>20 linhas) de uma única fonte pública.
+- Referencie documentação oficial somente na descrição do PR; não copie trechos integrais para o código.
+
+### Licença, Dependências e Conformidade
+
+- Repo sob MIT: gere apenas conteúdo compatível (preferência MIT/Apache-2.0/BSD).
+- Evite copyleft forte (GPL/AGPL/LGPL); qualquer exceção deve ser justificada no PR.
+- Não “vendorize” código de terceiros; use gerenciadores de pacotes.
+- Mantenha o inventário de terceiros atualizado (THIRD-PARTY-NOTICES).
+
+### Privacidade, Segredos e Dados
+
+- Nunca inclua tokens/chaves/credenciais em código, exemplos, commits, issues ou PRs.
+- Use placeholders e variáveis de ambiente para segredos.
+- Não cole conteúdo de repositórios privados ou documentos internos.
+- Exemplos devem ser originais; se derivados, reescreva e cite o link no PR.
+
+### Diretrizes de Engenharia Segura
+
+- Não use eval/Function dinâmica nem desabilite checks de tipo para contornar erros.
+- Valide e sanitize entradas; limite tamanho/escopo de entradas e recursos.
+- Evite injeção de comando; prefira spawn com shell: false e argumentos como lista.
+- Padrões seguros por padrão (TLS/HTTPS, headers, cookies HttpOnly/SameSite quando aplicável).
+- Não ampliar CORS ou permissões além do necessário.
+- Registre “notas de risco” para alterações em authZ/authN, criptografia, segredos ou superfícies de rede.
 
 ## Visão Geral
 
@@ -263,6 +304,6 @@ Se encontrar padrões não documentados ou dúvidas sobre fluxos, registre exemp
 
 ---
 
-**Última atualização das diretrizes: 2025-08-16**
+**Última atualização das diretrizes: 2025-08-17**
 
 ---

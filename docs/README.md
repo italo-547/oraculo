@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Organização da pasta docs
 
 Sugestão de estrutura para documentação e histórico do projeto:
@@ -10,3 +15,13 @@ Sugestão de estrutura para documentação e histórico do projeto:
 - `docs/RELATORIO.md`: Relatório principal do projeto (pode ser movido para `relatorios/` se preferir).
 
 Adapte e expanda conforme o crescimento do projeto.
+
+## Referências úteis
+
+- Guardian: `docs/guardian.md`
+- Relatórios: `docs/relatorios/RELATORIO.md`
+- Estruturas/Arquétipos: `docs/estruturas/README.md`
+- Decisões do scanner e filtros: `docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md`
+
+> Nota:
+> Mesmo com `--scan-only` e `--include`, `node_modules` pode ser ignorado em alguns cenários. Isso está documentado na decisão acima e registrado como ajuste futuro no `docs/CHECKLIST.md`.

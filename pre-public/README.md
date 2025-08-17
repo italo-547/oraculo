@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Oráculo CLI
 
 [![CI](https://github.com/aynsken/oraculo/actions/workflows/ci.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/ci.yml)
@@ -294,6 +299,7 @@ Limitações atuais:
 
 - Apenas separação por vírgula suportada (futuramente avaliar suporte a repetir `--include`).
 - Não há feedback explícito listando padrões aplicados (pode ser adicionado em modo `--verbose`).
+- Mesmo com `--scan-only` e `--include`, `node_modules` pode ser ignorado em alguns cenários por guard-rails. Ver detalhes e próximos passos em `docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md`.
 
 Se precisar resetar filtros programaticamente, não passe as flags (elas não persistem em config).
 

@@ -50,6 +50,48 @@ async function main() {
         }
     }
 
+    // Inserir aviso de Proveniência/Autoria no topo dos .md dentro de pre-public
+    try {
+        const avisoPath = path.join(ROOT, 'docs', 'partials', 'AVISO-PROVENIENCIA.md');
+        const aviso = await fs.readFile(avisoPath, 'utf-8');
+        const marker = /Proveni[eê]ncia\s+e\s+Autoria/i;
+        async function listMarkdown(dir) {
+            const acc = [];
+            const entries = await fs.readdir(dir, { withFileTypes: true });
+            for (const e of entries) {
+                const p = path.join(dir, e.name);
+                if (e.isDirectory()) acc.push(...(await listMarkdown(p)));
+                else if (e.isFile() && e.name.toLowerCase().endsWith('.md')) acc.push(p);
+            }
+            return acc;
+        }
+        const mdFiles = await listMarkdown(OUT_DIR);
+        for (const f of mdFiles) {
+            if (path.basename(f).toLowerCase() === 'preview.md') continue;
+            let c = await fs.readFile(f, 'utf-8');
+            const head = c.split(/\r?\n/).slice(0, 30).join('\n');
+            if (!marker.test(head)) {
+                await fs.writeFile(f, `${aviso}\n\n${c.trimStart()}\n`, 'utf-8');
+            }
+        }
+        console.log('[pre-public] Aviso de proveniência inserido nos .md de pre-public.');
+    } catch (e) {
+        console.warn('[pre-public] Aviso de proveniência não inserido:', e?.message || e);
+    }
+
+    // Cria um arquivo indicador de prévia de revisão
+    const previewNote = `# Prévia de Publicação (Review)
+
+Este diretório foi gerado pelo script pre-public para revisão do que seria publicado.
+
+- Conteúdos aqui refletem o estado atual de build (dist/) e documentação (docs/).
+- Alterações devem ser feitas na raiz do projeto e o script reexecutado.
+- Este arquivo não será incluído em publicação real; serve apenas como aviso/guia de revisão.
+
+Data/Horário de geração: ${new Date().toISOString()}
+`;
+    await fs.writeFile(path.join(OUT_DIR, 'PREVIEW.md'), previewNote, 'utf-8');
+
     console.log('[pre-public] pronto. Veja a pasta pre-public/.');
 }
 

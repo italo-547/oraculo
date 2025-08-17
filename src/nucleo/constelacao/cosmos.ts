@@ -27,13 +27,22 @@ export const configDefault = {
     // Dependências e artefatos externos
     'node_modules',
     'node_modules/**',
+    '**/node_modules',
     '**/node_modules/**',
     '.pnpm/**',
     // Estado interno / cache / builds
     '.oraculo/**',
+    '**/.oraculo',
+    '**/.oraculo/**',
     'dist/**',
+    '**/dist',
+    '**/dist/**',
     'coverage/**',
+    '**/coverage',
+    '**/coverage/**',
     'build/**',
+    '**/build',
+    '**/build/**',
     // Arquivos temporários e lockfiles
     '*.log',
     '*.lock',
@@ -42,6 +51,8 @@ export const configDefault = {
     'pnpm-lock.yaml',
     // VCS
     '.git/**',
+    '**/.git',
+    '**/.git/**',
   ],
 
   // 📄 Relatórios
@@ -63,18 +74,43 @@ export const configDefault = {
   ZELADOR_REPORT_PATH: path.join(ORACULO_STATE, 'poda-oraculo.md'),
   ZELADOR_GHOST_INACTIVITY_DAYS: 30,
   ZELADOR_IGNORE_PATTERNS: [
+    // VCS e diretórios internos
     '.git',
+    '.git/**',
+    '**/.git',
+    '**/.git/**',
+    '.oraculo/**',
+    '**/.oraculo',
+    '**/.oraculo/**',
+    // Raiz do projeto (nome "oraculo" – não costuma aparecer em relPath; mantido por compat)
     'oraculo',
+    // Artefatos de build
     'dist',
+    'dist/**',
+    '**/dist',
+    '**/dist/**',
     'build',
+    'build/**',
+    '**/build',
+    '**/build/**',
     'coverage',
-    // Evita varredura de dependências externas – melhora performance e reduz ruído do Guardian
+    'coverage/**',
+    '**/coverage',
+    '**/coverage/**',
+    // Evita varredura de dependências externas – melhora performance e reduz ruído
     'node_modules',
+    'node_modules/**',
+    '**/node_modules',
+    '**/node_modules/**',
+    // Lockfiles
     'package-lock.json',
     'yarn.lock',
   ],
   // Padrões adicionais controlados via CLI para filtragem dinâmica pontual
   CLI_INCLUDE_PATTERNS: [] as string[], // quando não vazio: somente arquivos que casem algum pattern serão considerados (override dos ignores padrão)
+  // Grupos de include: cada ocorrência de --include forma um grupo; padrões separados por vírgula/espaço dentro do mesmo argumento devem ser TODOS casados (AND).
+  // O arquivo é incluído se casar QUALQUER grupo (OR entre grupos). Mantemos CLI_INCLUDE_PATTERNS como lista achatada para raízes/compat.
+  CLI_INCLUDE_GROUPS: [] as string[][],
   CLI_EXCLUDE_PATTERNS: [] as string[], // sempre excluídos (aplicado após include)
   ZELADOR_LINE_THRESHOLD: 20,
 

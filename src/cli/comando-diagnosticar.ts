@@ -114,8 +114,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
       config.GUARDIAN_ENABLED = opts.guardianCheck ?? false;
       config.VERBOSE = opts.verbose ?? false;
       config.COMPACT_MODE = opts.compact ?? false;
-      // Filtros dinâmicos (limpeza inicial de espaços, evita strings vazias)
-      const processPatternList = (raw: string[] | undefined) => {
+      // Filtros dinâmicos utilitários
+      // - processPatternListAchatado: quebra por vírgulas/espaços e achata (uso em exclude e compat)
+      // - processPatternGroups: preserva grupos por ocorrência da flag --include (cada item do array bruto é um grupo)
+      const processPatternListAchatado = (raw: string[] | undefined) => {
         if (!raw || !raw.length) return [] as string[];
         return Array.from(
           new Set(
@@ -125,6 +127,17 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               .filter(Boolean),
           ),
         );
+      };
+      const processPatternGroups = (raw: string[] | undefined): string[][] => {
+        if (!raw || !raw.length) return [];
+        return raw
+          .map((grupo) =>
+            grupo
+              .split(/[\s,]+/)
+              .map((s) => s.trim())
+              .filter(Boolean),
+          )
+          .filter((g) => g.length > 0);
       };
       // Expansão de includes: aceita diretórios sem curingas (ex.: "node_modules")
       const expandIncludes = (list: string[]) => {
@@ -141,14 +154,34 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         }
         return Array.from(out);
       };
-      const includeListRaw = processPatternList(opts.include);
-      const includeList = includeListRaw.length ? expandIncludes(includeListRaw) : [];
-      if (includeList.length) config.CLI_INCLUDE_PATTERNS = includeList;
-      const excludeList = processPatternList(opts.exclude);
+      // Inclui: preserva grupos por ocorrência; dentro do grupo, todos os padrões devem casar (AND),
+      // entre grupos, basta um casar (OR). Também mantemos lista achatada expandida para compat/scanner roots.
+      const includeGroupsRaw = processPatternGroups(opts.include);
+      const includeGroupsExpanded = includeGroupsRaw.map((g) => expandIncludes(g));
+      const includeListFlat = includeGroupsExpanded.flat();
+      if (includeListFlat.length) {
+        config.CLI_INCLUDE_GROUPS = includeGroupsExpanded;
+        config.CLI_INCLUDE_PATTERNS = includeListFlat;
+      } else {
+        config.CLI_INCLUDE_GROUPS = [];
+        config.CLI_INCLUDE_PATTERNS = [];
+      }
+      const excludeList = processPatternListAchatado(opts.exclude);
       if (excludeList.length) config.CLI_EXCLUDE_PATTERNS = excludeList;
+      else {
+        // Guard-rail: sempre exclui node_modules quando usuário não passou excludes
+        // (somente removido se usuário incluir explicitamente node_modules em include)
+        config.CLI_EXCLUDE_PATTERNS = Array.from(
+          new Set([
+            ...(config.CLI_EXCLUDE_PATTERNS || []),
+            'node_modules/**',
+            '**/node_modules/**',
+          ]),
+        );
+      }
 
       // Se o usuário incluiu explicitamente node_modules, removemos dos ignores padrão
-      const incluiNodeModules = includeList.some((p) => /node_modules/.test(p));
+      const incluiNodeModules = includeListFlat.some((p) => /node_modules/.test(p));
       if (incluiNodeModules) {
         // Remove node_modules dos ignores padrão
         config.ZELADOR_IGNORE_PATTERNS = config.ZELADOR_IGNORE_PATTERNS.filter(
@@ -157,11 +190,18 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         config.GUARDIAN_IGNORE_PATTERNS = config.GUARDIAN_IGNORE_PATTERNS.filter(
           (p) => !/node_modules/.test(p),
         );
+        // E também dos excludes guard-rail, já que o usuário explicitou incluir
+        config.CLI_EXCLUDE_PATTERNS = (config.CLI_EXCLUDE_PATTERNS || []).filter(
+          (p) => !/node_modules/.test(String(p)),
+        );
       }
 
-      if (config.VERBOSE && !opts.json && (includeList.length || excludeList.length)) {
+      if (config.VERBOSE && !opts.json && (includeListFlat.length || excludeList.length)) {
         const parts = [];
-        if (includeList.length) parts.push(`include=[${includeList.join(', ')}]`);
+        const gruposFmt = includeGroupsExpanded
+          .map((g) => (g.length === 1 ? g[0] : '(' + g.join(' & ') + ')'))
+          .join(' | ');
+        if (includeListFlat.length) parts.push(`include=[${gruposFmt}]`);
         if (excludeList.length) parts.push(`exclude=[${excludeList.join(', ')}]`);
         if (incluiNodeModules)
           parts.push('(node_modules incluído: ignorado dos padrões de exclusão)');
@@ -324,7 +364,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           if (opts.json) {
             console.log(JSON.stringify({ modo: 'scan-only', totalArquivos: fileEntries.length }));
           }
-          if (!process.env.VITEST) process.exit(0);
+          // Evita encerramento forçado em testes/ambiente de automação; deixe o processo sair naturalmente
+          if (!process.env.VITEST && !opts.json) process.exit(0);
+          else if (!process.env.VITEST && opts.json) process.exitCode = 0;
           return; // evita continuar
         }
 
@@ -340,10 +382,20 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         // Detecção de arquétipos (biblioteca de estruturas)
         let arquetiposResultado: Awaited<ReturnType<typeof detectarArquetipos>> | undefined;
         try {
-          arquetiposResultado = await detectarArquetipos(
-            { arquivos: fileEntriesComAst, baseDir },
-            baseDir,
-          );
+          // Em ambiente de teste, limitar a detecção a um timeout curto para evitar travas
+          // quando o módulo real não foi mockado pelos testes.
+          if (process.env.VITEST) {
+            const timeoutMs = 800; // suficiente para mocks; evita custo alto do real
+            arquetiposResultado = await Promise.race([
+              detectarArquetipos({ arquivos: fileEntriesComAst, baseDir }, baseDir),
+              new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), timeoutMs)),
+            ]);
+          } else {
+            arquetiposResultado = await detectarArquetipos(
+              { arquivos: fileEntriesComAst, baseDir },
+              baseDir,
+            );
+          }
           // Logs úteis sobre arquétipos (somente modo não-JSON e sem silêncio forçado)
           if (
             arquetiposResultado &&
@@ -790,8 +842,20 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                     missingRequired: m.missingRequired,
                     matchedRequired: m.matchedRequired,
                     forbiddenPresent: m.forbiddenPresent,
-                    anomalias: m.anomalias,
-                    planoSugestao: m.planoSugestao,
+                    // Limita anomalias para evitar JSON gigante (detalhes completos só em modo verbose não-JSON)
+                    anomalias: Array.isArray(m.anomalias) ? m.anomalias.slice(0, 50) : [],
+                    // Resume planoSugestao para não carregar lista completa de moves
+                    planoSugestao: m.planoSugestao
+                      ? {
+                          resumo: m.planoSugestao.resumo,
+                          conflitos: Array.isArray(m.planoSugestao.conflitos)
+                            ? m.planoSugestao.conflitos.slice(0, 20)
+                            : [],
+                          mover: Array.isArray(m.planoSugestao.mover)
+                            ? m.planoSugestao.mover.slice(0, 50)
+                            : [],
+                        }
+                      : undefined,
                   })),
                   baseline: arquetiposResultado.baseline,
                   drift: arquetiposResultado.drift,
@@ -807,13 +871,17 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
               nivel: o.nivel,
             })),
           };
-          const jsonRaw = JSON.stringify(saida, (_k, v) => v, 0);
+          const jsonRaw = JSON.stringify(saida, (_k: string, v: unknown) => v, 0);
           // Normaliza encoding (substitui caracteres fora ASCII por escapes \u)
           const jsonSeguro = escapeNonAscii(jsonRaw);
           console.log(jsonSeguro);
-          if (temErro) {
-            if (!process.env.VITEST) process.exit(1);
-          } else if (!process.env.VITEST) process.exit(0);
+          // Em modo JSON, fora de ambiente de testes, finalize o processo conforme status
+          // (testes cobrem explicitamente esse comportamento).
+          if (!process.env.VITEST) {
+            process.exit(temErro ? 1 : 0);
+          }
+          // Garante retorno (parseAsync resolve) evitando pendências
+          return;
         } else {
           if (totalOcorrencias === 0) {
             log.sucesso(

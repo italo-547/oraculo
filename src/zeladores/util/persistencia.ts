@@ -21,12 +21,13 @@ export async function lerEstado<T = unknown>(caminho: string): Promise<T> {
 
 /** Serialização simples (não atômica). */
 export async function salvarEstado<T = unknown>(caminho: string, dados: T): Promise<void> {
-  await fs.mkdir(path.dirname(caminho), { recursive: true }).catch(() => {});
-  await fs.writeFile(
-    caminho,
-    typeof dados === 'string' ? (dados as string) : JSON.stringify(dados, null, 2),
-    'utf-8',
-  );
+  const dir = path.dirname(caminho);
+  await fs.mkdir(dir, { recursive: true }).catch(() => {});
+  const isString = typeof dados === 'string';
+  const payload = isString ? (dados as string) : JSON.stringify(dados, null, 2);
+  const tmp = path.join(dir, `.tmp-${Date.now()}-${Math.random().toString(16).slice(2)}.oraculo`);
+  await fs.writeFile(tmp, payload, 'utf-8');
+  await fs.rename(tmp, caminho);
 }
 
 // Leitura bruta de arquivo de texto (sem parse JSON). Uso para conteúdo fonte.

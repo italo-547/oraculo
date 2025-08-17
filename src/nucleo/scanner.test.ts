@@ -247,6 +247,49 @@ describe('scanRepository', () => {
     expect(Object.keys(fileMap)).toEqual(['a.txt']);
   });
 
+  it('restringe varredura a roots derivados dos padrões de include (não lê baseDir)', async () => {
+    vi.resetModules();
+    // Micromatch simples: caso especial para pattern 'dir/**'
+    vi.doMock('micromatch', () => ({
+      default: {
+        isMatch: (str: string, patterns: string[]) =>
+          Array.isArray(patterns) && patterns.some((p) => p === 'dir/**' && str.startsWith('dir/')),
+      },
+      isMatch: (str: string, patterns: string[]) =>
+        Array.isArray(patterns) && patterns.some((p) => p === 'dir/**' && str.startsWith('dir/')),
+    }));
+    // Config com include ativo
+    vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
+      config: {
+        ZELADOR_IGNORE_PATTERNS: [],
+        CLI_INCLUDE_PATTERNS: ['dir/**'],
+        CLI_EXCLUDE_PATTERNS: [],
+      },
+    }));
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    const calls: string[] = [];
+    (promises.readdir as any).mockImplementation(async (p: string) => {
+      calls.push(p);
+      if (p === '/base/dir') return [fakeDirent('a.txt')];
+      // Se tentar ler a raiz baseDir, falharia; o teste garante que não é chamado
+      if (p === '/base') throw new Error('should-not-read-base');
+      return [];
+    });
+    (promises.stat as any).mockResolvedValue(async () => ({
+      mtimeMs: 1,
+      isDirectory: () => false,
+      isSymbolicLink: () => false,
+    }));
+    const fileMap = await scanRepository('/base');
+    const keys = Object.keys(fileMap)
+      .map((k) => k.replace(/\\/g, '/'))
+      .sort();
+    expect(keys).toEqual(['dir/a.txt']);
+    // Verifica que não tentou ler '/base' (somente o root inferido)
+    expect(calls.includes('/base')).toBe(false);
+    expect(calls.includes('/base/dir')).toBe(true);
+  }, 15000);
   it('ignora arquivos pelo filtro customizado', async () => {
     const { promises } = await import('node:fs');
     (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);

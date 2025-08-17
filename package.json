@@ -26,11 +26,11 @@
     "lint": "eslint \"{src,tests,temp-fantasma}/**/*.ts\"",
     "format": "prettier --check \"**/*.{ts,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,md}\"",
-    "coverage:enforce": "vitest run --coverage --coverage.enabled=true --coverage.thresholds='{\\\"lines\\\":90,\\\"statements\\\":90,\\\"branches\\\":88,\\\"functions\\\":90}'",
+    "coverage:enforce": "$env:CI='true'; vitest run --coverage",
     "check:style": "npm run lint && npm run typecheck && npm run format",
     "coverage:gate": "npm run coverage:enforce",
     "test:e2e": "vitest run --dir src/cli --reporter dot",
-    "test:ci": "vitest run --reporter=json --outputFile .oraculo/last-test-report.json",
+    "test:ci": "$env:CI='true'; vitest run --reporter=json --outputFile .oraculo/last-test-report.json",
     "perf:baseline": "node dist/cli.js perf baseline --dir docs/perf",
     "perf:compare": "node dist/cli.js perf compare --dir docs/perf --json",
     "perf:gate": "node dist/cli.js perf compare --dir docs/perf --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);if(j.regressao){console.error('Regressao performance > limite');process.exit(1)}console.log('Perf OK')});\"",
@@ -38,8 +38,10 @@
     "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
     "prepare": "husky",
     "test": "vitest run",
+    "test:dev": "vitest run",
     "test:ui": "vitest",
     "coverage": "vitest run --coverage",
+    "coverage:dev": "$env:COVERAGE='true'; vitest run --coverage",
     "cleanup:metricas": "node -e \"import('node:fs').then(fs=>fs.promises.rm('.oraculo/historico-metricas',{recursive:true,force:true}).then(()=>console.log('Histórico de métricas limpo.')).catch(e=>console.error('Falha limpeza:',e.message)))\"",
     "licenses:list": "npx license-checker-rseidelsohn --production --csv",
     "licenses:json": "npx license-checker-rseidelsohn --production --json > .oraculo/licenses.json",
@@ -86,29 +88,6 @@
     "rimraf": "^6.0.1",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
-  },
-  "vitest": {
-    "coverage": {
-      "include": [
-        "src/**/*.ts"
-      ],
-      "exclude": [
-        "file1.ts",
-        "file2.ts",
-        "tmp-cache-file.ts",
-        "scripts/**",
-        "**/fixtures/**",
-        "**/mocks/**",
-        "**/__tests__/**",
-        "temp-fantasma/**"
-      ],
-      "thresholds": {
-        "lines": 90,
-        "statements": 90,
-        "branches": 90,
-        "functions": 90
-      }
-    }
   },
   "lint-staged": {
     "*.{ts,js,cts,mts}": [

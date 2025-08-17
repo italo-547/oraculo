@@ -1,4 +1,11 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Checklist de Melhorias e Ajustes
+
+**Última atualização: 2025-08-17**
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
@@ -6,123 +13,78 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 ### Alta Prioridade
 
-- [x] Comparação automática de baseline e regressões (gerar diff entre últimos snapshots em `docs/perf/` e destacar variações > X%)
-- [x] Sanitização/validação de entradas da CLI (normalizar paths, validar números, rejeitar combinações inválidas cedo)
-- [x] Revisar logs DEBUG e consolidar flag (`--dev` vs `ORACULO_DEBUG` => unificar em `--debug` mantendo retrocompatibilidade)
-- [ ] Biblioteca de estruturas padrão (detecção + aconselhamento + auto-reorganização opcional)
-  - [x] Tipos alvo iniciais definidos (`cli-modular`, `landing-page`, `api-rest-express`, `fullstack`, `bot`, `electron`, `lib-tsc`, `monorepo-packages`)
-  - [x] Taxonomia contratual (nome, descrição, pastas, rootFilesAllowed, forbidden, hints) implementada
-  - [x] Motor heurístico de detecção (pastas + dependências + padrões de arquivo)
-  - [x] Relatório: seção `estruturaIdentificada` com baseline + drift + melhores candidatos
-  - [x] Baseline estrutural + cálculo de drift
-  - [x] Plano de reorganização inicial (zona verde) gerado automaticamente (`planoSugestao`) – somente sugestões
-  - [x] Documentação detalhada em `docs/estruturas/README.md`
-  - [ ] Testes de fixtures por arquétipo (casos híbridos & conflito de confiança)
-  - [x] Comando `reestruturar` (dry-run + `--aplicar`)
-  - [ ] Geração de mapa de reversão para moves aplicados
-  - [ ] Normalização de nomes de diretórios (case / plurais) opcional
-  - [ ] Regras adicionais (zona amarela) com opt-in
+- [x] Comparação automática de baseline e regressões (finalizado em 2025-08-10)
+- [x] Sanitização/validação de entradas da CLI (finalizado em 2025-08-10)
+- [x] Revisar logs DEBUG e consolidar flag (`--debug`) (finalizado em 2025-08-11)
+- [ ] Biblioteca de estruturas padrão
+  - [x] Tipos alvo iniciais definidos (finalizado em 2025-08-12)
+  - [x] Taxonomia contratual implementada (finalizado em 2025-08-12)
+  - [x] Motor heurístico de detecção implementado (finalizado em 2025-08-12)
+  - [x] Relatório: seção `estruturaIdentificada` implementada (finalizado em 2025-08-12)
+  - [x] Baseline estrutural + cálculo de drift (finalizado em 2025-08-12)
+  - [x] Plano de reorganização inicial gerado automaticamente (finalizado em 2025-08-12)
+  - [x] Documentação detalhada em `docs/estruturas/README.md` (finalizado em 2025-08-13)
+  - [x] Testes de fixtures por arquétipo (finalizado em 2025-08-16)
+  - [x] Comando `reestruturar` (dry-run + `--aplicar`) (finalizado em 2025-08-13)
+  - [ ] Geração de mapa de reversão para moves aplicados (meta: finalizar até 2025-08-20)
+  - [ ] Normalização de nomes de diretórios (case / plurais) opcional (meta: até 2025-08-22)
+  - [ ] Regras adicionais (zona amarela) com opt-in (meta: até 2025-08-25)
+- [x] Refatoração inicial de comando-diagnosticar.ts (primeira etapa finalizada em 2025-08-15)
+- [ ] Refatoração avançada (modularização de options e ações) (em andamento, meta: 2025-08-20)
+- [ ] Cobertura de combinações de comandos e options (em andamento, meta: finalizar testes principais até 2025-08-20)
 
 ### Média Prioridade
 
-- [ ] Monitor de dependências: documentar fluxo automatizado + workflow agendado (usar `npm outdated` + `npm audit` não-blocking)
-- [x] Documentar estratégia de mocks de AST (arquivo guia em `docs/tests/AST_MOCKS.md` centralizando padrões)
-- [ ] Guia de padronização de código / convenções (estilo, naming, estrutura de analistas, limites de complexidade)
-- [ ] Gate de regressão de performance opcional (falhar CI se parsing/análise > +30% vs baseline referência) <!-- próximo passo: integrar comando perf compare no CI -->
+- [ ] Monitor de dependências (documentação e automação)
+- [x] Documentar estratégia de mocks de AST (finalizado em 2025-08-14)
+- [ ] Guia de padronização de código / convenções
+- [ ] Gate de regressão de performance opcional
 
 ### Baixa Prioridade / Futuro Próximo
 
-- [ ] Export Markdown consolidado de performance (comparando N snapshots)
-- [ ] Modo estrito de plugins (falha em qualquer plugin com erro)
-- [ ] Métrica de tempo por plugin estrutura (detectar outliers)
-- [ ] Flag `--metricas-export <arquivo>` para salvar métricas isoladas sem relatório completo
+- [ ] Export Markdown consolidado de performance
+- [ ] Modo estrito de plugins
+- [ ] Métrica de tempo por plugin estrutura
+- [ ] Flag `--metricas-export <arquivo>` para salvar métricas isoladas
+
+### Limitações conhecidas (registradas)
+
+- [ ] `--scan-only` + `--include` ainda ignora `node_modules` em alguns cenários. Precisamos harmonizar a regra de "inclusão explícita" para permitir inspeção pontual sem desmontar guard-rails. (registrado em 2025-08-17)
 
 ### Observações
 
-- Limites de PARSE_ERRO já expostos; considerar parametrize via flag futura (`--parse-erros-max=<n>`)
-- Métricas internas disponíveis em `diagnosticar --json` (`metricas`) e histórico via `oraculo metricas`
-- O catálogo `docs/ANALISTAS.md` deve ser gerado via comando: `oraculo analistas --doc docs/ANALISTAS.md`
-- Fluxo de PR: abrir de `develop` → `main`; marcar o check "ci" como obrigatório nas proteções da `main`.
-- Pré-visualização local: `npm run pre-public` monta a árvore final prevista para publicação em `pre-public/`.
-- Release manual: acione o workflow `release-prepublic` em Actions informando `tag_name` (ex.: `v0.1.0-alpha.0`); um Release draft com `pre-public.zip` será gerado.
-
-Cobertura atual (V8):
-
-- Statements/Lines/Functions > 96%; Branches ~89% (acima do gate de 88%).
-- Próxima iteração opcional: elevar branches globais para ≥ 90% com 1–2 micro-testes adicionais em módulos com ramos ainda abaixo desse patamar.
+- Sempre registrar data de finalização ao marcar um item como concluído.
+- Atualizar este arquivo após cada entrega relevante.
 
 ## Concluídos Recentes (Sessão Atual)
 
-- [x] Implementar flag `--scan-only`
-- [x] Testes ponta-a-ponta executando binário buildado (CLI real) – 5 cenários
-- [x] Automação: adicionar lint/format ao CI e gate de cobertura
-- [x] Guia de criação de plugins (exemplos práticos) (`docs/plugins/GUIA.md` com exemplo analista + plugin estrutura)
-- [x] Baseline de performance inicial (script `perf:baseline`)
-- [x] Comando `perf compare` para regressões sintéticas
-- [x] Flag `--full-scan` para incluir `node_modules` controladamente (baseline bloqueado)
-- [x] Documentar política de ignores do Guardian (guardian.md)
-- [x] Saída JSON estruturada (`diagnosticar --json`, `guardian --json`)
-- [x] Registro de contagem original vs agregada de PARSE_ERRO
-- [x] Expor limites de agregação de PARSE_ERRO no README
-- [x] Métricas internas opcionais exportáveis (campo `metricas` + comando `metricas`)
-- [x] Documentar contrato de saída para guardian (statuses) no README
-- [x] Licença final: MIT (sem restrições adicionais)
-- [x] Atualizar .gitignore para ignorar artefatos temporários (.oraculo, hist-\*.json, reports)
-- [x] Detecção de arquétipos inicial (heurística + baseline + drift JSON)
-- [x] Ampliação whitelist de arquivos raiz para reduzir falso-positivo de anomalias
-- [x] Limite de exibição de anomalias (máx 8 detalhadas em verbose)
-- [x] Suporte parsing leve multi-linguagem (kotlin, java, xml, html, css, gradle) com AST compat mínimo
-- [x] Inclusão de campo `drift` na saída JSON de `diagnosticar`
-- [x] Inclusão de campo `linguagens` (resumo extensões) na saída JSON de `diagnosticar`
-- [x] Escape unicode em saída `--json` para evitar artefatos em consoles Windows
-- [x] Documentação de arquétipos + regras reorganização (docs/estruturas/README.md)
-- [x] Plano de reorganização (zona verde) em `detector-arquetipos` + inclusão no JSON
-- [x] Refatoração para remover números mágicos (constantes de pesos & regex centralizadas)
-- [x] Skip de geração de plano em modo `--scan-only`
-- [x] UX de logs: molduras com formatador ANSI-aware e impressão direta (sem prefixos); fallback ASCII via `ORACULO_ASCII_FRAMES=1` documentado
-- [x] Resumo em tabela com moldura no final do diagnóstico (tipos de problemas x quantidade)
-- [x] Normalização de filtros `--include/--exclude` com precedência (include sobrepõe ignores, inclusive `node_modules` quando explicitado)
-- [x] Comando `analistas` adicionado (listar, `--json`, `--output`, `--doc`) e catálogo gerado em `docs/ANALISTAS.md`
-- [x] Flag `diagnosticar --listar-analistas` (uso opcional) para depuração rápida do registro
-- [x] Documentação sincronizada: correções de nomes em `docs/relatorios/RELATORIO.md` e atualização do README raiz com o comando `analistas`
-- [x] Agregação de `TODO_PENDENTE` por arquivo no resumo para reduzir ruído (mensagem consolidada)
+- [x] Implementar flag `--scan-only` (finalizado em 2025-08-12)
+- [x] Testes ponta-a-ponta CLI real – 5 cenários (finalizado em 2025-08-13)
+- [x] Automação: lint/format no CI e gate de cobertura (finalizado em 2025-08-13)
+- [x] Guia de criação de plugins (finalizado em 2025-08-14)
+- [x] Baseline de performance inicial (finalizado em 2025-08-10)
+- [x] Comando `perf compare` para regressões sintéticas (finalizado em 2025-08-10)
+- [x] Flag `--full-scan` para incluir `node_modules` (finalizado em 2025-08-13)
+- [x] Documentar política de ignores do Guardian (finalizado em 2025-08-14)
+- [x] Saída JSON estruturada (finalizado em 2025-08-14)
+- [x] Registro de contagem original vs agregada de PARSE_ERRO (finalizado em 2025-08-13)
+- [x] Expor limites de agregação de PARSE_ERRO no README (finalizado em 2025-08-14)
+- [x] Métricas internas opcionais exportáveis (finalizado em 2025-08-15)
+- [x] Documentar contrato de saída para guardian (finalizado em 2025-08-15)
+- [x] Licença final: MIT (finalizado em 2025-08-13)
+- [x] Atualizar .gitignore para ignorar artefatos temporários (finalizado em 2025-08-14)
 
-### Cobertura e testes (sessão atual)
+- [x] Documentação do detector de arquétipos e estratégia de testes (`docs/tests/detector-arquetipos.md`) (finalizado em 2025-08-16)
+- [x] Ajuste: cobertura habilitada por env (`COVERAGE=true`) com thresholds preservados para CI/gate (finalizado em 2025-08-16)
+- [x] Alinhamento de testes para Vitest (mocks/fixtures; remoção de mistura Jest/Vitest) (finalizado em 2025-08-16)
 
-- [x] Elevação de cobertura de testes: ≥ 90% global (linhas/declarações/funções) e ≥ 90% de branches no arquivo `src/cli/comando-diagnosticar.ts`.
-- [x] Micro-testes de ramos adicionados cobrindo:
-  - Guardian: combinações de status (Ok, Criado, Aceito, AlteracoesDetectadas), modo permissivo e enforcement com detalhes.
-  - JSON: silenciamento/restauração de logs, escape de não-ASCII e pares substitutos, caminho `codePointAt == null`, campo `guardian: "nao-verificado"` quando Guardian não roda.
-  - Listar-analistas: fallback de largura (compacto 84 / não-compacto 96) e `catch` em DEV_MODE.
-  - Agregações: `TODO_PENDENTE` por arquivo e `catch` silencioso na agregação; agregação de `PARSE_ERRO` com contagem original preservada.
-  - UX fora de VITEST: blocos moldurados de resumo e despedida.
-  - Arquétipos: resumo/drift com truncamento e reticências quando listas excedem o limite de exibição.
+### Notas de Lint (Mapa para futura implementação)
 
-## Refinamentos de Qualidade (Novos)
-
-- [x] Extrair lógica de geração de plano para módulo dedicado (`src/analistas/plano-reorganizacao.ts`)
-- [x] Adicionar limite configurável para tamanho de arquivo nos moves (default 256KB) via config (`ESTRUTURA_PLANO_MAX_FILE_SIZE`)
-- [x] Exibir resumo de plano em modo não-JSON (top 3 moves + contagem)
-- [x] Integrar comando `reestruturar` ao `planoSugestao` (flags `--somente-plano`, `--auto`/`--aplicar`)
-- [ ] Validar colisões de extensão (ex: mover `.test.ts` mantendo subpastas futuras)
-- [ ] Testar cenário sem candidatos (plano vazio) garantindo ausência de campos supérfluos
-- [ ] Flag experimental para mostrar diff simulado de imports quebrados
-- [ ] Geração de mapa de rollback para moves aplicados (persistir JSON)
-
-## Feito
-
-- [x] Estruturação da pasta `docs/` para centralizar documentação e relatórios
-- [x] Refatoração do analista de funções longas para robustez em produção
-- [x] Centralização de helpers de persistência em `src/zeladores/util/`
-- [x] Atualização do `.github/copilot-instructions.md` para refletir padrões atuais
-- [x] Gating de `process.exit` via `process.env.VITEST` nos testes
-- [x] README atualizado com arquitetura modular e fluxo de desenvolvimento
-- [x] RELATORIO.md atualizado (data 2025-08-12, 309 testes verdes + E2E ampliado)
-- [x] guardian.md criado e referenciado no README
-- [x] Remoção de docs redundantes (ROADMAP_ITERACOES.md, SUGESTOES-PRIORITARIAS.md, JSDOC.md raiz)
-- [x] Flags `--json` e `--full-scan` implementadas e testadas
-- [x] Agregação de PARSE_ERRO (contagem original rastreada)
-- [x] Exposição de métricas em `diagnosticar --json` (campo `metricas`)
+- Mantidos 3 avisos em `src/analistas/detector-arquetipos.ts` como marcadores de melhoria futura:
+  - `ARQUETIPOS` declarado e não usado (linha 1)
+  - `scoreArquetipo` declarado e não usado (linha 22)
+  - `isHibridoParcial` atribuído e não utilizado (linha 88)
+    Esses avisos servirão como guia para evolução do detector (integração total com orquestrador e uso ampliado do scorer/híbridos).
 
 ---
 
