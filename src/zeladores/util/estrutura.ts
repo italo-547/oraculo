@@ -77,7 +77,27 @@ export function normalizarRel(p: string): string {
 
 export function deveIgnorar(rel: string, ignorar: string[]): boolean {
   const norm = normalizarRel(rel);
-  return ignorar.some((pat) => norm === pat || norm.startsWith(pat + '/'));
+  // Ignora se qualquer padrão ocorrer em qualquer nível do caminho (não apenas na raiz)
+  // Exemplos suportados:
+  //  - 'node_modules' casa 'node_modules/...', 'a/b/node_modules/...'
+  //  - 'dist' casa 'dist/...', 'x/dist/...'
+  //  - padrões com subpastas ('coverage/html') ainda casam por substring segmentada
+  return ignorar.some((raw) => {
+    const pat = normalizarRel(raw);
+    if (!pat) return false;
+    if (norm === pat) return true;
+    if (norm.startsWith(pat + '/')) return true;
+    if (norm.endsWith('/' + pat)) return true;
+    // Casa por segmento intermediário:
+    //  - '/pat/' ocorre no meio do caminho
+    //  - ou qualquer segmento exatamente igual ao pat (quando pat é um único segmento)
+    if (norm.includes('/' + pat + '/')) return true;
+    if (!pat.includes('/')) {
+      const segs = norm.split('/');
+      if (segs.includes(pat)) return true;
+    }
+    return false;
+  });
 }
 
 export function parseNomeArquivo(baseName: string): ParseNomeResultado {

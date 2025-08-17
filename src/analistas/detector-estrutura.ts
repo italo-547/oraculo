@@ -1,4 +1,5 @@
 import { grafoDependencias } from './detector-dependencias.js';
+import micromatch from 'micromatch';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import type {
   TecnicaAplicarResultado,
@@ -166,12 +167,26 @@ export const detectorEstrutura = {
     }
 
     // Múltiplos entrypoints
-    const entrypoints = caminhosNorm.filter((p) => /(^|[\\/])(cli|index|main)\.(ts|js)$/.test(p));
+    // Lista de entrypoints potencialmente grande em repositórios com dependências; filtra ignorados
+    const entrypointsAll = caminhosNorm.filter((p) =>
+      /(^|[\\/])(cli|index|main)\.(ts|js)$/.test(p),
+    );
+    const ignored = Array.isArray(config.ZELADOR_IGNORE_PATTERNS)
+      ? (config.ZELADOR_IGNORE_PATTERNS as string[])
+      : [];
+    const entrypoints = entrypointsAll.filter((p) => !micromatch.isMatch(p, ignored));
     if (entrypoints.length > 1) {
+      // Evita mensagens gigantes: limita a uma prévia e indica quantidade oculta
+      const MAX_LIST = 20;
+      const preview = entrypoints.slice(0, MAX_LIST);
+      const resto = entrypoints.length - preview.length;
       ocorrencias.push({
         tipo: 'estrutura-entrypoints',
         nivel: 'aviso',
-        mensagem: `Projeto possui múltiplos entrypoints: ${entrypoints.join(', ')}`,
+        mensagem:
+          resto > 0
+            ? `Projeto possui múltiplos entrypoints: ${preview.join(', ')} … (+${resto} ocultos)`
+            : `Projeto possui múltiplos entrypoints: ${preview.join(', ')}`,
         origem: 'detector-estrutura',
         relPath: '[raiz do projeto]',
         linha: 0,

@@ -146,6 +146,17 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
       if (includeList.length) config.CLI_INCLUDE_PATTERNS = includeList;
       const excludeList = processPatternList(opts.exclude);
       if (excludeList.length) config.CLI_EXCLUDE_PATTERNS = excludeList;
+      else {
+        // Guard-rail: sempre exclui node_modules quando usuário não passou excludes
+        // (somente removido se usuário incluir explicitamente node_modules em include)
+        config.CLI_EXCLUDE_PATTERNS = Array.from(
+          new Set([
+            ...(config.CLI_EXCLUDE_PATTERNS || []),
+            'node_modules/**',
+            '**/node_modules/**',
+          ]),
+        );
+      }
 
       // Se o usuário incluiu explicitamente node_modules, removemos dos ignores padrão
       const incluiNodeModules = includeList.some((p) => /node_modules/.test(p));
@@ -156,6 +167,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         );
         config.GUARDIAN_IGNORE_PATTERNS = config.GUARDIAN_IGNORE_PATTERNS.filter(
           (p) => !/node_modules/.test(p),
+        );
+        // E também dos excludes guard-rail, já que o usuário explicitou incluir
+        config.CLI_EXCLUDE_PATTERNS = (config.CLI_EXCLUDE_PATTERNS || []).filter(
+          (p) => !/node_modules/.test(String(p)),
         );
       }
 
@@ -790,8 +805,20 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                     missingRequired: m.missingRequired,
                     matchedRequired: m.matchedRequired,
                     forbiddenPresent: m.forbiddenPresent,
-                    anomalias: m.anomalias,
-                    planoSugestao: m.planoSugestao,
+                    // Limita anomalias para evitar JSON gigante (detalhes completos só em modo verbose não-JSON)
+                    anomalias: Array.isArray(m.anomalias) ? m.anomalias.slice(0, 50) : [],
+                    // Resume planoSugestao para não carregar lista completa de moves
+                    planoSugestao: m.planoSugestao
+                      ? {
+                          resumo: m.planoSugestao.resumo,
+                          conflitos: Array.isArray(m.planoSugestao.conflitos)
+                            ? m.planoSugestao.conflitos.slice(0, 20)
+                            : [],
+                          mover: Array.isArray(m.planoSugestao.mover)
+                            ? m.planoSugestao.mover.slice(0, 50)
+                            : [],
+                        }
+                      : undefined,
                   })),
                   baseline: arquetiposResultado.baseline,
                   drift: arquetiposResultado.drift,

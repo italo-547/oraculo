@@ -108,6 +108,8 @@ export const PARSERS = new Map<string, ParserFunc>([
   ['.tsx', parseComBabel],
   ['.mjs', parseComBabel],
   ['.cjs', parseComBabel],
+  // Evitamos .d.ts explicitamente: não há AST útil para nossas análises
+  ['.d.ts', () => null],
   ['.kt', parseComKotlin],
   ['.kts', parseComKotlin],
   ['.java', parseComJava],

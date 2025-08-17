@@ -49,7 +49,9 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
 
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
-      const relPath = path.relative(baseDir, fullPath);
+      const relPathRaw = path.relative(baseDir, fullPath);
+      // Normaliza para separador POSIX para que micromatch funcione de forma consistente no Windows
+      const relPath = relPathRaw.split('\\').join('/');
       // ------------------------------
       // Filtros de inclusão / exclusão
       // Semântica:
@@ -73,6 +75,18 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       }
       if (!filter(relPath, entry)) {
         continue; // filtro customizado
+      }
+
+      // Evita descer em diretórios ignorados (importante para node_modules, dist, etc.)
+      if (
+        entry.isDirectory() &&
+        !entry.isSymbolicLink() &&
+        // Se NÃO há include explícito: aplica ignore padrão em diretórios também
+        !hasInclude &&
+        micromatch.isMatch(relPath, config.ZELADOR_IGNORE_PATTERNS)
+      ) {
+        // Skip recursão nesse diretório
+        continue;
       }
 
       if (entry.isDirectory() && !entry.isSymbolicLink()) {
@@ -122,7 +136,10 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
 
           fileMap[relPath] = entryObj;
           // Logar cada arquivo individualmente para compatibilidade com testes
-          onProgress(`✅ Arquivo lido: ${relPath}`);
+          // Evita ruído quando relatórios silenciosos estão ativos (modo --json)
+          if (!config.REPORT_SILENCE_LOGS) {
+            onProgress(`✅ Arquivo lido: ${relPath}`);
+          }
         } catch (err) {
           onProgress(
             JSON.stringify({
