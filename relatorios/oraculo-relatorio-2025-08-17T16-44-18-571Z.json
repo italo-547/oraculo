@@ -1,0 +1,90 @@
+{
+  "resumo": {
+    "totalArquivos": 463,
+    "totalOcorrencias": 11,
+    "tiposOcorrencias": {
+      "estrutura-config": 2,
+      "estrutura-monorepo": 1,
+      "estrutura-monorepo-incompleto": 1,
+      "estrutura-fullstack": 1,
+      "estrutura-mista": 1,
+      "estrutura-suspeita": 1,
+      "estrutura-backend": 1,
+      "estrutura-frontend": 1,
+      "estrutura-entrypoints": 1,
+      "TODO_PENDENTE": 1
+    },
+    "arquivosComProblemas": 4,
+    "integridadeGuardian": "nao-verificado",
+    "baselineModificado": false,
+    "arquivosOrfaosDetectados": 0
+  },
+  "detalhesOcorrencias": [
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-monorepo",
+      "mensagem": "Estrutura de monorepo detectada.",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-monorepo-incompleto",
+      "mensagem": "Monorepo sem pasta packages/.",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-fullstack",
+      "mensagem": "Estrutura fullstack detectada.",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-mista",
+      "mensagem": "Projeto possui src/ e packages/ (monorepo) ao mesmo tempo. Avalie a organização.",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-suspeita",
+      "mensagem": "Muitos arquivos na raiz do projeto. Considere organizar em pastas.",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-backend",
+      "mensagem": "Sinais de backend detectados (controllers/, prisma/, api/).",
+      "linha": 0
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-frontend",
+      "mensagem": "Sinais de frontend detectados (components/, pages/).",
+      "linha": 0
+    },
+    {
+      "filePath": "package.json",
+      "tipoOcorrencia": "estrutura-config",
+      "mensagem": "Arquivo de configuração detectado: package.json",
+      "linha": 1
+    },
+    {
+      "filePath": "tsconfig.json",
+      "tipoOcorrencia": "estrutura-config",
+      "mensagem": "Arquivo de configuração detectado: tsconfig.json",
+      "linha": 1
+    },
+    {
+      "filePath": "[raiz do projeto]",
+      "tipoOcorrencia": "estrutura-entrypoints",
+      "mensagem": "Projeto possui múltiplos entrypoints: src/cli.ts, tests/fixtures/estruturas/api-rest-express/index.ts, tests/fixtures/estruturas/api-rest-express/src/index.ts, tests/fixtures/estruturas/cli-modular/index.ts, tests/fixtures/estruturas/fullstack-hibrido/api/index.ts, tests/fixtures/estruturas/fullstack-hibrido/index.ts, tests/fixtures/estruturas/fullstack-hibrido/src/index.ts",
+      "linha": 0
+    },
+    {
+      "filePath": "src/analistas/detector-arquetipos.ts",
+      "tipoOcorrencia": "TODO_PENDENTE",
+      "mensagem": "3 TODOs pendentes no arquivo (agregado)",
+      "linha": 1
+    }
+  ]
+}
