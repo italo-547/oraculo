@@ -108,6 +108,9 @@ export const configDefault = {
   ],
   // Padrões adicionais controlados via CLI para filtragem dinâmica pontual
   CLI_INCLUDE_PATTERNS: [] as string[], // quando não vazio: somente arquivos que casem algum pattern serão considerados (override dos ignores padrão)
+  // Grupos de include: cada ocorrência de --include forma um grupo; padrões separados por vírgula/espaço dentro do mesmo argumento devem ser TODOS casados (AND).
+  // O arquivo é incluído se casar QUALQUER grupo (OR entre grupos). Mantemos CLI_INCLUDE_PATTERNS como lista achatada para raízes/compat.
+  CLI_INCLUDE_GROUPS: [] as string[][],
   CLI_EXCLUDE_PATTERNS: [] as string[], // sempre excluídos (aplicado após include)
   ZELADOR_LINE_THRESHOLD: 20,
 

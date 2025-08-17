@@ -145,6 +145,36 @@ describe('detectorDependencias', () => {
     ).toBe(true);
   });
 
+  it('detecta require de .js em arquivo TS', async () => {
+    const traverseMock = vi.fn((node, visitors) => {
+      visitors.CallExpression({
+        node: {
+          callee: { type: 'Identifier', name: 'require' },
+          arguments: [{ type: 'StringLiteral', value: './foo.js' }],
+          loc: { start: { line: 1 }, column: 1 },
+        },
+      });
+    });
+    await vi.doMock('../nucleo/constelacao/traverse.js', () => ({ traverse: traverseMock }));
+    await vi.doMock('node:path', () => {
+      const mockPath = {
+        normalize: (p: string) => p.replace(/\\/g, '/'),
+        join: (...args: string[]) => args.join('/'),
+        dirname: (p: string) => p.split('/').slice(0, -1).join('/'),
+      };
+      return { ...mockPath, default: mockPath };
+    });
+    const { detectorDependencias } = await import('./detector-dependencias.js');
+    const fakeAst = { node: { type: 'File' } };
+    const ocorrencias = detectorDependencias.aplicar('', 'src/teste.ts', fakeAst as any, '', {
+      arquivos: [{ relPath: 'src/teste.ts', ast: fakeAst }],
+    } as any);
+    expect(
+      Array.isArray(ocorrencias) &&
+        ocorrencias.some((o: any) => o.tipo === 'alerta' && o.mensagem.includes('.js')),
+    ).toBe(true);
+  });
+
   it('detecta require externo', async () => {
     const traverseMock = vi.fn((node, visitors) => {
       visitors.CallExpression({
@@ -330,7 +360,7 @@ describe('detectorDependencias', () => {
     await vi.doMock('node:path', () => {
       const normalize = (input: string) => {
         const parts = input.replace(/\\/g, '/').split('/');
-        const stack = [];
+        const stack: string[] = [];
         for (const part of parts) {
           if (part === '' || part === '.') continue;
           if (part === '..') stack.pop();
@@ -397,7 +427,7 @@ describe('detectorDependencias', () => {
     await vi.doMock('node:path', () => {
       const normalize = (input: string) => {
         const parts = input.replace(/\\/g, '/').split('/');
-        const stack = [];
+        const stack: string[] = [];
         for (const part of parts) {
           if (part === '' || part === '.') continue;
           if (part === '..') stack.pop();

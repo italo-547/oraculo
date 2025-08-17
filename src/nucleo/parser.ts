@@ -4,7 +4,8 @@ import { File as BabelFile } from '@babel/types';
 import { parseDocument } from 'htmlparser2';
 import { XMLParser } from 'fast-xml-parser';
 import * as csstree from 'css-tree';
-import { parse as parseJava } from 'java-parser';
+import { createRequire } from 'module';
+const localRequire = createRequire(import.meta.url);
 import { log } from './constelacao/log.js';
 
 // Mantemos a assinatura retornando BabelFile | null para não quebrar tipos externos, mas
@@ -54,7 +55,9 @@ function parseComKotlin(codigo: string) {
 
 function parseComJava(codigo: string) {
   try {
-    const ast = parseJava(codigo);
+    // Lazy require: evita custo de import em ambientes que não analisam Java
+    const { parse } = localRequire('java-parser');
+    const ast = parse(codigo);
     log.debug('☕ Java parse realizado');
     return wrapMinimal('java', ast);
   } catch (e) {
