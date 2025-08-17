@@ -206,42 +206,47 @@ export async function detectarArquetipos(
       }
     }
   }
-  // Ordena por confiança e score
-  resultados.sort((a, b) => b.confidence - a.confidence || b.score - a.score);
-  // Seleciona todos os stacks com confiança >= 40 (ajustável)
-  const LIMIAR_CONFIANCA = 40;
-  let candidatosPotenciais: ResultadoDeteccaoArquetipo[] = resultados.filter(
-    (r) => r.confidence >= LIMIAR_CONFIANCA,
-  );
-  // Se nenhum passou do limiar, retorna o melhor disponível
-  if (candidatosPotenciais.length === 0 && resultados.length > 0) {
-    candidatosPotenciais = [resultados[0]];
-  }
-  // Agrupa por nome e conta votos
-  const votos: Record<string, number> = {};
-  for (const c of candidatosPotenciais) {
-    votos[c.nome] = (votos[c.nome] || 0) + 1;
-  }
-  // Seleciona o mais votado (sem empate)
-  let escolhido: ResultadoDeteccaoArquetipo | undefined;
-  let maxVotos = 0;
-  for (const nome in votos) {
-    if (votos[nome] > maxVotos) {
-      maxVotos = votos[nome];
-      escolhido = candidatosPotenciais.find((c) => c.nome === nome);
+  // Ordena todos os candidatos por menor missingRequired.length, maior score, matchedRequired, confiança e nome
+  const ordenados = [...resultados].sort((a, b) => {
+    if (a.missingRequired.length !== b.missingRequired.length) {
+      return a.missingRequired.length - b.missingRequired.length;
     }
+    if (b.score !== a.score) return b.score - a.score;
+    if ((b.matchedRequired?.length ?? 0) !== (a.matchedRequired?.length ?? 0)) {
+      return (b.matchedRequired?.length ?? 0) - (a.matchedRequired?.length ?? 0);
+    }
+    if (b.confidence !== a.confidence) return b.confidence - a.confidence;
+    return a.nome.localeCompare(b.nome);
+  });
+  // Seleciona o melhor candidato (menos requisitos faltando, maior score, etc)
+  const melhor = ordenados[0];
+  // Só retorna desconhecido se todos os candidatos tiverem todos os requisitos faltando
+  const todosIncompativeis = ordenados.every(
+    (r) => r.missingRequired.length === r.matchedRequired.length + r.missingRequired.length,
+  );
+  let melhores: ResultadoDeteccaoArquetipo[];
+  if (!todosIncompativeis && melhor) {
+    melhores = [melhor];
+  } else {
+    melhores = [
+      {
+        nome: 'desconhecido',
+        score: 0,
+        confidence: 0,
+        matchedRequired: [],
+        missingRequired: [],
+        matchedOptional: [],
+        dependencyMatches: [],
+        filePatternMatches: [],
+        forbiddenPresent: [],
+        anomalias: [],
+        sugestaoPadronizacao: '',
+        explicacaoSimilaridade:
+          'Nenhum arquétipo compatível encontrado. Estrutura desconhecida ou personalizada.',
+        descricao: '',
+      },
+    ];
   }
-  // Lista os demais candidatos potenciais (menos votados)
-  const outrosCandidatos = candidatosPotenciais.filter((c) => c.nome !== (escolhido?.nome ?? ''));
-  // Adiciona explicação sobre candidatos potenciais
-  if (escolhido) {
-    escolhido.explicacaoSimilaridade +=
-      outrosCandidatos.length > 0
-        ? `\nOutros candidatos potenciais detectados: ${outrosCandidatos.map((c) => c.nome).join(', ')}.`
-        : '';
-  }
-  // Exporta apenas o mais votado
-  const melhores: ResultadoDeteccaoArquetipo[] = escolhido ? [escolhido] : [];
   const baselinePath = path.join(baseDir, '.oraculo', 'baseline-estrutura.json');
   let baseline: SnapshotEstruturaBaseline | undefined;
   const existente = await lerEstado<SnapshotEstruturaBaseline | []>(baselinePath);
