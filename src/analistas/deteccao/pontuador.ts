@@ -117,6 +117,20 @@ export function scoreArquetipo(
     }
   }
 
+  // Explicação genérica quando há penalidades/ausências e ainda não foi preenchida
+  if (!explicacaoSimilaridade) {
+    const partes: string[] = [];
+    if (missingRequired.length > 0) {
+      partes.push(`Diretórios obrigatórios ausentes: ${missingRequired.join(', ')}.`);
+    }
+    if (forbiddenPresent.length > 0) {
+      partes.push(`Diretórios não permitidos presentes: ${forbiddenPresent.join(', ')}.`);
+    }
+    if (partes.length > 0) {
+      explicacaoSimilaridade = `${partes.join(' ')} Estrutura parcialmente compatível ou personalizada.`;
+    }
+  }
+
   if (score < 0) score = 0;
   const maxPossible =
     (def.pesoBase || 1) * 10 +
@@ -182,5 +196,13 @@ export function pontuarTodos(arquivos: string[]): ResultadoDeteccaoArquetipo[] {
       }
     }
   }
-  return resultados;
+  // Filtro: manter apenas candidatos que apresentem algum sinal (match/forbidden/pattern/dep)
+  return resultados.filter(
+    (r) =>
+      (r.matchedRequired?.length || 0) > 0 ||
+      (r.matchedOptional?.length || 0) > 0 ||
+      (r.dependencyMatches?.length || 0) > 0 ||
+      (r.filePatternMatches?.length || 0) > 0 ||
+      (r.forbiddenPresent?.length || 0) > 0,
+  );
 }

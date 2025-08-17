@@ -24,6 +24,7 @@ export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetip
     lista = pontuarTodos(arquivos);
   }
 
+  // Se ainda vazio, é desconhecido
   if (!lista.length) {
     return {
       nome: 'desconhecido',
@@ -54,5 +55,28 @@ export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetip
   });
 
   const best = lista[0];
+  const hasSignals =
+    (best.matchedRequired?.length || 0) > 0 ||
+    (best.matchedOptional?.length || 0) > 0 ||
+    (best.dependencyMatches?.length || 0) > 0 ||
+    (best.filePatternMatches?.length || 0) > 0 ||
+    (best.forbiddenPresent?.length || 0) > 0;
+  if (!hasSignals || best.score <= 0) {
+    return {
+      nome: 'desconhecido',
+      score: 0,
+      confidence: 0,
+      matchedRequired: [],
+      missingRequired: [],
+      matchedOptional: [],
+      dependencyMatches: [],
+      filePatternMatches: [],
+      forbiddenPresent: [],
+      anomalias: [],
+      sugestaoPadronizacao: '',
+      explicacaoSimilaridade: '',
+      descricao: 'Arquétipo não identificado',
+    };
+  }
   return best;
 }
