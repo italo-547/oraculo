@@ -121,7 +121,7 @@ export const PARSERS = new Map<string, ParserFunc>([
   ['.gradle.kts', parseComGradle],
 ]);
 
-export const EXTENSOES_SUPORTADAS = Array.from(PARSERS.keys());
+export const EXTENSOES_SUPORTADAS = Array.from(PARSERS.keys()).filter((ext) => ext !== '.d.ts');
 
 interface DecifrarSintaxeOpts {
   plugins?: string[];

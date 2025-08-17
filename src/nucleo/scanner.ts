@@ -190,7 +190,88 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       const norm = path.resolve(d);
       if (vistos.has(norm)) continue;
       vistos.add(norm);
-      await scan(norm);
+      // Quando o root derivado for um arquivo, processe-o diretamente
+      try {
+        let st = statCache.get(norm);
+        if (!st) {
+          st = await fs.stat(norm);
+          statCache.set(norm, st);
+        }
+        if (
+          st &&
+          typeof (st as unknown as { isDirectory: () => boolean }).isDirectory === 'function' &&
+          st.isDirectory()
+        ) {
+          await scan(norm);
+        } else {
+          const relPathRaw = path.relative(baseDir, norm);
+          const relPath = relPathRaw.split('\\').join('/');
+          // Aplica as mesmas regras de filtragem de arquivos
+          if (hasInclude && !micromatch.isMatch(relPath, config.CLI_INCLUDE_PATTERNS)) {
+            continue;
+          }
+          if (
+            config.CLI_EXCLUDE_PATTERNS?.length &&
+            micromatch.isMatch(relPath, config.CLI_EXCLUDE_PATTERNS)
+          ) {
+            continue;
+          }
+          if (!hasInclude && micromatch.isMatch(relPath, config.ZELADOR_IGNORE_PATTERNS)) {
+            continue;
+          }
+          // Filtro customizado exige Dirent; criamos um stub mínimo
+          const fakeDirent: Dirent = {
+            name: path.basename(norm),
+            isDirectory: () => false,
+            isSymbolicLink: () => false,
+          } as unknown as Dirent;
+          if (!filter(relPath, fakeDirent)) continue;
+
+          let content: string | null = null;
+          if (includeContent) {
+            const emTeste = !!process.env.VITEST;
+            try {
+              if (emTeste) content = await lerEstado<string>(norm);
+              else content = await lerArquivoTexto(norm);
+            } catch (e) {
+              onProgress(
+                JSON.stringify({
+                  tipo: 'erro',
+                  acao: 'ler',
+                  caminho: relPath,
+                  mensagem:
+                    typeof e === 'object' && e && 'message' in e
+                      ? (e as { message: string }).message
+                      : String(e),
+                }),
+              );
+              content = null;
+            }
+          }
+
+          fileMap[relPath] = {
+            fullPath: norm,
+            relPath,
+            content,
+            ultimaModificacao: st?.mtimeMs || Date.now(),
+          };
+          if (!config.REPORT_SILENCE_LOGS) {
+            onProgress(`✅ Arquivo lido: ${relPath}`);
+          }
+        }
+      } catch (e) {
+        onProgress(
+          JSON.stringify({
+            tipo: 'erro',
+            acao: 'acessar',
+            caminho: norm,
+            mensagem:
+              typeof e === 'object' && e && 'message' in e
+                ? (e as { message: string }).message
+                : String(e),
+          }),
+        );
+      }
     }
   }
   return fileMap;
