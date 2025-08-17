@@ -3,7 +3,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Checklist de Sincronização – Oráculo
 
 Use este checklist para comparar com o `docs/CHECKLIST.md` atual e garantir alinhamento.
@@ -52,4 +51,3 @@ Use este checklist para comparar com o `docs/CHECKLIST.md` atual e garantir alin
 - [ ] Pré-visualização com `npm run pre-public`; release draft via workflow.
 
 Última revisão sugerida: 2025-08-17
-

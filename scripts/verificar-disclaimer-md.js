@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+
 import { readFile, access } from 'node:fs/promises';
 import { constants as fsConstants } from 'node:fs';
 import { execFile } from 'node:child_process';
@@ -15,8 +15,10 @@ function execFileAsync(cmd, args, opts) {
 
 const { stdout } = await execFileAsync('git', ['ls-files', '*.md']);
 const files = stdout
-  .split('\n').map(s => s.trim()).filter(Boolean)
-  .filter(f => f !== 'docs/partials/AVISO-PROVENIENCIA.md' && !f.startsWith('pre-public/'));
+  .split('\n')
+  .map((s) => s.trim())
+  .filter(Boolean)
+  .filter((f) => f !== 'docs/partials/AVISO-PROVENIENCIA.md' && !f.startsWith('pre-public/'));
 
 const marker = /Proveni[eê]ncia e Autoria/i;
 const hasMarker = (text) => marker.test(text);
@@ -35,7 +37,9 @@ for (const f of files) {
 }
 
 if (missing.length) {
-  console.error('Arquivos sem o aviso de Proveniência e Autoria (verifique as primeiras 30 linhas):');
+  console.error(
+    'Arquivos sem o aviso de Proveniência e Autoria (verifique as primeiras 30 linhas):',
+  );
   for (const m of missing) console.error('-', m);
   process.exit(1);
 } else {

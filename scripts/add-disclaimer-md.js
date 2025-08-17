@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+
 import { readFile, writeFile, access, readdir } from 'node:fs/promises';
 import { constants as fsConstants } from 'node:fs';
 import { execFile } from 'node:child_process';
@@ -21,9 +21,12 @@ function execFileAsync(cmd, args, opts) {
 async function listMarkdown() {
   try {
     const { stdout } = await execFileAsync('git', ['ls-files', '*.md']);
-    const listed = stdout.split('\n').map(s => s.trim()).filter(Boolean);
+    const listed = stdout
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
     if (listed.length) return listed;
-  } catch { }
+  } catch {}
   // Fallback: varre FS a partir da raiz
   async function walk(dir) {
     const out = [];
@@ -31,8 +34,9 @@ async function listMarkdown() {
     for (const e of entries) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) {
-        if (/^(node_modules|dist|.git|pre-public|coverage|relatorios|.oraculo)$/i.test(e.name)) continue;
-        out.push(...await walk(p));
+        if (/^(node_modules|dist|.git|pre-public|coverage|relatorios|.oraculo)$/i.test(e.name))
+          continue;
+        out.push(...(await walk(p)));
       } else if (/\.md$/i.test(e.name)) {
         out.push(path.relative(process.cwd(), p));
       }
@@ -44,9 +48,15 @@ async function listMarkdown() {
 
 const files = (await listMarkdown())
   // ignore o próprio snippet e arquivos gerados
-  .filter(f => f !== disclaimerPath && !f.startsWith('pre-public/'))
+  .filter((f) => f !== disclaimerPath && !f.startsWith('pre-public/'))
   // ignorar pastas históricas/abandonadas/deprecadas
-  .filter(f => !f.startsWith('.abandonados/') && !f.startsWith('.deprecados/') && !f.startsWith('coverage/') && !f.startsWith('relatorios/'));
+  .filter(
+    (f) =>
+      !f.startsWith('.abandonados/') &&
+      !f.startsWith('.deprecados/') &&
+      !f.startsWith('coverage/') &&
+      !f.startsWith('relatorios/'),
+  );
 
 const marker = /Proveni[eê]ncia e Autoria/i;
 
@@ -67,4 +77,4 @@ for (const f of files) {
   console.log(`Inserido aviso em: ${f}`);
   inserted++;
 }
-console.log(`Concluído. Arquivos atualizados: ${inserted}`)
+console.log(`Concluído. Arquivos atualizados: ${inserted}`);
