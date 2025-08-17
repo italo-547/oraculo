@@ -19,7 +19,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
       '.lintstagedrc.mjs',
       'LICENSE',
     ],
-    forbiddenDirs: ['pages', 'prisma', 'packages'],
+    // Evita colisão desnecessária com monorepo; penaliza apenas sinais de frontend típicos
+    forbiddenDirs: ['pages', 'prisma'],
     pesoBase: 1,
   },
   {
@@ -46,7 +47,9 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
     descricao: 'Aplicação fullstack (pages/ + api/ + prisma/)',
     requiredDirs: ['pages', 'api', 'prisma'],
     optionalDirs: ['components', 'lib'],
-    forbiddenDirs: [],
+    // Em projetos fullstack, normalmente não coexistem workspaces/packages na raiz
+    // pois indicam estrutura de monorepo; penalizamos quando presente.
+    forbiddenDirs: ['packages'],
     dependencyHints: [],
     rootFilesAllowed: ['package.json', 'tsconfig.json'],
     pesoBase: 1.5,
@@ -58,6 +61,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
     filePresencePatterns: ['bot.ts', 'src/bot'],
     dependencyHints: ['telegraf', 'discord.js'],
     rootFilesAllowed: ['package.json', 'tsconfig.json'],
+    // Estruturas típicas de frontend/monorepo não são esperadas em bots
+    forbiddenDirs: ['pages', 'prisma', 'packages'],
     pesoBase: 0.9,
   },
   {
@@ -67,6 +72,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
     filePresencePatterns: ['electron.js', 'main.js', 'electron.ts'],
     dependencyHints: ['electron'],
     rootFilesAllowed: ['package.json', 'tsconfig.json'],
+    // Electron não deve coexistir com pastas típicas de fullstack/monorepo
+    forbiddenDirs: ['pages', 'prisma', 'packages'],
     pesoBase: 1.1,
   },
   {
@@ -74,7 +81,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
     descricao: 'Biblioteca TypeScript compilada via tsc',
     requiredDirs: ['src'],
     optionalDirs: ['src/lib', 'src/utils'],
-    filePresencePatterns: ['index.ts'],
+    // Evita colisão com projeto mínimo contendo apenas index.ts na raiz
+    filePresencePatterns: ['src/index.ts'],
     dependencyHints: [],
     rootFilesAllowed: ['package.json', 'tsconfig.json', 'README.md'],
     forbiddenDirs: ['pages', 'api', 'prisma'],
