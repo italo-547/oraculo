@@ -10,8 +10,26 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reportsDirectory: './coverage',
-      // Habilita cobertura apenas quando explicitamente solicitado (ex.: COVERAGE=true ou via CLI)
+      // Sempre habilitado quando --coverage é passado; também pode ser ativado via env COVERAGE=true
       enabled: process.env.COVERAGE === 'true',
+      // Considera cobertura apenas do código-fonte
+      include: ['src/**/*.ts'],
+      // Exclui artefatos compilados, scripts e conteúdos auxiliares/fixtures
+      exclude: [
+        'dist/**',
+        'pre-public/**',
+        'scripts/**',
+        'tests/**',
+        'temp-fantasma/**',
+        'tmp-**/**',
+        '**/fixtures/**',
+        '**/mocks/**',
+        '**/__tests__/**',
+        'file1.ts',
+        'file2.ts',
+        'tmp-cache-file.ts',
+      ],
+      all: false,
       thresholds: {
         lines: 90,
         functions: 90,
