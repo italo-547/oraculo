@@ -1,16 +1,10 @@
-import { ARQUETIPOS, normalizarCaminho } from './arquetipos-defs.js';
-import { grafoDependencias } from './detector-dependencias.js';
+import { ARQUETIPOS, normalizarCaminho } from '../arquetipos-defs.js';
+import { grafoDependencias } from '../detector-dependencias.js';
 import type {
-  ContextoExecucao,
   ResultadoDeteccaoArquetipo,
-  ArquetipoDeteccaoAnomalia,
-  SnapshotEstruturaBaseline,
   ArquetipoEstruturaDef,
-  ArquetipoDrift,
-} from '../tipos/tipos.js';
-import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
-import { OperarioEstrutura } from '../zeladores/operario-estrutura.js';
-import path from 'node:path';
+  ArquetipoDeteccaoAnomalia,
+} from '../../tipos/tipos.js';
 
 const PENALIDADE_MISSING_REQUIRED = 20;
 const PESO_OPTIONAL = 5;
@@ -19,7 +13,7 @@ const PESO_DEPENDENCIA = 10;
 const PESO_PATTERN = 5;
 const PENALIDADE_FORBIDDEN = 20;
 
-function scoreArquetipo(
+export function scoreArquetipo(
   def: ArquetipoEstruturaDef,
   arquivos: string[],
 ): ResultadoDeteccaoArquetipo {
@@ -49,10 +43,56 @@ function scoreArquetipo(
   score += filePatternMatches.length * PESO_PATTERN;
   score -= forbiddenPresent.length * PENALIDADE_FORBIDDEN;
 
-  const temControllers = matchedRequired.includes('src/controllers');
-  const temExpress = dependencyMatches.includes('express');
   let explicacaoSimilaridade = '';
+  let candidatoExtra: string | undefined;
+
+  if (def.nome === 'fullstack') {
+    const temPages = matchedRequired.includes('pages');
+    const temApi = matchedRequired.includes('api');
+    const temPrisma = matchedRequired.includes('prisma');
+    const temControllers = norm.some((f) => f.includes('src/controllers'));
+    const temExpress = grafoDependencias.has('express');
+    const isHibridoCompleto = temPages && temApi && temPrisma && temControllers && temExpress;
+    if (isHibridoCompleto) {
+      score += 40;
+      explicacaoSimilaridade =
+        'Estrutura híbrida: fullstack + api-rest-express. Projeto combina frontend (pages/api/prisma) e backend Express/controllers.';
+      candidatoExtra = 'api-rest-express';
+      explicacaoSimilaridade +=
+        '\nOutros candidatos potenciais detectados: fullstack, api-rest-express.';
+    } else if (temPages && temApi && temPrisma) {
+      score += 20;
+      explicacaoSimilaridade = 'Estrutura segue o padrão fullstack (pages/api/prisma).';
+      explicacaoSimilaridade +=
+        '\nOutros candidatos potenciais detectados: fullstack, api-rest-express.';
+    }
+  }
+
+  if (def.nome === 'api-rest-express' && grafoDependencias.has('express')) {
+    if (
+      norm.some((f) => f.includes('pages')) &&
+      norm.some((f) => f.includes('prisma')) &&
+      norm.some((f) => f.includes('api'))
+    ) {
+      score += 40;
+      if (score > 100) score = 100;
+      explicacaoSimilaridade =
+        'Estrutura híbrida: api-rest-express + fullstack. Projeto combina backend Express/controllers e frontend (pages/prisma/api).';
+      explicacaoSimilaridade +=
+        '\nOutros candidatos potenciais detectados: fullstack, api-rest-express.';
+    } else if (norm.some((f) => f.includes('pages')) && norm.some((f) => f.includes('prisma'))) {
+      score += 40;
+      if (score > 100) score = 100;
+      explicacaoSimilaridade =
+        'Estrutura híbrida: api-rest-express + fullstack. Projeto combina backend Express/controllers e frontend (pages/prisma).';
+      explicacaoSimilaridade +=
+        '\nOutros candidatos potenciais detectados: fullstack, api-rest-express.';
+    }
+  }
+
   if (def.nome === 'api-rest-express') {
+    const temControllers = matchedRequired.includes('src/controllers');
+    const temExpress = dependencyMatches.includes('express');
     if (temControllers && temExpress) {
       score += 50;
     } else if (temControllers) {
@@ -74,57 +114,6 @@ function scoreArquetipo(
     } else {
       explicacaoSimilaridade =
         'Estrutura personalizada, mas o padrão mais próximo é api-rest-express. Recomenda-se seguir boas práticas para facilitar manutenção.';
-    }
-  }
-
-  let candidatoExtra: string | undefined;
-  if (def.nome === 'fullstack') {
-    const temPages = matchedRequired.includes('pages');
-    const temApi = matchedRequired.includes('api');
-    const temPrisma = matchedRequired.includes('prisma');
-    const temControllers = norm.some((f) => f.includes('src/controllers'));
-    const temExpress = grafoDependencias.has('express');
-    let isHibridoCompleto = temPages && temApi && temPrisma && temControllers && temExpress;
-    let isHibridoParcial = temPages && temApi && temPrisma && (temControllers || temExpress);
-    if (isHibridoCompleto) {
-      score += 40;
-      explicacaoSimilaridade =
-        'Estrutura híbrida: fullstack + api-rest-express. Projeto combina frontend (pages/api/prisma) e backend Express/controllers.';
-      candidatoExtra = 'api-rest-express';
-      // Garante que a explicação sempre inclua os candidatos potenciais
-      explicacaoSimilaridade +=
-        '\nOutros candidatos potenciais detectados: fullstack, api-rest-express.';
-    } else if (temPages && temApi && temPrisma) {
-      score += 20;
-      explicacaoSimilaridade = 'Estrutura segue o padrão fullstack (pages/api/prisma).';
-      // Sempre inclui candidatos potenciais quando fullstack detectado
-      explicacaoSimilaridade +=
-        '\nOutros candidatos potenciais detectados: fullstack, api-rest-express.';
-    }
-  }
-
-  // Reforça score/confiança do candidato extra em cenários híbridos (fullstack + api-rest-express)
-  if (def.nome === 'api-rest-express' && grafoDependencias.has('express')) {
-    if (
-      norm.some((f) => f.includes('pages')) &&
-      norm.some((f) => f.includes('prisma')) &&
-      norm.some((f) => f.includes('api'))
-    ) {
-      score += 40;
-      if (score > 100) score = 100;
-      explicacaoSimilaridade =
-        'Estrutura híbrida: api-rest-express + fullstack. Projeto combina backend Express/controllers e frontend (pages/prisma/api).';
-      explicacaoSimilaridade +=
-        '\nOutros candidatos potenciais detectados: fullstack, api-rest-express.';
-    }
-    // Se chamado como candidatoExtra de fullstack híbrido, reforça score
-    else if (norm.some((f) => f.includes('pages')) && norm.some((f) => f.includes('prisma'))) {
-      score += 40;
-      if (score > 100) score = 100;
-      explicacaoSimilaridade =
-        'Estrutura híbrida: api-rest-express + fullstack. Projeto combina backend Express/controllers e frontend (pages/prisma).';
-      explicacaoSimilaridade +=
-        '\nOutros candidatos potenciais detectados: fullstack, api-rest-express.';
     }
   }
 
@@ -161,7 +150,7 @@ function scoreArquetipo(
         'Sugestão: utilize nomes de arquivos e rotas que incluam "api" ou "rest" para reforçar o padrão.\n';
     }
   }
-  // Retorna candidatoExtra junto ao resultado (usado só internamente)
+
   return {
     nome: def.nome,
     score,
@@ -180,69 +169,18 @@ function scoreArquetipo(
   };
 }
 
-export async function detectarArquetipos(
-  contexto: Pick<ContextoExecucao, 'arquivos' | 'baseDir'>,
-  baseDir: string,
-): Promise<{
-  melhores: ResultadoDeteccaoArquetipo[];
-  baseline?: SnapshotEstruturaBaseline;
-  drift?: ArquetipoDrift;
-}> {
-  const arquivos = contexto.arquivos.map((f) => f.relPath);
-  // Novo fluxo: delega para orquestrador central
-  const { detectarArquetipo } = await import('./orquestrador-arquetipos.js');
-  const melhor = detectarArquetipo(arquivos);
-  const melhores = [melhor];
-  const baselinePath = path.join(baseDir, '.oraculo', 'baseline-estrutura.json');
-  let baseline: SnapshotEstruturaBaseline | undefined;
-  const existente = await lerEstado<SnapshotEstruturaBaseline | []>(baselinePath);
-  if (
-    existente &&
-    !Array.isArray(existente) &&
-    typeof existente === 'object' &&
-    'arquetipo' in existente
-  ) {
-    baseline = existente as SnapshotEstruturaBaseline;
-  }
-  if (!baseline && melhores[0]) {
-    baseline = {
-      version: 1,
-      timestamp: new Date().toISOString(),
-      arquetipo: melhores[0].nome,
-      confidence: melhores[0].confidence,
-      arquivosRaiz: arquivos.filter((p) => !p.includes('/')).sort(),
-    };
-    await salvarEstado(baselinePath, baseline);
-  }
-  let drift: ArquetipoDrift | undefined;
-  if (baseline && melhores[0]) {
-    const atual = melhores[0];
-    const arquivosRaizAtuais = arquivos.filter((p) => !p.includes('/')).sort();
-    const setBase = new Set(baseline.arquivosRaiz);
-    const setAtual = new Set(arquivosRaizAtuais);
-    const novos: string[] = [];
-    const removidos: string[] = [];
-    for (const f of setAtual) if (!setBase.has(f)) novos.push(f as string);
-    for (const f of setBase) if (!setAtual.has(f)) removidos.push(f as string);
-    drift = {
-      alterouArquetipo: baseline.arquetipo !== atual.nome,
-      anterior: baseline.arquetipo,
-      atual: atual.nome,
-      deltaConfidence: atual.confidence - baseline.confidence,
-      arquivosRaizNovos: novos,
-      arquivosRaizRemovidos: removidos,
-    };
-  }
-  if (melhores[0]) {
-    const top = melhores[0];
-    try {
-      const { plano } = await OperarioEstrutura.planejar(baseDir, contexto.arquivos, {
-        preferEstrategista: true,
-      });
-      if (plano) top.planoSugestao = plano;
-    } catch {
-      // mantém default vazio se falhar
+export function pontuarTodos(arquivos: string[]): ResultadoDeteccaoArquetipo[] {
+  const resultados: ResultadoDeteccaoArquetipo[] = [];
+  for (const def of ARQUETIPOS) {
+    const r = scoreArquetipo(def, arquivos);
+    resultados.push(r);
+    if (r.candidatoExtra) {
+      const extra = ARQUETIPOS.find((a) => a.nome === r.candidatoExtra);
+      if (extra) {
+        const e = scoreArquetipo(extra, arquivos);
+        if (!resultados.some((x) => x.nome === e.nome)) resultados.push(e);
+      }
     }
   }
-  return { melhores, baseline, drift };
+  return resultados;
 }

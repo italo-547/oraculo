@@ -1,26 +1,32 @@
-import type { ResultadoDeteccaoArquetipo } from '@tipos/tipos.js';
+import type { ResultadoDeteccaoArquetipo } from '../tipos/tipos.js';
 import { detectarArquetipoNode } from './detectores/detector-node.js';
 import { detectarArquetipoJava } from './detectores/detector-java.js';
 import { detectarArquetipoKotlin } from './detectores/detector-kotlin.js';
 import { detectarArquetipoXML } from './detectores/detector-xml.js';
+import { pontuarTodos } from './deteccao/pontuador.js';
 
 /**
  * Orquestrador central de detecção de arquétipos
  * Agrega votos dos detectores especializados e decide o arquétipo final
  */
 export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetipo {
-  // Chama todos detectores
-  const resultados: ResultadoDeteccaoArquetipo[] = [
+  // Agregação dos detectores por stack
+  const candidatos: ResultadoDeteccaoArquetipo[] = [
     ...detectarArquetipoNode(arquivos),
     ...detectarArquetipoJava(arquivos),
     ...detectarArquetipoKotlin(arquivos),
     ...detectarArquetipoXML(arquivos),
   ];
-  // Seleciona o melhor candidato (maior score, desempate por confiança)
-  if (resultados.length === 0) {
+
+  let lista = candidatos;
+  if (!lista.length) {
+    // Fallback de compatibilidade: usar o pontuador completo para preservar comportamento legado
+    lista = pontuarTodos(arquivos);
+  }
+
+  if (!lista.length) {
     return {
       nome: 'desconhecido',
-      descricao: 'Nenhum arquétipo identificado',
       score: 0,
       confidence: 0,
       matchedRequired: [],
@@ -30,7 +36,23 @@ export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetip
       filePatternMatches: [],
       forbiddenPresent: [],
       anomalias: [],
+      sugestaoPadronizacao: '',
+      explicacaoSimilaridade: '',
+      descricao: 'Arquétipo não identificado',
     };
   }
-  return resultados.reduce((a, b) => (a.score > b.score ? a : b));
+
+  // Ordenação próxima do legado: menor missingRequired, maior score, maior matchedRequired, maior confidence, nome asc
+  lista.sort((a, b) => {
+    const mm = (a.missingRequired?.length || 0) - (b.missingRequired?.length || 0);
+    if (mm !== 0) return mm;
+    if (b.score !== a.score) return b.score - a.score;
+    const mr = (b.matchedRequired?.length || 0) - (a.matchedRequired?.length || 0);
+    if (mr !== 0) return mr;
+    if (b.confidence !== a.confidence) return b.confidence - a.confidence;
+    return a.nome.localeCompare(b.nome);
+  });
+
+  const best = lista[0];
+  return best;
 }

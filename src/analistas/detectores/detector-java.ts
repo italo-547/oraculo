@@ -1,10 +1,10 @@
-import type { ResultadoDeteccaoArquetipo } from '@tipos/tipos.js';
+import type { ResultadoDeteccaoArquetipo } from '../../tipos/tipos.js';
 
 /**
  * Detector especializado para projetos Java
  * Retorna lista de candidatos de arquétipo com score/confiança
  */
-export function detectarArquetipoJava(arquivos: string[]): ResultadoDeteccaoArquetipo[] {
-  // TODO: Implementar heurísticas reais para Java
+export function detectarArquetipoJava(_arquivos: string[]): ResultadoDeteccaoArquetipo[] {
+  // Ainda não suportado: retornar lista vazia
   return [];
 }
