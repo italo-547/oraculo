@@ -24,4 +24,15 @@ describe('reescreverImports', () => {
     expect(reescritos.length).toBe(0);
     expect(novoConteudo).toBe(conteudo);
   });
+
+  it("gera prefixo './' quando relative não inicia com ponto após o move", () => {
+    const conteudo =
+      "import x from './utils/a';\nexport * from './utils/b';\nconst y = require('./utils/c')";
+    // mover dentro do mesmo diretório faz o relative ficar 'utils/a' (sem ponto)
+    const { novoConteudo, reescritos } = reescreverImports(conteudo, 'src/a.ts', 'src/b.ts');
+    expect(reescritos.length).toBe(3);
+    expect(novoConteudo).toContain("from './utils/a'");
+    expect(novoConteudo).toContain("from './utils/b'");
+    expect(novoConteudo).toContain("require('./utils/c')");
+  });
 });

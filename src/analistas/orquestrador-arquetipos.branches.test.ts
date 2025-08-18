@@ -20,6 +20,70 @@ vi.mock('./detectores/detector-xml.js', () => ({
 // Mock do pontuador para diferentes cenários
 vi.mock('./deteccao/pontuador.js', () => ({
   pontuarTodos: (arquivos: string[]) => {
+    if (arquivos.includes('empty-all')) {
+      return [] as ResultadoDeteccaoArquetipo[];
+    }
+    if (arquivos.includes('tie-normal')) {
+      // Dois candidatos idênticos em métricas para empatar até o nome
+      const base: Omit<ResultadoDeteccaoArquetipo, 'nome'> = {
+        score: 50,
+        confidence: 50,
+        matchedRequired: ['req'],
+        missingRequired: ['miss'],
+        matchedOptional: ['opt'],
+        dependencyMatches: [],
+        filePatternMatches: [],
+        forbiddenPresent: [],
+        anomalias: [],
+        sugestaoPadronizacao: '',
+        explicacaoSimilaridade: '',
+        descricao: '',
+      };
+      return [
+        { nome: 'b-type', ...base },
+        { nome: 'a-type', ...base },
+      ] as ResultadoDeteccaoArquetipo[];
+    }
+    if (arquivos.includes('tie-mr')) {
+      // Empate em missingRequired e score; desempata por matchedRequired (desc)
+      const base: Omit<ResultadoDeteccaoArquetipo, 'nome' | 'matchedRequired'> = {
+        score: 42,
+        confidence: 10,
+        missingRequired: ['m1'],
+        matchedOptional: [],
+        dependencyMatches: [],
+        filePatternMatches: [],
+        forbiddenPresent: [],
+        anomalias: [],
+        sugestaoPadronizacao: '',
+        explicacaoSimilaridade: '',
+        descricao: '',
+      };
+      return [
+        { nome: 'low-mr', matchedRequired: ['a'], ...base },
+        { nome: 'high-mr', matchedRequired: ['a', 'b'], ...base },
+      ] as ResultadoDeteccaoArquetipo[];
+    }
+    if (arquivos.includes('tie-confidence')) {
+      // Empate até matchedRequired; desempata por confidence (desc)
+      const base: Omit<ResultadoDeteccaoArquetipo, 'nome' | 'confidence'> = {
+        score: 77,
+        matchedRequired: ['req'],
+        missingRequired: ['m'],
+        matchedOptional: [],
+        dependencyMatches: [],
+        filePatternMatches: [],
+        forbiddenPresent: [],
+        anomalias: [],
+        sugestaoPadronizacao: '',
+        explicacaoSimilaridade: '',
+        descricao: '',
+      };
+      return [
+        { nome: 'low-conf', confidence: 5, ...base },
+        { nome: 'high-conf', confidence: 80, ...base },
+      ] as ResultadoDeteccaoArquetipo[];
+    }
     if (arquivos.includes('only-forbidden')) {
       return [
         {
@@ -146,5 +210,25 @@ describe('orquestrador-arquetipos (branches)', () => {
   it('sem sinais no melhor candidato: retorna desconhecido', () => {
     const r = detectarArquetipo(['no-signals']);
     expect(r.nome).toBe('desconhecido');
+  });
+
+  it('quando detectores e pontuador retornam vazio: desconhecido imediato', () => {
+    const r = detectarArquetipo(['empty-all']);
+    expect(r.nome).toBe('desconhecido');
+  });
+
+  it('empate total em ordenação normal desempata por nome ascendente', () => {
+    const r = detectarArquetipo(['tie-normal']);
+    expect(r.nome).toBe('a-type');
+  });
+
+  it('ordenacao normal: desempata por matchedRequired quando missingRequired/score iguais', () => {
+    const r = detectarArquetipo(['tie-mr']);
+    expect(r.nome).toBe('high-mr');
+  });
+
+  it('ordenacao normal: desempata por confidence quando missingRequired/score/matchedRequired iguais', () => {
+    const r = detectarArquetipo(['tie-confidence']);
+    expect(r.nome).toBe('high-conf');
   });
 });

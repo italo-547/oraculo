@@ -30,19 +30,27 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       ((config as unknown as { CLI_INCLUDE_GROUPS?: string[][] }).CLI_INCLUDE_GROUPS || []).length >
         0) ||
     (Array.isArray(config.CLI_INCLUDE_PATTERNS) && config.CLI_INCLUDE_PATTERNS.length > 0);
-  // node_modules explicitamente incluído em algum pattern de include
+  // node_modules explicitamente incluído em algum pattern ou grupo de include
   const includeNodeModulesExplicit = hasInclude
-    ? (config.CLI_INCLUDE_PATTERNS as string[]).some((p) =>
-        /(^|[\\\/])node_modules([\\\/]|$)/.test(String(p)),
-      )
+    ? (
+        [
+          ...(Array.isArray(config.CLI_INCLUDE_PATTERNS)
+            ? (config.CLI_INCLUDE_PATTERNS as string[])
+            : []),
+          ...((
+            (config as unknown as { CLI_INCLUDE_GROUPS?: string[][] }).CLI_INCLUDE_GROUPS || []
+          ).flat() as string[]),
+        ] as string[]
+      ).some((p) => /(^|[\\\/])node_modules([\\\/]|$)/.test(String(p)))
     : false;
 
   // Quando includes estão ativos, derivamos diretórios-raiz a partir dos prefixos antes do primeiro metacaractere
   function calcularIncludeRoots(padroes: string[] | undefined, grupos?: string[][]): string[] {
-    if (!Array.isArray(padroes) || padroes.length === 0) return [];
     const roots = new Set<string>();
-    const candidatos = new Set<string>(padroes);
+    const candidatos = new Set<string>();
+    if (Array.isArray(padroes)) padroes.forEach((p) => candidatos.add(p));
     if (Array.isArray(grupos)) for (const g of grupos) g.forEach((p) => candidatos.add(p));
+    if (candidatos.size === 0) return [];
     for (const raw of candidatos) {
       let p = String(raw).trim();
       if (!p) continue;
