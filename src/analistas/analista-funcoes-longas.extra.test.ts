@@ -81,4 +81,64 @@ describe('analista-funcoes-longas (extra)', () => {
     expect(Array.isArray(ocorrencias)).toBe(true);
     expect(ocorrencias.length).toBe(0);
   });
+  it('ignora função sem body', async () => {
+    const fakeAst = {
+      node: {
+        type: 'File',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            loc: { start: { line: 1 }, end: { line: 10 } },
+            params: [],
+            leadingComments: [{}],
+            // body ausente
+          },
+        ],
+      },
+    };
+    const { analistaFuncoesLongas } = await import('./analista-funcoes-longas.js');
+    const ocorrencias = analistaFuncoesLongas.aplicar('', 'a.ts', fakeAst as any) as any[];
+    expect(ocorrencias.length).toBe(0);
+  });
+
+  it('ignora função com body não BlockStatement', async () => {
+    const fakeAst = {
+      node: {
+        type: 'File',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            loc: { start: { line: 1 }, end: { line: 10 } },
+            params: [],
+            leadingComments: [{}],
+            body: { type: 'ExpressionStatement' },
+          },
+        ],
+      },
+    };
+    const { analistaFuncoesLongas } = await import('./analista-funcoes-longas.js');
+    const ocorrencias = analistaFuncoesLongas.aplicar('', 'a.ts', fakeAst as any) as any[];
+    expect(ocorrencias.length).toBe(0);
+  });
+
+  it('ignora função com leadingComments undefined', async () => {
+    const fakeAst = {
+      node: {
+        type: 'File',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            loc: { start: { line: 1 }, end: { line: 40 } },
+            params: [],
+            // leadingComments ausente
+            body: { type: 'BlockStatement', body: [] },
+          },
+        ],
+      },
+    };
+    const { analistaFuncoesLongas } = await import('./analista-funcoes-longas.js');
+    const ocorrencias = analistaFuncoesLongas.aplicar('', 'a.ts', fakeAst as any) as any[];
+    // Deve reportar FUNCAO_SEM_COMENTARIO
+    expect(ocorrencias.some((o) => o.tipo === 'FUNCAO_SEM_COMENTARIO')).toBe(true);
+  });
 });
