@@ -5,7 +5,7 @@
 
 # 📘 Relatório de Progresso — Projeto Oráculo CLI
 
-**Última atualização:** 2025-08-18 (suite completa estável, gates de cobertura/perf ativos, JSON determinístico, flags atualizadas no README)
+**Última atualização:** 2025-08-18 (suite completa estável, gates de cobertura/perf ativos, JSON determinístico, flags atualizadas no README; scanner reforçado)
 
 ---
 
@@ -89,12 +89,13 @@
 
 ## ✅ Qualidade de Testes e Cobertura
 
-- Cobertura (última execução): Stmts 92.33% | Branches 88.13% | Funcs 95.79% | Lines 92.33%.
-- Suite: 223 arquivos de teste; 589 testes; todos verdes.
+- Cobertura (última execução): Stmts 94.67% | Branches 89.42% | Funcs 96.74% | Lines 94.67%.
+- Suite: 232 arquivos de teste; 633 testes; todos verdes.
 - Camadas exercitadas: unidade, integração, guardian/baseline/diff, comandos CLI e E2E pós-build (5+ cenários).
 - Gates: cobertura via `coverage:gate` e performance via `perf:gate` (Perf OK).
 - `process.exit` suprimido durante testes via `process.env.VITEST`. Saída `--json` determinística com escape Unicode e logs silenciados.
 - Pendente: ampliar casos raros de falha de IO e consolidar export opcional de métricas de performance.
+- Nota: scanner com novos testes de ramos (grupos de include AND/OR, guarda de node_modules com inclusão explícita e normalização de caminhos no Windows).
 
 ## 🔎 Diagnóstico Realista
 

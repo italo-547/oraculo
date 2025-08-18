@@ -33,7 +33,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [ ] Refatoração avançada (modularização de options e ações) (em andamento, meta: 2025-08-20)
 - [ ] Cobertura de combinações de comandos e options (em andamento, meta: finalizar testes principais até 2025-08-20)
 
-- [ ] Guardian: silenciar logs de progresso quando `--json` (emitir apenas o JSON final e restaurar logger) (meta: 2025-08-19)
+- [ ] Guardian: silenciar logs de progresso quando `--json` (emitir apenas o JSON final e restaurar logger) (meta: 2025-08-19) — concluído, ver sessão abaixo
 - [ ] Proteção da branch `main` (regras + doc + script + issue)
   - [x] Documentar política e passos: `docs/branches/protecao-main.md` (finalizado em 2025-08-18)
   - [x] Script gh-cli para verificar/aplicar: `scripts/config-branch-protection.mjs` (finalizado em 2025-08-18)
@@ -60,6 +60,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 ### Limitações conhecidas (registradas)
 
 - [ ] `--scan-only` + `--include` ainda ignora `node_modules` em alguns cenários. Precisamos harmonizar a regra de "inclusão explícita" para permitir inspeção pontual sem desmontar guard-rails. (registrado em 2025-08-17)
+  - Mitigação aplicada em 2025-08-18: detecção de inclusão explícita de `node_modules` via `--include` (padrões e grupos) e normalização de caminhos no Windows; revalidar cenários exóticos em `--scan-only` com combinações raras de filtros.
 - [x] Flakiness no Vitest quando existe `.oraculo/historico-metricas` no workspace de teste. Mitigação: limpar a pasta antes da suíte completa ou usar workspace limpo; futuro: isolar state nos helpers. (registrado em 2025-08-18)
 
 ### Observações
@@ -94,6 +95,12 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Compatibilidade Windows validada (exemplos PowerShell; scripts cross-env) (finalizado em 2025-08-18)
 
 - [x] Estabilizar pre-commit no Windows (lint-staged + `.gitignore` ancorado; Prettier `--ignore-unknown`; evitar bloqueios por caminhos ignorados) (finalizado em 2025-08-18)
+
+- [x] Cobertura ampliada e estabilizada (última execução: Lines 94.67%, Branches 89.42%, Funcs 96.74%, Stmts 94.67%; 232 arquivos de teste / 633 testes) (finalizado em 2025-08-18)
+- [x] Novos testes focados do scanner (include groups: AND/OR; guarda de `node_modules`; silêncio de logs; tratamento de root como arquivo) com normalização de paths no Windows (finalizado em 2025-08-18)
+- [x] Ajustes no `scanner.ts` para derivação de raízes a partir de padrões e grupos e detecção explícita de `node_modules` (finalizado em 2025-08-18)
+- [x] Testes de `relatorio-reestruturar` com persistência via helpers centralizados (`salvarEstado`) cobrindo Markdown/JSON (finalizado em 2025-08-18)
+- [x] Guardian em modo `--json`: logs silenciados durante montagem e restauração do logger após emissão (validado em testes) (finalizado em 2025-08-18)
 
 ### Notas de Lint (Mapa para futura implementação)
 
