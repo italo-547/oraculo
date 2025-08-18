@@ -2,6 +2,8 @@
 
 Descreva brevemente o que foi alterado e o porquê.
 
+Nota de idioma: por padrão, escreva em português brasileiro. Exceção: documentação jurídica/licenças/trechos legais devem permanecer no idioma original.
+
 ## Checklist de Compliance
 
 - [ ] Originalidade: solução autoral, sem cópia literal de código público (blogs, SO, repositórios).
