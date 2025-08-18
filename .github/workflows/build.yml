@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Clonar repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configurar cache de dependências
         uses: actions/cache@v4

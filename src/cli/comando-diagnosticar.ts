@@ -84,6 +84,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
   // Em modo padrão, ignoramos opções desconhecidas para evitar saídas forçadas do Commander
   // (comportamento desejado também pelos testes de opções inválidas)
   cmd.allowUnknownOption(true);
+  // Também aceitamos argumentos excedentes silenciosamente, pois diversos testes
+  // passam o nome do comando na linha simulada (ex.: ['node','cli','diagnosticar', ...])
+  // e o Commander trataria como "excess arguments" por padrão.
+  cmd.allowExcessArguments(true);
 
   // Adiciona opções centralizadas
   for (const opt of optionsDiagnosticar) {

@@ -28,7 +28,14 @@ export function scoreArquetipo(
   const matchedOptional = optional.filter((d) =>
     norm.some((f) => f.startsWith(d + '/') || f === d),
   );
-  const dependencyMatches = (def.dependencyHints || []).filter((dep) => grafoDependencias.has(dep));
+  // Verifica dependências sugeridas no grafo global (qualquer arquivo pode importar)
+  function hasDependencyGlobal(dep: string): boolean {
+    for (const set of grafoDependencias.values()) {
+      if (set.has(dep)) return true;
+    }
+    return false;
+  }
+  const dependencyMatches = (def.dependencyHints || []).filter((dep) => hasDependencyGlobal(dep));
   const filePatternMatches = (def.filePresencePatterns || []).filter((pat) =>
     norm.some((f) => f.includes(pat)),
   );
