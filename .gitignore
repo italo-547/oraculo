@@ -93,3 +93,5 @@ diag.json
 /pre-public/
 /tmp-perf-diff/
 /tmp-relatorio-guardian-parcial.md
+/# Diretório temporário usado em testes de corretores
+/tmp-corretor-destino-existe-test/
