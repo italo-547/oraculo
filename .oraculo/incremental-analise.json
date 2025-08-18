@@ -3,7 +3,7 @@
     "b.js": {
       "analistas": {
         "t": {
-          "duracaoMs": 0.027899999999817737,
+          "duracaoMs": 0.039499999999975444,
           "ocorrencias": 1
         }
       },
@@ -16,13 +16,13 @@
         }
       ],
       "reaproveitadoCount": 0,
-      "ultimaExecucaoMs": 1755483588639
+      "ultimaExecucaoMs": 1755487841912
     }
   },
   "estatisticas": {
     "totalArquivosProcessados": 1,
     "totalReaproveitamentos": 0,
-    "ultimaDuracaoMs": 6
+    "ultimaDuracaoMs": 3
   },
   "versao": 1
 }
