@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { diffSnapshots } from './diff.js';
 import { config } from '../nucleo/constelacao/cosmos.js';

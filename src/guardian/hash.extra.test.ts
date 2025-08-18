@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi } from 'vitest';
 
 // Cobrir caminho de amostra vazia e múltiplas linhas para snapshot (amostra limita a 200 chars já implicitamente)

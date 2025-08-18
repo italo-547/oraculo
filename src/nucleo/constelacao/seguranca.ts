@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import path from 'node:path';
 
 // Normaliza um caminho relativo eliminando tentativas de escape (..), barras duplicadas e separadores inconsistentes

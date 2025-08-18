@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { scanRepository } from '../nucleo/scanner.js';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';

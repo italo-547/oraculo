@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Esses testes extras visam aumentar cobertura de ramos do onProgress e do preparo de AST inválido.

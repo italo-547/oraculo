@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { parse as babelParse, ParserOptions } from '@babel/parser';
 import { File as BabelFile } from '@babel/types';
 // Parsers externos leves para outras linguagens

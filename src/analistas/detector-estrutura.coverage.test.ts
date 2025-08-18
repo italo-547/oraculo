@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { aplicarConfigParcial, config } from '../nucleo/constelacao/cosmos.js';
 import { detectorEstrutura } from './detector-estrutura.js';

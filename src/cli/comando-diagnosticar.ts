@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { optionsDiagnosticar } from './options-diagnosticar.js';
@@ -382,19 +383,33 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         // Detecção de arquétipos (biblioteca de estruturas)
         let arquetiposResultado: Awaited<ReturnType<typeof detectarArquetipos>> | undefined;
         try {
-          // Em ambiente de teste, limitar a detecção a um timeout curto para evitar travas
-          // quando o módulo real não foi mockado pelos testes.
-          if (process.env.VITEST) {
-            const timeoutMs = 800; // suficiente para mocks; evita custo alto do real
-            arquetiposResultado = await Promise.race([
-              detectarArquetipos({ arquivos: fileEntriesComAst, baseDir }, baseDir),
-              new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), timeoutMs)),
-            ]);
-          } else {
-            arquetiposResultado = await detectarArquetipos(
-              { arquivos: fileEntriesComAst, baseDir },
-              baseDir,
-            );
+          // Em modo --json fora do VITEST priorizamos saída rápida e previsível: pulamos detecção.
+          // Isso evita promessas pendentes que podem manter o event loop ativo em suítes completas.
+          if (!(opts.json && !process.env.VITEST)) {
+            // Timeout condicional para a detecção de arquétipos:
+            // - Em VITEST: 800ms (rápido, evita travar quando detector real não está mockado)
+            // - Fora de VITEST mas em modo não-JSON: usa ORACULO_DETECT_TIMEOUT_MS (0 desativa)
+            const detectTimeoutMs = (() => {
+              if (process.env.VITEST) return 800;
+              const envVal = Number(process.env.ORACULO_DETECT_TIMEOUT_MS || '0');
+              return Number.isFinite(envVal) ? envVal : 0;
+            })();
+
+            if (detectTimeoutMs > 0) {
+              arquetiposResultado = await Promise.race<
+                Awaited<ReturnType<typeof detectarArquetipos>> | undefined
+              >([
+                detectarArquetipos({ arquivos: fileEntriesComAst, baseDir }, baseDir),
+                new Promise<undefined>((resolve) =>
+                  setTimeout(() => resolve(undefined), detectTimeoutMs),
+                ),
+              ]);
+            } else {
+              arquetiposResultado = await detectarArquetipos(
+                { arquivos: fileEntriesComAst, baseDir },
+                baseDir,
+              );
+            }
           }
           // Logs úteis sobre arquétipos (somente modo não-JSON e sem silêncio forçado)
           if (

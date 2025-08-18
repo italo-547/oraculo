@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { analistaFuncoesLongas } from './analista-funcoes-longas.js';
 import { analistaPadroesUso } from './analista-padroes-uso.js';
 import { detectorDependencias } from './detector-dependencias.js';

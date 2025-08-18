@@ -5,7 +5,7 @@
 
 # 📘 Relatório de Progresso — Projeto Oráculo CLI
 
-**Última atualização:** 2025-08-12 (E2E ampliado, gate de cobertura, flags `--json` e `--full-scan`, agregação PARSE_ERRO)
+**Última atualização:** 2025-08-18 (suite completa estável, gates de cobertura/perf ativos, JSON determinístico, flags atualizadas no README)
 
 ---
 
@@ -89,12 +89,12 @@
 
 ## ✅ Qualidade de Testes e Cobertura
 
-- Cobertura (última execução): ~97% statements, ~100% funções. 309 testes verdes.
-- Camadas exercitadas: unidade, integração, persistência/guardian, comandos CLI e E2E binário pós-build (5 cenários).
-- E2E adicionados: scan-only, scan-only export, diagnóstico completo benigno, guardian baseline, cenário de erro determinístico (exit code 1).
-- Gate de cobertura automatizado (scripts `coverage` + `coverage:gate` no CI e build).
-- `process.exit` suprimido durante testes via `process.env.VITEST` garantindo inspeção segura.
-- O que falta: casos de erro muito raros (falhas de IO inesperadas, corrupções) e métricas de performance.
+- Cobertura (última execução): Stmts 92.33% | Branches 88.13% | Funcs 95.79% | Lines 92.33%.
+- Suite: 223 arquivos de teste; 589 testes; todos verdes.
+- Camadas exercitadas: unidade, integração, guardian/baseline/diff, comandos CLI e E2E pós-build (5+ cenários).
+- Gates: cobertura via `coverage:gate` e performance via `perf:gate` (Perf OK).
+- `process.exit` suprimido durante testes via `process.env.VITEST`. Saída `--json` determinística com escape Unicode e logs silenciados.
+- Pendente: ampliar casos raros de falha de IO e consolidar export opcional de métricas de performance.
 
 ## 🔎 Diagnóstico Realista
 
@@ -117,5 +117,5 @@
 
 ---
 
-**Autor:** Italo C Lopes  
+**Autor:** Italo C Lopes
 **Projeto:** Oráculo CLI

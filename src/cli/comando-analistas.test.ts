@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi } from 'vitest';
 import { comandoAnalistas } from './comando-analistas.js';
 import { Command } from 'commander';

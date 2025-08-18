@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import type { SinaisProjeto, DiagnosticoProjeto } from '../tipos/tipos.js';
 
 /**

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi } from 'vitest';
 
 // Cobre branch faltante em vigiaOculta: skip quando content vazio ou só espaços

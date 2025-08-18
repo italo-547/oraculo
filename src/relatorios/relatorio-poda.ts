@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { salvarEstado } from '../zeladores/util/persistencia.js';
 import type { Pendencia } from '../tipos/tipos.js';
 

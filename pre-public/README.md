@@ -5,10 +5,11 @@
 
 # Oráculo CLI
 
-[![CI](https://github.com/aynsken/oraculo/actions/workflows/ci.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/ci.yml)
-[![Build](https://github.com/aynsken/oraculo/actions/workflows/build.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/build.yml)
-[![Monitor Deps](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml/badge.svg)](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml)
-[![Testes](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/aynsken/oraculo/main/.oraculo/badge-test-stats.json)](docs/relatorios/RELATORIO.md)
+[![CI](https://github.com/aynsken/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/ci.yml)
+[![Build](https://github.com/aynsken/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/build.yml)
+[![Monitor Deps](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml)
+[![Compliance](https://github.com/aynsken/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/compliance.yml)
+[![License Gate](https://github.com/aynsken/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/license-gate.yml)
 
 ![Node](https://img.shields.io/badge/node-%3E%3D24.x-339933?logo=node.js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -305,35 +306,167 @@ Se precisar resetar filtros programaticamente, não passe as flags (elas não pe
 
 ### Exit Codes
 
-| Contexto                                                         | Exit Code |
-| ---------------------------------------------------------------- | --------- |
-| Execução bem-sucedida (sem erros críticos)                       | 0         |
-| Guardian detecta alterações sem política permissiva (`--diff`)   | 1         |
-| Falha técnica (ex: parse irreversível + `PARSE_ERRO_FALHA=true`) | 1         |
-| Erro estrutural inesperado (IO, crash)                           | 1         |
+| Flag                             | Descrição                                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------------------------- |
+| `-s, --silence`                  | Silencia todos os logs de informação e aviso (sobrepõe `--verbose`)                       |
+| `-v, --verbose`                  | Exibe logs detalhados de cada arquivo e técnica analisada (ignorado se `--silence` ativo) |
+| `-e, --export`                   | Gera arquivos de relatório detalhados (JSON e Markdown)                                   |
+| `--debug`                        | Ativa modo de desenvolvimento (logs detalhados de debug)                                  |
+| `-d, --dev`                      | Alias legado para `--debug` (deprecado)                                                   |
+| `--scan-only`                    | Executa somente varredura e priorização, sem aplicar técnicas                             |
+| `--json`                         | (diagnosticar/guardian) Saída estruturada JSON para uso em CI                             |
+| `--log-estruturado`              | Ativa logging estruturado JSON (experimental)                                             |
+| `--incremental/--no-incremental` | Liga/desliga análise incremental (experimental)                                           |
+| `--metricas/--no-metricas`       | Liga/desliga métricas de análise (experimental)                                           |
 
-Durante testes (`process.env.VITEST` definido) não chamamos `process.exit`, permitindo inspeção.
+| Comando        | Descrição                                                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `diagnosticar` | Análise completa (arquitetura, padrões, estrutura, guardian opcional). Suporta filtros `--include` e `--exclude` para glob patterns pontuais |
+| `guardian`     | Cria/atualiza/verifica baseline de integridade                                                                                               |
+| `podar`        | Lista ou remove (seguro) arquivos órfãos                                                                                                     |
+| `metricas`     | Histórico agregado de métricas internas                                                                                                      |
+| `analistas`    | Lista analistas registrados; suporta `--json`, `--output <arquivo>` e `--doc <arquivo>` para exportar catálogo                               |
+| `reestruturar` | (experimental) Aplicar plano de reorganização                                                                                                |
+| `perf`         | Baseline e comparação de performance sintética (subcomandos `baseline` e `compare`)                                                          |
 
-## 📁 Estrutura (Resumo)
+zeladores/ # Correções e manutenção
+guardian/ # Verificações e baseline
+relatorios/ # Geração de relatórios
+Limitações atuais:
 
-```text
-src/
-  cli.ts                # Entrada principal da CLI
-  cli/                  # Comandos individuais
-  analistas/            # Núcleo de análise
-  arquitetos/           # Diagnóstico e arquitetura
-  zeladores/            # Correções e manutenção
-  guardian/             # Verificações e baseline
-  relatorios/           # Geração de relatórios
-  tipos/                # Tipos e interfaces globais
-  zeladores/util/       # Helpers utilitários e persistência
-tests/
-  fixtures/             # Arquivos sintéticos usados só em testes (plugins, exemplos de parsing, etc)
-    plugins/            # Plugins de teste carregados em cenários controlados
-    arquivos/           # Exemplos genéricos file1.ts / file2.ts movidos da raiz
+- Suporta repetir a flag (`--include a --include b`) e listas por vírgula/espaços; padrões duplicados são normalizados.
+- Listagem explícita de filtros aplicados aparece em `--verbose` (fora de `--json`).
+- Mesmo com `--scan-only` e `--include`, `node_modules` pode ser ignorado em alguns cenários por guard-rails. Ver detalhes e próximos passos em `docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md`.
+  plugins/ # Plugins de teste carregados em cenários controlados
+
+## 🧭 Comandos e Flags Detalhadas
+
+Esta seção lista as opções implementadas por comando (além das flags globais).
+
+### diagnosticar
+
+- `-c, --compact` Modo compacto de logs (resumos e menos detalhes)
+- `-V, --verbose` Modo verboso (além do global, prioriza detalhes do comando)
+- `--listar-analistas` Lista técnicas/analistas ativos antes da análise
+- `-g, --guardian-check` Executa verificação de integridade (Guardian) durante o diagnóstico
+- `--json` Saída JSON estruturada (silencia logs intermediários e imprime apenas JSON final)
+- `--include <padrao>` Glob(s) a incluir; pode repetir a flag, aceitar vírgulas/espaços
+- `--exclude <padrao>` Glob(s) a excluir; pode repetir a flag, aceitar vírgulas/espaços
+
+Exemplos rápidos:
+
+```powershell
+# Diagnóstico padrão
+node dist/cli.js diagnosticar
+
+# Diagnóstico com Guardian e export de relatórios
+node dist/cli.js diagnosticar --guardian-check --export
+
+# JSON para CI, com filtros pontuais
+node dist/cli.js diagnosticar --json --include "src/**" --exclude "**/*.test.ts"
 ```
 
+### guardian
+
+- `-a, --accept-baseline` Aceita o baseline atual como o novo baseline
+- `-d, --diff` Mostra diferenças entre o estado atual e o baseline
+- `--full-scan` Ignora padrões de ignore para verificação pontual (não persiste baseline)
+- `--json` Saída estruturada em JSON
+
+Exemplos:
+
+```powershell
+# Verificar integridade
+node dist/cli.js guardian
+
+# Mostrar diferenças
+node dist/cli.js guardian --diff
+
+# Aceitar baseline (não permitido com --full-scan)
+node dist/cli.js guardian --accept-baseline
+```
+
+### reestruturar (experimental)
+
+- `-a, --auto` Aplica correções automaticamente sem confirmação (CUIDADO!)
+- `--aplicar` Alias para `--auto` (deprecado futuramente)
+- `--somente-plano` Exibe apenas o plano sugerido e sai (dry-run)
+- `--domains` Organiza por `domains/<entidade>/<categoria>s`
+- `--flat` Organiza por `src/<categoria>s`
+- `--prefer-estrategista` Força uso do estrategista (ignora plano de arquétipos)
+- `--preset <nome>` Preset de estrutura (`oraculo|node-community|ts-lib`)
+- `--categoria <pair>` Overrides `chave=valor` (pode repetir)
+
+Exemplos:
+
+```powershell
+
+```
+
+node dist/cli.js reestruturar --somente-plano
+
+# Aplicar automaticamente usando preset padrão (oraculo)
+
+node dist/cli.js reestruturar --auto
+
+````
+
+### podar
+
+- `-f, --force` Remove arquivos sem confirmação
+- `--include <padrao>` Globs a incluir (repita ou use vírgulas/espaços)
+- `--exclude <padrao>` Globs a excluir (repita ou use vírgulas/espaços)
+
+Exemplos:
+
+```powershell
+
+node dist/cli.js diagnosticar --export; node dist/cli.js podar
+
+# Remoção direta (cuidado)
+node dist/cli.js podar --force
+````
+
+### analistas
+
+- `-j, --json` Saída em JSON
+- `-o, --output <arquivo>` Exporta JSON com catálogo de analistas
+- `-d, --doc <arquivo>` Gera documentação Markdown dos analistas
+
+Exemplos:
+
+```powershell
 ## 🔌 Domínios
+node dist/cli.js analistas
+
+# Exportar doc
+node dist/cli.js analistas --doc docs/ANALISTAS.md
+```
+
+### perf
+
+Comando para baseline e comparação de performance sintética.
+
+Opções (aplicáveis ao grupo `perf`):
+
+- `-d, --dir <dir>` Diretório de snapshots (default configurado no runtime)
+- `-j, --json` Saída JSON
+- `-l, --limite <n>` Limite de regressão em % (padrão 30)
+
+Subcomandos:
+
+- `perf baseline` Gera novo snapshot usando as últimas métricas conhecidas
+- `perf compare` Compara dois últimos snapshots e sinaliza regressão
+
+Exemplos:
+
+```powershell
+
+node dist/cli.js perf baseline --dir docs/perf
+
+# Comparar (gate de regressão)
+node dist/cli.js perf compare --dir docs/perf --json
+```
 
 - Analistas: identificam padrões, estruturas e potenciais problemas (somente leitura)
 - Arquitetos: consolidam diagnósticos de alto nível
@@ -341,7 +474,7 @@ tests/
 - Guardian: verifica integridade (hashes, baseline, diffs)
 - Relatórios: geração de artefatos (Markdown / JSON)
 
-## � Analistas (resumo)
+## 🔬 Analistas (resumo)
 
 - detector-dependencias — heurísticas de dependências e sinais de stack
 - detector-estrutura — extração de sinais estruturais globais
@@ -353,15 +486,15 @@ tests/
 Catálogo completo e detalhes: veja `src/analistas/README.md`.
 Para gerar um documento estático do catálogo: `oraculo analistas --doc docs/ANALISTAS.md`.
 
-## �🤝 Contribuir
+## 🤝 Contribuir
 
 Leia `CONTRIBUTING.md` e `docs/TOOLING.md`.
 
-## �️ Roadmap & Checklist
+## 🧭 Roadmap & Checklist
 
 `docs/CHECKLIST.md` mantém backlog vivo. Este README não replica listas para evitar divergência.
 
-## 🧬 Camadas de Teste
+## � Camadas de Teste
 
 Resumo rápido em `docs/TOOLING.md` e detalhado em `docs/relatorios/camadas-testes.md`.
 
@@ -497,7 +630,7 @@ Isso gera/atualiza os arquivos com base nas dependências de produção instalad
 
 Se surgir necessidade futura de oferecer extras proprietários, dá para fazer via modelo open-core sem alterar o core livre.
 
-## � Agradecimentos
+## 🙏 Agradecimentos
 
 Este projeto se apoia em software livre mantido por uma comunidade incrível.
 
@@ -505,7 +638,7 @@ Este projeto se apoia em software livre mantido por uma comunidade incrível.
 - Os textos legais das licenças são reproduzidos no idioma original para preservar a validade jurídica.
 - A todas as pessoas mantenedoras e contribuidoras de OSS: obrigado pelo trabalho e pela distribuição aberta que torna este projeto possível.
 
-## �🚀 Performance
+## 🚀 Performance
 
 Snapshots sintéticos: `npm run perf:baseline` (detalhes em `docs/perf/README.md`).
 

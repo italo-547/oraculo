@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import type { ResultadoDeteccaoArquetipo } from '../tipos/tipos.js';
 import { detectarArquetipoNode } from './detectores/detector-node.js';
 import { detectarArquetipoJava } from './detectores/detector-java.js';

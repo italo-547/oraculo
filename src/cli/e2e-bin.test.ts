@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { execSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';

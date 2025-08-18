@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 const ORIGINALS = { ...process.env } as Record<string, string | undefined>;

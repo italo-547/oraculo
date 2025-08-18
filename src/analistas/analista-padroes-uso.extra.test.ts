@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Testes extras focados em ramos não cobertos: ClassProperty com arrow, exports.* em TS e FunctionExpression anônima

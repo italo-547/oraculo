@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 /** Utilitários de formatação padronizada para métricas e valores numéricos */
 
 export function formatMs(v: number | undefined | null): string {

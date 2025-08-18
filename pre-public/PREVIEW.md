@@ -6,4 +6,4 @@ Este diretório foi gerado pelo script pre-public para revisão do que seria pub
 - Alterações devem ser feitas na raiz do projeto e o script reexecutado.
 - Este arquivo não será incluído em publicação real; serve apenas como aviso/guia de revisão.
 
-Data/Horário de geração: 2025-08-17T21:29:53.799Z
+Data/Horário de geração: 2025-08-18T02:27:12.165Z

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { createHash, getHashes } from 'node:crypto';
 import { ALGORITMO_HASH } from './constantes.js';
 

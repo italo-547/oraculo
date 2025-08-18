@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import type { Command } from 'commander';
 import { comandoDiagnosticar } from './comando-diagnosticar.js';
 import { comandoGuardian } from './comando-guardian.js';

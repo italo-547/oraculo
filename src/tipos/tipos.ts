@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 export interface ResultadoGuardian {
   status: IntegridadeStatus;
   detalhes?: string[];

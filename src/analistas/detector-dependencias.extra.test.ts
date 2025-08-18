@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
 beforeEach(() => {

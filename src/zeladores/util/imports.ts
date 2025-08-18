@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 /**
  * Helper puro para reescrever imports relativos quando um arquivo é movido.
  * Não toca disco; apenas retorna o novo conteúdo.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Helpers utilitários para analistas
 
 /**

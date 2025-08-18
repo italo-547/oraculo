@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi } from 'vitest';
 import { alinhamentoEstrutural } from './analista-estrutura.js';
 vi.mock('p-limit', () => ({ default: (n: number) => (fn: any) => fn() }));

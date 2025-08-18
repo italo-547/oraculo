@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { Command } from 'commander';
 import path from 'node:path';
 import { lerEstado, salvarEstado } from '../zeladores/util/persistencia.js';

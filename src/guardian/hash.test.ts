@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi } from 'vitest';
 import { gerarHashHex, gerarSnapshotDoConteudo } from './hash.js';
 import { getHashes, createHash } from 'node:crypto';

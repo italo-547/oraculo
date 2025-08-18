@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { detectarFantasmas } from './fantasma.js';
 import * as deps from '../analistas/detector-dependencias.js';

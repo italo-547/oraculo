@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { traverse } from '../nucleo/constelacao/traverse.js';
 import * as t from '@babel/types';
 import type { NodePath } from '@babel/traverse';

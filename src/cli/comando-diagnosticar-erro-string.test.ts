@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Mock de config deve ser o primeiro!
 vi.mock('../../config', () => ({
   GUARDIAN_BASELINE: 'mock-baseline.json',

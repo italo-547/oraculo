@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import micromatch from 'micromatch';
 import { lerEstado, lerArquivoTexto } from '../zeladores/util/persistencia.js';
 import { promises as fs } from 'node:fs';

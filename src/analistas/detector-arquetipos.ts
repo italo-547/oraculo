@@ -1,5 +1,8 @@
+// SPDX-License-Identifier: MIT
 // TODO(lembrar): manter ARQUETIPOS importado visível como lembrete para integração futura
 import { ARQUETIPOS, normalizarCaminho } from './arquetipos-defs.js';
+// Referência intencional para evitar remoção/aviso de import mantido como lembrete
+void ARQUETIPOS;
 import { grafoDependencias } from './detector-dependencias.js';
 import type {
   ContextoExecucao,
@@ -26,6 +29,13 @@ function scoreArquetipo(
   arquivos: string[],
 ): ResultadoDeteccaoArquetipo {
   const norm = arquivos.map((f) => String(normalizarCaminho(f)));
+  // Verifica se alguma entrada do grafo contém a dependência informada
+  function hasDependency(dep: string): boolean {
+    for (const set of grafoDependencias.values()) {
+      if (set.has(dep)) return true;
+    }
+    return false;
+  }
   const required = def.requiredDirs || [];
   const matchedRequired = required.filter((d) =>
     norm.some((f) => f.startsWith(d + '/') || f === d),
@@ -35,7 +45,7 @@ function scoreArquetipo(
   const matchedOptional = optional.filter((d) =>
     norm.some((f) => f.startsWith(d + '/') || f === d),
   );
-  const dependencyMatches = (def.dependencyHints || []).filter((dep) => grafoDependencias.has(dep));
+  const dependencyMatches = (def.dependencyHints || []).filter((dep) => hasDependency(dep));
   const filePatternMatches = (def.filePresencePatterns || []).filter((pat) =>
     norm.some((f) => f.includes(pat)),
   );
@@ -85,9 +95,10 @@ function scoreArquetipo(
     const temApi = matchedRequired.includes('api');
     const temPrisma = matchedRequired.includes('prisma');
     const temControllers = norm.some((f) => f.includes('src/controllers'));
-    const temExpress = grafoDependencias.has('express');
+    const temExpress = hasDependency('express');
     let isHibridoCompleto = temPages && temApi && temPrisma && temControllers && temExpress;
     // TODO(lembrar): variável mantida para futura heurística (parcial vs completo)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let isHibridoParcial = temPages && temApi && temPrisma && (temControllers || temExpress);
     if (isHibridoCompleto) {
       score += 40;
@@ -107,7 +118,7 @@ function scoreArquetipo(
   }
 
   // Reforça score/confiança do candidato extra em cenários híbridos (fullstack + api-rest-express)
-  if (def.nome === 'api-rest-express' && grafoDependencias.has('express')) {
+  if (def.nome === 'api-rest-express' && hasDependency('express')) {
     if (
       norm.some((f) => f.includes('pages')) &&
       norm.some((f) => f.includes('prisma')) &&
@@ -181,6 +192,15 @@ function scoreArquetipo(
     descricao: def.descricao || '',
     candidatoExtra,
   };
+}
+
+// Exposição somente para testes (não altera API pública)
+// Evita exportar diretamente para não vazar em produção
+if (process.env.VITEST) {
+  type TestExports = Record<string, unknown> & { scoreArquetipo: typeof scoreArquetipo };
+  const g = globalThis as unknown as { __ORACULO_TESTS__?: TestExports };
+  const prev = g.__ORACULO_TESTS__ ?? ({} as TestExports);
+  g.__ORACULO_TESTS__ = { ...prev, scoreArquetipo };
 }
 
 export async function detectarArquetipos(

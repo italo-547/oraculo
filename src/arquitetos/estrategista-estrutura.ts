@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import path from 'node:path';
 import type { PlanoSugestaoEstrutura, PlanoMoverItem } from '../tipos/plano-estrutura.js';
 import type { ContextoExecucao } from '../tipos/tipos.js';
@@ -35,6 +36,10 @@ export async function gerarPlanoEstrategico(
     if (deveIgnorar(rel, cfg.ignorarPastas)) continue;
     // Evitar mexer em arquivos fora do escopo de código (por agora)
     if (!rel.endsWith('.ts') && !rel.endsWith('.js')) continue;
+
+    // Respeita convenções de ferramentas no root: não mover configs globais
+    const base = path.posix.basename(rel);
+    if (/^(eslint|vitest)\.config\.[jt]s$/i.test(base)) continue;
 
     const res = destinoPara(rel, cfg.raizCodigo, cfg.criarSubpastasPorEntidade, cfg.categoriasMapa);
     if (!res.destinoDir) continue;

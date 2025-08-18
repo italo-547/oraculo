@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { diagnosticarProjeto } from './diagnostico-projeto.js';
 import type { SinaisProjeto, DiagnosticoProjeto } from '../tipos/tipos.js';

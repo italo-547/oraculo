@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi } from 'vitest';
 import { prepararComAst } from './inquisidor.js';
 import { config } from './constelacao/cosmos.js';

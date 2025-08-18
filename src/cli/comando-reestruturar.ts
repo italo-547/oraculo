@@ -1,7 +1,9 @@
+// SPDX-License-Identifier: MIT
 import { Command } from 'commander';
 import chalk from 'chalk';
 
 import type { Ocorrencia, FileEntryWithAst } from '../tipos/tipos.js';
+import type { PlanoMoverItem } from '../tipos/plano-estrutura.js';
 
 import {
   iniciarInquisicao,
@@ -12,6 +14,11 @@ import {
 import { OperarioEstrutura } from '../zeladores/operario-estrutura.js';
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
+import path from 'node:path';
+import {
+  gerarRelatorioReestruturarJson,
+  gerarRelatorioReestruturarMarkdown,
+} from '../relatorios/relatorio-reestruturar.js';
 
 export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('reestruturar')
@@ -21,7 +28,7 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
     .option('--somente-plano', 'Exibe apenas o plano sugerido e sai (dry-run)', false)
     .option(
       '--domains',
-      'Organiza por domains/<entidade>/<categoria>s (prioriza sobre --flat)',
+      'Organiza por domains/<entidade>/<categoria>s (opcional; preset oraculo usa flat)',
       false,
     )
     .option('--flat', 'Organiza por src/<categoria>s (sem domains)', false)
@@ -166,6 +173,38 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
         }
 
         if (opts.somentePlano) {
+          // Exporta o plano sugerido em modo simulado quando export está habilitado
+          if (config.REPORT_EXPORT_ENABLED) {
+            try {
+              const ts = new Date().toISOString().replace(/[:.]/g, '-');
+              const dir =
+                typeof config.REPORT_OUTPUT_DIR === 'string'
+                  ? config.REPORT_OUTPUT_DIR
+                  : path.join(baseDir, 'relatorios');
+              await import('node:fs').then((fs) => fs.promises.mkdir(dir, { recursive: true }));
+              const nome = `oraculo-reestruturacao-${ts}`;
+              // No dry-run, respeite apenas o plano calculado; não exportar fallback de ocorrências
+              const movimentos: PlanoMoverItem[] = plano?.mover?.length ? plano.mover : [];
+              const conflitosCount = Array.isArray(plano?.conflitos) ? plano.conflitos.length : 0;
+              await gerarRelatorioReestruturarMarkdown(path.join(dir, `${nome}.md`), movimentos, {
+                simulado: true,
+                origem,
+                preset: opts.preset,
+                conflitos: conflitosCount,
+              });
+              await gerarRelatorioReestruturarJson(path.join(dir, `${nome}.json`), movimentos, {
+                simulado: true,
+                origem,
+                preset: opts.preset,
+                conflitos: conflitosCount,
+              });
+              log.sucesso(`Relatórios de reestruturação (dry-run) exportados para: ${dir}`);
+            } catch (e) {
+              log.erro(
+                `Falha ao exportar relatórios (dry-run) de reestruturação: ${(e as Error).message}`,
+              );
+            }
+          }
           log.info('Dry-run solicitado (--somente-plano). Nenhuma ação aplicada.');
           return;
         }
@@ -217,6 +256,33 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
         await OperarioEstrutura.aplicar(mapaMoves, fileEntriesComAst, baseDir);
         const frase = usarFallback ? 'correções aplicadas' : 'movimentos solicitados';
         log.sucesso(`✅ Reestruturação concluída: ${mapaMoves.length} ${frase}.`);
+
+        // Exporta relatórios quando habilitado globalmente (--export)
+        if (config.REPORT_EXPORT_ENABLED) {
+          try {
+            const ts = new Date().toISOString().replace(/[:.]/g, '-');
+            const dir =
+              typeof config.REPORT_OUTPUT_DIR === 'string'
+                ? config.REPORT_OUTPUT_DIR
+                : path.join(baseDir, 'relatorios');
+            await import('node:fs').then((fs) => fs.promises.mkdir(dir, { recursive: true }));
+            const nome = `oraculo-reestruturacao-${ts}`;
+            const movimentos = mapaMoves.map((m) => ({ de: m.atual, para: m.ideal ?? m.atual }));
+            await gerarRelatorioReestruturarMarkdown(path.join(dir, `${nome}.md`), movimentos, {
+              simulado: false,
+              origem,
+              preset: opts.preset,
+            });
+            await gerarRelatorioReestruturarJson(path.join(dir, `${nome}.json`), movimentos, {
+              simulado: false,
+              origem,
+              preset: opts.preset,
+            });
+            log.sucesso(`Relatórios de reestruturação exportados para: ${dir}`);
+          } catch (e) {
+            log.erro(`Falha ao exportar relatórios de reestruturação: ${(e as Error).message}`);
+          }
+        }
       } catch (error) {
         log.erro(
           `❌ Erro durante a reestruturação: ${typeof error === 'object' && error && 'message' in error ? (error as { message: string }).message : String(error)}`,

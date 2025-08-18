@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import path from 'node:path';
 import pLimit from 'p-limit';
 import { config } from '../nucleo/constelacao/cosmos.js';

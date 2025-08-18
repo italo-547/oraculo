@@ -5,7 +5,7 @@
 
 # Checklist de Melhorias e Ajustes
 
-**Última atualização: 2025-08-17**
+**Última atualização: 2025-08-18**
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
@@ -33,12 +33,16 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [ ] Refatoração avançada (modularização de options e ações) (em andamento, meta: 2025-08-20)
 - [ ] Cobertura de combinações de comandos e options (em andamento, meta: finalizar testes principais até 2025-08-20)
 
+- [ ] Guardian: silenciar logs de progresso quando `--json` (emitir apenas o JSON final e restaurar logger) (meta: 2025-08-19)
+
 ### Média Prioridade
 
 - [ ] Monitor de dependências (documentação e automação)
 - [x] Documentar estratégia de mocks de AST (finalizado em 2025-08-14)
 - [ ] Guia de padronização de código / convenções
 - [ ] Gate de regressão de performance opcional
+
+- [ ] Compliance: automatizar auditoria de licenças no CI e validar headers SPDX (meta: 2025-08-21)
 
 ### Baixa Prioridade / Futuro Próximo
 
@@ -50,6 +54,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 ### Limitações conhecidas (registradas)
 
 - [ ] `--scan-only` + `--include` ainda ignora `node_modules` em alguns cenários. Precisamos harmonizar a regra de "inclusão explícita" para permitir inspeção pontual sem desmontar guard-rails. (registrado em 2025-08-17)
+- [x] Flakiness no Vitest quando existe `.oraculo/historico-metricas` no workspace de teste. Mitigação: limpar a pasta antes da suíte completa ou usar workspace limpo; futuro: isolar state nos helpers. (registrado em 2025-08-18)
 
 ### Observações
 
@@ -77,6 +82,12 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Documentação do detector de arquétipos e estratégia de testes (`docs/tests/detector-arquetipos.md`) (finalizado em 2025-08-16)
 - [x] Ajuste: cobertura habilitada por env (`COVERAGE=true`) com thresholds preservados para CI/gate (finalizado em 2025-08-16)
 - [x] Alinhamento de testes para Vitest (mocks/fixtures; remoção de mistura Jest/Vitest) (finalizado em 2025-08-16)
+
+- [x] Documentar comandos e flags atuais no README (diagnosticar, guardian, podar, analistas, reestruturar, perf) (finalizado em 2025-08-18)
+- [x] Atualizar notas de `--include`/`--exclude` e comportamento em `--json` no README (finalizado em 2025-08-18)
+- [x] Compatibilidade Windows validada (exemplos PowerShell; scripts cross-env) (finalizado em 2025-08-18)
+
+- [x] Estabilizar pre-commit no Windows (lint-staged + `.gitignore` ancorado; Prettier `--ignore-unknown`; evitar bloqueios por caminhos ignorados) (finalizado em 2025-08-18)
 
 ### Notas de Lint (Mapa para futura implementação)
 

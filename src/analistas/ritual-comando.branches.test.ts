@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Objetivo: cobrir ramos restantes (comandosInvocados === 0 já coberto; aqui focar em: handler sem nome e sem comandoNome não reporta anônimo; handler com logging somente fora do slice; comando sem try/catch mas com logging global impede segunda ocorrência)

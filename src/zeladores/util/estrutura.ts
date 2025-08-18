@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import path from 'node:path';
 import { lerEstado } from './persistencia.js';
 
@@ -47,8 +48,22 @@ export const DEFAULT_OPCOES: Required<
 export const PRESETS: Record<string, Partial<typeof DEFAULT_OPCOES> & { nome: string }> = {
   oraculo: {
     nome: 'oraculo',
-    criarSubpastasPorEntidade: true,
+    // No preset "oraculo" não organizamos por entidade/domains
+    criarSubpastasPorEntidade: false,
     categoriasMapa: { ...CATEGORIAS_DEFAULT },
+    ignorarPastas: [
+      ...DEFAULT_OPCOES.ignorarPastas,
+      'tests',
+      'tests/fixtures',
+      'src/analistas',
+      'src/arquitetos',
+      'src/relatorios',
+      'src/guardian',
+      'src/nucleo',
+      'src/cli',
+      'src/zeladores',
+      'src/tipos',
+    ],
   },
   'node-community': {
     nome: 'node-community',
@@ -104,13 +119,20 @@ export function parseNomeArquivo(baseName: string): ParseNomeResultado {
   const semExt = baseName.replace(/\.[^.]+$/i, '');
   const lower = semExt.toLowerCase();
 
+  // Apenas aceite categorias reconhecidas (singular/plural) para evitar falsos positivos
+  const CATS = new Set(Object.keys(CATEGORIAS_DEFAULT).map((c) => c.toLowerCase()));
+
   const dotMatch = /^(?<ent>[\w-]+)\.(?<cat>[\w-]+)$/.exec(semExt);
-  if (dotMatch?.groups)
-    return { entidade: dotMatch.groups.ent, categoria: dotMatch.groups.cat.toLowerCase() };
+  if (dotMatch?.groups) {
+    const cat = dotMatch.groups.cat.toLowerCase();
+    if (CATS.has(cat)) return { entidade: dotMatch.groups.ent, categoria: cat };
+  }
 
   const kebabMatch = /^(?<ent>[\w-]+)-(?<cat>[\w-]+)$/.exec(lower);
-  if (kebabMatch?.groups)
-    return { entidade: kebabMatch.groups.ent, categoria: kebabMatch.groups.cat };
+  if (kebabMatch?.groups) {
+    const cat = kebabMatch.groups.cat.toLowerCase();
+    if (CATS.has(cat)) return { entidade: kebabMatch.groups.ent, categoria: cat };
+  }
 
   const camelMatch =
     /^(?<ent>[A-Za-z][A-Za-z0-9]*?)(?<cat>Controller|Webhook|Cliente|Client|Service|Repository)$/.exec(
@@ -148,17 +170,19 @@ export function destinoPara(
   const { entidade, categoria } = parseNomeArquivo(baseName);
   if (!categoria) return { destinoDir: null };
 
-  const pastaCategoria = categoriasMapa[categoria] || categoria.toLowerCase() + 's';
+  // Evita pluralização incorreta quando já termina com 's'
+  const normCat = categoria.toLowerCase();
+  const pastaFinal = categoriasMapa[normCat] || (normCat.endsWith('s') ? normCat : normCat + 's');
   if (criarSubpastasPorEntidade && entidade) {
     const ent = entidade
       .toString()
       .replace(/[^a-z0-9-]/gi, '')
       .toLowerCase();
-    const dir = path.posix.join(raizCodigo, 'domains', ent, pastaCategoria);
+    const dir = path.posix.join(raizCodigo, 'domains', ent, pastaFinal);
     return { destinoDir: dir, motivo: `categoria ${categoria} organizada por entidade ${ent}` };
   }
   return {
-    destinoDir: path.posix.join(raizCodigo, pastaCategoria),
+    destinoDir: path.posix.join(raizCodigo, pastaFinal),
     motivo: `categoria ${categoria} organizada por camada`,
   };
 }
@@ -178,21 +202,27 @@ export async function carregarConfigEstrategia(
     'oraculo') as string;
   const preset = PRESETS[nomePreset]?.nome ? PRESETS[nomePreset] : PRESETS['oraculo'];
 
-  const parcial: Partial<typeof DEFAULT_OPCOES> = {
-    ...DEFAULT_OPCOES,
-    ...(preset as Partial<typeof DEFAULT_OPCOES>),
-    ...(cfgArquivo as Partial<typeof DEFAULT_OPCOES>),
-    ...(overrides as Partial<typeof DEFAULT_OPCOES>),
+  // Merge determinístico: DEFAULT -> PRESET -> ARQUIVO -> OVERRIDES (apenas chaves definidas)
+  const base = { ...DEFAULT_OPCOES } as Required<typeof DEFAULT_OPCOES>;
+  const aplicarParcial = (src?: Partial<typeof DEFAULT_OPCOES>) => {
+    if (!src) return;
+    if (src.raizCodigo) base.raizCodigo = src.raizCodigo as string;
+    if (typeof src.criarSubpastasPorEntidade === 'boolean')
+      base.criarSubpastasPorEntidade = src.criarSubpastasPorEntidade as boolean;
+    if (src.estiloPreferido) base.estiloPreferido = src.estiloPreferido as NomeacaoEstilo;
+    if (src.categoriasMapa)
+      base.categoriasMapa = { ...base.categoriasMapa, ...src.categoriasMapa } as Record<
+        string,
+        string
+      >;
+    if (src.ignorarPastas && Array.isArray(src.ignorarPastas))
+      base.ignorarPastas = Array.from(new Set([...base.ignorarPastas, ...src.ignorarPastas]));
   };
-  const merged: Required<typeof DEFAULT_OPCOES> = {
-    raizCodigo: parcial.raizCodigo ?? DEFAULT_OPCOES.raizCodigo,
-    criarSubpastasPorEntidade:
-      parcial.criarSubpastasPorEntidade ?? DEFAULT_OPCOES.criarSubpastasPorEntidade,
-    estiloPreferido: (parcial.estiloPreferido ?? DEFAULT_OPCOES.estiloPreferido) as NomeacaoEstilo,
-    categoriasMapa: parcial.categoriasMapa ?? DEFAULT_OPCOES.categoriasMapa,
-    ignorarPastas: parcial.ignorarPastas ?? DEFAULT_OPCOES.ignorarPastas,
-  };
+  aplicarParcial(preset as Partial<typeof DEFAULT_OPCOES>);
+  aplicarParcial(cfgArquivo as Partial<typeof DEFAULT_OPCOES>);
+  aplicarParcial(overrides as Partial<typeof DEFAULT_OPCOES>);
+
   // Garante que categoriasMapa tenha defaults base
-  merged.categoriasMapa = { ...CATEGORIAS_DEFAULT, ...merged.categoriasMapa };
-  return merged;
+  base.categoriasMapa = { ...CATEGORIAS_DEFAULT, ...base.categoriasMapa } as Record<string, string>;
+  return base;
 }

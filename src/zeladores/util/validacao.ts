@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import path from 'node:path';
 
 /** Normaliza um caminho assegurando que permanece dentro da CWD (remove tentativas de escape). */

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { grafoDependencias } from './detector-dependencias.js';
 import micromatch from 'micromatch';
 import { config } from '../nucleo/constelacao/cosmos.js';

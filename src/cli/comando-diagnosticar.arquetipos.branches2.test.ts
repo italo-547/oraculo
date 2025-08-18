@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest';
 import { comandoDiagnosticar } from './comando-diagnosticar.js';
 import { log } from '../nucleo/constelacao/log.js';

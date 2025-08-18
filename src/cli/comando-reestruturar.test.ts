@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 it('executa reestruturação com ocorrência sem relPath nem arquivo (arquivo desconhecido)', async () => {
   const { comandoReestruturar } = await import('./comando-reestruturar.js');
   const { executarInquisicao } = await import('../nucleo/inquisidor.js');
