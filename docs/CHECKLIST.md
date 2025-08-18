@@ -34,7 +34,6 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [ ] Cobertura de combinações de comandos e options (em andamento, meta: finalizar testes principais até 2025-08-20)
 
 - [ ] Guardian: silenciar logs de progresso quando `--json` (emitir apenas o JSON final e restaurar logger) (meta: 2025-08-19)
-
 - [ ] Proteção da branch `main` (regras + doc + script + issue)
   - [x] Documentar política e passos: `docs/branches/protecao-main.md` (finalizado em 2025-08-18)
   - [x] Script gh-cli para verificar/aplicar: `scripts/config-branch-protection.mjs` (finalizado em 2025-08-18)
