@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+# Husky v9 pre-push: políticas locais de segurança
+
+branch_name=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+
+# Bloqueia push direto para main por padrão, com bypass via ALLOW_PUSH_MAIN=1
+if [ "$branch_name" = "main" ] && [ "${ALLOW_PUSH_MAIN}" != "1" ]; then
+  echo "🚫 pre-push: push direto na main bloqueado. Use PR (ou export ALLOW_PUSH_MAIN=1 para bypass controlado)."
+  exit 1
+fi
+
+# Scanner simples de tokens acidentais no diff a ser empurrado
+if command -v git >/dev/null 2>&1; then
+  to_push=$(git diff --cached | tr -d '\r')
+  if echo "$to_push" | grep -E -i 'ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{80,}|AIza[0-9A-Za-z-_]{35}|SECRET_KEY|API_KEY|ACCESS_TOKEN' >/dev/null 2>&1; then
+    echo "❌ pre-push: possível segredo detectado no índice (token/pat/padrão comum). Revise antes de fazer push."
+    exit 1
+  fi
+fi
+
+exit 0

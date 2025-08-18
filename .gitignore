@@ -95,3 +95,15 @@ diag.json
 /tmp-relatorio-guardian-parcial.md
 /# Diretório temporário usado em testes de corretores
 /tmp-corretor-destino-existe-test/
+
+# Segurança / scripts locais (não versionar)
+scripts/local/
+scripts/**/*.private.*
+scripts/**/*.local.*
+scripts/**/sandbox-*/
+.secrets/
+secrets/
+*.token
+token.txt
+*.secret
+*.secrets.json

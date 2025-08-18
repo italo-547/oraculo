@@ -13,6 +13,13 @@ Descreva brevemente o que foi alterado e o porquê.
 - [ ] Varredura de .md: `node scripts/scan-markdown.mjs` sem pendências.
 - [ ] Referências: somente links para documentação oficial (se houver), colocados na descrição do PR.
 
+## Checklist Operacional (governança)
+
+- [ ] Branch do PR atualizada com a base (sem ficar atrás)
+- [ ] CI Principal, license-gate e compliance passaram
+- [ ] Pelo menos 1 aprovação de revisor que não sou eu
+- [ ] Merge preferencial: Squash
+
 ## Impacto
 
 - [ ] Somente docs
