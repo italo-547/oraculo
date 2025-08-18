@@ -59,25 +59,37 @@ export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetip
     return forb > 0 && pos === 0;
   });
   if (apenasPenalidades.length > 0) {
-    // desempate refinado: maior cobertura relativa de forbidden (detectados/definidos)
-    apenasPenalidades.sort((a, b) => {
-      const forbA = a.forbiddenPresent?.length || 0;
-      const forbB = b.forbiddenPresent?.length || 0;
-      // Usa somente o total de diretórios proibidos definidos no alvo para o ratio
-      const defA = ARQUETIPOS.find((d) => d.nome === a.nome);
-      const defB = ARQUETIPOS.find((d) => d.nome === b.nome);
-      const totA = defA?.forbiddenDirs?.length || 0;
-      const totB = defB?.forbiddenDirs?.length || 0;
-      const ratioA = totA > 0 ? forbA / totA : 0;
-      const ratioB = totB > 0 ? forbB / totB : 0;
-      if (ratioB !== ratioA) return ratioB - ratioA;
-      if (forbB !== forbA) return forbB - forbA;
-      // depois, mais missingRequired primeiro (penalidade maior do alvo)
-      const miss = (b.missingRequired?.length || 0) - (a.missingRequired?.length || 0);
-      if (miss !== 0) return miss;
-      return a.nome.localeCompare(b.nome);
+    // Heurística de segurança: ignore o candidato 'monorepo-packages' quando o único forbidden presente for 'src'
+    // (cenário comum em projetos Node simples com pasta src/, que não devem ser classificados como monorepo).
+    const filtrados = apenasPenalidades.filter((c) => {
+      if (c.nome !== 'monorepo-packages') return true;
+      const forb = c.forbiddenPresent || [];
+      // se houver apenas 'src' como forbidden detectado, descartamos este candidato especial
+      return !(forb.length === 1 && forb[0] === 'src');
     });
-    return apenasPenalidades[0];
+    if (filtrados.length === 0) {
+      // caso todos tenham sido filtrados, prossegue com fluxo normal
+    } else {
+      // desempate refinado: maior cobertura relativa de forbidden (detectados/definidos)
+      filtrados.sort((a, b) => {
+        const forbA = a.forbiddenPresent?.length || 0;
+        const forbB = b.forbiddenPresent?.length || 0;
+        // Usa somente o total de diretórios proibidos definidos no alvo para o ratio
+        const defA = ARQUETIPOS.find((d) => d.nome === a.nome);
+        const defB = ARQUETIPOS.find((d) => d.nome === b.nome);
+        const totA = defA?.forbiddenDirs?.length || 0;
+        const totB = defB?.forbiddenDirs?.length || 0;
+        const ratioA = totA > 0 ? forbA / totA : 0;
+        const ratioB = totB > 0 ? forbB / totB : 0;
+        if (ratioB !== ratioA) return ratioB - ratioA;
+        if (forbB !== forbA) return forbB - forbA;
+        // depois, mais missingRequired primeiro (penalidade maior do alvo)
+        const miss = (b.missingRequired?.length || 0) - (a.missingRequired?.length || 0);
+        if (miss !== 0) return miss;
+        return a.nome.localeCompare(b.nome);
+      });
+      return filtrados[0];
+    }
   }
 
   // Ordenação próxima do legado: menor missingRequired, maior score, maior matchedRequired, maior confidence, nome asc
