@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { gerarRelatorioMarkdown } from './gerador-relatorio.js';
 import { promises as fs } from 'node:fs';

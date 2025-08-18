@@ -87,3 +87,9 @@ diag.json
 # Relatórios temporários ESLint
 .eslint-report.json
 \n# Diretório temporário usado em testes de filtros include/exclude\ntmp-oraculo-filtros-test/
+
+# Artefatos gerados que não devem ser versionados
+/relatorios/
+/pre-public/
+/tmp-perf-diff/
+/tmp-relatorio-guardian-parcial.md

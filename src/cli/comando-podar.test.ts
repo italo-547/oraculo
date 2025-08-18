@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Command } from 'commander';
 import { comandoPodar } from './comando-podar.js';

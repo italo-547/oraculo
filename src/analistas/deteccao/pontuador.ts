@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { ARQUETIPOS, normalizarCaminho } from '../arquetipos-defs.js';
 import { grafoDependencias } from '../detector-dependencias.js';
 import type {

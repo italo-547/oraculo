@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import type { Analista, TecnicaAplicarResultado } from '../tipos/tipos.js';
 import { criarOcorrencia } from '../tipos/tipos.js';
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Command } from 'commander';
 // Não importar IntegridadeStatus para uso dentro de vi.hoisted; usar literais para evitar hoisting issues

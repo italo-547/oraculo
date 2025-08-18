@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import type { ResultadoDeteccaoArquetipo } from '../../tipos/tipos.js';
 import { ARQUETIPOS } from '../arquetipos-defs.js';
 import { scoreArquetipo } from '../deteccao/pontuador.js';

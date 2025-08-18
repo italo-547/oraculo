@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Command } from 'commander';
 import { comandoMetricas } from './comando-metricas.js';

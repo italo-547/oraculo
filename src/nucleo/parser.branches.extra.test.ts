@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { decifrarSintaxe } from './parser.js';
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock de log com imprimirBloco para capturar chamadas de moldura

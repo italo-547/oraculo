@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT
 import { Command } from 'commander';
 import chalk from 'chalk';
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { gerarRelatorioPodaMarkdown, gerarRelatorioPodaJson } from './relatorio-poda.js';
 

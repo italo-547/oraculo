@@ -11,6 +11,16 @@ Nada nesta documentação constitui cessão ou transferência dos direitos morai
 - Não “vendorize” conteúdo de terceiros em documentação. Prefira links.
 - Para código, prefira dependências com licenças permissivas (MIT/Apache-2.0/BSD). Evite GPL/AGPL/LGPL salvo justificativa explícita em PR.
 
+### Notas sobre o scanner de documentação (termos de risco)
+
+- O pipeline possui um scanner que marca termos sensíveis (ex.: “GPL/AGPL/LGPL”, “cessão de direitos”, “All rights reserved”).
+- Documentos de política/referência já são isentos automaticamente (whitelist).
+- Quando for necessário citar termos sensíveis por referência em qualquer outro documento, inclua o marcador:
+
+  <!-- RISCO_REFERENCIA_OK -->
+
+  Isso sinaliza citação legítima, evitando falha no modo estrito do scanner.
+
 ## Aviso a ser incluído nos principais documentos
 
 Inclua o bloco abaixo no topo de READMEs e documentos-chave:

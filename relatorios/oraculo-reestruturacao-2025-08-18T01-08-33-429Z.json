@@ -1,0 +1,18 @@
+{
+  "conflitos": 0,
+  "movimentos": [
+    {
+      "de": "eslint.config.js",
+      "para": "src/config/eslint.config.js"
+    },
+    {
+      "de": "vitest.config.ts",
+      "para": "src/config/vitest.config.ts"
+    }
+  ],
+  "origem": "estrategista",
+  "preset": "oraculo",
+  "simulado": true,
+  "timestamp": 1755479313434,
+  "totalMovimentos": 2
+}

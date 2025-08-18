@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { gerarPlanoReorganizacao } from './plano-reorganizacao.js';
 import { config, aplicarConfigParcial } from '../nucleo/constelacao/cosmos.js';

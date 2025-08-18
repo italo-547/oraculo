@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import chalk from 'chalk';
 import tty from 'node:tty';
 import { config } from './cosmos.js';

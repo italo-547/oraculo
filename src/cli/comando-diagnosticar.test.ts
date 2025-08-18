@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Mock fs.promises.mkdir para todos os testes que envolvem exportação
 vi.mock('node:fs', () => ({
   promises: { mkdir: vi.fn(async () => undefined) },

@@ -26,11 +26,11 @@
     "lint": "eslint \"{src,tests,temp-fantasma}/**/*.ts\"",
     "format": "prettier --check \"**/*.{ts,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,md}\"",
-    "coverage:enforce": "$env:CI='true'; vitest run --coverage",
+    "coverage:enforce": "cross-env CI=true vitest run --coverage",
     "check:style": "npm run lint && npm run typecheck && npm run format",
     "coverage:gate": "npm run coverage:enforce",
-    "test:e2e": "vitest run --dir src/cli --reporter dot",
-    "test:ci": "$env:CI='true'; vitest run --reporter=json --outputFile .oraculo/last-test-report.json",
+    "test:e2e": "vitest run src/cli --reporter dot",
+    "test:ci": "cross-env CI=true vitest run --reporter=json --outputFile .oraculo/last-test-report.json",
     "perf:baseline": "node dist/cli.js perf baseline --dir docs/perf",
     "perf:compare": "node dist/cli.js perf compare --dir docs/perf --json",
     "perf:gate": "node dist/cli.js perf compare --dir docs/perf --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);if(j.regressao){console.error('Regressao performance > limite');process.exit(1)}console.log('Perf OK')});\"",
@@ -41,13 +41,14 @@
     "test:dev": "vitest run",
     "test:ui": "vitest",
     "coverage": "vitest run --coverage",
-    "coverage:dev": "$env:COVERAGE='true'; vitest run --coverage",
+    "coverage:dev": "cross-env COVERAGE=true vitest run --coverage",
     "cleanup:metricas": "node -e \"import('node:fs').then(fs=>fs.promises.rm('.oraculo/historico-metricas',{recursive:true,force:true}).then(()=>console.log('Histórico de métricas limpo.')).catch(e=>console.error('Falha limpeza:',e.message)))\"",
     "licenses:list": "npx license-checker-rseidelsohn --production --csv",
     "licenses:json": "npx license-checker-rseidelsohn --production --json > .oraculo/licenses.json",
     "licenses:notice": "node scripts/generate-notices.mjs",
     "licenses:notice:pt-br": "node scripts/generate-notices.mjs --pt-br",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "headers:spdx": "node scripts/add-spdx-headers.mjs"
   },
   "keywords": [
     "cli",
@@ -80,6 +81,7 @@
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
     "@vitest/coverage-v8": "^3.2.4",
+    "cross-env": "^10.0.0",
     "eslint": "^9.33.0",
     "husky": "^9.1.7",
     "license-checker-rseidelsohn": "^4.4.2",
@@ -88,14 +90,5 @@
     "rimraf": "^6.0.1",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
-  },
-  "lint-staged": {
-    "*.{ts,js,cts,mts}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.{md,json}": [
-      "prettier --write"
-    ]
   }
 }

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // src/analistas/analista-padroes-uso.ts
 import * as t from '@babel/types';
 import { traverse } from '../nucleo/constelacao/traverse.js';

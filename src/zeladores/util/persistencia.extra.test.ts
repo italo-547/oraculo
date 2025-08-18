@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { lerEstado, salvarEstado } from './persistencia.js';
 import { promises as fs } from 'node:fs';

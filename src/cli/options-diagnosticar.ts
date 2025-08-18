@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Opções do comando diagnosticar centralizadas para facilitar manutenção e testes
 // Siga o padrão do projeto para adicionar novas opções
 

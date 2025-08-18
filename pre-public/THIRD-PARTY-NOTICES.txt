@@ -3,7 +3,7 @@ THIRD-PARTY NOTICES
 
 oraculo@0.1.0 — Project license: MIT
 This file lists third-party components included (production) and their notices/licenses.
-Generated at: 2025-08-17T21:00:16.620Z
+Generated at: 2025-08-17T23:06:31.270Z
 
 Notes:
 - This file is generated automatically; do not edit manually.
@@ -15,7 +15,6 @@ Pacote: @babel/code-frame@7.27.1
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\code-frame
 
 --- Início do texto de licença ---
 MIT License
@@ -47,7 +46,6 @@ Pacote: @babel/generator@7.28.3
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\generator
 
 --- Início do texto de licença ---
 MIT License
@@ -79,7 +77,6 @@ Pacote: @babel/helper-globals@7.28.0
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\helper-globals
 
 --- Início do texto de licença ---
 MIT License
@@ -111,7 +108,6 @@ Pacote: @babel/helper-string-parser@7.27.1
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\helper-string-parser
 
 --- Início do texto de licença ---
 MIT License
@@ -143,7 +139,6 @@ Pacote: @babel/helper-validator-identifier@7.27.1
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\helper-validator-identifier
 
 --- Início do texto de licença ---
 MIT License
@@ -175,7 +170,6 @@ Pacote: @babel/parser@7.28.3
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\parser
 
 --- Início do texto de licença ---
 Copyright (C) 2012-2014 by various contributors (see AUTHORS)
@@ -204,7 +198,6 @@ Pacote: @babel/template@7.27.2
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\template
 
 --- Início do texto de licença ---
 MIT License
@@ -236,7 +229,6 @@ Pacote: @babel/traverse@7.28.3
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\traverse
 
 --- Início do texto de licença ---
 MIT License
@@ -268,7 +260,6 @@ Pacote: @babel/types@7.28.2
 Licenças: MIT
 Publicador: The Babel Team
 Repositório: https://github.com/babel/babel
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@babel\types
 
 --- Início do texto de licença ---
 MIT License
@@ -299,7 +290,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Pacote: @chevrotain/cst-dts-gen@11.0.3
 Licenças: Apache-2.0
 Repositório: https://github.com/Chevrotain/chevrotain
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@chevrotain\cst-dts-gen
 
 --- Início do texto de licença ---
 Apache License
@@ -509,7 +499,6 @@ Apache License
 Pacote: @chevrotain/gast@11.0.3
 Licenças: Apache-2.0
 Repositório: https://github.com/Chevrotain/chevrotain
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@chevrotain\gast
 
 --- Início do texto de licença ---
 Apache License
@@ -719,7 +708,6 @@ Apache License
 Pacote: @chevrotain/regexp-to-ast@11.0.3
 Licenças: Apache-2.0
 Repositório: https://github.com/Chevrotain/chevrotain
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@chevrotain\regexp-to-ast
 
 --- Início do texto de licença ---
 Apache License
@@ -930,7 +918,6 @@ Pacote: @chevrotain/types@11.0.3
 Licenças: Apache-2.0
 Publicador: Shahar Soel
 Repositório: https://github.com/Chevrotain/chevrotain
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@chevrotain\types
 
 --- Início do texto de licença ---
 Apache License
@@ -1141,7 +1128,6 @@ Pacote: @chevrotain/utils@11.0.3
 Licenças: Apache-2.0
 Publicador: Shahar Soel
 Repositório: https://github.com/Chevrotain/chevrotain
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@chevrotain\utils
 
 --- Início do texto de licença ---
 Apache License
@@ -1353,7 +1339,6 @@ Licenças: MIT
 Publicador: Justin Ridgewell
 Contato: justin@ridgewell.name
 Repositório: https://github.com/jridgewell/sourcemaps
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@jridgewell\gen-mapping
 
 --- Início do texto de licença ---
 Copyright 2024 Justin Ridgewell <justin@ridgewell.name>
@@ -1383,7 +1368,6 @@ Licenças: MIT
 Publicador: Justin Ridgewell
 Contato: justin@ridgewell.name
 Repositório: https://github.com/jridgewell/resolve-uri
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@jridgewell\resolve-uri
 
 --- Início do texto de licença ---
 Copyright 2019 Justin Ridgewell <jridgewell@google.com>
@@ -1413,7 +1397,6 @@ Licenças: MIT
 Publicador: Justin Ridgewell
 Contato: justin@ridgewell.name
 Repositório: https://github.com/jridgewell/sourcemaps
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@jridgewell\sourcemap-codec
 
 --- Início do texto de licença ---
 Copyright 2024 Justin Ridgewell <justin@ridgewell.name>
@@ -1443,7 +1426,6 @@ Licenças: MIT
 Publicador: Justin Ridgewell
 Contato: justin@ridgewell.name
 Repositório: https://github.com/jridgewell/sourcemaps
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\@jridgewell\trace-mapping
 
 --- Início do texto de licença ---
 Copyright 2024 Justin Ridgewell <justin@ridgewell.name>
@@ -1472,7 +1454,6 @@ Pacote: braces@3.0.3
 Licenças: MIT
 Publicador: Jon Schlinkert
 Repositório: https://github.com/micromatch/braces
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\braces
 
 --- Início do texto de licença ---
 The MIT License (MIT)
@@ -1502,7 +1483,6 @@ THE SOFTWARE.
 Pacote: chalk@5.5.0
 Licenças: MIT
 Repositório: https://github.com/chalk/chalk
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\chalk
 
 --- Início do texto de licença ---
 MIT License
@@ -1521,7 +1501,6 @@ Pacote: chevrotain-allstar@0.3.1
 Licenças: MIT
 Publicador: TypeFox
 Repositório: https://github.com/langium/chevrotain-allstar
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\chevrotain-allstar
 
 --- Início do texto de licença ---
 Copyright 2022 TypeFox GmbH
@@ -1547,7 +1526,6 @@ Pacote: chevrotain@11.0.3
 Licenças: Apache-2.0
 Publicador: Shahar Soel
 Repositório: https://github.com/Chevrotain/chevrotain
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\chevrotain
 
 --- Início do texto de licença ---
 Apache License
@@ -1759,7 +1737,6 @@ Licenças: MIT
 Publicador: TJ Holowaychuk
 Contato: tj@vision-media.ca
 Repositório: https://github.com/tj/commander.js
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\commander
 
 --- Início do texto de licença ---
 (The MIT License)
@@ -1792,7 +1769,6 @@ Licenças: MIT
 Publicador: Roman Dvornov
 Contato: rdvornov@gmail.com
 Repositório: https://github.com/csstree/csstree
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\css-tree
 
 --- Início do texto de licença ---
 Copyright (C) 2016-2022 by Roman Dvornov
@@ -1821,7 +1797,6 @@ Pacote: cuint@0.2.2
 Licenças: MIT
 Publicador: Pierre Curto
 Repositório: https://github.com/pierrec/js-cuint
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\cuint
 
 --- Início do texto de licença ---
 # C-like unsigned integers for Javascript
@@ -2036,7 +2011,6 @@ Pacote: debug@4.4.1
 Licenças: MIT
 Publicador: Josh Junon
 Repositório: https://github.com/debug-js/debug
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\debug
 
 --- Início do texto de licença ---
 (The MIT License)
@@ -2066,7 +2040,6 @@ Licenças: MIT
 Publicador: Felix Boehm
 Contato: me@feedic.com
 Repositório: https://github.com/cheeriojs/dom-serializer
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\dom-serializer
 
 --- Início do texto de licença ---
 License
@@ -2088,7 +2061,6 @@ Licenças: BSD-2-Clause
 Publicador: Felix Boehm
 Contato: me@feedic.com
 Repositório: https://github.com/fb55/domelementtype
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\domelementtype
 
 --- Início do texto de licença ---
 Copyright (c) Felix Böhm
@@ -2110,7 +2082,6 @@ Licenças: BSD-2-Clause
 Publicador: Felix Boehm
 Contato: me@feedic.com
 Repositório: https://github.com/fb55/domhandler
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\domhandler
 
 --- Início do texto de licença ---
 Copyright (c) Felix Böhm
@@ -2132,7 +2103,6 @@ Licenças: BSD-2-Clause
 Publicador: Felix Boehm
 Contato: me@feedic.com
 Repositório: https://github.com/fb55/domutils
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\domutils
 
 --- Início do texto de licença ---
 Copyright (c) Felix Böhm
@@ -2154,7 +2124,6 @@ Licenças: BSD-2-Clause
 Publicador: Felix Boehm
 Contato: me@feedic.com
 Repositório: https://github.com/fb55/entities
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\entities
 
 --- Início do texto de licença ---
 Copyright (c) Felix Böhm
@@ -2175,7 +2144,6 @@ Pacote: fast-xml-parser@4.5.3
 Licenças: MIT
 Publicador: Amit Gupta
 Repositório: https://github.com/NaturalIntelligence/fast-xml-parser
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\fast-xml-parser
 
 --- Início do texto de licença ---
 MIT License
@@ -2206,7 +2174,6 @@ Pacote: fill-range@7.1.1
 Licenças: MIT
 Publicador: Jon Schlinkert
 Repositório: https://github.com/jonschlinkert/fill-range
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\fill-range
 
 --- Início do texto de licença ---
 The MIT License (MIT)
@@ -2238,7 +2205,6 @@ Licenças: MIT
 Publicador: Felix Boehm
 Contato: me@feedic.com
 Repositório: https://github.com/fb55/htmlparser2
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\htmlparser2
 
 --- Início do texto de licença ---
 Copyright 2010, 2011, Chris Winberry <chris@winberry.net>. All rights reserved.
@@ -2266,7 +2232,6 @@ Pacote: is-number@7.0.0
 Licenças: MIT
 Publicador: Jon Schlinkert
 Repositório: https://github.com/jonschlinkert/is-number
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\is-number
 
 --- Início do texto de licença ---
 The MIT License (MIT)
@@ -2296,7 +2261,6 @@ THE SOFTWARE.
 Pacote: java-parser@2.3.4
 Licenças: Apache-2.0
 Repositório: https://github.com/jhipster/prettier-java.git#main
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\java-parser
 
 --- Início do texto de licença ---
 Copyright 2018-2025 the original author or authors from the JHipster project
@@ -2509,7 +2473,6 @@ Pacote: js-tokens@4.0.0
 Licenças: MIT
 Publicador: Simon Lydell
 Repositório: https://github.com/lydell/js-tokens
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\js-tokens
 
 --- Início do texto de licença ---
 The MIT License (MIT)
@@ -2540,7 +2503,6 @@ Pacote: jsesc@3.1.0
 Licenças: MIT
 Publicador: Mathias Bynens
 Repositório: https://github.com/mathiasbynens/jsesc
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\jsesc
 
 --- Início do texto de licença ---
 Copyright Mathias Bynens <https://mathiasbynens.be/>
@@ -2571,7 +2533,6 @@ Licenças: MIT
 Publicador: John-David Dalton
 Contato: john.david.dalton@gmail.com
 Repositório: https://github.com/lodash/lodash
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\lodash-es
 
 --- Início do texto de licença ---
 Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
@@ -2629,7 +2590,6 @@ Licenças: MIT
 Publicador: John-David Dalton
 Contato: john.david.dalton@gmail.com
 Repositório: https://github.com/lodash/lodash
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\lodash
 
 --- Início do texto de licença ---
 Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
@@ -2686,7 +2646,6 @@ Pacote: mdn-data@2.0.30
 Licenças: CC0-1.0
 Publicador: Mozilla Developer Network
 Repositório: https://github.com/mdn/data
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\mdn-data
 
 --- Início do texto de licença ---
 CC0 1.0 Universal
@@ -2812,7 +2771,6 @@ Pacote: micromatch@4.0.8
 Licenças: MIT
 Publicador: Jon Schlinkert
 Repositório: https://github.com/micromatch/micromatch
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\micromatch
 
 --- Início do texto de licença ---
 The MIT License (MIT)
@@ -2842,7 +2800,6 @@ THE SOFTWARE.
 Pacote: ms@2.1.3
 Licenças: MIT
 Repositório: https://github.com/vercel/ms
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\ms
 
 --- Início do texto de licença ---
 The MIT License (MIT)
@@ -2874,7 +2831,6 @@ Licenças: MIT
 Publicador: Sindre Sorhus
 Contato: sindresorhus@gmail.com
 Repositório: https://github.com/sindresorhus/p-limit
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\p-limit
 
 --- Início do texto de licença ---
 MIT License
@@ -2893,7 +2849,6 @@ Pacote: picocolors@1.1.1
 Licenças: ISC
 Publicador: Alexey Raspopov
 Repositório: https://github.com/alexeyraspopov/picocolors
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\picocolors
 
 --- Início do texto de licença ---
 ISC License
@@ -2918,7 +2873,6 @@ Pacote: picomatch@2.3.1
 Licenças: MIT
 Publicador: Jon Schlinkert
 Repositório: https://github.com/micromatch/picomatch
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\picomatch
 
 --- Início do texto de licença ---
 The MIT License (MIT)
@@ -2950,7 +2904,6 @@ Licenças: BSD-3-Clause
 Publicador: Valentin 7rulnik Semirulnik
 Contato: v7rulnik@gmail.com
 Repositório: https://github.com/7rulnik/source-map-js
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\source-map-js
 
 --- Início do texto de licença ---
 Copyright (c) 2009-2011, Mozilla Foundation and contributors
@@ -2987,7 +2940,6 @@ Pacote: strnum@1.1.2
 Licenças: MIT
 Publicador: Amit Gupta
 Repositório: https://github.com/NaturalIntelligence/strnum
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\strnum
 
 --- Início do texto de licença ---
 MIT License
@@ -3018,7 +2970,6 @@ Pacote: to-regex-range@5.0.1
 Licenças: MIT
 Publicador: Jon Schlinkert
 Repositório: https://github.com/micromatch/to-regex-range
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\to-regex-range
 
 --- Início do texto de licença ---
 The MIT License (MIT)
@@ -3049,7 +3000,6 @@ Pacote: xxhashjs@0.2.2
 Licenças: MIT
 Publicador: Pierre Curto
 Repositório: https://github.com/pierrec/js-xxhash
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\xxhashjs
 
 --- Início do texto de licença ---
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -3077,7 +3027,6 @@ Licenças: MIT
 Publicador: Sindre Sorhus
 Contato: sindresorhus@gmail.com
 Repositório: https://github.com/sindresorhus/yocto-queue
-Caminho: C:\Users\Aynsken\Desktop\projeto-oraculo\oraculo\node_modules\yocto-queue
 
 --- Início do texto de licença ---
 MIT License

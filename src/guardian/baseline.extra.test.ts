@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const TEST_BASELINE = 'tmp-baseline-extra.json';

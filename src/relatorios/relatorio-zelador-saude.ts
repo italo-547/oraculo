@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import chalk from 'chalk';
 import { estatisticasUsoGlobal } from '../analistas/analista-padroes-uso.js';
 import { config } from '../nucleo/constelacao/cosmos.js';

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { parseNomeArquivo, destinoPara, normalizarRel, DEFAULT_OPCOES } from './estrutura.js';
 

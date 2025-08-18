@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { gerarSnapshotDoConteudo } from './hash.js';
 import { salvarRegistros, carregarRegistros } from './registros.js';
 import { REGISTRO_VIGIA_CAMINHO_PADRAO } from './constantes.js';

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import crypto from 'node:crypto';
 import XXH from 'xxhashjs';
 import type {

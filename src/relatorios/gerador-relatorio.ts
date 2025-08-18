@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { salvarEstado } from '../zeladores/util/persistencia.js';
 import { formatMs } from '../nucleo/constelacao/format.js';
 import { ResultadoInquisicaoCompleto, Ocorrencia } from '../tipos/tipos.js';

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Gera THIRD-PARTY-NOTICES.txt a partir das dependências de produção
 // Usa license-checker-rseidelsohn via API programática (CJS) a partir de ESM
 import { createRequire } from 'node:module';
@@ -13,15 +14,14 @@ const require = createRequire(import.meta.url);
 let licenseChecker = null;
 try {
   // Tenta carregar a lib localmente; se não existir, seguimos com fallback
-  // eslint-disable-next-line import/no-extraneous-dependencies
   licenseChecker = require('license-checker-rseidelsohn');
 } catch {}
 
 const ROOT = process.cwd();
 const isPtBr = process.argv.includes('--pt-br') || process.env.PT_BR === '1';
 const OUTPUT = path.join(
-    ROOT,
-    isPtBr ? 'AVISOS-DE-TERCEIROS.pt-BR.txt' : 'THIRD-PARTY-NOTICES.txt'
+  ROOT,
+  isPtBr ? 'AVISOS-DE-TERCEIROS.pt-BR.txt' : 'THIRD-PARTY-NOTICES.txt',
 );
 
 /** Retorna string segura (sem undefined/null) */
@@ -39,34 +39,34 @@ function nl(txt) {
  */
 function header({ projectName, license, ptBr }) {
   const now = new Date().toISOString();
-    if (ptBr) {
-      return [
-        'AVISOS DE TERCEIROS',
-        '====================',
-        '',
-        `${projectName} — Licença do projeto: ${license}`,
-        `Este arquivo lista componentes de terceiros incluídos (produção) e seus respectivos avisos/licenças.`,
-        `Gerado em: ${now}`,
-        '',
-        'Observações:',
-        '- Este arquivo é gerado automaticamente; não edite manualmente.',
-        '- Para atualizar, execute: npm run licenses:notice',
-            '- Os textos de licença de terceiros são reproduzidos no idioma original para preservar validade jurídica.',
-            '',
-        ].join('\n');
-    }
+  if (ptBr) {
     return [
-        'THIRD-PARTY NOTICES',
-        '====================',
-        '',
-        `${projectName} — Project license: ${license}`,
-        `This file lists third-party components included (production) and their notices/licenses.`,
-        `Generated at: ${now}`,
-        '',
-        'Notes:',
-        '- This file is generated automatically; do not edit manually.',
-        '- To update, run: npm run licenses:notice',
-        '- Third-party license texts are reproduced in their original language to preserve legal validity.',
+      'AVISOS DE TERCEIROS',
+      '====================',
+      '',
+      `${projectName} — Licença do projeto: ${license}`,
+      `Este arquivo lista componentes de terceiros incluídos (produção) e seus respectivos avisos/licenças.`,
+      `Gerado em: ${now}`,
+      '',
+      'Observações:',
+      '- Este arquivo é gerado automaticamente; não edite manualmente.',
+      '- Para atualizar, execute: npm run licenses:notice',
+      '- Os textos de licença de terceiros são reproduzidos no idioma original para preservar validade jurídica.',
+      '',
+    ].join('\n');
+  }
+  return [
+    'THIRD-PARTY NOTICES',
+    '====================',
+    '',
+    `${projectName} — Project license: ${license}`,
+    `This file lists third-party components included (production) and their notices/licenses.`,
+    `Generated at: ${now}`,
+    '',
+    'Notes:',
+    '- This file is generated automatically; do not edit manually.',
+    '- To update, run: npm run licenses:notice',
+    '- Third-party license texts are reproduced in their original language to preserve legal validity.',
     '',
   ].join('\n');
 }
@@ -82,7 +82,7 @@ async function renderPackageBlock(pkgId, meta) {
   if (meta.publisher) lines.push(`Publicador: ${s(meta.publisher)}`);
   if (meta.email) lines.push(`Contato: ${s(meta.email)}`);
   if (meta.repository) lines.push(`Repositório: ${s(meta.repository)}`);
-  if (meta.path) lines.push(`Caminho: ${s(meta.path)}`);
+  // Não incluir caminhos locais do ambiente
 
   // Tenta embutir o conteúdo do arquivo de licença quando existir (útil para Apache-2.0, BSD, etc.)
   if (meta.licenseFile) {
@@ -97,7 +97,9 @@ async function renderPackageBlock(pkgId, meta) {
       }
     } catch (err) {
       lines.push('');
-      lines.push(`(Aviso) Não foi possível ler o arquivo de licença: ${meta.licenseFile} — ${err.message}`);
+      lines.push(
+        `(Aviso) Não foi possível ler o arquivo de licença: ${meta.licenseFile} — ${err.message}`,
+      );
     }
   }
 
@@ -155,7 +157,7 @@ async function main() {
         (err, json) => {
           if (err) reject(err);
           else resolve(json);
-        }
+        },
       );
     });
   }
@@ -163,12 +165,11 @@ async function main() {
   // 3) Fallback: executa npx e captura JSON (tenta execFile, depois exec com shell)
   if (!results) {
     try {
-      const { stdout } = await execFile(process.platform === 'win32' ? 'npx.cmd' : 'npx', [
-        '--yes',
-        'license-checker-rseidelsohn',
-        '--production',
-        '--json',
-      ], { maxBuffer: 10 * 1024 * 1024 });
+      const { stdout } = await execFile(
+        process.platform === 'win32' ? 'npx.cmd' : 'npx',
+        ['--yes', 'license-checker-rseidelsohn', '--production', '--json'],
+        { maxBuffer: 10 * 1024 * 1024 },
+      );
       results = JSON.parse(stdout);
     } catch {
       const cmd = 'npx --yes license-checker-rseidelsohn --production --json';
@@ -189,7 +190,7 @@ async function main() {
     .filter(([id]) => !id.startsWith(`${pkg.name}@`))
     .sort(([a], [b]) => a.localeCompare(b));
 
-    const parts = [header({ projectName, license: projectLicense, ptBr: isPtBr })];
+  const parts = [header({ projectName, license: projectLicense, ptBr: isPtBr })];
 
   for (const [id, meta] of entries) {
     parts.push(await renderPackageBlock(id, meta));

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { config } from '../nucleo/constelacao/cosmos.js';
 
 export interface SnapshotDiff {

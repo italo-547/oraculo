@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT
 /*
   Gate simples de cobertura.
   Estratégia: usar summary gerado em coverage/coverage-summary.json.

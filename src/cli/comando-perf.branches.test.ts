@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';

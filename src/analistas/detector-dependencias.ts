@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import path from 'node:path';
 import { traverse } from '../nucleo/constelacao/traverse.js';
 import type { TecnicaAplicarResultado, ContextoExecucao, Ocorrencia } from '../tipos/tipos.js';

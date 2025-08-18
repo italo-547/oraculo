@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 export interface AlinhamentoItem {
   arquivo: string;
   atual: string;

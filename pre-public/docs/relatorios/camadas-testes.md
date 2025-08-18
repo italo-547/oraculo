@@ -53,6 +53,11 @@ Este documento descreve as camadas atuais de testes após a inclusão dos testes
 - Evitar replicar lógica de análise nos projetos temporários: apenas 1-2 arquivos.
 - Adicionar novas flags sempre primeiro em testes de comando (rápidos) e depois 1 cenário E2E.
 
+### Observação de estabilidade (flakiness)
+
+- Em ambientes locais, já observamos flakiness quando existem artefatos residuais dentro de `.oraculo/historico-metricas` no repositório sob teste. Esses artefatos podem manter caches/estados anteriores e interferir em asserts de contagem/tempo.
+- Mitigação sugerida antes de rodar a suíte completa: remover a pasta `.oraculo/historico-metricas` do projeto de teste (ou usar um workspace limpo). Em CI, garanta checkout limpo. Futuro: isolar state por execução no helper de persistência.
+
 ## Métricas Atuais (12/08/2025)
 
 - Total testes: 309.

@@ -74,6 +74,7 @@ Estas diretrizes reforçam originalidade, licenças, privacidade e segurança op
 - Para algoritmos clássicos, implemente a partir da especificação, não de uma implementação pública.
 - Evite inserir blocos longos (>20 linhas) de uma única fonte pública.
 - Referencie documentação oficial somente na descrição do PR; não copie trechos integrais para o código.
+- Idioma: produza respostas e textos em português brasileiro por padrão. Exceções: quando citar textos jurídicos/licenças ou trechos legais que devem permanecer no idioma original, mantenha o idioma original sem traduzir o conteúdo normativo.
 
 ### Licença, Dependências e Conformidade
 
@@ -304,6 +305,6 @@ Se encontrar padrões não documentados ou dúvidas sobre fluxos, registre exemp
 
 ---
 
-**Última atualização das diretrizes: 2025-08-17**
+**Última atualização das diretrizes: 2025-08-18**
 
 ---

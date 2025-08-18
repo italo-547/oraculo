@@ -1,0 +1,66 @@
+{
+  "conflitos": 0,
+  "movimentos": [
+    {
+      "de": "[raiz do projeto]",
+      "para": "[raiz do projeto]"
+    },
+    {
+      "de": "[raiz do projeto]",
+      "para": "[raiz do projeto]"
+    },
+    {
+      "de": "[raiz do projeto]",
+      "para": "[raiz do projeto]"
+    },
+    {
+      "de": "[raiz do projeto]",
+      "para": "[raiz do projeto]"
+    },
+    {
+      "de": "[raiz do projeto]",
+      "para": "[raiz do projeto]"
+    },
+    {
+      "de": "[raiz do projeto]",
+      "para": "[raiz do projeto]"
+    },
+    {
+      "de": "[raiz do projeto]",
+      "para": "[raiz do projeto]"
+    },
+    {
+      "de": "package.json",
+      "para": "package.json"
+    },
+    {
+      "de": "tsconfig.json",
+      "para": "tsconfig.json"
+    },
+    {
+      "de": "[raiz do projeto]",
+      "para": "[raiz do projeto]"
+    },
+    {
+      "de": "src/analistas/detector-arquetipos.ts",
+      "para": "src/analistas/detector-arquetipos.ts"
+    },
+    {
+      "de": "src/analistas/detector-arquetipos.ts",
+      "para": "src/analistas/detector-arquetipos.ts"
+    },
+    {
+      "de": "src/analistas/detector-arquetipos.ts",
+      "para": "src/analistas/detector-arquetipos.ts"
+    },
+    {
+      "de": ".github/dependabot.yml",
+      "para": ".github/dependabot.yml"
+    }
+  ],
+  "origem": "estrategista",
+  "preset": "oraculo",
+  "simulado": true,
+  "timestamp": 1755479386729,
+  "totalMovimentos": 14
+}

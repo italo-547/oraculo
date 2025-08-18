@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import fs from 'fs/promises';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
@@ -8,79 +9,79 @@ const DIST = path.join(ROOT, 'dist');
 const DOCS = path.join(ROOT, 'docs');
 
 async function ensureDir(dir) {
-    await fs.mkdir(dir, { recursive: true });
+  await fs.mkdir(dir, { recursive: true });
 }
 
 async function copySafe(src, dest) {
-    await fs.cp(src, dest, { recursive: true, force: true });
+  await fs.cp(src, dest, { recursive: true, force: true });
 }
 
 async function exists(p) {
-    try {
-        await fs.access(p);
-        return true;
-    } catch {
-        return false;
-    }
+  try {
+    await fs.access(p);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function main() {
-    console.log('[pre-public] buildando projeto...');
-    execSync('npm run build', { stdio: 'inherit' });
+  console.log('[pre-public] buildando projeto...');
+  execSync('npm run build', { stdio: 'inherit' });
 
-    console.log('[pre-public] limpando pasta alvo...');
-    await fs.rm(OUT_DIR, { recursive: true, force: true });
-    await ensureDir(OUT_DIR);
+  console.log('[pre-public] limpando pasta alvo...');
+  await fs.rm(OUT_DIR, { recursive: true, force: true });
+  await ensureDir(OUT_DIR);
 
-    console.log('[pre-public] copiando dist...');
-    if (!(await exists(DIST))) throw new Error('dist não encontrado após o build');
-    await copySafe(DIST, path.join(OUT_DIR, 'dist'));
+  console.log('[pre-public] copiando dist...');
+  if (!(await exists(DIST))) throw new Error('dist não encontrado após o build');
+  await copySafe(DIST, path.join(OUT_DIR, 'dist'));
 
-    console.log('[pre-public] copiando docs (se existir)...');
-    if (await exists(DOCS)) {
-        await copySafe(DOCS, path.join(OUT_DIR, 'docs'));
+  console.log('[pre-public] copiando docs (se existir)...');
+  if (await exists(DOCS)) {
+    await copySafe(DOCS, path.join(OUT_DIR, 'docs'));
+  }
+
+  console.log('[pre-public] copiando arquivos de raiz...');
+  const rootFiles = ['README.md', 'LICENSE', 'THIRD-PARTY-NOTICES.txt'];
+  for (const f of rootFiles) {
+    const src = path.join(ROOT, f);
+    if (await exists(src)) {
+      await copySafe(src, path.join(OUT_DIR, f));
     }
+  }
 
-    console.log('[pre-public] copiando arquivos de raiz...');
-    const rootFiles = ['README.md', 'LICENSE', 'THIRD-PARTY-NOTICES.txt'];
-    for (const f of rootFiles) {
-        const src = path.join(ROOT, f);
-        if (await exists(src)) {
-            await copySafe(src, path.join(OUT_DIR, f));
-        }
+  // Inserir aviso de Proveniência/Autoria no topo dos .md dentro de pre-public
+  try {
+    const avisoPath = path.join(ROOT, 'docs', 'partials', 'AVISO-PROVENIENCIA.md');
+    const aviso = await fs.readFile(avisoPath, 'utf-8');
+    const marker = /Proveni[eê]ncia\s+e\s+Autoria/i;
+    async function listMarkdown(dir) {
+      const acc = [];
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+      for (const e of entries) {
+        const p = path.join(dir, e.name);
+        if (e.isDirectory()) acc.push(...(await listMarkdown(p)));
+        else if (e.isFile() && e.name.toLowerCase().endsWith('.md')) acc.push(p);
+      }
+      return acc;
     }
-
-    // Inserir aviso de Proveniência/Autoria no topo dos .md dentro de pre-public
-    try {
-        const avisoPath = path.join(ROOT, 'docs', 'partials', 'AVISO-PROVENIENCIA.md');
-        const aviso = await fs.readFile(avisoPath, 'utf-8');
-        const marker = /Proveni[eê]ncia\s+e\s+Autoria/i;
-        async function listMarkdown(dir) {
-            const acc = [];
-            const entries = await fs.readdir(dir, { withFileTypes: true });
-            for (const e of entries) {
-                const p = path.join(dir, e.name);
-                if (e.isDirectory()) acc.push(...(await listMarkdown(p)));
-                else if (e.isFile() && e.name.toLowerCase().endsWith('.md')) acc.push(p);
-            }
-            return acc;
-        }
-        const mdFiles = await listMarkdown(OUT_DIR);
-        for (const f of mdFiles) {
-            if (path.basename(f).toLowerCase() === 'preview.md') continue;
-            let c = await fs.readFile(f, 'utf-8');
-            const head = c.split(/\r?\n/).slice(0, 30).join('\n');
-            if (!marker.test(head)) {
-                await fs.writeFile(f, `${aviso}\n\n${c.trimStart()}\n`, 'utf-8');
-            }
-        }
-        console.log('[pre-public] Aviso de proveniência inserido nos .md de pre-public.');
-    } catch (e) {
-        console.warn('[pre-public] Aviso de proveniência não inserido:', e?.message || e);
+    const mdFiles = await listMarkdown(OUT_DIR);
+    for (const f of mdFiles) {
+      if (path.basename(f).toLowerCase() === 'preview.md') continue;
+      let c = await fs.readFile(f, 'utf-8');
+      const head = c.split(/\r?\n/).slice(0, 30).join('\n');
+      if (!marker.test(head)) {
+        await fs.writeFile(f, `${aviso}\n\n${c.trimStart()}\n`, 'utf-8');
+      }
     }
+    console.log('[pre-public] Aviso de proveniência inserido nos .md de pre-public.');
+  } catch (e) {
+    console.warn('[pre-public] Aviso de proveniência não inserido:', e?.message || e);
+  }
 
-    // Cria um arquivo indicador de prévia de revisão
-    const previewNote = `# Prévia de Publicação (Review)
+  // Cria um arquivo indicador de prévia de revisão
+  const previewNote = `# Prévia de Publicação (Review)
 
 Este diretório foi gerado pelo script pre-public para revisão do que seria publicado.
 
@@ -90,12 +91,12 @@ Este diretório foi gerado pelo script pre-public para revisão do que seria pub
 
 Data/Horário de geração: ${new Date().toISOString()}
 `;
-    await fs.writeFile(path.join(OUT_DIR, 'PREVIEW.md'), previewNote, 'utf-8');
+  await fs.writeFile(path.join(OUT_DIR, 'PREVIEW.md'), previewNote, 'utf-8');
 
-    console.log('[pre-public] pronto. Veja a pasta pre-public/.');
+  console.log('[pre-public] pronto. Veja a pasta pre-public/.');
 }
 
 main().catch((e) => {
-    console.error('[pre-public] falhou:', e?.message || e);
-    process.exit(1);
+  console.error('[pre-public] falhou:', e?.message || e);
+  process.exit(1);
 });

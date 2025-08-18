@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { Command } from 'commander';
 import { registroAnalistas, listarAnalistas } from '../analistas/registry.js';
 import { log } from '../nucleo/constelacao/log.js';

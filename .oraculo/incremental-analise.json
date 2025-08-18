@@ -1,28 +1,28 @@
 {
-  "versao": 1,
   "arquivos": {
     "b.js": {
+      "analistas": {
+        "t": {
+          "duracaoMs": 0.027899999999817737,
+          "ocorrencias": 1
+        }
+      },
       "hash": "ddfc5d5ff6d3e506",
       "ocorrencias": [
         {
-          "tipo": "Y",
           "mensagem": "m",
-          "relPath": "b.js"
+          "relPath": "b.js",
+          "tipo": "Y"
         }
       ],
-      "analistas": {
-        "t": {
-          "ocorrencias": 1,
-          "duracaoMs": 0.03660000000013497
-        }
-      },
-      "ultimaExecucaoMs": 1755461836156,
-      "reaproveitadoCount": 0
+      "reaproveitadoCount": 0,
+      "ultimaExecucaoMs": 1755483588639
     }
   },
   "estatisticas": {
-    "totalReaproveitamentos": 0,
     "totalArquivosProcessados": 1,
-    "ultimaDuracaoMs": 1
-  }
+    "totalReaproveitamentos": 0,
+    "ultimaDuracaoMs": 6
+  },
+  "versao": 1
 }

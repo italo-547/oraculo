@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { Command } from 'commander';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

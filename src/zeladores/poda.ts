@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { lerEstado, salvarEstado } from './util/persistencia.js';
 import path from 'node:path';
 import pLimit from 'p-limit';

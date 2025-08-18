@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { describe, it, expect, vi } from 'vitest';
 
 // Testa caminho onde primeiros algoritmos falham e um subsequente funciona
