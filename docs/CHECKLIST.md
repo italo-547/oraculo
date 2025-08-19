@@ -102,6 +102,14 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Testes de `relatorio-reestruturar` com persistência via helpers centralizados (`salvarEstado`) cobrindo Markdown/JSON (finalizado em 2025-08-18)
 - [x] Guardian em modo `--json`: logs silenciados durante montagem e restauração do logger após emissão (validado em testes) (finalizado em 2025-08-18)
 
+- [x] Elevação de limiares do gate de cobertura (aplicado em 2025-08-18)
+  - Novos thresholds (aplicados quando `CI=true` ou `COVERAGE[_ENFORCE]=true`):
+    - lines: 95
+    - statements: 95
+    - functions: 96
+    - branches: 90
+  - Micro-teste adicional do scanner cobrindo fallback de prefixo para padrões com sufixo `/**` (`src/nucleo/scanner.fallback-suffix.test.ts`).
+
 ### Notas de Lint (Mapa para futura implementação)
 
 - Mantidos 3 avisos em `src/analistas/detector-arquetipos.ts` como marcadores de melhoria futura:
