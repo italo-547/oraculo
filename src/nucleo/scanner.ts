@@ -14,6 +14,10 @@ interface ScanOptions {
 }
 
 export async function scanRepository(baseDir: string, options: ScanOptions = {}): Promise<FileMap> {
+  // Helpers locais de normalização (não exportados)
+  const toPosix = (s: string) => s.replace(/\\+/g, '/');
+  const trimDotSlash = (s: string) => s.replace(/^\.\/?/, '');
+
   const {
     includeContent = true,
     filter = () => true,
@@ -21,41 +25,51 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       return undefined;
     },
   } = options;
+  // Em modo scan-only, não devemos ler conteúdos de arquivos
+  const efetivoIncluirConteudo = includeContent && !config.SCAN_ONLY;
 
   const fileMap: FileMap = {};
   const statCache = new Map<string, Stats>();
   // Avalia configuração por varredura
-  const hasInclude =
-    (Array.isArray((config as unknown as { CLI_INCLUDE_GROUPS?: unknown }).CLI_INCLUDE_GROUPS) &&
-      ((config as unknown as { CLI_INCLUDE_GROUPS?: string[][] }).CLI_INCLUDE_GROUPS || []).length >
-        0) ||
-    (Array.isArray(config.CLI_INCLUDE_PATTERNS) && config.CLI_INCLUDE_PATTERNS.length > 0);
+  const gruposRaw =
+    (config as unknown as { CLI_INCLUDE_GROUPS?: string[][] }).CLI_INCLUDE_GROUPS || [];
+  const includeGroups = Array.isArray(gruposRaw) ? gruposRaw : [];
+  const includeGroupsNorm: string[][] = includeGroups.map((g) =>
+    (g || []).map((p) => toPosix(trimDotSlash(String(p || '')))),
+  );
+  const includePatterns = Array.isArray(config.CLI_INCLUDE_PATTERNS)
+    ? (config.CLI_INCLUDE_PATTERNS as string[])
+    : [];
+  const includePatternsNorm = includePatterns.map((p) => toPosix(trimDotSlash(String(p || ''))));
+  const excludePatternsNorm = (
+    Array.isArray(config.CLI_EXCLUDE_PATTERNS) ? (config.CLI_EXCLUDE_PATTERNS as string[]) : []
+  ).map((p) => toPosix(String(p || '')));
+  const ignorePatternsNorm = (
+    Array.isArray(config.ZELADOR_IGNORE_PATTERNS)
+      ? (config.ZELADOR_IGNORE_PATTERNS as string[])
+      : []
+  ).map((p) => toPosix(String(p || '')));
+
+  const hasInclude = includeGroupsNorm.length > 0 || includePatternsNorm.length > 0;
   // node_modules explicitamente incluído em algum pattern ou grupo de include
   const includeNodeModulesExplicit = hasInclude
-    ? (
-        [
-          ...(Array.isArray(config.CLI_INCLUDE_PATTERNS)
-            ? (config.CLI_INCLUDE_PATTERNS as string[])
-            : []),
-          ...((
-            (config as unknown as { CLI_INCLUDE_GROUPS?: string[][] }).CLI_INCLUDE_GROUPS || []
-          ).flat() as string[]),
-        ] as string[]
-      ).some((p) => /(^|[\\\/])node_modules([\\\/]|$)/.test(String(p)))
+    ? [...includePatternsNorm, ...includeGroupsNorm.flat()].some((p) =>
+        /(^|\/)node_modules(\/|$)/.test(String(p || '')),
+      )
     : false;
 
   // Quando includes estão ativos, derivamos diretórios-raiz a partir dos prefixos antes do primeiro metacaractere
   function calcularIncludeRoots(padroes: string[] | undefined, grupos?: string[][]): string[] {
     const roots = new Set<string>();
     const candidatos = new Set<string>();
-    if (Array.isArray(padroes)) padroes.forEach((p) => candidatos.add(p));
-    if (Array.isArray(grupos)) for (const g of grupos) g.forEach((p) => candidatos.add(p));
+    if (Array.isArray(padroes)) padroes.forEach((p) => candidatos.add(toPosix(trimDotSlash(p))));
+    if (Array.isArray(grupos))
+      for (const g of grupos) g.forEach((p) => candidatos.add(toPosix(trimDotSlash(p))));
     if (candidatos.size === 0) return [];
     for (const raw of candidatos) {
       let p = String(raw).trim();
       if (!p) continue;
-      p = p.replace(/\\+/g, '/');
-      p = p.replace(/^\.\/?/, '');
+      p = toPosix(trimDotSlash(p));
       let anchor = '';
       if (p.includes('/**')) anchor = p.slice(0, p.indexOf('/**'));
       else if (p.includes('/*')) anchor = p.slice(0, p.indexOf('/*'));
@@ -63,7 +77,7 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       else anchor = '';
       anchor = anchor.replace(/\/+/g, '/').replace(/\/$/, '');
       if (anchor && anchor !== '.' && anchor !== '**') {
-        const baseNorm = String(baseDir).replace(/\\+/g, '/').replace(/\/$/, '');
+        const baseNorm = toPosix(String(baseDir)).replace(/\/$/, '');
         const rootPosix = `${baseNorm}/${anchor}`.replace(/\/+/g, '/');
         roots.add(rootPosix);
       }
@@ -73,10 +87,9 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
 
   // Matcher de include considerando grupos: AND dentro do grupo, OR entre grupos
   function matchInclude(relPath: string): boolean {
-    const grupos = (config as unknown as { CLI_INCLUDE_GROUPS?: string[][] }).CLI_INCLUDE_GROUPS;
-    if (Array.isArray(grupos) && grupos.length > 0) {
+    if (includeGroupsNorm.length > 0) {
       // OR entre grupos
-      for (const g of grupos) {
+      for (const g of includeGroupsNorm) {
         // AND dentro do grupo
         const allMatch = g.every((p) => micromatch.isMatch(relPath, p));
         if (allMatch) return true;
@@ -84,10 +97,9 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       return false;
     }
     // Fallback: lista simples (OR)
-    const patterns = config.CLI_INCLUDE_PATTERNS as string[];
-    if (micromatch.isMatch(relPath, patterns)) return true;
+    if (includePatternsNorm.length && micromatch.isMatch(relPath, includePatternsNorm)) return true;
     // Compat extra: reconhece padrões simples com sufixo '/**' por prefixo
-    for (const p of patterns || []) {
+    for (const p of includePatternsNorm || []) {
       if (typeof p === 'string' && p.endsWith('/**')) {
         const base = p.slice(0, -3); // remove '/**'
         if (base && relPath.startsWith(base)) return true;
@@ -123,19 +135,16 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       const fullPath = path.join(dir, entry.name);
       const relPathRaw = path.relative(baseDir, fullPath);
       // Normaliza para separador POSIX para que micromatch funcione de forma consistente no Windows
-      const relPath = relPathRaw.split('\\').join('/');
+      const relPath = toPosix(relPathRaw);
       // ------------------------------
       // Filtros de inclusão/exclusão aplicados corretamente: diretórios x arquivos
       if (entry.isDirectory() && !entry.isSymbolicLink()) {
         // Diretórios: aplica excludes e ignores padrão (ignores somente quando não há include),
         // além de guarda específica para node_modules.
-        if (
-          config.CLI_EXCLUDE_PATTERNS?.length &&
-          micromatch.isMatch(relPath, config.CLI_EXCLUDE_PATTERNS)
-        ) {
+        if (micromatch.isMatch(relPath, excludePatternsNorm)) {
           continue; // diretório excluído explicitamente
         }
-        if (!hasInclude && micromatch.isMatch(relPath, config.ZELADOR_IGNORE_PATTERNS)) {
+        if (!hasInclude && micromatch.isMatch(relPath, ignorePatternsNorm)) {
           continue; // ignora diretórios padrão quando não há include
         }
         if (/(^|\/)node_modules(\/|$)/.test(relPath) && !includeNodeModulesExplicit) {
@@ -147,13 +156,10 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
         if (hasInclude && !matchInclude(relPath)) {
           continue; // arquivo não incluso explicitamente
         }
-        if (
-          config.CLI_EXCLUDE_PATTERNS?.length &&
-          micromatch.isMatch(relPath, config.CLI_EXCLUDE_PATTERNS)
-        ) {
+        if (micromatch.isMatch(relPath, excludePatternsNorm)) {
           continue; // arquivo excluído
         }
-        if (!hasInclude && micromatch.isMatch(relPath, config.ZELADOR_IGNORE_PATTERNS)) {
+        if (!hasInclude && micromatch.isMatch(relPath, ignorePatternsNorm)) {
           continue; // ignore padrão quando não há include
         }
         if (!filter(relPath, entry)) {
@@ -191,7 +197,7 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
           }
 
           let content: string | null = null;
-          if (includeContent) {
+          if (efetivoIncluirConteudo) {
             const emTeste = !!process.env.VITEST;
             try {
               if (emTeste) {
@@ -314,18 +320,15 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
             // segue como arquivo
           }
           const relPathRaw = path.relative(baseDir, norm);
-          const relPath = relPathRaw.split('\\').join('/');
+          const relPath = toPosix(relPathRaw);
           // Aplica as mesmas regras de filtragem de arquivos
           if (hasInclude && !matchInclude(relPath)) {
             continue;
           }
-          if (
-            config.CLI_EXCLUDE_PATTERNS?.length &&
-            micromatch.isMatch(relPath, config.CLI_EXCLUDE_PATTERNS)
-          ) {
+          if (micromatch.isMatch(relPath, excludePatternsNorm)) {
             continue;
           }
-          if (!hasInclude && micromatch.isMatch(relPath, config.ZELADOR_IGNORE_PATTERNS)) {
+          if (!hasInclude && micromatch.isMatch(relPath, ignorePatternsNorm)) {
             continue;
           }
           // Filtro customizado exige Dirent; criamos um stub mínimo
@@ -337,7 +340,7 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
           if (!filter(relPath, fakeDirent)) continue;
 
           let content: string | null = null;
-          if (includeContent) {
+          if (efetivoIncluirConteudo) {
             const emTeste = !!process.env.VITEST;
             try {
               if (emTeste) content = await lerEstado<string>(norm);
