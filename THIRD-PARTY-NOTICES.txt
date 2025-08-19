@@ -3,7 +3,7 @@ THIRD-PARTY NOTICES
 
 oraculo@0.1.0 — Project license: MIT
 This file lists third-party components included (production) and their notices/licenses.
-Generated at: 2025-08-17T23:06:31.270Z
+Generated at: 2025-08-19T18:19:19.717Z
 
 Notes:
 - This file is generated automatically; do not edit manually.
