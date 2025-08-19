@@ -44,13 +44,13 @@ export default defineConfig(({ mode }) => {
         // Só aplica thresholds quando em CI ou explicitamente solicitado
         ...(enforceThresholds
           ? {
-            thresholds: {
-              lines: 95,
-              functions: 96,
-              branches: 90,
-              statements: 95,
-            },
-          }
+              thresholds: {
+                lines: 95,
+                functions: 96,
+                branches: 90,
+                statements: 95,
+              },
+            }
           : {}),
       },
     },
