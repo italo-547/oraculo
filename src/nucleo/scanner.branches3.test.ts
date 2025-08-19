@@ -7,7 +7,7 @@ const fakeDirent = (name: string, isDir = false) => ({
   isSymbolicLink: () => false,
 });
 
-// Mocks base por arquivo; cada teste pode ajustar com vi.doMock + vi.resetModules
+// Mocks base; cada teste usa vi.resetModules + vi.doMock conforme necessário
 vi.mock('node:fs', () => ({
   promises: {
     readdir: vi.fn(),
@@ -19,6 +19,86 @@ vi.mock('../zeladores/util/persistencia.js', () => ({
   lerArquivoTexto: vi.fn(async (file: string) => 'texto_' + file),
 }));
 
+describe('scanner — branches3 (cobertura de ramos restantes)', () => {
+  it('includeGroups com grupo vazio gera hasInclude=true e calcularIncludeRoots retorna [], varrendo baseDir', async () => {
+    vi.resetModules();
+    // micromatch não será usado porque grupos vazios fazem every([])===true
+    vi.doMock('micromatch', () => ({
+      default: { isMatch: () => false },
+      isMatch: () => false,
+    }));
+    vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
+      config: {
+        ZELADOR_IGNORE_PATTERNS: 'nao-array', // cobre ramo de normalização "não-array"
+        CLI_INCLUDE_PATTERNS: 'tambem-nao-array',
+        CLI_INCLUDE_GROUPS: [/* grupo vazio */ []],
+        CLI_EXCLUDE_PATTERNS: 'exclude-nao-array',
+        REPORT_SILENCE_LOGS: true,
+      },
+    }));
+
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+    (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);
+    (promises.stat as any).mockResolvedValueOnce({
+      mtimeMs: 42,
+      isDirectory: () => false,
+      isSymbolicLink: () => false,
+    });
+
+    const res = await scanRepository('/base');
+    expect(Object.keys(res)).toEqual(['a.txt']);
+    expect(res['a.txt'].ultimaModificacao).toBe(42);
+  });
+
+  it('root derivado: stat sem isDirectory cai no fallback de readdir para detectar diretório', async () => {
+    vi.resetModules();
+    // micromatch: inclui qualquer coisa que comece com 'dir/' quando pattern 'dir/**'
+    vi.doMock('micromatch', () => ({
+      default: {
+        isMatch: (str: string, patterns: string[]) =>
+          Array.isArray(patterns) && patterns.some((p) => p === 'dir/**' && str.startsWith('dir/')),
+      },
+      isMatch: (str: string, patterns: string[]) =>
+        Array.isArray(patterns) && patterns.some((p) => p === 'dir/**' && str.startsWith('dir/')),
+    }));
+    vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
+      config: {
+        ZELADOR_IGNORE_PATTERNS: [],
+        CLI_INCLUDE_PATTERNS: ['dir/**'],
+        CLI_EXCLUDE_PATTERNS: [],
+        REPORT_SILENCE_LOGS: true,
+      },
+    }));
+
+    const { scanRepository } = await import('./scanner.js');
+    const { promises } = await import('node:fs');
+
+    // Controla comportamento de readdir para '/base/dir': primeira tentativa falha (força caminho de arquivo),
+    // fallback dentro do bloco usa readdir novamente e desta vez detecta diretório; depois scan lê conteúdo.
+    let readdirCalls = 0;
+    (promises.readdir as any).mockImplementation(async (p: string) => {
+      const n = p.replace(/\\/g, '/');
+      if (n === '/base/dir') {
+        readdirCalls++;
+        if (readdirCalls === 1) throw new Error('not-a-dir-first-try');
+        // a partir da 2ª chamada, tratar como diretório com 1 arquivo
+        return [fakeDirent('a.txt')];
+      }
+      if (n === '/base') return [fakeDirent('dir', true)];
+      return [];
+    });
+    // stat retorna objeto sem função isDirectory (cobre else do fallback)
+    (promises.stat as any).mockImplementation(async (p: string) => ({ mtimeMs: 7 }));
+
+    const res = await scanRepository('/base');
+    const keys = Object.keys(res)
+      .map((k) => k.replace(/\\/g, '/'))
+      .sort();
+    expect(keys).toEqual(['dir/a.txt']);
+    expect(res['dir/a.txt']?.ultimaModificacao).toBe(7); // mtimeMs definido no mock
+  });
+});
 describe('scanner — branches extras 2', () => {
   it("calcularIncludeRoots: padrão 'abc/*' gera anchor 'abc' e inclui arquivo", async () => {
     vi.resetModules();
