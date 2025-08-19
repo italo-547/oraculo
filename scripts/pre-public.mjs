@@ -4,7 +4,7 @@ import path from 'node:path';
 import { execSync } from 'node:child_process';
 
 const ROOT = process.cwd();
-const OUT_DIR = path.join(ROOT, 'pre-public');
+const OUT_DIR = path.join(ROOT, 'preview-oraculo');
 const DIST = path.join(ROOT, 'dist');
 const DOCS = path.join(ROOT, 'docs');
 
@@ -26,23 +26,23 @@ async function exists(p) {
 }
 
 async function main() {
-  console.log('[pre-public] buildando projeto...');
+  console.log('[preview-oraculo] buildando projeto...');
   execSync('npm run build', { stdio: 'inherit' });
 
-  console.log('[pre-public] limpando pasta alvo...');
+  console.log('[preview-oraculo] limpando pasta alvo...');
   await fs.rm(OUT_DIR, { recursive: true, force: true });
   await ensureDir(OUT_DIR);
 
-  console.log('[pre-public] copiando dist...');
+  console.log('[preview-oraculo] copiando dist...');
   if (!(await exists(DIST))) throw new Error('dist não encontrado após o build');
   await copySafe(DIST, path.join(OUT_DIR, 'dist'));
 
-  console.log('[pre-public] copiando docs (se existir)...');
+  console.log('[preview-oraculo] copiando docs (se existir)...');
   if (await exists(DOCS)) {
     await copySafe(DOCS, path.join(OUT_DIR, 'docs'));
   }
 
-  console.log('[pre-public] copiando arquivos de raiz...');
+  console.log('[preview-oraculo] copiando arquivos de raiz...');
   const rootFiles = ['README.md', 'LICENSE', 'THIRD-PARTY-NOTICES.txt'];
   for (const f of rootFiles) {
     const src = path.join(ROOT, f);
@@ -75,9 +75,9 @@ async function main() {
         await fs.writeFile(f, `${aviso}\n\n${c.trimStart()}\n`, 'utf-8');
       }
     }
-    console.log('[pre-public] Aviso de proveniência inserido nos .md de pre-public.');
+    console.log('[preview-oraculo] Aviso de proveniência inserido nos .md de preview-oraculo.');
   } catch (e) {
-    console.warn('[pre-public] Aviso de proveniência não inserido:', e?.message || e);
+    console.warn('[preview-oraculo] Aviso de proveniência não inserido:', e?.message || e);
   }
 
   // Cria um arquivo indicador de prévia de revisão
@@ -93,10 +93,10 @@ Data/Horário de geração: ${new Date().toISOString()}
 `;
   await fs.writeFile(path.join(OUT_DIR, 'PREVIEW.md'), previewNote, 'utf-8');
 
-  console.log('[pre-public] pronto. Veja a pasta pre-public/.');
+  console.log('[preview-oraculo] pronto. Veja a pasta preview-oraculo/.');
 }
 
 main().catch((e) => {
-  console.error('[pre-public] falhou:', e?.message || e);
+  console.error('[preview-oraculo] falhou:', e?.message || e);
   process.exit(1);
 });
