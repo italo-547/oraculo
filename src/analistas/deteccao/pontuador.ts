@@ -34,6 +34,14 @@ export function scoreArquetipo(
       if (set.has(dep)) return true;
     }
     return false;
+  const allDependencies = new Set<string>();
+  for (const set of grafoDependencias.values()) {
+    for (const dep of set) {
+      allDependencies.add(dep);
+    }
+  }
+  function hasDependencyGlobal(dep: string): boolean {
+    return allDependencies.has(dep);
   }
   const dependencyMatches = (def.dependencyHints || []).filter((dep) => hasDependencyGlobal(dep));
   const filePatternMatches = (def.filePresencePatterns || []).filter((pat) =>
