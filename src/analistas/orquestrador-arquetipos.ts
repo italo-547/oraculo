@@ -65,7 +65,10 @@ export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetip
       if (c.nome !== 'monorepo-packages') return true;
       const forb = c.forbiddenPresent || [];
       // se houver apenas 'src' como forbidden detectado, descartamos este candidato especial
-      return !(forb.length === 1 && forb[0] === 'src');
+      if (c.nome !== SPECIAL_MONOREPO_ARCHETYPE) return true;
+      const forb = c.forbiddenPresent || [];
+      // se houver apenas o diretório proibido especial detectado, descartamos este candidato especial
+      return !(forb.length === 1 && forb[0] === SPECIAL_FORBIDDEN_DIR);
     });
     if (filtrados.length === 0) {
       // caso todos tenham sido filtrados, prossegue com fluxo normal
