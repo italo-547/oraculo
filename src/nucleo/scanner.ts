@@ -5,6 +5,7 @@ import { promises as fs } from 'node:fs';
 import type { Dirent, Stats } from 'node:fs';
 import path from 'path';
 import { config } from '../nucleo/constelacao/cosmos.js';
+import { shouldInclude } from './constelacao/include-exclude.js';
 import type { FileMap, FileEntry } from '../tipos/tipos.js';
 
 interface ScanOptions {
@@ -162,7 +163,12 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
         if (!hasInclude && micromatch.isMatch(relPath, ignorePatternsNorm)) {
           continue; // ignore padrão quando não há include
         }
-        if (!filter(relPath, entry)) {
+        // Filtro customizado e regras dinâmicas opcionais
+        if (
+          (config.INCLUDE_EXCLUDE_RULES &&
+            !shouldInclude(relPath, entry, config.INCLUDE_EXCLUDE_RULES)) ||
+          !filter(relPath, entry)
+        ) {
           continue; // filtro customizado
         }
         try {
@@ -337,7 +343,12 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
             isDirectory: () => false,
             isSymbolicLink: () => false,
           } as unknown as Dirent;
-          if (!filter(relPath, fakeDirent)) continue;
+          if (
+            (config.INCLUDE_EXCLUDE_RULES &&
+              !shouldInclude(relPath, fakeDirent, config.INCLUDE_EXCLUDE_RULES)) ||
+            !filter(relPath, fakeDirent)
+          )
+            continue;
 
           let content: string | null = null;
           if (efetivoIncluirConteudo) {

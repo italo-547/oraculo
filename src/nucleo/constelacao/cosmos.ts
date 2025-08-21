@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import type { IncludeExcludeConfig } from '../../tipos/tipos.js';
 
 // Diretório atual do usuário (base do projeto)
 const CWD = process.cwd();
@@ -113,6 +114,8 @@ export const configDefault = {
   // O arquivo é incluído se casar QUALQUER grupo (OR entre grupos). Mantemos CLI_INCLUDE_PATTERNS como lista achatada para raízes/compat.
   CLI_INCLUDE_GROUPS: [] as string[][],
   CLI_EXCLUDE_PATTERNS: [] as string[], // sempre excluídos (aplicado após include)
+  // Regras dinâmicas e programáticas (opcionais) para decisões de include/exclude
+  INCLUDE_EXCLUDE_RULES: undefined as IncludeExcludeConfig | undefined,
   ZELADOR_LINE_THRESHOLD: 20,
 
   // 🔍 Analistas

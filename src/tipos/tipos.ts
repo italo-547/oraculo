@@ -122,11 +122,25 @@ export interface Tecnica {
   aplicar: (
     src: string,
     relPath: string,
-    ast: NodePath | null,
+    ast: import('@babel/traverse').NodePath<import('@babel/types').Node> | null,
     fullPath?: string,
     contexto?: ContextoExecucao,
   ) => TecnicaAplicarResultado | Promise<TecnicaAplicarResultado>;
 }
+
+// Tipos para configuração dinâmica de include/exclude
+export type IncludeExcludeRule = {
+  include?: boolean;
+  exclude?: boolean;
+  patterns?: string[];
+  custom?: (relPath: string, entry: import('node:fs').Dirent) => boolean;
+};
+
+export type IncludeExcludeConfig = {
+  globalInclude?: string[];
+  globalExclude?: string[];
+  dirRules?: Record<string, IncludeExcludeRule>;
+};
 
 // Interface futura unificada para analistas (superset de Tecnica).
 export interface Analista extends Tecnica {
