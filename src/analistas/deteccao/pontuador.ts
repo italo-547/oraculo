@@ -29,11 +29,7 @@ export function scoreArquetipo(
     norm.some((f) => f.startsWith(d + '/') || f === d),
   );
   // Verifica dependências sugeridas no grafo global (qualquer arquivo pode importar)
-  function hasDependencyGlobal(dep: string): boolean {
-    for (const set of grafoDependencias.values()) {
-      if (set.has(dep)) return true;
-    }
-    return false;
+  // Otimização: materializa um Set único de todas as dependências para lookup O(1)
   const allDependencies = new Set<string>();
   for (const set of grafoDependencias.values()) {
     for (const dep of set) {

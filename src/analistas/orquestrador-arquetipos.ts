@@ -62,13 +62,12 @@ export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetip
     // Heurística de segurança: ignore o candidato 'monorepo-packages' quando o único forbidden presente for 'src'
     // (cenário comum em projetos Node simples com pasta src/, que não devem ser classificados como monorepo).
     const filtrados = apenasPenalidades.filter((c) => {
-      if (c.nome !== 'monorepo-packages') return true;
-      const forb = c.forbiddenPresent || [];
-      // se houver apenas 'src' como forbidden detectado, descartamos este candidato especial
-      if (c.nome !== SPECIAL_MONOREPO_ARCHETYPE) return true;
-      const forb = c.forbiddenPresent || [];
-      // se houver apenas o diretório proibido especial detectado, descartamos este candidato especial
-      return !(forb.length === 1 && forb[0] === SPECIAL_FORBIDDEN_DIR);
+      // Regra específica: se o candidato for 'monorepo-packages' e o único forbidden detectado for 'src', descartamos
+      if (c.nome === 'monorepo-packages') {
+        const forb = c.forbiddenPresent || [];
+        if (forb.length === 1 && forb[0] === 'src') return false;
+      }
+      return true;
     });
     if (filtrados.length === 0) {
       // caso todos tenham sido filtrados, prossegue com fluxo normal
