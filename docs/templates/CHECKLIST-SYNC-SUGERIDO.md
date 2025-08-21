@@ -3,7 +3,7 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-# Checklist de Sincronização – Oráculo
+# Checklist de Sincronização – Oráculo (Template)
 
 Use este checklist para comparar com o `docs/CHECKLIST.md` atual e garantir alinhamento.
 
