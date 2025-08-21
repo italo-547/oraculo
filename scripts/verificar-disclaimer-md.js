@@ -19,7 +19,12 @@ const files = stdout
   .split('\n')
   .map((s) => s.trim())
   .filter(Boolean)
-  .filter((f) => f !== 'docs/partials/AVISO-PROVENIENCIA.md' && !f.startsWith('pre-public/'));
+  .filter(
+    (f) =>
+      f !== 'docs/partials/AVISO-PROVENIENCIA.md' &&
+      !f.startsWith('pre-public/') &&
+      !f.startsWith('preview-oraculo/'),
+  );
 
 const marker = /Proveni[eê]ncia e Autoria/i;
 const hasMarker = (text) => marker.test(text);

@@ -12,7 +12,7 @@ Nota de idioma: por padrão, escreva em português brasileiro. Exceção: docume
 - [ ] Segurança: sem segredos em código/commits/logs; entradas validadas; padrões seguros por defeito.
 - [ ] Qualidade: testes incluídos/atualizados e passando; lint/format aplicados.
 - [ ] Documentação: inclui o aviso de “Proveniência e Autoria” nos .md relevantes.
-- [ ] Varredura de .md: `node scripts/scan-markdown.mjs` sem pendências.
+- [ ] Varredura de .md: `npm run md:scan` sem pendências.
 - [ ] Referências: somente links para documentação oficial (se houver), colocados na descrição do PR.
 
 ## Checklist Operacional (governança)

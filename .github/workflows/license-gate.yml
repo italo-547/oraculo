@@ -1,8 +1,10 @@
 name: license-gate
 
 on:
+  push:
+    branches: [develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   license-audit:

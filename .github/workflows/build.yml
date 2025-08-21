@@ -2,9 +2,9 @@ name: Validação Extendida do Oráculo
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, develop]
   pull_request:
-    branches: [main, master]
+    branches: [main, develop]
 
 jobs:
   oraculo-check:
@@ -13,16 +13,6 @@ jobs:
     steps:
       - name: Clonar repositório
         uses: actions/checkout@v5
-
-      - name: Configurar cache de dependências
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Apagar build antigo
         run: rm -rf dist tsconfig.tsbuildinfo
@@ -35,23 +25,11 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      - name: Verificar tipos (typecheck)
-        run: npm run typecheck
-
-      - name: Lint (sem ignorar erro)
-        run: npm run lint
-
-      - name: Verificar formatação (Prettier)
-        run: npm run format
+      - name: Checagens de estilo (lint + types + prettier)
+        run: npm run check:style
 
       - name: Auditoria de dependências (permitindo nível moderado)
         run: npm run security:deps
-
-      - name: Exportar artefato dist
-        uses: actions/upload-artifact@v4
-        with:
-          name: oraculo-dist
-          path: dist
 
       - name: Compilar projeto
         run: npm run build
@@ -66,7 +44,11 @@ jobs:
           node dist/cli.js atualizar --help
 
       - name: Rodar testes e cobertura
-        run: npm run coverage
+        run: npm run coverage && npm run coverage:gate
 
-      - name: Gate de cobertura
-        run: npm run coverage:gate
+      - name: Exportar artefato dist
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: oraculo-dist
+          path: dist

@@ -25,6 +25,14 @@ Obrigado pelo interesse! Este guia resume expectativas para mudanças de código
 4. Atualizar docs afetados (ex: novo campo JSON, nova flag CLI).
 5. Abrir PR descrevendo: problema, solução, impacto em usuários, riscos.
 
+Referências rápidas:
+
+- Guia de desenvolvimento: `docs/DESENVOLVIMENTO.md`
+- Template de PR: `.github/pull_request_template.md`
+- Templates de issues: `.github/ISSUE_TEMPLATE/*`
+- Código de Conduta: `CODE_OF_CONDUCT.md`
+- Política de Segurança: `SECURITY.md`
+
 ## Estilo de Código
 
 - TypeScript ESM puro (sem `require`).

@@ -35,7 +35,12 @@ async function listMarkdown() {
     for (const e of entries) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) {
-        if (/^(node_modules|dist|.git|pre-public|coverage|relatorios|.oraculo)$/i.test(e.name))
+        // Ignora diretórios comuns e diretórios especiais do projeto (escape de pontos)
+        if (
+          /^(node_modules|dist|\.git|pre-public|preview-oraculo|coverage|relatorios|\.oraculo)$/i.test(
+            e.name,
+          )
+        )
           continue;
         out.push(...(await walk(p)));
       } else if (/\.md$/i.test(e.name)) {

@@ -1,6 +1,8 @@
 name: compliance
 
 on:
+  push:
+    branches: [develop]
   pull_request:
     branches: [main, develop]
 
@@ -20,6 +22,6 @@ jobs:
       - name: Testes (com cobertura mínima)
         run: npm run coverage:gate
       - name: Scan Markdown (aviso e riscos; estrito + readme)
-        run: node scripts/scan-markdown.mjs --strict --strict-readme
+        run: npm run md:scan:strict
       - name: Auditoria de Licenças (falha no copyleft)
         run: node scripts/auditar-licencas.mjs --fail-on-copyleft

@@ -146,6 +146,7 @@ async function main() {
     const rel = path.relative(ROOT, f).replace(/\\/g, '/');
     if (
       rel.startsWith('pre-public/') ||
+      rel.startsWith('preview-oraculo/') ||
       rel.startsWith('.abandonados/') ||
       rel.startsWith('.deprecados/') ||
       rel.startsWith('relatorios/')
@@ -182,6 +183,7 @@ async function main() {
     const rel = path.relative(ROOT, f).replace(/\\/g, '/');
     if (
       rel.startsWith('pre-public/') ||
+      rel.startsWith('preview-oraculo/') ||
       rel.startsWith('.abandonados/') ||
       rel.startsWith('.deprecados/') ||
       rel.startsWith('relatorios/')
