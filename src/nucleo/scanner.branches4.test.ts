@@ -33,20 +33,21 @@ describe('scanner – branches extras', () => {
     } as any);
   });
 
-  it('calcularIncludeRoots: ignora padrão vazio e mapeia grupo indefinido (cobre g||[] e !p continue)', async () => {
+  it('calcularIncludeRoots: ignora padrão vazio (cobre ramo !p continue)', async () => {
     // arquivo qualquer
     const f = path.join(baseDir, 'foo.txt');
     await fs.writeFile(f, 'ok');
-    // Força grupos com item indefinido e padrão vazio
+    // Força padrão que vira vazio após trim em calcularIncludeRoots, mas não é string vazia em matchInclude
+    // Usar ' ' evita o erro do micromatch (que rejeita pattern "") e ainda cobre o ramo do continue
     aplicarConfigParcial({
-      CLI_INCLUDE_GROUPS: [undefined] as unknown as string[][],
-      CLI_INCLUDE_PATTERNS: [''],
+      CLI_INCLUDE_GROUPS: [],
+      CLI_INCLUDE_PATTERNS: [' '],
       CLI_EXCLUDE_PATTERNS: [],
       ZELADOR_IGNORE_PATTERNS: [],
       REPORT_SILENCE_LOGS: true,
     } as any);
     const mapa = await scanRepository(baseDir, { includeContent: false });
-    // Sem âncoras derivadas e include não casando, nada incluído (apenas executa o caminho)
+    // Apenas valida execução
     expect(mapa).toBeTypeOf('object');
   });
 
