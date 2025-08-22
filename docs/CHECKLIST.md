@@ -5,7 +5,7 @@
 
 # Checklist de Melhorias e Ajustes
 
-**Última atualização: 2025-08-21**
+**Última atualização: 2025-08-22**
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
@@ -62,12 +62,22 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
   - [ ] **AÇÃO NECESSÁRIA**: Aplicar no repositório (Settings → Branches) ou via script com contexts definidos (meta: 2025-08-25)
   - [ ] Validar com PR de teste (checks obrigatórios e bloqueios ativos) (meta: 2025-08-26)
 
+- [ ] Timeout por analista com cancelamento (Item 21) (meta: 2025-08-28)
+- [ ] Versão de schema nos relatórios JSON (Item 23) (meta: 2025-08-27)
+- [ ] Pool de workers para paralelizar por arquivo (Item 15) (meta: 2025-09-02)
+- [ ] Sandbox opcional para plugins externos (Item 9) (meta: 2025-09-05)
+
 ### Média Prioridade
 
 - [ ] Monitor de dependências (documentação e automação)
 - [x] Documentar estratégia de mocks de AST (finalizado em 2025-08-14)
 - [ ] Guia de padronização de código / convenções
 - [ ] Gate de regressão de performance opcional
+
+- [ ] Reforço de tipagem discriminada de ocorrências (Item 10) (meta: 2025-09-03)
+- [ ] Linter interno de analistas (verificação de testes mínimos) (Item 19) (meta: 2025-09-04)
+- [ ] Priorização por git diff (Item 16) (meta: 2025-09-06)
+- [ ] Snapshot/diff ampliado de relatórios (JSON/MD) (Item 18) (meta: 2025-09-07)
 
 - [x] Compliance: automatizar auditoria de licenças no CI e validar headers SPDX (CONCLUÍDO em 2025-08-21)
 
@@ -81,9 +91,11 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [ ] Sistema de cache distribuído para análises em CI
 - [ ] Suporte para monorepos complexos (workspaces)
 
+- [ ] Flag para suprimir TODOs/limiar por arquivo (reduzir ruído em escopos amplos)
+
 ### Limitações conhecidas (registradas)
 
-- [x] `--scan-only` + `--include` ainda ignora `node_modules` em alguns cenários. Harmonização implementada (finalizado em 2025-08-18)
+- [x] `--scan-only` + `--include` ignorava `node_modules` em alguns cenários. Harmonização implementada (finalizado em 2025-08-22)
   - Mitigação aplicada: detecção de inclusão explícita de `node_modules` via `--include` (padrões e grupos) e normalização de caminhos no Windows
 - [x] Flakiness no Vitest quando existe `.oraculo/historico-metricas` no workspace de teste. Mitigação implementada (finalizado em 2025-08-18)
 
@@ -137,6 +149,12 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Documentar comandos e flags atuais no README (diagnosticar, guardian, podar, analistas, reestruturar, perf) (finalizado em 2025-08-18)
 - [x] Atualizar notas de `--include`/`--exclude` e comportamento em `--json` no README (finalizado em 2025-08-18)
 - [x] Compatibilidade Windows validada (exemplos PowerShell; scripts cross-env) (finalizado em 2025-08-18)
+
+## Concluídos Recentes (Sessão 2025-08-22)
+
+- [x] Harmonização completa de filtros: `--include`/`--exclude` controlam o escopo; analistas deixaram de impor limitação rígida a `src/` (2025-08-22)
+- [x] `node_modules` passa a ser analisado quando incluído explicitamente, inclusive em `--scan-only` (2025-08-22)
+- [x] Atualização de documentação (README principal, docs/README, docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md, src/analistas/README.md) refletindo o novo comportamento (2025-08-22)
 
 - [x] Estabilizar pre-commit no Windows (lint-staged + `.gitignore` ancorado; Prettier `--ignore-unknown`; evitar bloqueios por caminhos ignorados) (finalizado em 2025-08-18)
 

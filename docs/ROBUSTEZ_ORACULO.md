@@ -137,12 +137,39 @@ Estado Atual:
   - (11) Doc automática (--doc)
   - (17) Hash de Conteúdo Eficiente (xxhash64 com fallback sha1)
 
+- Entregas recentes (2025-08-22):
+  - Harmonização de filtros: `--include/--exclude` controlam 100% do escopo; analistas não impõem mais limitação rígida a `src/`.
+  - `node_modules` pode ser analisado quando incluído explicitamente, inclusive em `--scan-only`.
+  - Modo `--json` estabilizado (logs intermediários silenciados e escape Unicode). Normalização POSIX de paths.
+  - Redução de ruído: `ritual-comando` limita "padrao-ausente" a arquivos com face de comandos; `todo-comments` respeita escopo do scanner.
+
 - Em Progresso / Próximos Passos Detalhados:
   - (8) Evolução: granularidade por analista/config, limpeza seletiva e estatísticas de reaproveitamento persistidas.
   - (7) Evolução: persistir histórico de métricas e diffs entre execuções.
   - (13) Config Dinâmico (merge multi-fontes) – próximo alvo recomendado.
   - (10) Tipagem fortalecida de ocorrências (discriminated unions).
   - (14) Reclassificação de erros AST em PARSE_ERRO.
+
+Lacunas/prudência:
+
+- (9) Sandbox de plugins ainda não implementado (risco controlado por whitelist de extensões)
+- (15) Pool de workers ausente (impacto em bases muito grandes)
+- (16) Priorização por mudanças (git diff) não aplicada
+- (21) Timeouts/cancelamentos por analista ausentes
+- (23) Versão de schema JSON ausente (pode afetar consumidores)
+- (19) Linter interno de analistas (testes mínimos) não automatizado
+- (18) Snapshot/diff amplo de relatórios além de métricas ainda pendente
+
+Recomendações priorizadas (próximos 2 semanas):
+
+1. (23) Incluir `schemaVersion` na raiz do JSON de saída e versionar campos críticos.
+2. (21) Adicionar timeout cancelável por analista (default conservador) e telemetria de cancelamentos.
+3. (15) Introduzir pool simples de workers (paralelismo por arquivo com limite configurável).
+4. (9) Sandbox opcional para plugins externos (feature flag) com tempo limite por worker.
+5. (10) Reforçar tipagem discriminada e reduzir `OcorrenciaGenerica`.
+6. (19) Linter interno: checar presença de `.test.ts` por analista e falhar no CI se faltar.
+7. (16) Priorizar por git diff quando disponível; fallback por raízes derivadas do include.
+8. (18) Export de snapshot/diff de relatórios (JSON/MD) como primeiro-class output.
 
 Histórico recente:
 

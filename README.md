@@ -258,13 +258,13 @@ Isso facilita métricas de adoção multi-stack e priorização de analistas ded
 Use para um diagnóstico focado (investigar somente uma pasta, ou incluir node_modules pontualmente, ou excluir arquivos de teste). Ambos aceitam:
 
 - Múltiplas ocorrências da mesma flag (`--include a --include b`)
-- Lista separada por vírgula (`--include "a,b,c"`)
+- Lista separada por vírgula e/ou espaços (`--include "a,b,c"` ou `--include "a b c"`)
 - Separação por espaços dentro do valor (`--exclude "dist/** docs/**"`)
   Espaços e vírgulas são normalizados e duplicados removidos. Padrões são globs micromatch.
 
 Regras de precedência:
 
-1. Se `--include` estiver presente e não vazio: somente arquivos que casem pelo menos um pattern listado serão considerados (ignora os ignores padrão, ex: permite inspecionar `node_modules`).
+1. Se `--include` estiver presente e não vazio: somente arquivos que casem pelo menos um pattern listado serão considerados (ignora os ignores padrão; ex.: permite inspecionar `node_modules`).
 2. Em seguida aplica-se `--exclude` (remove qualquer arquivo que casar com algum pattern extra).
 3. Se `--include` não for usado: usa ignores padrão e depois aplica `--exclude`.
 
@@ -274,7 +274,7 @@ Exemplos:
 # Incluir apenas arquivos TypeScript e package.json
 oraculo diagnosticar --include "src/**/*.ts,package.json"
 
-# Inspecionar apenas node_modules (bypass de ignore padrão) para auditoria pontual
+# Inspecionar apenas node_modules (bypass do ignore padrão) para auditoria pontual
 oraculo diagnosticar --include "node_modules/**"
 
 # Incluir somente código de produção e excluir testes
@@ -293,14 +293,16 @@ oraculo diagnosticar --include "src/core/**,src/guardian/**" --exclude "**/mocks
 Boas práticas:
 
 - Evite listas muito grandes de globs: separe investigações em execuções menores.
-- Use `--json` junto quando integrar em scripts (a saída filtrada reduz ruído e volume de dados).
+- Use `--json` junto quando integrar em scripts (a saída filtrada reduz ruído e volume de dados). Em `--json`, logs intermediários são silenciados e apenas o objeto final é impresso.
 - Para auditorias de dependências, combine com flags silenciosas: `oraculo diagnosticar --include "node_modules/**" --silence --json`.
 
-Limitações atuais:
+Notas:
 
-- Apenas separação por vírgula suportada (futuramente avaliar suporte a repetir `--include`).
-- Não há feedback explícito listando padrões aplicados (pode ser adicionado em modo `--verbose`).
-- Mesmo com `--scan-only` e `--include`, `node_modules` pode ser ignorado em alguns cenários por guard-rails. Ver detalhes e próximos passos em `docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md`.
+- Suporta repetir a flag e listas com vírgulas e/ou espaços; padrões duplicados são normalizados.
+- `node_modules` é ignorado por padrão, mas passa a ser analisado quando você o inclui explicitamente via `--include`.
+- Para ver a consolidação dos padrões aplicados, use `--verbose` (fora de `--json`).
+
+Observação importante: os analistas respeitam o conjunto de arquivos já filtrado pelo scanner/CLI. Não há mais limitação rígida a `src/`; o escopo é totalmente controlado por `--include`/`--exclude`.
 
 Se precisar resetar filtros programaticamente, não passe as flags (elas não persistem em config).
 

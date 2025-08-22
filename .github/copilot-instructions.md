@@ -222,7 +222,7 @@ Observações de testes:
 ## Documentação — Fonte Única de Verdade
 
 - Roadmap operacional agora vive no `docs/CHECKLIST.md` (evitar múltiplos roadmaps divergentes).
-- Documentos removidos: `ROADMAP_ITERACOES.md`, `SUGESTOES-PRIORITARIAS.md`, `JSDOC.md` raiz (duplicado).
+- Documentos legados foram movidos para `docs/legado/` com stubs de redirecionamento nos caminhos originais (inclusive no pacote de preview em `preview-oraculo/docs/legado/`): `ROADMAP_ITERACOES.md`, `SUGESTOES-PRIORITARIAS.md`, `JSDOC.md` (raiz/preview).
 - Guardian detalhado em `docs/guardian.md`.
 - Test layers em `docs/relatorios/camadas-testes.md`.
 - Performance baseline em `docs/perf/README.md`.
@@ -248,6 +248,14 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 - Largura: use o cálculo dinâmico; se falhar, aplique fallbacks determinísticos — modo compacto: 84 colunas; modo padrão: 96 colunas. Em ambientes de DEV/CI onde `chalk.columns` não está disponível, trate exceções e caia no fallback.
 - Logs verbosos de filtros (include/exclude) não devem quebrar molduras; em `--json` devem estar silenciados.
 
+### Filtros de varredura: include/exclude e node_modules (2025-08-22)
+
+- Grupos de include: dentro do grupo é AND; entre grupos é OR.
+- Precedência: include tem prioridade sobre exclude e ignores padrão.
+- `node_modules`: ignorado por padrão; ao incluir explicitamente (ex.: `--include node_modules`), deve ser varrido inclusive em `--scan-only`.
+- Normalização de caminhos: padronize internamente para POSIX e aceite separadores do Windows na entrada.
+- Analistas devem operar apenas sobre o conjunto filtrado pelo scanner/CLI (evitar filtros de diretório hardcoded nos analistas).
+
 ## Dependências e Requisitos
 
 - Node.js 24.0.4
@@ -259,6 +267,8 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 
 - Toda documentação e relatórios devem ser centralizados na pasta `docs/` na raiz do projeto.
 - Relatórios, históricos e arquivos de referência devem ser movidos para `docs/`.
+- Documentos obsoletos/duplicados devem ser arquivados em `docs/legado/` e, quando existirem em caminhos antigos, manter apenas um stub que aponta para `docs/legado/`.
+- O pacote de preview segue a mesma política em `preview-oraculo/docs/legado/`.
 - Exemplos: `docs/RELATORIO.md`, `docs/CHECKLIST.md`.
 
 ## Checklist de Melhorias
@@ -305,6 +315,22 @@ Se encontrar padrões não documentados ou dúvidas sobre fluxos, registre exemp
 
 ---
 
-**Última atualização das diretrizes: 2025-08-18**
+## Novas Diretrizes (2025-08-22)
+
+### Documentação legada
+
+- Mover documentos obsoletos para `docs/legado/` e manter stubs nos caminhos antigos com aviso e link de redirecionamento.
+- Replicar a mesma estrutura no pacote de preview em `preview-oraculo/docs/legado/`.
+- Planejamento ativo deve permanecer em `docs/CHECKLIST.md`.
+
+### Filtros dinâmicos include/exclude
+
+- Usar `--include` e `--exclude` unificados conforme semântica documentada.
+- `include` explícito sobrepõe `exclude`/ignores; respeitar `node_modules` quando incluído.
+- Silenciar logs verbosos durante montagem de `--json`.
+
+---
+
+**Última atualização das diretrizes: 2025-08-22**
 
 ---

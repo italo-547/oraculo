@@ -26,6 +26,8 @@ O registro central fica em `src/analistas/registry.ts`. Hoje inclui:
 
 Observação: a detecção de arquétipos (biblioteca de estruturas) é orquestrada pelo CLI via `detector-arquetipos.ts` e não faz parte do array de técnicas, pois consolida sinais de múltiplos arquivos e gera `planoSugestao`.
 
+Escopo de arquivos: os analistas respeitam exatamente o conjunto de arquivos fornecido pelo scanner/CLI conforme `--include`/`--exclude`. Evite impor filtros rígidos de caminho dentro do `test()`; prefira apenas filtrar por extensões, ignorar testes/specs e auto-exclusões, delegando o escopo ao scanner.
+
 ## Arquivos típicos nesta pasta
 
 - `*-test.ts` e `*.extra.test.ts`: testes do analista (contrato, branches e exemplos extra)

@@ -5,7 +5,7 @@
 
 # (LEGADO) Guia JSDoc
 
-> Documento LEGADO (preview) — movido para `docs/legado/JSDOC.md` neste pacote.
+> Documento reduzido. Padrões principais agora vivem em `CONTRIBUTING.md` e `docs/TOOLING.md`.
 
 Geração opcional:
 
@@ -17,4 +17,3 @@ jsdoc -c .vscode/jsdoc.json
 Destino sugerido (ignorado no repo): `docs/jsdoc/`.
 
 Preferimos comentários concisos diretamente nas funções e tipos exportados; geração automatizada não é obrigatória.
-Padrões atuais vivem em `CONTRIBUTING.md` e `docs/TOOLING.md` no repositório principal.

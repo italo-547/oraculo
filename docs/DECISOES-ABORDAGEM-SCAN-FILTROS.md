@@ -5,7 +5,7 @@
 
 # Decisões e Abordagem: Scanner, Includes/Excludes e Modo JSON
 
-Data: 2025-08-17
+Data: 2025-08-22
 Responsável: Equipe Oráculo
 
 ## Por que esta abordagem
@@ -25,12 +25,13 @@ Responsável: Equipe Oráculo
 - Cross-platform (Windows): normalização de `relPath` para POSIX e escaping de Unicode no `--json` para evitar artefatos.
 - Coverage gate por pouco (branches): adicionamos micro-testes focados sem alterar o comportamento dos detectores.
 
-## Limitação conhecida (próximo ajuste)
+## Harmonização de `node_modules`
 
-Hoje, mesmo com `--scan-only` e `--include`, o Oráculo ainda ignora `node_modules` por padrão. O objetivo é permitir inspeções pontuais quando o usuário incluir explicitamente `node_modules` (por exemplo, `--include node_modules/**`) sem desmontar os guard-rails no caso geral.
+O comportamento foi harmonizado: ao fornecer `--include` que corresponda a `node_modules` (ex.: `--include node_modules/**`), o scanner inclui os arquivos desse diretório mesmo em `--scan-only`, mantendo a exclusão por padrão quando não houver `--include`.
 
-- Situação atual: o scanner evita descer em `node_modules` a menos que detecte um include explícito de `node_modules` nos padrões (ou em grupos). Entretanto, em alguns cenários o guard-rail ainda prevalece durante `--scan-only`.
-- Próximo passo: harmonizar a detecção de inclusão explícita de `node_modules` para que `--scan-only` respeite `--include` quando o padrão corresponder a `node_modules`, mantendo exclusão por padrão nos demais casos.
+- Include/Exclude: precedência mantém-se — include limita escopo, exclude filtra em seguida.
+- Normalização cross-platform: `relPath` é tratado em POSIX internamente; padrões são normalizados.
+- JSON mode: logs intermediários ficam silenciados; apenas o objeto final é impresso.
 
 ## Impacto em documentação e testes
 
