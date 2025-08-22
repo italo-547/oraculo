@@ -1,0 +1,40 @@
+{
+    "name": "oraculo",
+    "version": "0.1.0",
+    "type": "module",
+    "description": "Oráculo: Análise, limpeza e organização de repositórios",
+    "author": "Italo C Lopes",
+    "license": "MIT",
+    "main": "./dist/cli.js",
+    "bin": {
+        "oraculo": "./dist/cli.js"
+    },
+    "exports": {
+        ".": "./dist/cli.js"
+    },
+    "engines": {
+        "node": ">=24.0.4"
+    },
+    "keywords": [
+        "cli",
+        "limpeza",
+        "arquitetura",
+        "análise",
+        "estrutura",
+        "organização"
+    ],
+    "dependencies": {
+        "@babel/parser": "^7.28.3",
+        "@babel/traverse": "^7.28.3",
+        "@babel/types": "^7.28.2",
+        "chalk": "^5.6.0",
+        "commander": "^14.0.0",
+        "css-tree": "^2.3.1",
+        "fast-xml-parser": "^4.5.3",
+        "htmlparser2": "^10.0.0",
+        "java-parser": "^3.0.1",
+        "micromatch": "^4.0.8",
+        "p-limit": "^7.1.0",
+        "xxhashjs": "^0.2.2"
+    }
+}

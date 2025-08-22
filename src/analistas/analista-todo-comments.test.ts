@@ -1,5 +1,50 @@
 // SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
+
+describe('analista-todo-comments', () => {
+  it('detecta TODO em comentário de linha e bloco', async () => {
+    const { analistaTodoComments } = await import('./analista-todo-comments.js');
+    const src = [
+      'const a = 1; // TODO ajustar X',
+      '/*',
+      '  TODO: implementar Y',
+      '*/',
+      'console.log(a);',
+    ].join('\n');
+    const ocorrencias = analistaTodoComments.aplicar(src, 'src/app.ts') as any[];
+    expect(Array.isArray(ocorrencias)).toBe(true);
+    expect(ocorrencias.length).toBe(2);
+    expect(ocorrencias[0].tipo).toBe('TODO_PENDENTE');
+    expect(ocorrencias[1].tipo).toBe('TODO_PENDENTE');
+  });
+
+  it('retorna null se não houver TODOs', async () => {
+    const { analistaTodoComments } = await import('./analista-todo-comments.js');
+    const src = 'const a = 1;\n// ok\n/* comentario */';
+    const r = analistaTodoComments.aplicar(src, 'src/app.ts');
+    expect(r).toBeNull();
+  });
+
+  it('test() ignora arquivos de teste e não-código e evita auto-detecção', async () => {
+    const { analistaTodoComments } = await import('./analista-todo-comments.js');
+    expect(analistaTodoComments.test('tests/unit/foo.test.ts')).toBe(false);
+    expect(analistaTodoComments.test('specs/foo.spec.js')).toBe(false);
+    expect(analistaTodoComments.test('docs/readme.md')).toBe(false);
+    expect(analistaTodoComments.test('src/code.ts')).toBe(true);
+    expect(analistaTodoComments.test('src/code.js')).toBe(true);
+    expect(analistaTodoComments.test('src/analistas/analista-todo-comments.ts')).toBe(false);
+  });
+
+  it('aplicar retorna null quando src vazio ou auto-detecção', async () => {
+    const { analistaTodoComments } = await import('./analista-todo-comments.js');
+    expect(analistaTodoComments.aplicar('', 'src/code.ts')).toBeNull();
+    expect(
+      analistaTodoComments.aplicar('// TODO x', 'src/analistas/analista-todo-comments.ts'),
+    ).toBeNull();
+  });
+});
+// SPDX-License-Identifier: MIT
+import { describe, it, expect } from 'vitest';
 import { analistaTodoComments } from './analista-todo-comments.js';
 
 describe('analistaTodoComments', () => {
