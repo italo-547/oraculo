@@ -51,14 +51,10 @@ export function extractHandlerInfo(node: unknown): HandlerInfo | null {
 export const ritualComando = {
   nome: 'ritual-comando',
   test: (relPath: string): boolean => {
+    // Delega escopo ao scanner/CLI. Aqui só filtramos por extensão e ignoramos testes/specs
     const p = relPath.replace(/\\/g, '/').toLowerCase();
-    // Ignora node_modules e arquivos fora de src/
-    if (p.includes('node_modules/')) return false;
-    if (!p.includes('/src/')) return false;
-    // Extensões alvo
-    if (!/(\.ts|\.tsx|\.js|\.jsx)$/.test(p)) return false;
-    // Heurística temática (bot)
-    return p.includes('bot');
+    if (/(^|\/)tests?(\/)/i.test(p) || /\.(test|spec)\.(ts|js|tsx|jsx)$/i.test(p)) return false;
+    return /(\.ts|\.tsx|\.js|\.jsx)$/.test(p);
   },
 
   aplicar(
@@ -111,13 +107,17 @@ export const ritualComando = {
     });
 
     if (comandosInvocados === 0) {
-      ocorrencias.push({
-        tipo: 'padrao-ausente',
-        nivel: 'aviso',
-        mensagem: 'Nenhum comando registrado usando "onCommand" ou "registerCommand".',
-        relPath: arquivo,
-        origem: 'ritual-comando',
-      });
+      // Só reporta ausência quando o arquivo sugere ser de comandos (reduz ruído sem limitar escopo)
+      const p = arquivo.replace(/\\/g, '/').toLowerCase();
+      if (/(^|\/)(cli|commands?|comandos?|bot)(\/|\.|-)/.test(p)) {
+        ocorrencias.push({
+          tipo: 'padrao-ausente',
+          nivel: 'aviso',
+          mensagem: 'Nenhum comando registrado usando "onCommand" ou "registerCommand".',
+          relPath: arquivo,
+          origem: 'ritual-comando',
+        });
+      }
     }
 
     // Detectar comandos duplicados
