@@ -54,7 +54,7 @@ export interface OcorrenciaParseErro extends OcorrenciaBase {
   trecho?: string;
 }
 
-// Generic fallback / legacy occurrence type
+// Tipo genérico (fallback/legado) para ocorrência
 export interface OcorrenciaGenerica extends OcorrenciaBase {
   [k: string]: unknown;
 }
@@ -65,10 +65,10 @@ export type Ocorrencia =
   | OcorrenciaParseErro
   | OcorrenciaGenerica; // manter por compatibilidade
 
-// Enum de severidade textual padronizada (complementar ao campo numerico opcional)
+// Severidade textual padronizada (complementa um campo numérico opcional)
 export type SeveridadeTexto = 'info' | 'aviso' | 'risco' | 'critico';
 
-// Builder simples para ocorrência garantindo escape básico e campos mínimos.
+// Construtor simples para ocorrência garantindo escape básico e campos mínimos.
 export function criarOcorrencia<T extends Ocorrencia>(
   base: Pick<T, 'tipo' | 'mensagem'> & Omit<Partial<T>, 'tipo' | 'mensagem'>,
 ): T {
@@ -81,7 +81,7 @@ export function criarOcorrencia<T extends Ocorrencia>(
   return resultado as T;
 }
 
-// Helpers especializados
+// Auxiliares especializados
 export function ocorrenciaErroAnalista(data: {
   mensagem: string;
   relPath?: string;
@@ -128,21 +128,37 @@ export interface Tecnica {
   ) => TecnicaAplicarResultado | Promise<TecnicaAplicarResultado>;
 }
 
-// Tipos para configuração dinâmica de include/exclude
-export type IncludeExcludeRule = {
+// Tipos para configuração dinâmica de inclusão/exclusão
+// Nomes em português (preferidos) com aliases em inglês para compatibilidade de código existente.
+export type RegraIncluiExclui = {
+  /** força inclusão (true) */
   include?: boolean;
+  /** força exclusão (true) */
   exclude?: boolean;
+  /** padrões simples (substring) que, se presentes, incluem */
   patterns?: string[];
+  /** função personalizada para decidir inclusão */
   custom?: (relPath: string, entry: import('node:fs').Dirent) => boolean;
 };
 
-export type IncludeExcludeConfig = {
+export type ConfigIncluiExclui = {
+  /** Inclusões globais por substring (compat) */
   globalInclude?: string[];
+  /** Exclusões globais por substring (compat) */
   globalExclude?: string[];
-  dirRules?: Record<string, IncludeExcludeRule>;
+  /** Globs micromatch globais (prioridade: excludeGlob > exclude > includeGlob > include) */
+  globalIncludeGlob?: string[];
+  /** Globs micromatch globais para exclusão (mais forte) */
+  globalExcludeGlob?: string[];
+  /** Regras por diretório (chave é prefixo, ex.: "src/") */
+  dirRules?: Record<string, RegraIncluiExclui>;
 };
 
-// Interface futura unificada para analistas (superset de Tecnica).
+// Aliases para manter compatibilidade com nomes anteriores (inglês)
+export type IncludeExcludeRule = RegraIncluiExclui;
+export type IncludeExcludeConfig = ConfigIncluiExclui;
+
+// Interface futura unificada para analistas (superset de Tecnica)
 export interface Analista extends Tecnica {
   nome: string; // obrigatório para identificação
   categoria?: string; // ex: 'complexidade', 'estrutura'
@@ -151,7 +167,7 @@ export interface Analista extends Tecnica {
   sempreAtivo?: boolean; // ignora filtros
 }
 
-// Factory para criar analista com validação mínima.
+// Fábrica para criar analista com validação mínima
 export function criarAnalista<A extends Analista>(def: A): A {
   if (!def || typeof def !== 'object') throw new Error('Definição de analista inválida');
   if (!def.nome || (/\s/.test(def.nome) === false) === false) {

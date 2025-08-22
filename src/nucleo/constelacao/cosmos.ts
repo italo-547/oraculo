@@ -25,37 +25,7 @@ export const configDefault = {
   GUARDIAN_ALLOW_CHG: false,
   GUARDIAN_ALLOW_DELS: false,
   // Padrões ignorados somente para o Guardian (não impacta scanner geral / analistas)
-  GUARDIAN_IGNORE_PATTERNS: [
-    // Dependências e artefatos externos
-    'node_modules',
-    'node_modules/**',
-    '**/node_modules',
-    '**/node_modules/**',
-    '.pnpm/**',
-    // Estado interno / cache / builds
-    '.oraculo/**',
-    '**/.oraculo',
-    '**/.oraculo/**',
-    'dist/**',
-    '**/dist',
-    '**/dist/**',
-    'coverage/**',
-    '**/coverage',
-    '**/coverage/**',
-    'build/**',
-    '**/build',
-    '**/build/**',
-    // Arquivos temporários e lockfiles
-    '*.log',
-    '*.lock',
-    'package-lock.json',
-    'yarn.lock',
-    'pnpm-lock.yaml',
-    // VCS
-    '.git/**',
-    '**/.git',
-    '**/.git/**',
-  ],
+  GUARDIAN_IGNORE_PATTERNS: [], // obsoleto (sincronizado a partir de INCLUDE_EXCLUDE_RULES)
 
   // 📄 Relatórios
   REPORT_SILENCE_LOGS: false,
@@ -75,39 +45,7 @@ export const configDefault = {
   ZELADOR_HISTORY_PATH: path.join(ORACULO_STATE, 'historico.json'),
   ZELADOR_REPORT_PATH: path.join(ORACULO_STATE, 'poda-oraculo.md'),
   ZELADOR_GHOST_INACTIVITY_DAYS: 30,
-  ZELADOR_IGNORE_PATTERNS: [
-    // VCS e diretórios internos
-    '.git',
-    '.git/**',
-    '**/.git',
-    '**/.git/**',
-    '.oraculo/**',
-    '**/.oraculo',
-    '**/.oraculo/**',
-    // Raiz do projeto (nome "oraculo" – não costuma aparecer em relPath; mantido por compat)
-    'oraculo',
-    // Artefatos de build
-    'dist',
-    'dist/**',
-    '**/dist',
-    '**/dist/**',
-    'build',
-    'build/**',
-    '**/build',
-    '**/build/**',
-    'coverage',
-    'coverage/**',
-    '**/coverage',
-    '**/coverage/**',
-    // Evita varredura de dependências externas – melhora performance e reduz ruído
-    'node_modules',
-    'node_modules/**',
-    '**/node_modules',
-    '**/node_modules/**',
-    // Lockfiles
-    'package-lock.json',
-    'yarn.lock',
-  ],
+  ZELADOR_IGNORE_PATTERNS: [], // obsoleto (sincronizado a partir de INCLUDE_EXCLUDE_RULES)
   // Padrões adicionais controlados via CLI para filtragem dinâmica pontual
   CLI_INCLUDE_PATTERNS: [] as string[], // quando não vazio: somente arquivos que casem algum pattern serão considerados (override dos ignores padrão)
   // Grupos de include: cada ocorrência de --include forma um grupo; padrões separados por vírgula/espaço dentro do mesmo argumento devem ser TODOS casados (AND).
@@ -115,7 +53,34 @@ export const configDefault = {
   CLI_INCLUDE_GROUPS: [] as string[][],
   CLI_EXCLUDE_PATTERNS: [] as string[], // sempre excluídos (aplicado após include)
   // Regras dinâmicas e programáticas (opcionais) para decisões de include/exclude
-  INCLUDE_EXCLUDE_RULES: undefined as IncludeExcludeConfig | undefined,
+  // Regras dinâmicas: NOME PT-BR (ConfigIncluiExclui) mas tipo mantém compat
+  INCLUDE_EXCLUDE_RULES: {
+    // Fonte única de verdade para exclusões/ inclusões globais
+    globalExcludeGlob: [
+      // Dependências e artefatos externos
+      '**/node_modules/**',
+      '.pnpm/**',
+      // Estado interno / cache / builds
+      '**/.oraculo/**',
+      'dist/**',
+      '**/dist/**',
+      'coverage/**',
+      '**/coverage/**',
+      'build/**',
+      '**/build/**',
+      // Logs e lockfiles
+      '**/*.log',
+      '**/*.lock',
+      'package-lock.json',
+      'yarn.lock',
+      'pnpm-lock.yaml',
+      // VCS
+      '**/.git/**',
+    ],
+    globalInclude: [],
+    globalExclude: [],
+    dirRules: {},
+  } as IncludeExcludeConfig,
   ZELADOR_LINE_THRESHOLD: 20,
 
   // 🔍 Analistas
@@ -194,11 +159,13 @@ export const config: typeof configDefault & {
 
 type DiffRegistro = { from: unknown; to: unknown; fonte: string };
 
-function isPlainObject(v: unknown): v is Record<string, unknown> {
+// Helper interno: verifica se é um objeto plano (não array)
+function ehObjetoPlano(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object' && !Array.isArray(v);
 }
 
-function deepMerge(
+// Merge profundo e seguro de objetos, registrando diferenças para auditoria
+function mesclarProfundo(
   target: Record<string, unknown>,
   src: Record<string, unknown>,
   fonte: string,
@@ -209,8 +176,8 @@ function deepMerge(
     const keyPath = prefix ? `${prefix}.${k}` : k;
     const srcVal = src[k];
     const tgtVal = target[k];
-    if (isPlainObject(srcVal) && isPlainObject(tgtVal)) {
-      deepMerge(
+    if (ehObjetoPlano(srcVal) && ehObjetoPlano(tgtVal)) {
+      mesclarProfundo(
         tgtVal as Record<string, unknown>,
         srcVal as Record<string, unknown>,
         fonte,
@@ -242,6 +209,15 @@ async function carregarArquivoConfig(): Promise<Record<string, unknown> | null> 
   return null;
 }
 
+function sincronizarIgnoradosLegado() {
+  // Mantém campos legados sincronizados a partir da configuração dinâmica, para compat com consumidores antigos
+  const dyn = (config.INCLUDE_EXCLUDE_RULES || {}) as IncludeExcludeConfig;
+  const glob = Array.isArray(dyn.globalExcludeGlob) ? dyn.globalExcludeGlob : [];
+  const arr = Array.from(new Set(glob.map((g) => String(g))));
+  (config as unknown as { ZELADOR_IGNORE_PATTERNS: string[] }).ZELADOR_IGNORE_PATTERNS = arr;
+  (config as unknown as { GUARDIAN_IGNORE_PATTERNS: string[] }).GUARDIAN_IGNORE_PATTERNS = arr;
+}
+
 function carregarEnvConfig(): Record<string, unknown> {
   const resultado: Record<string, unknown> = {};
   // Mapeia cada chave do default para uma env ORACULO_<KEY>
@@ -256,7 +232,7 @@ function carregarEnvConfig(): Record<string, unknown> {
       const keyPath = prefix ? `${prefix}.${k}` : k;
       const envName = `ORACULO_${keyPath.replace(/\./g, '_').toUpperCase()}`;
       const currentVal = (obj as Record<string, unknown>)[k];
-      if (isPlainObject(currentVal)) {
+      if (ehObjetoPlano(currentVal)) {
         stack.push({ obj: currentVal, prefix: keyPath });
       } else {
         const rawEnv = process.env[envName];
@@ -264,7 +240,7 @@ function carregarEnvConfig(): Record<string, unknown> {
           let val: unknown = rawEnv;
           if (/^(true|false)$/i.test(rawEnv)) val = rawEnv.toLowerCase() === 'true';
           else if (/^-?\d+(\.\d+)?$/.test(rawEnv)) val = Number(rawEnv);
-          resultadoPathAssign(resultado, keyPath, val);
+          atribuirPorCaminho(resultado, keyPath, val);
         }
       }
     }
@@ -272,13 +248,14 @@ function carregarEnvConfig(): Record<string, unknown> {
   return resultado;
 }
 
-function resultadoPathAssign(base: Record<string, unknown>, keyPath: string, value: unknown) {
+// Atribui um valor em um caminho ponto-notado, criando objetos intermediários conforme necessário
+function atribuirPorCaminho(base: Record<string, unknown>, keyPath: string, value: unknown) {
   const parts = keyPath.split('.');
   let cursor: Record<string, unknown> = base;
   for (let i = 0; i < parts.length - 1; i++) {
     const p = parts[i];
     let next = cursor[p];
-    if (!isPlainObject(next)) {
+    if (!ehObjetoPlano(next)) {
       next = {};
       cursor[p] = next;
     }
@@ -291,7 +268,7 @@ export async function inicializarConfigDinamica(overridesCli?: Record<string, un
   const diffs: Record<string, DiffRegistro> = {};
   const arquivo = await carregarArquivoConfig();
   if (arquivo)
-    deepMerge(
+    mesclarProfundo(
       config as unknown as Record<string, unknown>,
       arquivo as Record<string, unknown>,
       'arquivo',
@@ -299,9 +276,9 @@ export async function inicializarConfigDinamica(overridesCli?: Record<string, un
     );
   const envCfg = carregarEnvConfig();
   if (Object.keys(envCfg).length)
-    deepMerge(config as unknown as Record<string, unknown>, envCfg, 'env', diffs);
+    mesclarProfundo(config as unknown as Record<string, unknown>, envCfg, 'env', diffs);
   if (overridesCli && Object.keys(overridesCli).length)
-    deepMerge(
+    mesclarProfundo(
       config as unknown as Record<string, unknown>,
       overridesCli as Record<string, unknown>,
       'cli',
@@ -311,18 +288,25 @@ export async function inicializarConfigDinamica(overridesCli?: Record<string, un
   // Sincroniza alias de modo somente varredura
   if (config.ANALISE_SCAN_ONLY && !config.SCAN_ONLY) config.SCAN_ONLY = true;
   else if (config.SCAN_ONLY && !config.ANALISE_SCAN_ONLY) config.ANALISE_SCAN_ONLY = true;
+  // Sincroniza campos legados a partir da configuração dinâmica
+  sincronizarIgnoradosLegado();
   config.__OVERRIDES__ = diffs;
   return diffs;
 }
 
 export function aplicarConfigParcial(partial: Record<string, unknown>) {
   const diffs: Record<string, DiffRegistro> = {};
-  deepMerge(config as unknown as Record<string, unknown>, partial, 'programatico', diffs);
+  mesclarProfundo(config as unknown as Record<string, unknown>, partial, 'programatico', diffs);
   if (config.ANALISE_SCAN_ONLY && !config.SCAN_ONLY) config.SCAN_ONLY = true;
   else if (config.SCAN_ONLY && !config.ANALISE_SCAN_ONLY) config.ANALISE_SCAN_ONLY = true;
+  // Sincroniza campos legados a partir da configuração dinâmica
+  sincronizarIgnoradosLegado();
   config.__OVERRIDES__ = { ...(config.__OVERRIDES__ || {}), ...diffs };
   return diffs;
 }
 
 // Inicialização automática (arquivo + env) sem CLI (CLI aplicará depois)
-void inicializarConfigDinamica();
+// Em ambiente de testes (VITEST), evitamos auto-init para não sobrescrever flags de teste.
+if (!process.env.VITEST) {
+  void inicializarConfigDinamica();
+}

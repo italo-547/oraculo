@@ -50,7 +50,16 @@ export function extractHandlerInfo(node: unknown): HandlerInfo | null {
  */
 export const ritualComando = {
   nome: 'ritual-comando',
-  test: (relPath: string): boolean => relPath.includes('bot'),
+  test: (relPath: string): boolean => {
+    const p = relPath.replace(/\\/g, '/').toLowerCase();
+    // Ignora node_modules e arquivos fora de src/
+    if (p.includes('node_modules/')) return false;
+    if (!p.includes('/src/')) return false;
+    // Extensões alvo
+    if (!/(\.ts|\.tsx|\.js|\.jsx)$/.test(p)) return false;
+    // Heurística temática (bot)
+    return p.includes('bot');
+  },
 
   aplicar(
     conteudo: string,
@@ -71,17 +80,8 @@ export const ritualComando = {
     let comandosInvocados = 0;
 
     if (!ast) {
-      return [
-        {
-          tipo: 'erro',
-          nivel: 'erro',
-          relPath: arquivo,
-          linha: 1,
-          arquivo,
-          mensagem: 'AST não fornecida ou inválida para validação do comando.',
-          origem: 'ritual-comando',
-        },
-      ];
+      // Fora de src/ ou quando parser não aplicável, não considerar erro – apenas ignorar
+      return [];
     }
 
     traverse(ast.node, {

@@ -8,6 +8,7 @@ import { log } from './constelacao/log.js';
 import { executarInquisicao as executarExecucao, registrarUltimasMetricas } from './executor.js';
 import { decifrarSintaxe } from './parser.js';
 import { scanRepository } from './scanner.js';
+import { isMetaPath } from './constelacao/paths.js';
 // Fallback de símbolos para cenários de teste onde o mock de log não inclui `simbolos`.
 interface SimbolosLog {
   info: string;
@@ -53,6 +54,9 @@ import type {
 } from '../tipos/tipos.js';
 import { ocorrenciaParseErro, OcorrenciaParseErro } from '../tipos/tipos.js';
 
+// Extensões consideradas para tentativa de AST. Observações:
+// - .d.ts é propositalmente excluída pelo parser (retorna null) e aqui não entra.
+// - .map (source maps) não deve ser parseado – marcamos como NÃO pertencente ao conjunto.
 const EXTENSOES_COM_AST = new Set(
   Array.isArray(config.SCANNER_EXTENSOES_COM_AST)
     ? config.SCANNER_EXTENSOES_COM_AST
@@ -106,7 +110,15 @@ export async function prepararComAst(
         stats = undefined;
       }
 
-      if (entry.content && EXTENSOES_COM_AST.has(ext)) {
+      // Detecção de extensão com suporte a sufixos compostos (ex.: .d.ts, .js.map)
+      const nomeLower = entry.relPath.toLowerCase();
+      const extEfetiva = nomeLower.endsWith('.d.ts')
+        ? '.d.ts'
+        : nomeLower.endsWith('.map')
+          ? '.map'
+          : ext;
+
+      if (entry.content && EXTENSOES_COM_AST.has(extEfetiva)) {
         const chave = entry.relPath;
         if (config.ANALISE_AST_CACHE_ENABLED && stats) {
           const anterior = cache.get(chave);
@@ -123,7 +135,7 @@ export async function prepararComAst(
         try {
           if (!ast) {
             const inicioParse = performance.now();
-            const parsed = await decifrarSintaxe(entry.content, ext);
+            const parsed = await decifrarSintaxe(entry.content, extEfetiva);
             if (parsed && typeof parsed === 'object') {
               // parsed pode ser BabelFile; manter ast undefined (NodePath não necessário para todos analistas)
               // Somente registra erro se parser retornou null (falha real)
@@ -135,17 +147,26 @@ export async function prepararComAst(
                 >;
               }
             } else if (parsed == null) {
-              const globalStore2 = globalStore as unknown as Record<string, unknown>;
-              const lista =
-                (globalStore2.__ORACULO_PARSE_ERROS__ as OcorrenciaParseErro[] | undefined) || [];
-              lista.push(
-                ocorrenciaParseErro({
-                  mensagem: 'Erro de parsing: AST não gerada (código possivelmente inválido).',
-                  relPath: entry.relPath,
-                  origem: 'parser',
-                }),
-              );
-              globalStore2.__ORACULO_PARSE_ERROS__ = lista;
+              // Politica: para arquivos em node_modules, não tratar falha de parsing como erro;
+              // em vez disso, seguimos com um sentinel de AST para permitir analistas que não dependem de AST completa.
+              const inNodeModules = /(^|\/)node_modules(\/|\\)/.test(entry.relPath);
+              if (inNodeModules) {
+                ast = {} as unknown as import('@babel/traverse').NodePath<
+                  import('@babel/types').Node
+                >;
+              } else {
+                const globalStore2 = globalStore as unknown as Record<string, unknown>;
+                const lista =
+                  (globalStore2.__ORACULO_PARSE_ERROS__ as OcorrenciaParseErro[] | undefined) || [];
+                lista.push(
+                  ocorrenciaParseErro({
+                    mensagem: 'Erro de parsing: AST não gerada (código possivelmente inválido).',
+                    relPath: entry.relPath,
+                    origem: 'parser',
+                  }),
+                );
+                globalStore2.__ORACULO_PARSE_ERROS__ = lista;
+              }
             }
             metricas.parsingTimeMs += performance.now() - inicioParse;
             metricas.cacheMiss++;
@@ -224,23 +245,8 @@ export async function iniciarInquisicao(
   let fileEntries: FileEntryWithAst[];
 
   let entriesBase = Object.values(fileMap);
-  // Filtra arquivos meta que não devem influenciar priorização (ainda são analisados, mas não ranqueados no topo)
-  const META_PATTERNS = [/^\.github\//, /^docs\//, /^\.oraculo\//, /^\.vscode\//];
-  function isMeta(rel: string): boolean {
-    const norm = rel.replace(/\\/g, '/');
-    if (META_PATTERNS.some((r) => r.test(norm))) return true;
-    if (!norm.startsWith('src/') && /\.(md|MD)$/.test(norm)) return true;
-    if (
-      !norm.startsWith('src/') &&
-      /^(package|tsconfig|eslint|vitest)\.(json|js|cjs|mjs)$/i.test(norm)
-    )
-      return true;
-    if (/^\.eslint-report\.json$/i.test(norm)) return true;
-    if (/^\.gitignore$/i.test(norm)) return true;
-    if (norm.startsWith('.oraculo/')) return true;
-    return false;
-  }
-  const metaSet = new Set(entriesBase.filter((e) => isMeta(e.relPath)).map((e) => e.relPath));
+  // Filtra arquivos meta com helper central: tudo fora de src/ é meta por padrão
+  const metaSet = new Set(entriesBase.filter((e) => isMetaPath(e.relPath)).map((e) => e.relPath));
   // Priorização (usa estado incremental anterior somente para ordenar)
   if (config.ANALISE_PRIORIZACAO_ENABLED && config.ANALISE_INCREMENTAL_STATE_PATH) {
     try {

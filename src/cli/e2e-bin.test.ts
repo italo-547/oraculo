@@ -10,6 +10,8 @@ import { join, resolve } from 'node:path';
 
 function garantirBuild() {
   const cliPath = resolve('dist/cli.js');
+  // Compila apenas se o binário ainda não existir para evitar overhead e timeouts
+  const { existsSync } = require('node:fs');
   if (!existsSync(cliPath)) {
     execSync('npm run build', { stdio: 'inherit' });
   }

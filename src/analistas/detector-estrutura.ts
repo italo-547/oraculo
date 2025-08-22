@@ -2,6 +2,7 @@
 import { grafoDependencias } from './detector-dependencias.js';
 import micromatch from 'micromatch';
 import { config } from '../nucleo/constelacao/cosmos.js';
+import { isInsideSrc } from '../nucleo/constelacao/paths.js';
 import type {
   TecnicaAplicarResultado,
   ContextoExecucao,
@@ -44,7 +45,7 @@ export const detectorEstrutura = {
       temControllers: caminhosNorm.some((p) => p.includes('controllers/')),
       temComponents: caminhosNorm.some((p) => p.includes('components/')),
       temCli: caminhosNorm.some((p) => /(^|\/)cli\.(ts|js)$/.test(p)),
-      temSrc: caminhosNorm.some((p) => p.startsWith('src/') || p.includes('/src/')),
+      temSrc: caminhosNorm.some((p) => isInsideSrc(p)),
       temPrisma: caminhosNorm.some((p) => p.includes('prisma/') || p.includes('schema.prisma')),
       temPackages: caminhosNorm.some((p) => p.includes('packages/') || p.includes('turbo.json')),
       temExpress: grafoDependencias.has('express'),
@@ -172,10 +173,14 @@ export const detectorEstrutura = {
     const entrypointsAll = caminhosNorm.filter((p) =>
       /(^|[\\/])(cli|index|main)\.(ts|js)$/.test(p),
     );
-    const ignored = Array.isArray(config.ZELADOR_IGNORE_PATTERNS)
-      ? (config.ZELADOR_IGNORE_PATTERNS as string[])
-      : [];
-    const entrypoints = entrypointsAll.filter((p) => !micromatch.isMatch(p, ignored));
+    const ignoredDyn =
+      (config.INCLUDE_EXCLUDE_RULES && config.INCLUDE_EXCLUDE_RULES.globalExcludeGlob) ||
+      (Array.isArray(config.ZELADOR_IGNORE_PATTERNS)
+        ? (config.ZELADOR_IGNORE_PATTERNS as string[])
+        : []);
+    const entrypoints = entrypointsAll.filter(
+      (p) => !micromatch.isMatch(p, (ignoredDyn as unknown as string[]) || []),
+    );
     if (entrypoints.length > 1) {
       // Evita mensagens gigantes: limita a uma prévia e indica quantidade oculta
       const MAX_LIST = 20;

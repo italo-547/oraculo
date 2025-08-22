@@ -5,7 +5,11 @@ import chalk from 'chalk';
 
 import { registrarComandos } from './cli/comandos.js';
 import { comandoPerf } from './cli/comando-perf.js';
-import { config, aplicarConfigParcial } from './nucleo/constelacao/cosmos.js';
+import {
+  config,
+  aplicarConfigParcial,
+  inicializarConfigDinamica,
+} from './nucleo/constelacao/cosmos.js';
 
 // 🛠️ Configuração principal do CLI
 const program = new Command();
@@ -20,7 +24,6 @@ program
     'exibe logs detalhados de cada arquivo e técnica analisada (ignorado se --silence)',
   )
   .option('-e, --export', 'gera arquivos de relatório detalhados (JSON e Markdown)')
-  .option('-d, --dev', 'ativa modo de desenvolvimento (deprecated, use --debug)')
   .option('--debug', 'ativa logs de debug (equivalente a --dev)');
 // Flag experimental implementada
 program.option('--scan-only', 'executa apenas varredura e priorização sem AST ou técnicas');
@@ -37,7 +40,7 @@ interface OraculoGlobalFlags {
   silence?: boolean;
   verbose?: boolean;
   export?: boolean;
-  dev?: boolean;
+  dev?: boolean; // legado removido da CLI; mantido aqui apenas para compat de parse em tests antigos
   debug?: boolean;
   logEstruturado?: boolean;
   incremental?: boolean;
@@ -57,11 +60,7 @@ async function aplicarFlagsGlobais(opts: unknown) {
   }
   config.REPORT_SILENCE_LOGS = Boolean(flags.silence);
   config.REPORT_EXPORT_ENABLED = Boolean(flags.export);
-  const debugAtivo =
-    Boolean(flags.debug) || Boolean(flags.dev) || process.env.ORACULO_DEBUG === 'true';
-  if (!flags.debug && flags.dev) {
-    console.warn(chalk.yellow('⚠️  --dev está deprecado; prefira --debug.')); // aviso único
-  }
+  const debugAtivo = Boolean(flags.debug) || process.env.ORACULO_DEBUG === 'true';
   config.DEV_MODE = debugAtivo;
   config.SCAN_ONLY = Boolean(flags.scanOnly);
   // Se silence está ativo, verbose é sempre falso
@@ -73,6 +72,9 @@ async function aplicarFlagsGlobais(opts: unknown) {
     overrides.ANALISE_INCREMENTAL_ENABLED = optObj.incremental;
   if (typeof optObj.metricas === 'boolean') overrides.ANALISE_METRICAS_ENABLED = optObj.metricas;
   if (Object.keys(overrides).length) aplicarConfigParcial(overrides);
+
+  // Unificação: filtros de include/exclude são definidos apenas nos comandos
+  // (--include/--exclude). Flags globais antigas removidas.
 }
 
 // 🔗 Registro de todos os comandos
@@ -82,4 +84,12 @@ registrarComandos(program, (o) => {
 program.addCommand(comandoPerf());
 
 // 🚀 Execução do CLI
-void program.parseAsync(process.argv);
+// Carrega config de arquivo/env explicitamente no processo do CLI, mesmo sob VITEST (e2e spawn)
+void (async () => {
+  try {
+    await inicializarConfigDinamica();
+  } catch {
+    // ignore: CLI continua com defaults
+  }
+  await program.parseAsync(process.argv);
+})();

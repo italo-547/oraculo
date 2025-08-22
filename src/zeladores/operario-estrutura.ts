@@ -7,6 +7,7 @@ import { gerarPlanoEstrategico } from '../arquitetos/estrategista-estrutura.js';
 import { corrigirEstrutura } from './corretor-estrutura.js';
 import { log } from '../nucleo/constelacao/log.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
+import { isInsideSrc } from '../nucleo/constelacao/paths.js';
 
 export interface OpcoesPlanejamento {
   preferEstrategista?: boolean;
@@ -56,7 +57,7 @@ export const OperarioEstrutura = {
           temControllers: fileEntriesComAst.some((f) => /\bcontrollers?\//.test(f.relPath)),
           temApi: fileEntriesComAst.some((f) => /\bapi\//.test(f.relPath)),
           temExpress: false, // heurística rápida; poderia vir do grafo de deps
-          temSrc: fileEntriesComAst.some((f) => f.relPath.startsWith('src/')),
+          temSrc: fileEntriesComAst.some((f) => isInsideSrc(f.relPath)),
           temCli: fileEntriesComAst.some((f) => /src\/cli(\b|\/)/.test(f.relPath)),
           temPrisma: fileEntriesComAst.some((f) => /\bprisma\//.test(f.relPath)),
           temPackages: fileEntriesComAst.some((f) => f.relPath.startsWith('packages/')),

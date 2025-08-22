@@ -3,6 +3,7 @@ import { scanRepository } from '../nucleo/scanner.js';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { grafoDependencias } from '../analistas/detector-dependencias.js';
+import { isInsideSrc } from '../nucleo/constelacao/paths.js';
 
 import type { ArquivoFantasma, FileMap } from '../tipos/tipos.js';
 
@@ -41,7 +42,7 @@ export async function detectarFantasmas(
       const referenciado = estaSendoReferenciado(relPath, grafoDependencias);
 
       // Regras de exclusão preventiva (não marcar como fantasma):
-      if (relPath.startsWith('src/')) {
+      if (isInsideSrc(relPath)) {
         // Protege arquivos fonte recentes ou de index/entry mesmo que não referenciados ainda
         if (/\/index\.(ts|js|tsx|jsx)$/.test(relPath)) continue;
       }

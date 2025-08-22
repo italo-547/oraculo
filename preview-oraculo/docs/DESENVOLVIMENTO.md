@@ -3,7 +3,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Guia de Desenvolvimento
 
 ## Requisitos
@@ -34,4 +33,3 @@
 - Em Windows PowerShell, use `;` para encadear comandos.
 - Evite `fs.readFile/writeFile` direto fora de utilitários.
 - Testes: cubra caminhos felizes e 1-2 bordas.
-

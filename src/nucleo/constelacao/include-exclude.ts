@@ -5,6 +5,7 @@
  */
 import type { Dirent } from 'node:fs';
 import type { IncludeExcludeConfig } from '../../tipos/tipos.js';
+import micromatch from 'micromatch';
 
 /**
  * Avalia se um caminho deve ser incluído/excluído conforme config dinâmica.
@@ -28,9 +29,23 @@ export function shouldInclude(
       }
     }
   }
-  // Globais
+  // Globais (prioridade: excludeGlob > exclude > includeGlob > include)
+  if (
+    Array.isArray(config.globalExcludeGlob) &&
+    config.globalExcludeGlob.length > 0 &&
+    micromatch.isMatch(relPath, config.globalExcludeGlob)
+  ) {
+    return false;
+  }
   if (config.globalExclude && config.globalExclude.some((p: string) => relPath.includes(p))) {
     return false;
+  }
+  if (
+    Array.isArray(config.globalIncludeGlob) &&
+    config.globalIncludeGlob.length > 0 &&
+    micromatch.isMatch(relPath, config.globalIncludeGlob)
+  ) {
+    return true;
   }
   if (config.globalInclude && config.globalInclude.some((p: string) => relPath.includes(p))) {
     return true;

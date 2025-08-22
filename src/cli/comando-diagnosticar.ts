@@ -267,7 +267,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         // Fallback adicional: neutraliza métodos de log (caso algum bypass ocorra antes de flag ser checada)
         const logObj = log as unknown as Record<string, unknown>;
         const originalLogFns: Record<string, unknown> = {};
-        ['info', 'sucesso', 'aviso'].forEach((k) => {
+        // Inclui infoDestaque e fase para evitar mensagens fora do JSON
+        ['info', 'sucesso', 'aviso', 'infoDestaque', 'fase'].forEach((k) => {
           if (typeof logObj[k] === 'function') {
             originalLogFns[k] = logObj[k];
             logObj[k] = () => undefined;
@@ -986,9 +987,12 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
           }
         }
       } catch (error) {
-        log.erro(
-          `${__S.erro} Erro fatal durante o diagnóstico: ${(error as Error).message ?? String(error)}`,
-        );
+        const logErro = (
+          log as unknown as { erro?: (m: string) => void; info: (m: string) => void }
+        ).erro;
+        const msg = `${__S.erro} Erro fatal durante o diagnóstico: ${(error as Error).message ?? String(error)}`;
+        if (typeof logErro === 'function') logErro(msg);
+        else log.info(msg);
         if (config.DEV_MODE) console.error(error);
         if (!process.env.VITEST) process.exit(1);
       } finally {

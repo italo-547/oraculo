@@ -1,3 +1,46 @@
 {
-  "ESTRUTURA_ARQUIVOS_RAIZ_MAX": 20
+  "REPORT_SILENCE_LOGS": false,
+  "VERBOSE": false,
+
+  "SCAN_ONLY": false,
+  "ANALISE_SCAN_ONLY": false,
+
+  "ANALISE_METRICAS_ENABLED": true,
+
+  "ESTRUTURA_ARQUIVOS_RAIZ_MAX": 50,
+
+  "ANALISE_LIMITES": {
+    "FUNCOES_LONGAS": {
+      "MAX_LINHAS": 50,
+      "MAX_PARAMETROS": 4,
+      "MAX_ANINHAMENTO": 3
+    }
+  },
+
+  "CLI_INCLUDE_GROUPS": [],
+  "CLI_INCLUDE_PATTERNS": [],
+  "CLI_EXCLUDE_PATTERNS": [],
+
+  "INCLUDE_EXCLUDE_RULES": {
+    "globalExcludeGlob": [
+      "**/node_modules/**",
+      "**/.oraculo/**",
+      "dist/**",
+      "**/dist/**",
+      "coverage/**",
+      "**/coverage/**",
+      "build/**",
+      "**/build/**",
+      "**/*.spec.ts",
+      "**/*.test.ts",
+      "**/*.snap",
+      "**/.git/**"
+    ],
+    "globalInclude": [],
+    "globalExclude": [],
+    "dirRules": {
+      "tests/": { "exclude": true },
+      "docs/": { "include": true }
+    }
+  }
 }

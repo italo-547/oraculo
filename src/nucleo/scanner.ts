@@ -45,13 +45,19 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
   const excludePatternsNorm = (
     Array.isArray(config.CLI_EXCLUDE_PATTERNS) ? (config.CLI_EXCLUDE_PATTERNS as string[]) : []
   ).map((p) => toPosix(String(p || '')));
-  const ignorePatternsNorm = (
-    Array.isArray(config.ZELADOR_IGNORE_PATTERNS)
+  const dynIgnores =
+    (config.INCLUDE_EXCLUDE_RULES && config.INCLUDE_EXCLUDE_RULES.globalExcludeGlob) ||
+    (Array.isArray(config.ZELADOR_IGNORE_PATTERNS)
       ? (config.ZELADOR_IGNORE_PATTERNS as string[])
-      : []
-  ).map((p) => toPosix(String(p || '')));
+      : []);
+  const ignorePatternsNorm = (dynIgnores as string[]).map((p) => toPosix(String(p || '')));
 
   const hasInclude = includeGroupsNorm.length > 0 || includePatternsNorm.length > 0;
+  // Sinaliza quando os includes pedem ocorrências em qualquer profundidade (ex.: '**/nome/**') ou quando
+  // o usuário forneceu nomes simples (que o expandIncludes converte em '**/nome/**').
+  const pedeOcorrenciasGlobais = hasInclude
+    ? [...includePatternsNorm, ...includeGroupsNorm.flat()].some((p) => p.startsWith('**/'))
+    : false;
   // node_modules explicitamente incluído em algum pattern ou grupo de include
   const includeNodeModulesExplicit = hasInclude
     ? [...includePatternsNorm, ...includeGroupsNorm.flat()].some((p) =>
@@ -67,6 +73,7 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
     if (Array.isArray(grupos))
       for (const g of grupos) g.forEach((p) => candidatos.add(toPosix(trimDotSlash(p))));
     if (candidatos.size === 0) return [];
+    const META = /[\\*\?\{\}\[\]]/; // caracteres meta de glob
     for (const raw of candidatos) {
       let p = String(raw).trim();
       if (!p) continue;
@@ -77,7 +84,8 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       else if (p.includes('/')) anchor = p.split('/')[0];
       else anchor = '';
       anchor = anchor.replace(/\/+/g, '/').replace(/\/$/, '');
-      if (anchor && anchor !== '.' && anchor !== '**') {
+      // Ignora anchors inválidos: vazios, apenas '.', '**' ou contendo metacaracteres (ex.: '**/src')
+      if (anchor && anchor !== '.' && anchor !== '**' && !META.test(anchor)) {
         const baseNorm = toPosix(String(baseDir)).replace(/\/$/, '');
         const rootPosix = `${baseNorm}/${anchor}`.replace(/\/+/g, '/');
         roots.add(rootPosix);
@@ -88,24 +96,70 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
 
   // Matcher de include considerando grupos: AND dentro do grupo, OR entre grupos
   function matchInclude(relPath: string): boolean {
-    if (includeGroupsNorm.length > 0) {
-      // OR entre grupos
-      for (const g of includeGroupsNorm) {
-        // AND dentro do grupo
-        const allMatch = g.every((p) => micromatch.isMatch(relPath, p));
-        if (allMatch) return true;
+    // Função auxiliar: avalia se um padrão casa com o caminho relativo
+    const matchesPattern = (rp: string, p: string): boolean => {
+      if (!p) return false;
+      // Casamento direto via micromatch
+      if (micromatch.isMatch(rp, [p])) return true;
+      // Compat extra: reconhece padrões simples com sufixo '/**' por prefixo
+      if (p.endsWith('/**')) {
+        const base = p.slice(0, -3); // remove '/**'
+        if (base && rp.startsWith(base)) return true;
+      }
+      // Quando o padrão não possui metacaracteres, trate como diretório/segmento
+      const META = /[\\*\?\{\}\[\]]/;
+      if (!META.test(p)) {
+        const pat = p.replace(/\/+$|\/+$|^\.\/?/g, '').replace(/\/+/g, '/');
+        if (!pat) return false;
+        // Se contém barra: trate como caminho base (prefixo)
+        if (pat.includes('/')) {
+          if (rp === pat) return true;
+          if (rp.startsWith(pat + '/')) return true;
+          if (rp.includes('/' + pat + '/')) return true;
+          if (rp.endsWith('/' + pat)) return true;
+          return false;
+        }
+        // Segmento simples: casa em qualquer nível
+        if (rp === pat) return true;
+        if (rp.startsWith(pat + '/')) return true;
+        if (rp.includes('/' + pat + '/')) return true;
+        if (rp.endsWith('/' + pat)) return true;
+        return false;
       }
       return false;
-    }
-    // Fallback: lista simples (OR)
-    if (includePatternsNorm.length && micromatch.isMatch(relPath, includePatternsNorm)) return true;
-    // Compat extra: reconhece padrões simples com sufixo '/**' por prefixo
-    for (const p of includePatternsNorm || []) {
-      if (typeof p === 'string' && p.endsWith('/**')) {
-        const base = p.slice(0, -3); // remove '/**'
-        if (base && relPath.startsWith(base)) return true;
+    };
+    // Função auxiliar: extrai a "base" do padrão (token original antes das ampliações)
+    const baseFromPattern = (p: string): string => {
+      let b = p.trim();
+      b = b.replace(/^\*\*\//, ''); // remove '**/' inicial
+      b = b.replace(/\/\*\*$/, ''); // remove '/**' final
+      b = b.replace(/^\.\/?/, ''); // remove './' inicial
+      b = b.replace(/\/+/g, '/').replace(/\/$/, '');
+      return b;
+    };
+    // Quando houver grupos, aplica estritamente: OR entre grupos com AND dentro do grupo
+    if (includeGroupsNorm.length > 0) {
+      for (const g of includeGroupsNorm) {
+        // Agrupa padrões por base (permite OR entre variantes de um mesmo token e AND entre tokens)
+        const porBase = new Map<string, string[]>();
+        for (const p of g) {
+          const base = baseFromPattern(p);
+          const arr = porBase.get(base) || [];
+          arr.push(p);
+          porBase.set(base, arr);
+        }
+        const allBasesMatch = Array.from(porBase.values()).every((lista) =>
+          lista.some((p) => matchesPattern(relPath, p)),
+        );
+        if (allBasesMatch) return true;
       }
+      // Sem correspondência em nenhum grupo -> não inclui
+      return false;
     }
+    // Sem grupos: lista achatada (OR)
+    if (includePatternsNorm.length && micromatch.isMatch(relPath, includePatternsNorm)) return true;
+    // Compat extra também para padrões simples quando não há grupos
+    for (const p of includePatternsNorm || []) if (matchesPattern(relPath, p)) return true;
     return false;
   }
 
@@ -164,11 +218,12 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
           continue; // ignore padrão quando não há include
         }
         // Filtro customizado e regras dinâmicas opcionais
-        if (
-          (config.INCLUDE_EXCLUDE_RULES &&
-            !shouldInclude(relPath, entry, config.INCLUDE_EXCLUDE_RULES)) ||
-          !filter(relPath, entry)
-        ) {
+        // Regras dinâmicas: quando há includes explícitos, estes sobrepõem ignores globais
+        const regrasPermitem =
+          !config.INCLUDE_EXCLUDE_RULES ||
+          hasInclude ||
+          shouldInclude(relPath, entry, config.INCLUDE_EXCLUDE_RULES);
+        if (!regrasPermitem || !filter(relPath, entry)) {
           continue; // filtro customizado
         }
         try {
@@ -266,6 +321,12 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
         (config as unknown as { CLI_INCLUDE_GROUPS?: string[][] }).CLI_INCLUDE_GROUPS,
       )
     : [];
+  // Quando o include pede ocorrências em qualquer profundidade, adicionamos também a base do repo para
+  // garantir que diretórios-alvo apareçam em níveis arbitrários (ex.: packages/*/node_modules).
+  if (hasInclude && pedeOcorrenciasGlobais) {
+    const baseNorm = toPosix(String(baseDir)).replace(/\/$/, '');
+    if (!startDirs.includes(baseNorm)) startDirs = [baseNorm, ...startDirs];
+  }
   // Se nenhum root foi derivado (ex.: includes somente de arquivos como 'a.txt'), varremos a base inteira
   // para permitir que o filtro de includes atue nos arquivos diretamente.
   if (hasInclude && startDirs.length === 0) {
@@ -343,12 +404,11 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
             isDirectory: () => false,
             isSymbolicLink: () => false,
           } as unknown as Dirent;
-          if (
-            (config.INCLUDE_EXCLUDE_RULES &&
-              !shouldInclude(relPath, fakeDirent, config.INCLUDE_EXCLUDE_RULES)) ||
-            !filter(relPath, fakeDirent)
-          )
-            continue;
+          const regrasPermitem =
+            !config.INCLUDE_EXCLUDE_RULES ||
+            hasInclude ||
+            shouldInclude(relPath, fakeDirent, config.INCLUDE_EXCLUDE_RULES);
+          if (!regrasPermitem || !filter(relPath, fakeDirent)) continue;
 
           let content: string | null = null;
           if (efetivoIncluirConteudo) {

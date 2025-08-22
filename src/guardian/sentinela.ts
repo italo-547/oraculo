@@ -49,7 +49,10 @@ export async function scanSystemIntegrity(
   }
 
   // Filtra entradas conforme padrões ignorados específicos do Guardian
-  const ignorados = config.GUARDIAN_IGNORE_PATTERNS || [];
+  const ignorados =
+    (config.INCLUDE_EXCLUDE_RULES && config.INCLUDE_EXCLUDE_RULES.globalExcludeGlob) ||
+    config.GUARDIAN_IGNORE_PATTERNS ||
+    [];
   const filtrados = fileEntries.filter((f) => {
     const rel = f.relPath.replace(/\\/g, '/');
     return !micromatch.isMatch(rel, ignorados);
@@ -98,9 +101,12 @@ export async function scanSystemIntegrity(
 
 export async function acceptNewBaseline(fileEntries: FileEntry[]): Promise<void> {
   const ignorados = config.GUARDIAN_IGNORE_PATTERNS || [];
+  // Preferir configuração dinâmica quando disponível
+  const ignoradosDyn =
+    (config.INCLUDE_EXCLUDE_RULES && config.INCLUDE_EXCLUDE_RULES.globalExcludeGlob) || ignorados;
   const filtrados = fileEntries.filter((f) => {
     const rel = f.relPath.replace(/\\/g, '/');
-    return !micromatch.isMatch(rel, ignorados);
+    return !micromatch.isMatch(rel, ignoradosDyn);
   });
   const snapshotAtual = construirSnapshot(filtrados);
   await fs.mkdir(path.dirname(BASELINE_PATH), { recursive: true });

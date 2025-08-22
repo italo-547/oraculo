@@ -18,7 +18,22 @@ interface BabelFileExtra extends BabelFile {
 type ParserFunc = (codigo: string, plugins?: string[]) => BabelFile | BabelFileExtra | null;
 
 function parseComBabel(codigo: string, plugins?: string[]): BabelFile | null {
-  const defaultPlugins = ['typescript', 'jsx', 'decorators-legacy'];
+  // Plugins padrão ampliados para cobrir padrões amplamente usados em node_modules
+  const defaultPlugins = [
+    'typescript',
+    'jsx',
+    'decorators-legacy',
+    // Suporte a import attributes/assertions modernos
+    'importAttributes',
+    'importAssertions',
+    // Class fields/methods private (comuns em libs modernas)
+    'classProperties',
+    'classPrivateProperties',
+    'classPrivateMethods',
+    'optionalChaining',
+    'nullishCoalescingOperator',
+    'topLevelAwait',
+  ];
   const options: ParserOptions = {
     sourceType: 'unambiguous',
     plugins: (Array.isArray(plugins) ? plugins : defaultPlugins) as ParserOptions['plugins'],
@@ -63,6 +78,28 @@ function parseComJava(codigo: string) {
     return wrapMinimal('java', ast);
   } catch (e) {
     log.debug(`⚠️ Erro Java parse: ${(e as Error).message}`);
+    return null;
+  }
+}
+
+function parseComTypeScript(codigo: string, tsx = false) {
+  try {
+    // Lazy require para reduzir custo quando não necessário
+    const ts: typeof import('typescript') = localRequire('typescript');
+    const sf = ts.createSourceFile(
+      tsx ? 'file.tsx' : 'file.ts',
+      codigo,
+      ts.ScriptTarget.Latest,
+      /*setParentNodes*/ false,
+      tsx ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+    );
+    // Retorna AST do TS como extra; suficiente para gerar sentinel no pipeline
+    return wrapMinimal(tsx ? 'tsx-tsc' : 'ts-tsc', {
+      kind: sf.kind,
+      statements: sf.statements?.length ?? 0,
+    });
+  } catch (e) {
+    log.debug(`⚠️ Erro TS compiler parse: ${(e as Error).message}`);
     return null;
   }
 }
@@ -143,7 +180,56 @@ export async function decifrarSintaxe(
     return null;
   }
 
-  const parseResult = parser(codigo, opts.plugins);
+  // Primeira tentativa com plugins padrão (ou fornecidos)
+  let parseResult = parser(codigo, opts.plugins);
+  // Fallbacks específicos para .js/.mjs: tentar Flow quando a primeira tentativa falhar
+  if (parseResult == null && (ext === '.js' || ext === '.mjs' || ext === '.cjs')) {
+    try {
+      // Heurística rápida: detecta uso de Flow
+      const pareceFlow = /@flow\b/.test(codigo) || /\bimport\s+type\b/.test(codigo);
+      if (pareceFlow) {
+        const flowPlugins = [
+          'flow',
+          'jsx',
+          'decorators-legacy',
+          'importAttributes',
+          'importAssertions',
+          'classProperties',
+          'classPrivateProperties',
+          'classPrivateMethods',
+          'optionalChaining',
+          'nullishCoalescingOperator',
+          'topLevelAwait',
+        ];
+        parseResult = parseComBabel(codigo, flowPlugins);
+      }
+      // Se ainda nulo e não parece Flow, tenta um conjunto "JS moderno" sem TypeScript (para .js puros)
+      if (parseResult == null) {
+        const jsModernPlugins = [
+          'jsx',
+          'decorators-legacy',
+          'importAttributes',
+          'importAssertions',
+          'classProperties',
+          'classPrivateProperties',
+          'classPrivateMethods',
+          'optionalChaining',
+          'nullishCoalescingOperator',
+          'topLevelAwait',
+        ];
+        parseResult = parseComBabel(codigo, jsModernPlugins);
+      }
+    } catch {
+      // mantém null
+    }
+  }
+
+  // Fallback usando TypeScript compiler quando Babel falhar em .ts/.tsx
+  if (parseResult == null && (ext === '.ts' || ext === '.tsx')) {
+    const tsx = ext === '.tsx';
+    const tsParsed = parseComTypeScript(codigo, tsx);
+    if (tsParsed) return Promise.resolve(tsParsed as unknown as BabelFile);
+  }
 
   if (opts.timeoutMs) {
     const timeoutPromise = new Promise<null>((resolve) => {
