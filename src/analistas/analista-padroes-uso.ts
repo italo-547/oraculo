@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // src/analistas/analista-padroes-uso.ts
 import * as t from '@babel/types';
+import type { NodePath } from '@babel/traverse';
 import { traverse } from '../nucleo/constelacao/traverse.js';
 import { incrementar, garantirArray } from '../zeladores/util/helpers-analistas.js';
 import type {
@@ -58,7 +59,7 @@ export const analistaPadroesUso = {
 
       try {
         traverse(ast as unknown as t.Node, {
-          enter(path) {
+          enter(path: NodePath<t.Node>) {
             const node = path.node;
 
             if (t.isVariableDeclaration(node) && node.kind === 'var') {
@@ -157,10 +158,10 @@ export const analistaPadroesUso = {
             if (
               (node.type === 'ClassProperty' ||
                 (node as { type?: string }).type === 'PropertyDefinition') &&
-              // @ts-expect-error PropertyDefinition em versões mais novas
-              'value' in (node as Record<string, unknown>) &&
-              // @ts-expect-error acesso a value dinamicamente
-              t.isArrowFunctionExpression((node as Record<string, unknown>).value as t.Node)
+              'value' in (node as unknown as Record<string, unknown>) &&
+              t.isArrowFunctionExpression(
+                (node as unknown as Record<string, unknown>).value as t.Node,
+              )
             ) {
               ocorrencias.push({
                 tipo: 'info',

@@ -2,7 +2,23 @@
 import traverseModule from '@babel/traverse';
 
 /**
- * Reexporta o método `traverse` do Babel para uso interno,
- * mantendo compatibilidade e controle centralizado.
+ * Wrapper resiliente para o `@babel/traverse` lidando com variações de ESM/CJS.
+ * Algumas builds expõem a função no `default`, outras como export do módulo CJS.
  */
-export const traverse = traverseModule.default;
+type TraverseFn = (...a: unknown[]) => unknown;
+
+export function traverse(...args: unknown[]): unknown {
+  const mod = traverseModule as unknown;
+  let fn: TraverseFn | undefined;
+  if (typeof mod === 'function') {
+    fn = mod as TraverseFn;
+  } else if (mod && typeof (mod as { default?: unknown }).default === 'function') {
+    fn = (mod as { default: unknown }).default as TraverseFn;
+  } else if (mod && typeof (mod as { traverse?: unknown }).traverse === 'function') {
+    fn = (mod as { traverse: unknown }).traverse as TraverseFn;
+  }
+  if (!fn) {
+    throw new TypeError('Babel traverse não é uma função — verifique a resolução de módulo.');
+  }
+  return fn(...args);
+}

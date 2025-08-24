@@ -16,13 +16,13 @@ export const analistaTodoComments: Analista = {
       return false;
     }
     // Delega escopo ao scanner/CLI: não restringe por caminho aqui
-    const p = relPath.replace(/\\/g, '/').toLowerCase();
+    // normalização não é necessária aqui; scanner controla escopo
     // Evita auto-detecção neste próprio arquivo
     if (/analistas[\\\/]analista-todo-comments\.(ts|js)$/i.test(relPath)) return false;
     return /\.(ts|js|tsx|jsx)$/i.test(relPath);
   },
   aplicar(src, relPath): TecnicaAplicarResultado {
-    if (!src) return null;
+    if (!src || typeof src !== 'string') return null;
     // Evita auto-detecção neste próprio arquivo (defesa dupla)
     if (/analistas[\\\/]analista-todo-comments\.(ts|js)$/i.test(relPath)) return null;
 

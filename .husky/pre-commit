@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 # Husky v9 pre-commit: executa lint-staged
 echo "🔍 pre-commit: executando lint-staged"
-NODE_OPTIONS= npx lint-staged --config ./.lintstagedrc.mjs --cwd . --quiet || { echo "lint-staged falhou; executando verificação completa (npm run check)"; npm run check || exit 1; }
+# Usa o arquivo de configuração correto (.lintstageddrc.mjs) — nome histórico do projeto
+NODE_OPTIONS= npx lint-staged --config ./.lintstageddrc.mjs --cwd . --quiet || { echo "lint-staged falhou; executando verificação completa (npm run check)"; npm run check || exit 1; }
 
 # Varredura rápida de possíveis segredos nos arquivos staged
 echo "🛡️  pre-commit: scan rápido por segredos em arquivos staged"

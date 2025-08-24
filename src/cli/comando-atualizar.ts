@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
-import chalk from 'chalk';
+import chalk from '../nucleo/constelacao/chalk-safe.js';
 import { execSync } from 'node:child_process';
 
 import type { FileEntryWithAst } from '../tipos/tipos.js';

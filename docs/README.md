@@ -23,8 +23,25 @@ Adapte e expanda conforme o crescimento do projeto.
 - Estruturas/Arquétipos: `docs/estruturas/README.md`
 - Decisões do scanner e filtros: `docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md`
 
-### Arquivo legado
+## Nova organização (resumo)
 
-- Documentos históricos/obsoletos foram movidos para `docs/legado/`. Os arquivos originais mantêm apenas um stub de redirecionamento. Planejamento ativo: `docs/CHECKLIST.md`.
+Criamos uma organização mais navegável para a documentação. Abaixo os diretórios principais:
 
-Nota: `node_modules` é ignorado por padrão, mas ao incluir explicitamente via `--include` (ex.: `--include node_modules/**`) o scanner passa a considerar esse diretório, inclusive em `--scan-only`. Os analistas seguem o conjunto de arquivos já filtrado pelo scanner/CLI.
+- `docs/guides/` — guias práticos e operacionais (desenvolvimento, tooling, monitoramento de dependências).
+- `docs/policies/` — políticas de proveniência, licenciamento e diretrizes legais/éticos.
+- `docs/roadmap/` — roadmap e histórico consolidado (roadmaps, decisões de alto nível).
+- `docs/estruturas/`, `docs/specs/`, `docs/relatorios/`, `docs/tests/` — mantidos nas áreas especializadas.
+
+## Referências rápidas
+
+- Guia de desenvolvimento: `docs/guides/development.md`
+- Tooling e políticas de qualidade: `docs/guides/tooling.md`
+- Monitoramento de dependências: `docs/guides/monitor-deps.md`
+- Política de proveniência: `docs/policies/proveniencia.md`
+
+## Observações
+
+- Documentos históricos/obsoletos foram removidos para reduzir ruído. O planejamento ativo permanece em `docs/CHECKLIST.md`.
+- Nota: `node_modules` é ignorado por padrão, mas ao incluir explicitamente via `--include` (ex.: `--include node_modules/**`) o scanner passa a considerar esse diretório, inclusive em `--scan-only`.
+
+Adapte e expanda conforme o crescimento do projeto.

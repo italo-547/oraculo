@@ -75,9 +75,26 @@ export async function corrigirEstrutura(
             );
             await fs.writeFile(destino, novoConteudo, 'utf-8');
             await fs.unlink(origem);
-          } catch {
+          } catch (_e) {
+            // AVISO: Ignoramos intencionalmente a exceção aqui.
+            // Motivo: se a reescrita de imports falhar (ex.: arquivo não textual,
+            // parsers/heurísticas não suportam o conteúdo, ou falhas transitórias de IO),
+            // fazemos fallback para um move simples via fs.rename sem tocar no conteúdo.
+            // Isso mantém a rotina resiliente em execuções automáticas (AUTO_FIX) sem abortar
+            // toda a correção por um caso isolado. Em ocorrências frequentes, promover para
+            // log de aviso e/ou instrumentar métrica pontual pode ser considerado.
+            // A variável _e é preservada para depuração eventual.
             // fallback: mover arquivo sem reescrita se algo falhar na leitura/escrita
-            await fs.rename(origem, destino);
+            try {
+              await fs.rename(origem, destino);
+            } catch (err) {
+              const msg =
+                err && typeof err === 'object' && 'message' in err
+                  ? String((err as { message: unknown }).message)
+                  : String(err);
+              log.erro(`❌ Falha ao mover ${arquivo} via rename: ${msg}`);
+              return;
+            }
           }
           log.sucesso(`✅ Movido: ${arquivo} → ${path.relative(baseDir, destino)}`);
         } catch (err) {

@@ -153,7 +153,7 @@ console.log(bloco); // impressão direta, sem prefixo
 
 ## Cobertura e Testes (Vitest)
 
-- Limiares atuais (V8): linhas/declarações/funções 90% e ramos 88% no projeto. Evite regressões e, quando possível, mantenha ≥ 90% também para ramos nos arquivos críticos de CLI (ex.: `src/cli/comando-diagnosticar.ts`).
+- Limiares atuais (V8): linhas/declarações/funções/ramos 100% no projeto (gate global). Evite regressões; priorize cobrir early-returns (`--scan-only`), caminhos de erro/catch e combinações de flags que mudam o fluxo. Para arquivos críticos de CLI (ex.: `src/cli/comando-diagnosticar.ts`), mantenha 100% em todos os critérios.
 - Priorização de ramos: adicione micro-testes que acionem early-returns (`--scan-only`), caminhos de erro/catch, e combinações de flags que mudam o fluxo (verbose, compacto, guardian full-scan, exportações de relatório).
 - Execução em testes: durante Vitest, `process.env.VITEST` deve desabilitar saídas que encerram o processo. Use spies em `process.exit` e restaure no teardown.
 - Mocks úteis: isole formatação de terminal (chalk/width), IO (helpers de persistência), e relógio quando necessário. Não faça mock de `fs` direto: sempre dos helpers (`lerEstado`/`salvarEstado`).
@@ -276,6 +276,91 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 - Use e atualize sempre o arquivo `docs/CHECKLIST.md` para registrar pendências, melhorias e histórico de ajustes.
 - Sempre consulte o checklist antes e depois de cada modificação relevante.
 
+## Árvore estrutural do projeto (modelo obrigatório)
+
+Abaixo segue a árvore estrutural que deve ser seguida como referência padrão do projeto Oráculo. Ela serve como mapa para evitar confusão na organização de código, técnicas e testes. Ao criar novos artefatos, siga esta estrutura e as regras adicionais listadas em seguida.
+
+```
+.github/
+.husky/
+.oraculo/
+dist/
+docs/
+  docs/banchs/
+  docs/estruturas/
+  docs/historico/
+  docs/legado/
+  docs/partials/
+  docs/perf/
+  docs/plugins/
+  docs/relatorios/
+  docs/specs/
+  docs/templates/
+  docs/tests/
+  docs/*.md
+node_modules/
+preview-oraculo/
+scripts/
+src/
+  src/@types/
+  src/analistas/
+  src/arquitetos/
+  src/cli/
+  src/guardian/
+  src/nucleo/
+  src/relatorios/
+  src/tipos/
+  src/zeladores/
+  src/cli.ts
+temp-fantasma/
+tests/
+  tests/analistas/
+  tests/arquitetos/
+  tests/cli/
+  tests/fixtures/
+  tests/guardian/
+  tests/nucleo/
+  tests/relatorios/
+  tests/tipos/
+  tests/zeladores/
+  tests/tmp/
+    tests/tmp/relatorios-test/
+    tests/tmp/tmp-corretor-destino-existe-test/
+    tests/tmp/tmp-perf-diff/
+    tests/tmp/tmp-scan-only/
+.gitattributes
+.gitignore
+.lintstageddrc.mjs
+.prettierrc
+CHANGELOG.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+eslint.config.js
+inc-state.json
+LICENSE.md
+oraculos.config.json
+package-lock.json
+package.json
+README.md
+SEGURITY.md
+THIRD-PARTY-NOTICES.txt
+temp-cache-file.ts
+tsconfig.eslint.json
+tsconfig.json
+vitest.config.ts
+```
+
+Regras e orientações adicionais (obrigatórias):
+
+- Técnicas implementadas pelo projeto devem ser agrupadas em pastas dedicadas de técnicas dentro do domínio apropriado em `src` (por exemplo `src/analistas/tecnicas/`, `src/zeladores/tecnicas/`). Não misture múltiplas técnicas diferentes em um único arquivo grande.
+- Testes unitários e de integração devem ser criados exclusivamente sob a pasta `tests/` na raiz, usando subpastas por domínio (ex.: `tests/analistas/`, `tests/zeladores/`). Não coloque testes dentro de `src/` para evitar confusão entre código de produção e fixtures/testes.
+- Quando for necessário adicionar um novo módulo com um objetivo distinto, crie uma pasta dedicada em `src/` com nome claro e documente o propósito no `README.md` local do módulo (ex.: `src/novo-modulo/README.md`). Evite adicionar responsabilidades multifuncionais a pastas já existentes.
+- Fixtures e recursos de teste relacionados a detecção de estruturas/arquétipos devem residir em `tests/fixtures/estruturas/` conforme as novas diretrizes de testes por arquétipo.
+- Scripts de build, geração de relatórios e utilitários de manutenção devem ficar em `scripts/` quando são ferramentas de repo; helpers de execução em runtime devem ficar em `src/nucleo/` ou no domínio apropriado.
+- Siga o padrão de persistência centralizado (`src/zeladores/util/persistencia.ts`) para todas as leituras/escritas de estado e snapshots — nunca use `fs` diretamente fora desses helpers.
+
+Observação: Nem todas as subpastas foram listadas detalhadamente; a árvore acima é o mapa de alto nível e referência para organização. Use-a como contrato estrutural para novos commits e para revisão de PRs.
+
 ## Referências
 
 - Veja `docs/RELATORIO.md` para histórico de refatorações e decisões recentes.
@@ -331,6 +416,6 @@ Se encontrar padrões não documentados ou dúvidas sobre fluxos, registre exemp
 
 ---
 
-**Última atualização das diretrizes: 2025-08-22**
+**Última atualização das diretrizes: 2025-08-24**
 
 ---

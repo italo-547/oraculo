@@ -63,9 +63,25 @@ export async function scanSystemIntegrity(
       `⚙️ Guardian filtro aplicado: ${filtrados.length} arquivos considerados (removidos ${removidos}).`,
     );
   }
-  const snapshotAtual = construirSnapshot(filtrados);
+  // Usa import dinâmico para alinhar com mocks de teste (vi.mock/vi.doMock)
+  const { gerarSnapshotDoConteudo: gerar } = await import('./hash.js');
+  const snapshotAtual: Snapshot = {};
+  for (const { relPath, content } of filtrados) {
+    if (typeof content !== 'string' || !content.trim()) continue;
+    try {
+      snapshotAtual[relPath] = gerar(content);
+    } catch (err) {
+      log.aviso(
+        `\u001Fx Falha ao gerar hash de ${relPath}: ${typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)}`,
+      );
+    }
+  }
 
   if (!baselineAnterior) {
+    if (options?.justDiff) {
+      // Em modo justDiff, ausência de baseline implica sem alterações reportáveis
+      return { status: IntegridadeStatus.Ok, timestamp: agora, detalhes: [] };
+    }
     if (!options?.suppressLogs) {
       log.info(`🆕 Guardian: baseline inicial criado.`);
     }

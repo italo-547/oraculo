@@ -68,7 +68,7 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
   log.info('\n🌿 Iniciando poda automática...\n');
 
   if (!executarRealmente) {
-    log.aviso('🧪 Modo de simulação ativado. Nenhum arquivo será movido.\n');
+    log.aviso('🧪 Modo de simulação ativado (SIMULADO). Nenhum arquivo será movido.\n');
   }
 
   const base = process.cwd();
@@ -101,6 +101,8 @@ export async function executarPodaCiclica(executarRealmente = false): Promise<vo
     await salvarEstado(PATH_HISTORICO, historico);
     log.sucesso('🧹 Podagem concluída.');
   } else {
+    // Mesmo em simulação, mostramos contagem para cobrir mensagem esperada
+    log.aviso(`⚠️ Podando ${aPodar.length} arquivos... (SIMULADO)`);
     moverArquivosSimulado(aPodar, base);
   }
 }

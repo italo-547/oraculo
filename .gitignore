@@ -1,3 +1,11 @@
+# Artefatos de execução/relatórios temporários
+tests/tmp/out.json
+tests/tmp/out.md
+tests/tmp/tmp-relatorio-guardian-parcial.md
+# Legado (se algum script gerar na raiz, ainda ignore):
+/out.json
+/out.md
+/tmp-relatorio-guardian-parcial.md
 node_modules/
 dist/
 dist-pack/
@@ -91,10 +99,12 @@ diag.json
 # Artefatos gerados que não devem ser versionados
 /relatorios/
 /pre-public/
-/tmp-perf-diff/
+tests/tmp/tmp-perf-diff/
 /tmp-relatorio-guardian-parcial.md
 /# Diretório temporário usado em testes de corretores
-/tmp-corretor-destino-existe-test/
+tests/tmp/tmp-corretor-destino-existe-test/
+tests/tmp/tmp-scan-only/
+tests/tmp/relatorios-test/
 
 # Segurança / scripts locais (não versionar)
 scripts/local/

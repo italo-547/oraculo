@@ -81,7 +81,7 @@ export const ritualComando = {
     }
 
     traverse(ast.node, {
-      enter(path) {
+      enter(path: NodePath<t.Node>) {
         const nodeAtual = path.node;
         if (t.isCallExpression(nodeAtual) && t.isIdentifier(nodeAtual.callee)) {
           if (['onCommand', 'registerCommand'].includes(nodeAtual.callee.name)) {

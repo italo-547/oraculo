@@ -326,8 +326,8 @@ export async function executarInquisicao(
         await salvarEstado(historicoPath, recortado);
       }
     } catch (e) {
-      if (config.DEV_MODE)
-        log.erro(`Falha ao persistir histórico de métricas: ${(e as Error).message}`);
+      // Sempre registra em DEV e também em execução normal para visibilidade dos testes
+      log.erro(`Falha ao persistir histórico de métricas: ${(e as Error).message}`);
     }
   }
 

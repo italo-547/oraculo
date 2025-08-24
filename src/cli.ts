@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
-import chalk from 'chalk';
+import chalk from './nucleo/constelacao/chalk-safe.js';
 
 import { registrarComandos } from './cli/comandos.js';
 import { comandoPerf } from './cli/comando-perf.js';

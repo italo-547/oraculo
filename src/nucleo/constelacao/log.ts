@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import chalk from 'chalk';
+import chalk, { type StyleFn } from './chalk-safe.js';
 import tty from 'node:tty';
 import { config } from './cosmos.js';
 
@@ -103,29 +103,40 @@ function stripLeadingSimbolos(msg: string): string {
 function formatarLinha({ nivel, mensagem, sanitize = true }: FormatOptions): string {
   const ts = getTimestamp();
   const colNivelRaw = nivel.toUpperCase().padEnd(7);
-  let cor: (s: string) => string = (s) => s;
+  // Resolver possíveis formas do 'chalk' (função ou objeto mockado com .bold)
+  const hasBold = (v: unknown): v is { bold: StyleFn } =>
+    !!v && typeof (v as { bold?: unknown }).bold === 'function';
+  const resolveStyle = (v: unknown): StyleFn => {
+    if (typeof v === 'function') return v as StyleFn;
+    if (hasBold(v)) return v.bold;
+    return (s: string) => String(s);
+  };
+
+  let cor: StyleFn = (s) => s;
   switch (nivel) {
     case 'info':
-      cor = chalk.cyan;
+      cor = resolveStyle(chalk.cyan);
       break;
     case 'sucesso':
-      cor = chalk.green;
+      cor = resolveStyle(chalk.green);
       break;
     case 'erro':
-      cor = chalk.red;
+      cor = resolveStyle(chalk.red);
       break;
     case 'aviso':
-      cor = chalk.yellow;
+      cor = resolveStyle(chalk.yellow);
       break;
     case 'debug':
-      cor = chalk.magenta;
+      cor = resolveStyle(chalk.magenta);
       break;
   }
-  const colNivel = chalk.bold(cor(colNivelRaw));
+  const boldFn = resolveStyle(chalk.bold);
+  const colNivel = boldFn(colNivelRaw);
   const corpo = sanitize ? stripLeadingSimbolos(mensagem) : mensagem;
   // Colorimos mensagens de destaque (erro/aviso/sucesso) para reforçar visibilidade.
   const corpoFmt = nivel === 'info' || nivel === 'debug' ? corpo : cor(corpo);
-  const linha = chalk.gray(ts) + ' ' + colNivel + ' ' + corpoFmt;
+  const grayFn: StyleFn = typeof chalk.gray === 'function' ? chalk.gray : (s) => String(s);
+  const linha = grayFn(ts) + ' ' + colNivel + ' ' + corpoFmt;
   // Centraliza linhas soltas somente com opt-in explícito (ORACULO_CENTER=1)
   if (!process.env.VITEST && process.env.ORACULO_CENTER === '1') {
     try {
@@ -196,7 +207,7 @@ function calcularLarguraInterna(
 export function formatarBloco(
   titulo: string,
   linhas: string[],
-  corTitulo: (s: string) => string = chalk.bold,
+  corTitulo: StyleFn = typeof chalk.bold === 'function' ? chalk.bold : (s: string) => String(s),
   larguraMax?: number,
 ): string {
   // Utilitários conscientes de ANSI para medir/compor por largura visível
@@ -239,9 +250,10 @@ export function formatarBloco(
   const normalizar = (s: string) => truncateVisible(s, maxInner);
   const corpo = linhas.map((l) => '│ ' + padEndVisible(normalizar(l), maxInner) + '│').join('\n');
   const headTxt = '│ ' + padEndVisible(normalizar(titulo), maxInner) + '│';
-  return [chalk.gray(topo), corTitulo(headTxt), chalk.gray(corpo), chalk.gray(base)]
-    .filter(Boolean)
-    .join('\n');
+  // Garantir que corTitulo funciona mesmo quando mockado como objeto
+  const corTituloFn = typeof corTitulo === 'function' ? corTitulo : (s: string) => String(s);
+  const gray: StyleFn = typeof chalk.gray === 'function' ? chalk.gray : (x) => String(x);
+  return [gray(topo), corTituloFn(headTxt), gray(corpo), gray(base)].filter(Boolean).join('\n');
 }
 
 // Fallback opcional de moldura ASCII (evita mojibake em redirecionamentos no Windows)
@@ -261,10 +273,12 @@ function converterMolduraParaAscii(bloco: string): string {
 
 export function fase(titulo: string) {
   if (shouldSilence()) return;
+  const bold: StyleFn = typeof chalk.bold === 'function' ? chalk.bold : (s) => String(s);
+  const cyan: StyleFn = typeof chalk.cyan === 'function' ? chalk.cyan : (s) => String(s);
   console.log(
     formatarLinha({
       nivel: 'info',
-      mensagem: chalk.cyan.bold(`${LOG_SIMBOLOS.fase} ${titulo}`),
+      mensagem: bold(cyan(`${LOG_SIMBOLOS.fase} ${titulo}`)),
       sanitize: false,
     }),
   );
@@ -298,7 +312,9 @@ export const log = {
   // preservando cores dentro do corpo. Útil para títulos curtos e resumos.
   infoDestaque(msg: string): void {
     if (shouldSilence()) return;
-    console.log(formatarLinha({ nivel: 'info', mensagem: chalk.cyan.bold(msg), sanitize: false }));
+    const bold: StyleFn = typeof chalk.bold === 'function' ? chalk.bold : (s) => String(s);
+    const cyan: StyleFn = typeof chalk.cyan === 'function' ? chalk.cyan : (s) => String(s);
+    console.log(formatarLinha({ nivel: 'info', mensagem: bold(cyan(msg)), sanitize: false }));
   },
 
   sucesso(msg: string): void {
@@ -330,7 +346,7 @@ export const log = {
   imprimirBloco(
     titulo: string,
     linhas: string[],
-    corTitulo: (s: string) => string = chalk.bold,
+    corTitulo: StyleFn = typeof chalk.bold === 'function' ? chalk.bold : (s: string) => String(s),
     larguraMax?: number,
   ): void {
     if (shouldSilence()) return;

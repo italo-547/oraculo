@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import { salvarEstado } from '../zeladores/util/persistencia.js';
+// Import dinâmico para facilitar intercepção por vi.mock em diferentes variações de caminho nos testes
 import { formatMs } from '../nucleo/constelacao/format.js';
 import { ResultadoInquisicaoCompleto, Ocorrencia } from '../tipos/tipos.js';
 
@@ -7,11 +7,23 @@ export async function gerarRelatorioMarkdown(
   resultado: ResultadoInquisicaoCompleto,
   outputPath: string,
 ): Promise<void> {
-  const { totalArquivos, ocorrencias, guardian, timestamp, duracaoMs } = resultado;
+  const {
+    totalArquivos = 0,
+    ocorrencias = [],
+    guardian,
+    timestamp = Date.now(),
+    duracaoMs = 0,
+  } = (resultado || {}) as ResultadoInquisicaoCompleto;
   const dataISO = new Date(timestamp).toISOString();
-  const ocorrenciasOrdenadas: Ocorrencia[] = [...ocorrencias].sort(
-    (a, b) => (a.relPath?.localeCompare(b.relPath ?? '') ?? 0) || (a.linha ?? 0) - (b.linha ?? 0),
-  );
+  const ocorrenciasOrdenadas: Ocorrencia[] = [...ocorrencias].sort((a, b) => {
+    const ra = String(a.relPath ?? '');
+    const rb = String(b.relPath ?? '');
+    const cmp = ra.localeCompare(rb);
+    if (cmp !== 0) return cmp;
+    const la = typeof a.linha === 'number' ? a.linha : Number.MAX_SAFE_INTEGER;
+    const lb = typeof b.linha === 'number' ? b.linha : Number.MAX_SAFE_INTEGER;
+    return la - lb;
+  });
 
   const guardianStatus =
     guardian && typeof guardian === 'object' && 'status' in guardian
@@ -26,7 +38,7 @@ export async function gerarRelatorioMarkdown(
       ? String((guardian as Record<string, unknown>).totalArquivos)
       : '—';
 
-  const header = `# 🧾 Relatório Oráculo  
+  const header = `# 🧾 Relatório Oráculo
 
 **Data:** ${dataISO}  
 **Duração:** ${formatMs(duracaoMs)}  
@@ -50,11 +62,12 @@ export async function gerarRelatorioMarkdown(
 ${ocorrenciasOrdenadas
   .map(
     (o) =>
-      `| ${o.relPath} | ${o.linha ?? ''} | ${o.nivel ?? ''} | ${o.mensagem.replace(/\|/g, '\\|')} |`,
+      `| ${o.relPath} | ${o.linha ?? ''} | ${o.nivel ?? ''} | ${String(o.mensagem || '').replace(/\|/g, '\\|')} |`,
   )
   .join('\n')}
 `;
 
+  const { salvarEstado } = await import('../zeladores/util/persistencia.js');
   await salvarEstado(outputPath, header);
 }
 
@@ -62,5 +75,7 @@ export async function gerarRelatorioJson(
   resultado: ResultadoInquisicaoCompleto,
   outputPath: string,
 ): Promise<void> {
+  // Persistir exatamente o objeto fornecido (tests verificam identidade)
+  const { salvarEstado } = await import('../zeladores/util/persistencia.js');
   await salvarEstado(outputPath, resultado);
 }

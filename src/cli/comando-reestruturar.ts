@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
-import chalk from 'chalk';
+import chalk from '../nucleo/constelacao/chalk-safe.js';
 
 import type { Ocorrencia, FileEntryWithAst } from '../tipos/tipos.js';
 import type { PlanoMoverItem } from '../tipos/plano-estrutura.js';

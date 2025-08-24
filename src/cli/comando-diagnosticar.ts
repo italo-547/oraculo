@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import chalk from 'chalk';
+import chalk from '../nucleo/constelacao/chalk-safe.js';
 import { Command } from 'commander';
 import { optionsDiagnosticar } from './options-diagnosticar.js';
 import path from 'node:path';

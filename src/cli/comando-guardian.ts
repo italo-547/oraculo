@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import chalk from 'chalk';
+import chalk from '../nucleo/constelacao/chalk-safe.js';
 import { Command } from 'commander';
 
 import type { FileEntryWithAst } from '../tipos/tipos.js';
@@ -161,7 +161,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
                           .__ORACULO_DIFF_CACHE_HITS__ || 0,
                     }),
                   );
-                else log.info('📘 Guardian baseline criado.');
+                else log.info('📘 Guardian baseline criado');
                 log.aviso(
                   'Execute `oraculo guardian --accept-baseline` para aceitá-lo ou `oraculo diagnosticar` novamente.',
                 );
@@ -176,7 +176,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
                           .__ORACULO_DIFF_CACHE_HITS__ || 0,
                     }),
                   );
-                else log.sucesso('🌀 Guardian: baseline atualizado e aceito.');
+                else log.sucesso('🌀 Guardian: baseline atualizado e aceito');
                 break;
               case IntegridadeStatus.AlteracoesDetectadas: {
                 if (opts.json) {
@@ -189,9 +189,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
                     }),
                   );
                 } else {
-                  log.aviso(
-                    '🚨 Guardian: alterações suspeitas detectadas! Execute `oraculo guardian --diff` para ver detalhes.',
-                  );
+                  log.aviso('🚨 Guardian: alterações suspeitas detectadas!');
                 }
                 process.exit(1);
               }

@@ -2,6 +2,7 @@
 import path from 'node:path';
 import { traverse } from '../nucleo/constelacao/traverse.js';
 import type { TecnicaAplicarResultado, ContextoExecucao, Ocorrencia } from '../tipos/tipos.js';
+import type * as t from '@babel/types';
 import type { NodePath } from '@babel/traverse';
 export const grafoDependencias = new Map<string, Set<string>>();
 
@@ -23,10 +24,10 @@ function extrairReferencias(ast: NodePath): string[] {
   const refs: string[] = [];
 
   traverse(ast.node, {
-    ImportDeclaration(path) {
+    ImportDeclaration(path: NodePath<t.ImportDeclaration>) {
       refs.push(path.node.source.value);
     },
-    CallExpression(path) {
+    CallExpression(path: NodePath<t.CallExpression>) {
       const { callee, arguments: args } = path.node;
       if (
         callee.type === 'Identifier' &&
@@ -66,7 +67,7 @@ export const detectorDependencias = {
 
     // Detecta padrões problemáticos
     traverse(ast.node, {
-      ImportDeclaration(p) {
+      ImportDeclaration(p: NodePath<t.ImportDeclaration>) {
         tiposImport.add('import');
         const val = p.node.source.value;
         // Import externo
@@ -121,7 +122,7 @@ export const detectorDependencias = {
           }
         }
       },
-      CallExpression(p) {
+      CallExpression(p: NodePath<t.CallExpression>) {
         const { callee, arguments: args } = p.node;
         if (
           callee.type === 'Identifier' &&

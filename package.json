@@ -17,6 +17,7 @@
     "node": ">=24.0.4"
   },
   "scripts": {
+    "pretest": "npm run build",
     "typecheck": "tsc --noEmit",
     "prebuild": "rimraf dist",
     "build": "tsc",
@@ -30,7 +31,7 @@
     "check:style": "npm run lint && npm run typecheck && npm run format",
     "check": "npm run check:style && npm run coverage:gate",
     "coverage:gate": "npm run coverage:enforce",
-    "test:e2e": "vitest run src/cli --reporter dot",
+    "test:e2e": "vitest run tests/cli --reporter dot",
     "test:ci": "cross-env CI=true vitest run --reporter=json --outputFile .oraculo/last-test-report.json",
     "perf:baseline": "node dist/cli.js perf baseline --dir docs/perf",
     "perf:compare": "node dist/cli.js perf compare --dir docs/perf --json",
@@ -55,7 +56,8 @@
     "md:scan": "node scripts/scan-markdown.mjs",
     "md:scan:strict": "node scripts/scan-markdown.mjs --strict --strict-readme",
     "md:add-disclaimer": "node scripts/add-disclaimer-md.js",
-    "md:verify-disclaimer": "node scripts/verificar-disclaimer-md.js"
+    "md:verify-disclaimer": "node scripts/verificar-disclaimer-md.js",
+    "tests:fix-imports": "node scripts/fix-test-imports.mjs"
   },
   "keywords": [
     "cli",

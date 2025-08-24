@@ -330,6 +330,7 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
   // Se nenhum root foi derivado (ex.: includes somente de arquivos como 'a.txt'), varremos a base inteira
   // para permitir que o filtro de includes atue nos arquivos diretamente.
   if (hasInclude && startDirs.length === 0) {
+    // Sem roots deriváveis (ex.: include apenas 'a.txt'): varre só a raiz para permitir filtro
     await scan(baseDir);
     return fileMap;
   }

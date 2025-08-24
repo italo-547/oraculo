@@ -123,12 +123,8 @@ export async function prepararComAst(
         if (config.ANALISE_AST_CACHE_ENABLED && stats) {
           const anterior = cache.get(chave);
           if (anterior && anterior.mtimeMs === stats.mtimeMs && anterior.size === stats.size) {
-            // Reaproveita sentinel/AST anterior (não precisamos necessariamente do NodePath completo
-            // para todos analistas; sentinel truthy evita novo parsing).
-            // Sentinel: usamos um objeto vazio tipado para indicar que já houve parsing prévio
-            ast =
-              anterior.ast ||
-              ({} as unknown as import('@babel/traverse').NodePath<import('@babel/types').Node>);
+            // Se o cache tinha AST válida, reutiliza; caso contrário, mantém undefined para obrigar tentative parsing novamente.
+            ast = anterior.ast;
             metricas.cacheHits++;
           }
         }
@@ -137,9 +133,7 @@ export async function prepararComAst(
             const inicioParse = performance.now();
             const parsed = await decifrarSintaxe(entry.content, extEfetiva);
             if (parsed && typeof parsed === 'object') {
-              // parsed pode ser BabelFile; manter ast undefined (NodePath não necessário para todos analistas)
-              // Somente registra erro se parser retornou null (falha real)
-              // Usamos sentinel somente se objeto não for vazio (possui alguma chave), para distinguir de forma inválida
+              // Mantém ast undefined quando parsed é objeto vazio (forma inválida)
               if (Object.keys(parsed as unknown as Record<string, unknown>).length > 0) {
                 // Sentinel convertida para o tipo NodePath via unknown cast – suficiente para diferenciar truthy
                 ast = {} as unknown as import('@babel/traverse').NodePath<
@@ -222,6 +216,10 @@ export async function iniciarInquisicao(
             __ORACULO_DIR_SAMPLES__?: string[];
           };
           g.__ORACULO_DIR_COUNT__ = (g.__ORACULO_DIR_COUNT__ || 0) + 1;
+          // Emite resumo parcial amigável para visibilidade em testes
+          if (!config.COMPACT_MODE) {
+            log.info(`Diretórios escaneados (parcial): ${g.__ORACULO_DIR_COUNT__}`);
+          }
           // contador atualizado em g.__ORACULO_DIR_COUNT__ (não usado diretamente aqui)
           // Armazena primeiros N diretórios como amostra
           const SAMPLE_MAX = 5;
@@ -345,6 +343,8 @@ export async function iniciarInquisicao(
     if (g.__ORACULO_DIR_COUNT__) {
       const totalDirs = g.__ORACULO_DIR_COUNT__;
       __infoDestaque(`Diretórios escaneados: ${totalDirs}`);
+      // Também emite via info padrão para facilitar asserts em testes
+      log.info(`Diretórios escaneados: ${totalDirs}`);
     }
   } catch {
     /* ignore */

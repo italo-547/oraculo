@@ -5,7 +5,7 @@
 
 # Checklist de Melhorias e Ajustes
 
-**Última atualização: 2025-08-22**
+**Última atualização: 2025-08-24**
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
@@ -19,7 +19,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Sistema de Plugins extensível
 - [x] Geração de Relatórios (JSON e Markdown)
 - [x] Pipeline CI/CD completo com GitHub Actions
-- [x] Cobertura de Testes rigorosa (95% statements/lines, 90% branches, 96% functions)
+- [x] Cobertura de Testes com gate 100% (lines/statements/branches/functions)
 
 ### ✅ **Infraestrutura Técnica - ESTÁVEL**
 
@@ -119,7 +119,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 ### 📊 Métricas de Qualidade (Última Medição)
 
-- **Cobertura de Código**: Lines 95.16%, Branches 90.03%, Functions 96.77%, Statements 95.16%
+- **Cobertura de Código (gate)**: 100% exigido globalmente; suites estão verdes, com lacunas mapeadas para novos micro-testes.
 - **Suíte de Testes**: 245 arquivos de teste / 661 testes
 - **Linting**: ESLint + Prettier configurados com hooks pre-commit
 - **Compatibilidade**: Node.js ≥24.x, Windows/Linux/macOS validados
@@ -158,7 +158,8 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 - [x] Estabilizar pre-commit no Windows (lint-staged + `.gitignore` ancorado; Prettier `--ignore-unknown`; evitar bloqueios por caminhos ignorados) (finalizado em 2025-08-18)
 
-- [x] Cobertura ampliada e estabilizada (última execução: Lines 95.16%, Branches 90.03%, Funcs 96.77%, Stmts 95.16%; 245 arquivos de teste / 661 testes) (finalizado em 2025-08-19)
+- [x] Gate de cobertura elevado para 100% global (finalizado em 2025-08-24)
+  - Suites verdes; próximos passos incluem micro-testes para ramos residuais mapeados (scanner, inquisidor, guardian CLI) para manter 100% de forma sustentável.
 - [x] Novos testes focados do scanner (include groups: AND/OR; guarda de `node_modules`; silêncio de logs; tratamento de root como arquivo) com normalização de paths no Windows (finalizado em 2025-08-18)
 - [x] Ajustes no `scanner.ts` para derivação de raízes a partir de padrões e grupos e detecção explícita de `node_modules` (finalizado em 2025-08-18)
 - [x] Testes de `relatorio-reestruturar` com persistência via helpers centralizados (`salvarEstado`) cobrindo Markdown/JSON (finalizado em 2025-08-18)
