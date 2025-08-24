@@ -21,6 +21,7 @@
     "typecheck": "tsc --noEmit",
     "prebuild": "rimraf dist",
     "build": "tsc",
+    "prepack": "npm run build",
     "pre-public": "node scripts/pre-public.mjs",
     "start": "node ./dist/cli.js",
     "diagnosticar": "node ./dist/cli.js diagnosticar",
@@ -38,7 +39,7 @@
     "perf:gate": "node dist/cli.js perf compare --dir docs/perf --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);if(j.regressao){console.error('Regressao performance > limite');process.exit(1)}console.log('Perf OK')});\"",
     "security:deps": "npm audit --production --audit-level=moderate || true",
     "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
-    "prepare": "husky",
+    "prepare": "npm run build",
     "test": "vitest run",
     "test:dev": "vitest run",
     "test:ui": "vitest",
@@ -66,6 +67,13 @@
     "análise",
     "estrutura",
     "organização"
+  ],
+  "preferGlobal": true,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE*",
+    "THIRD-PARTY-NOTICES.txt"
   ],
   "dependencies": {
     "@babel/parser": "^7.28.3",

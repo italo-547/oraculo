@@ -5,7 +5,7 @@
 
 # Checklist de Melhorias e Ajustes
 
-**Última atualização: 2025-08-21**
+**Última atualização: 2025-08-24**
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
@@ -19,7 +19,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Sistema de Plugins extensível
 - [x] Geração de Relatórios (JSON e Markdown)
 - [x] Pipeline CI/CD completo com GitHub Actions
-- [x] Cobertura de Testes rigorosa (95% statements/lines, 90% branches, 96% functions)
+- [x] Cobertura de Testes com gate 100% (lines/statements/branches/functions)
 
 ### ✅ **Infraestrutura Técnica - ESTÁVEL**
 
@@ -62,12 +62,22 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
   - [ ] **AÇÃO NECESSÁRIA**: Aplicar no repositório (Settings → Branches) ou via script com contexts definidos (meta: 2025-08-25)
   - [ ] Validar com PR de teste (checks obrigatórios e bloqueios ativos) (meta: 2025-08-26)
 
+- [ ] Timeout por analista com cancelamento (Item 21) (meta: 2025-08-28)
+- [ ] Versão de schema nos relatórios JSON (Item 23) (meta: 2025-08-27)
+- [ ] Pool de workers para paralelizar por arquivo (Item 15) (meta: 2025-09-02)
+- [ ] Sandbox opcional para plugins externos (Item 9) (meta: 2025-09-05)
+
 ### Média Prioridade
 
 - [ ] Monitor de dependências (documentação e automação)
 - [x] Documentar estratégia de mocks de AST (finalizado em 2025-08-14)
 - [ ] Guia de padronização de código / convenções
 - [ ] Gate de regressão de performance opcional
+
+- [ ] Reforço de tipagem discriminada de ocorrências (Item 10) (meta: 2025-09-03)
+- [ ] Linter interno de analistas (verificação de testes mínimos) (Item 19) (meta: 2025-09-04)
+- [ ] Priorização por git diff (Item 16) (meta: 2025-09-06)
+- [ ] Snapshot/diff ampliado de relatórios (JSON/MD) (Item 18) (meta: 2025-09-07)
 
 - [x] Compliance: automatizar auditoria de licenças no CI e validar headers SPDX (CONCLUÍDO em 2025-08-21)
 
@@ -81,9 +91,11 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [ ] Sistema de cache distribuído para análises em CI
 - [ ] Suporte para monorepos complexos (workspaces)
 
+- [ ] Flag para suprimir TODOs/limiar por arquivo (reduzir ruído em escopos amplos)
+
 ### Limitações conhecidas (registradas)
 
-- [x] `--scan-only` + `--include` ainda ignora `node_modules` em alguns cenários. Harmonização implementada (finalizado em 2025-08-18)
+- [x] `--scan-only` + `--include` ignorava `node_modules` em alguns cenários. Harmonização implementada (finalizado em 2025-08-22)
   - Mitigação aplicada: detecção de inclusão explícita de `node_modules` via `--include` (padrões e grupos) e normalização de caminhos no Windows
 - [x] Flakiness no Vitest quando existe `.oraculo/historico-metricas` no workspace de teste. Mitigação implementada (finalizado em 2025-08-18)
 
@@ -107,7 +119,7 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 ### 📊 Métricas de Qualidade (Última Medição)
 
-- **Cobertura de Código**: Lines 95.16%, Branches 90.03%, Functions 96.77%, Statements 95.16%
+- **Cobertura de Código (gate)**: 100% exigido globalmente; suites estão verdes, com lacunas mapeadas para novos micro-testes.
 - **Suíte de Testes**: 245 arquivos de teste / 661 testes
 - **Linting**: ESLint + Prettier configurados com hooks pre-commit
 - **Compatibilidade**: Node.js ≥24.x, Windows/Linux/macOS validados
@@ -138,9 +150,16 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Atualizar notas de `--include`/`--exclude` e comportamento em `--json` no README (finalizado em 2025-08-18)
 - [x] Compatibilidade Windows validada (exemplos PowerShell; scripts cross-env) (finalizado em 2025-08-18)
 
+## Concluídos Recentes (Sessão 2025-08-22)
+
+- [x] Harmonização completa de filtros: `--include`/`--exclude` controlam o escopo; analistas deixaram de impor limitação rígida a `src/` (2025-08-22)
+- [x] `node_modules` passa a ser analisado quando incluído explicitamente, inclusive em `--scan-only` (2025-08-22)
+- [x] Atualização de documentação (README principal, docs/README, docs/DECISOES-ABORDAGEM-SCAN-FILTROS.md, src/analistas/README.md) refletindo o novo comportamento (2025-08-22)
+
 - [x] Estabilizar pre-commit no Windows (lint-staged + `.gitignore` ancorado; Prettier `--ignore-unknown`; evitar bloqueios por caminhos ignorados) (finalizado em 2025-08-18)
 
-- [x] Cobertura ampliada e estabilizada (última execução: Lines 95.16%, Branches 90.03%, Funcs 96.77%, Stmts 95.16%; 245 arquivos de teste / 661 testes) (finalizado em 2025-08-19)
+- [x] Gate de cobertura elevado para 100% global (finalizado em 2025-08-24)
+  - Suites verdes; próximos passos incluem micro-testes para ramos residuais mapeados (scanner, inquisidor, guardian CLI) para manter 100% de forma sustentável.
 - [x] Novos testes focados do scanner (include groups: AND/OR; guarda de `node_modules`; silêncio de logs; tratamento de root como arquivo) com normalização de paths no Windows (finalizado em 2025-08-18)
 - [x] Ajustes no `scanner.ts` para derivação de raízes a partir de padrões e grupos e detecção explícita de `node_modules` (finalizado em 2025-08-18)
 - [x] Testes de `relatorio-reestruturar` com persistência via helpers centralizados (`salvarEstado`) cobrindo Markdown/JSON (finalizado em 2025-08-18)
