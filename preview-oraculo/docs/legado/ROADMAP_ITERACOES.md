@@ -5,8 +5,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 > Arquivo LEGADO arquivado (preview).
 
 Este roadmap foi descontinuado. O planejamento ativo vive em `docs/CHECKLIST.md` no repo principal.
-

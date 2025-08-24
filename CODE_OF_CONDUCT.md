@@ -5,7 +5,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Código de Conduta do Contribuidor
 
 Como participantes e mantenedores deste projeto, comprometemo-nos a tornar a participação uma experiência livre de assédio para todos.
@@ -17,4 +16,3 @@ Como participantes e mantenedores deste projeto, comprometemo-nos a tornar a par
 Relatos de violação podem ser enviados para issues ou via contato no perfil do mantenedor.
 
 Licença: MIT
-
