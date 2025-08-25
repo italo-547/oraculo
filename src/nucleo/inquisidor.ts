@@ -211,26 +211,23 @@ export async function iniciarInquisicao(
       try {
         const obj = JSON.parse(msg);
         if (obj.tipo === 'diretorio') {
+          // Atualiza contador e amostra em memória, sem emitir logs incrementais.
+          // A política semântica correta: não mostrar progresso parcial durante a varredura;
+          // em vez disso, exibimos apenas um resumo final após a conclusão da varredura.
           const g = globalThis as unknown as {
             __ORACULO_DIR_COUNT__?: number;
             __ORACULO_DIR_SAMPLES__?: string[];
           };
           g.__ORACULO_DIR_COUNT__ = (g.__ORACULO_DIR_COUNT__ || 0) + 1;
-          // Emite resumo parcial amigável para visibilidade em testes
-          if (!config.COMPACT_MODE) {
-            log.info(`Diretórios escaneados (parcial): ${g.__ORACULO_DIR_COUNT__}`);
-          }
-          // contador atualizado em g.__ORACULO_DIR_COUNT__ (não usado diretamente aqui)
-          // Armazena primeiros N diretórios como amostra
+          // Armazena primeiros N diretórios como amostra para diagnóstico posterior
           const SAMPLE_MAX = 5;
           if (!g.__ORACULO_DIR_SAMPLES__) g.__ORACULO_DIR_SAMPLES__ = [];
           if (g.__ORACULO_DIR_SAMPLES__.length < SAMPLE_MAX) {
             g.__ORACULO_DIR_SAMPLES__.push(obj.caminho);
           }
-          // Em modo verbose original podemos ainda mostrar cada, mas agora desativado para reduzir ruído.
-          if (config.VERBOSE && config.COMPACT_MODE) {
-            // já temos contagem progressiva suficiente
-          }
+          // contador atualizado em g.__ORACULO_DIR_COUNT__ (não usado diretamente aqui)
+          // Em modo verbose original poderíamos mostrar mais detalhes, mas por padrão
+          // evitamos ruído progressivo. Erros continuam sendo reportados abaixo.
         } else if (obj.tipo === 'erro') {
           log.erro(`Erro ao ${obj.acao} ${obj.caminho}: ${obj.mensagem}`);
         }
@@ -334,17 +331,34 @@ export async function iniciarInquisicao(
     }));
   }
 
-  // Emite resumo de diretórios escaneados (compacto e estilizado)
+  // Exibe um resumo único da varredura preliminar, imediatamente antes da análise principal.
   try {
     const g = globalThis as unknown as {
       __ORACULO_DIR_COUNT__?: number;
       __ORACULO_DIR_SAMPLES__?: string[];
     };
-    if (g.__ORACULO_DIR_COUNT__) {
-      const totalDirs = g.__ORACULO_DIR_COUNT__;
-      __infoDestaque(`Diretórios escaneados: ${totalDirs}`);
-      // Também emite via info padrão para facilitar asserts em testes
-      log.info(`Diretórios escaneados: ${totalDirs}`);
+    const totalDirs = g.__ORACULO_DIR_COUNT__ || 0;
+    // Não exibir caminhos nem moldura — apenas resumo simples em texto.
+    const amostra = Array.isArray(g.__ORACULO_DIR_SAMPLES__) ? g.__ORACULO_DIR_SAMPLES__ : [];
+    if (config.LOG_ESTRUTURADO) {
+      log.info(
+        JSON.stringify({
+          tipo: 'varredura_preliminar',
+          totalDiretorios: totalDirs,
+          amostraDiretorios: amostra,
+        }),
+      );
+    } else {
+      // Saída plain-text solicitada (sem moldura nem caminhos detalhados)
+      // Exemplo:
+      // resumos varredura preliminar:
+      //
+      // Diretorios escaneados: ?
+      // arquivos escaneados: ?
+      console.log('resumos varredura preliminar:');
+      console.log();
+      console.log(`Diretorios escaneados: ${totalDirs}`);
+      console.log(`arquivos escaneados: ${fileEntries.length}`);
     }
   } catch {
     /* ignore */

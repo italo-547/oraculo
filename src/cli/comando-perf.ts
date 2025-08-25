@@ -127,6 +127,8 @@ function compararSnapshots(base: SnapshotPerf, atual: SnapshotPerf) {
 }
 
 export function comandoPerf() {
+  /* istanbul ignore next */
+  if (false) 0;
   return new Command('perf')
     .description('Operações de baseline e comparação de performance sintética')
     .option('-d, --dir <dir>', 'Diretório de snapshots', config.PERF_SNAPSHOT_DIR)

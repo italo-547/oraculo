@@ -29,6 +29,10 @@ export const configDefault = {
 
   // 📄 Relatórios
   REPORT_SILENCE_LOGS: false,
+  // Quando true, suprime logs de progresso que incluem a palavra "parcial"
+  // (ex.: "Diretórios escaneados (parcial): ..."). Útil para reduzir ruído em CI ou
+  // ao executar em modo silencioso. Valor default: false.
+  SUPPRESS_PARCIAL_LOGS: false,
   REPORT_EXPORT_ENABLED: false,
   REPORT_OUTPUT_DIR: path.join(CWD, 'relatorios'),
   // Relatório de Saúde (controle de exibição)

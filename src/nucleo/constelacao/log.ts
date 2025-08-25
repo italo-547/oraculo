@@ -28,6 +28,18 @@ function shouldSilence(): boolean {
   return config.REPORT_SILENCE_LOGS;
 }
 
+function shouldSuppressParcial(msg?: string): boolean {
+  try {
+    if (!config.SUPPRESS_PARCIAL_LOGS) return false;
+    if (!msg || typeof msg !== 'string') return false;
+    // Suprime quando substring 'parcial' (case-insensitive) aparece em qualquer lugar.
+    // Isso cobre 'parcial' e variações como 'parcialmente'.
+    return /parcial/i.test(msg);
+  } catch {
+    return false;
+  }
+}
+
 function isDebugMode(): boolean {
   return config.DEV_MODE || process.env.ORACULO_DEBUG === 'true';
 }
@@ -298,6 +310,7 @@ export function passo(descricao: string) {
 export const log = {
   info(msg: string): void {
     if (shouldSilence()) return;
+    if (shouldSuppressParcial(msg)) return;
     console.log(formatarLinha({ nivel: 'info', mensagem: msg }));
   },
 
@@ -305,6 +318,7 @@ export const log = {
   // útil para alinhar colunas mantendo números coloridos.
   infoSemSanitizar(msg: string): void {
     if (shouldSilence()) return;
+    if (shouldSuppressParcial(msg)) return;
     console.log(formatarLinha({ nivel: 'info', mensagem: msg, sanitize: false }));
   },
 
@@ -312,6 +326,7 @@ export const log = {
   // preservando cores dentro do corpo. Útil para títulos curtos e resumos.
   infoDestaque(msg: string): void {
     if (shouldSilence()) return;
+    if (shouldSuppressParcial(msg)) return;
     const bold: StyleFn = typeof chalk.bold === 'function' ? chalk.bold : (s) => String(s);
     const cyan: StyleFn = typeof chalk.cyan === 'function' ? chalk.cyan : (s) => String(s);
     console.log(formatarLinha({ nivel: 'info', mensagem: bold(cyan(msg)), sanitize: false }));
@@ -319,6 +334,7 @@ export const log = {
 
   sucesso(msg: string): void {
     if (shouldSilence()) return;
+    if (shouldSuppressParcial(msg)) return;
     console.log(formatarLinha({ nivel: 'sucesso', mensagem: msg }));
   },
 
@@ -328,11 +344,13 @@ export const log = {
 
   aviso(msg: string): void {
     if (shouldSilence()) return;
+    if (shouldSuppressParcial(msg)) return;
     console.log(formatarLinha({ nivel: 'aviso', mensagem: msg }));
   },
 
   debug(msg: string): void {
     if (isDebugMode()) {
+      if (shouldSuppressParcial(msg)) return;
       console.log(formatarLinha({ nivel: 'debug', mensagem: msg }));
     }
   },
@@ -350,6 +368,11 @@ export const log = {
     larguraMax?: number,
   ): void {
     if (shouldSilence()) return;
+    // Suprime blocos que contenham a palavra 'parcial' quando configurado
+    if (config.SUPPRESS_PARCIAL_LOGS) {
+      if (shouldSuppressParcial(titulo)) return;
+      for (const l of linhas) if (shouldSuppressParcial(l)) return;
+    }
     const bloco = formatarBloco(titulo, linhas, corTitulo, larguraMax);
     const out = deveUsarAsciiFrames() ? converterMolduraParaAscii(bloco) : bloco;
     // Centraliza o bloco somente com opt-in explícito (ORACULO_CENTER=1)

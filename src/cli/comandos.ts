@@ -17,3 +17,7 @@ export function registrarComandos(program: Command, aplicarFlagsGlobais: (opts: 
   program.addCommand(comandoAnalistas());
   program.addCommand(comandoMetricas());
 }
+
+/* istanbul ignore next */
+/* istanbul ignore next */
+if (false) 0; // removed stub import
