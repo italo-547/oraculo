@@ -1,6 +1,3 @@
-// SPDX-License-Identifier: MIT
-// Stub para satisfazer analisadores estáticos que esperam chamadas a `registerCommand`.
-// Nunca executa em runtime; apenas fornece um símbolo válido para análise estática.
-export function registerCommand(_name: string, _handler: (...args: unknown[]) => unknown): void {
-  // noop intentionally
-}
+// Arquivo neutralizado — removido uso de stub.
+// Originalmente criado durante uma iteração de correção automática.
+export {}; // torna o módulo um módulo ES vazio e evita símbolos globais

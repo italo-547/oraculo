@@ -107,9 +107,67 @@ export const ritualComando = {
     });
 
     if (comandosInvocados === 0) {
-      // Só reporta ausência quando o arquivo sugere ser de comandos (reduz ruído sem limitar escopo)
+      // Só reporta ausência quando o arquivo sugere ser de comandos *e* contém
+      // sinais de um módulo CLI (import/require de 'commander', uso de `new Command`,
+      // `program.parse`, identificador `program`, etc.). Evita falsos positivos.
       const p = arquivo.replace(/\\/g, '/').toLowerCase();
-      if (/(^|\/)(cli|commands?|comandos?|bot)(\/|\.|-)/.test(p)) {
+      const looksLikeCliPath = /(^|\/)(cli|commands?|comandos?|bot)(\/|\.|-)/.test(p);
+      let hasCliSigns = false;
+      if (ast && looksLikeCliPath) {
+        traverse(ast.node, {
+          enter(path: NodePath<t.Node>) {
+            const node = path.node;
+            // import 'commander' or import ... from 'commander'
+            if (t.isImportDeclaration(node) && typeof node.source.value === 'string') {
+              if (/commander/.test(String(node.source.value))) {
+                hasCliSigns = true;
+                path.stop();
+                return;
+              }
+            }
+            // require('commander') style
+            if (
+              t.isCallExpression(node) &&
+              t.isIdentifier(node.callee) &&
+              node.callee.name === 'require' &&
+              node.arguments.length > 0 &&
+              t.isStringLiteral(node.arguments[0])
+            ) {
+              if (/commander/.test(node.arguments[0].value)) {
+                hasCliSigns = true;
+                path.stop();
+                return;
+              }
+            }
+            // new Command(...)
+            if (
+              t.isNewExpression(node) &&
+              t.isIdentifier(node.callee) &&
+              node.callee.name === 'Command'
+            ) {
+              hasCliSigns = true;
+              path.stop();
+              return;
+            }
+            // program.parse(...) or identifier 'program'
+            if (
+              t.isMemberExpression(node) &&
+              t.isIdentifier(node.object) &&
+              node.object.name === 'program'
+            ) {
+              hasCliSigns = true;
+              path.stop();
+              return;
+            }
+            if (t.isIdentifier(node) && node.name === 'program') {
+              hasCliSigns = true;
+              path.stop();
+              return;
+            }
+          },
+        });
+      }
+      if (looksLikeCliPath && hasCliSigns) {
         ocorrencias.push({
           tipo: 'padrao-ausente',
           nivel: 'aviso',
