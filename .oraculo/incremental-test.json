@@ -1,1 +1,0 @@
-{"arquivos":{"docs/readme.md":{"hash":"x","ocorrencias":[],"analistas":{"demo":{"ocorrencias":10,"duracaoMs":500}}},"src/a.ts":{"hash":"y","ocorrencias":[],"analistas":{"demo":{"ocorrencias":1,"duracaoMs":10}}},"src/b.ts":{"hash":"z","ocorrencias":[],"analistas":{"demo":{"ocorrencias":2,"duracaoMs":20}}}}}
