@@ -353,12 +353,13 @@ export async function iniciarInquisicao(
       // Exemplo:
       // resumos varredura preliminar:
       //
-      // Diretorios escaneados: ?
+      // Diretórios escaneados: ?
       // arquivos escaneados: ?
-      console.log('resumos varredura preliminar:');
-      console.log();
-      console.log(`Diretorios escaneados: ${totalDirs}`);
-      console.log(`arquivos escaneados: ${fileEntries.length}`);
+      // Usamos log.info para que testes possam interceptar a saída
+      log.info('resumos varredura preliminar:');
+      log.info('');
+      log.info(`Diretórios escaneados: ${totalDirs}`);
+      log.info(`arquivos escaneados: ${fileEntries.length}`);
     }
   } catch {
     /* ignore */

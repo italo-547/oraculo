@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
 import chalk from '../nucleo/constelacao/chalk-safe.js';
-import { execSync } from 'node:child_process';
+import { executarShellSeguro } from '../nucleo/util/exec-safe.js';
 
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 
@@ -46,7 +46,7 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: Record<string, unkn
         const cmd = opts.global ? 'npm install -g oraculo@latest' : 'npm install oraculo@latest';
 
         log.info(`📥 Executando: ${cmd}`);
-        execSync(cmd, { stdio: 'inherit' });
+        executarShellSeguro(cmd, { stdio: 'inherit' });
 
         log.sucesso('✅ Atualização concluída com sucesso!');
       } catch (err: unknown) {

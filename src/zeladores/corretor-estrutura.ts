@@ -2,9 +2,10 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import pLimit from 'p-limit';
-import { config } from '../nucleo/constelacao/cosmos.js';
 import { log } from '../nucleo/constelacao/log.js';
 import { resolverPluginSeguro } from '../nucleo/constelacao/seguranca.js';
+import { importarModuloSeguro } from '../nucleo/util/import-safe.js';
+import { config } from '../nucleo/constelacao/cosmos.js';
 import { reescreverImports } from './util/imports.js';
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 
@@ -67,33 +68,35 @@ export async function corrigirEstrutura(
 
           // Reescrever imports relativos (opcional; somente quando AUTO_FIX)
           try {
-            const conteudo = await fs.readFile(origem, 'utf-8');
-            const { novoConteudo } = reescreverImports(
-              conteudo,
-              path.posix.normalize(arquivo.replace(/\\/g, '/')),
-              path.posix.normalize(path.relative(baseDir, destino).replace(/\\/g, '/')),
-            );
-            await fs.writeFile(destino, novoConteudo, 'utf-8');
-            await fs.unlink(origem);
-          } catch (_e) {
-            // AVISO: Ignoramos intencionalmente a exceção aqui.
-            // Motivo: se a reescrita de imports falhar (ex.: arquivo não textual,
-            // parsers/heurísticas não suportam o conteúdo, ou falhas transitórias de IO),
-            // fazemos fallback para um move simples via fs.rename sem tocar no conteúdo.
-            // Isso mantém a rotina resiliente em execuções automáticas (AUTO_FIX) sem abortar
-            // toda a correção por um caso isolado. Em ocorrências frequentes, promover para
-            // log de aviso e/ou instrumentar métrica pontual pode ser considerado.
-            // A variável _e é preservada para depuração eventual.
-            // fallback: mover arquivo sem reescrita se algo falhar na leitura/escrita
-            try {
-              await fs.rename(origem, destino);
-            } catch (err) {
-              const msg =
-                err && typeof err === 'object' && 'message' in err
-                  ? String((err as { message: unknown }).message)
-                  : String(err);
-              log.erro(`❌ Falha ao mover ${arquivo} via rename: ${msg}`);
-              return;
+            if (config.SAFE_MODE && !config.ALLOW_MUTATE_FS) {
+              log.info(
+                `→ SAFE_MODE: simulando escrita/movimento para ${arquivo} → ${path.relative(baseDir, destino)}`,
+              );
+            } else {
+              const conteudo = await fs.readFile(origem, 'utf-8');
+              const { novoConteudo } = reescreverImports(
+                conteudo,
+                path.posix.normalize(arquivo.replace(/\\/g, '/')),
+                path.posix.normalize(path.relative(baseDir, destino).replace(/\\/g, '/')),
+              );
+              await fs.writeFile(destino, novoConteudo, 'utf-8');
+              await fs.unlink(origem);
+            }
+          } catch {
+            if (config.SAFE_MODE && !config.ALLOW_MUTATE_FS) {
+              // Já simulamos acima — nada a fazer
+            } else {
+              // fallback: mover arquivo sem reescrita se algo falhar na leitura/escrita
+              try {
+                await fs.rename(origem, destino);
+              } catch (err) {
+                const msg =
+                  err && typeof err === 'object' && 'message' in err
+                    ? String((err as { message: unknown }).message)
+                    : String(err);
+                log.erro(`❌ Falha ao mover ${arquivo} via rename: ${msg}`);
+                return;
+              }
             }
           }
           log.sucesso(`✅ Movido: ${arquivo} → ${path.relative(baseDir, destino)}`);
@@ -120,7 +123,7 @@ export async function corrigirEstrutura(
         log.aviso(`⚠️ Caminho de plugin não resolvido: ${String(pluginRel)}`);
         continue;
       }
-      const pluginModule: unknown = await import(caminhoPlugin);
+      const pluginModule: unknown = await importarModuloSeguro(baseDir, String(pluginRel));
       let pluginFn:
         | ((args: {
             mapa: ResultadoEstrutural[];

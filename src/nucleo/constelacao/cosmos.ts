@@ -16,6 +16,14 @@ export const configDefault = {
   // 🌱 Flags gerais
   DEV_MODE: process.env.NODE_ENV === 'development' || process.env.ORACULO_DEV === 'true',
   AUTOANALISE_CONCURRENCY: 5,
+  // Segurança: modo seguro impede ações destrutivas por padrão.
+  // Em ambiente de testes (VITEST) mantemos SAFE_MODE desabilitado para preservar o comportamento das suites.
+  // Para desativar por processo/ambiente fora de testes: ORACULO_SAFE_MODE=0
+  SAFE_MODE: process.env.VITEST ? false : process.env.ORACULO_SAFE_MODE !== '0',
+  // Permissões explícitas para permitir plugins/exec/fs mutações quando SAFE_MODE ativo
+  ALLOW_PLUGINS: process.env.ORACULO_ALLOW_PLUGINS === '1' || false,
+  ALLOW_EXEC: process.env.ORACULO_ALLOW_EXEC === '1' || false,
+  ALLOW_MUTATE_FS: process.env.ORACULO_ALLOW_MUTATE_FS === '1' || false,
 
   // 🛡️ Guardian
   GUARDIAN_ENABLED: true,

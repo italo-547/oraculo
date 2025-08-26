@@ -1,0 +1,15 @@
+[
+  "dist/**",
+  "pre-public/**",
+  "scripts/**",
+  "tests/**",
+  "temp-fantasma/**",
+  "tmp-**/**",
+  "**/fixtures/**",
+  "**/mocks/**",
+  "**/__tests__/**",
+  "tmp-cache-file.ts",
+  "src/@types/**",
+  "preview-oraculo/**",
+  "docs/**"
+]

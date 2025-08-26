@@ -55,11 +55,6 @@ function getSourceFns(x: unknown): Partial<Record<StyleName, (s: string) => stri
   };
 }
 
-function compose(a: (s: string) => string, b: (s: string) => string): (s: string) => string {
-  // Aplica b depois a (ordem aqui não altera o efeito prático para ANSI de bold/cor)
-  return (s: string) => a(b(String(s)));
-}
-
 function makeChalkLike(src: Partial<Record<StyleName, (s: string) => string>>): ChalkLike {
   const base = {
     cyan: src.cyan ?? ID,

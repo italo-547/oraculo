@@ -10,6 +10,8 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "removeComments": false,
+  "sourceMap": true,
+  "inlineSources": true,
     "rootDir": "src",
     "outDir": "dist",
     "declaration": true,

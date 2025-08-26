@@ -153,19 +153,18 @@ export const detectorEstrutura = {
       });
     }
 
-    // Arquivos de configuração conhecidos
+    // Arquivos de configuração conhecidos — agrupa em uma única ocorrência para reduzir ruído
     const arquivosConfig = ['package.json', 'tsconfig.json', 'turbo.json', 'pnpm-workspace.yaml'];
-    for (const cfg of arquivosConfig) {
-      if (caminhos.includes(cfg)) {
-        ocorrencias.push({
-          tipo: 'estrutura-config',
-          nivel: 'info',
-          mensagem: `Arquivo de configuração detectado: ${cfg}`,
-          origem: 'detector-estrutura',
-          relPath: cfg,
-          linha: 1,
-        });
-      }
+    const detectados = arquivosConfig.filter((cfg) => caminhos.includes(cfg));
+    if (detectados.length > 0) {
+      ocorrencias.push({
+        tipo: 'estrutura-config',
+        nivel: 'info',
+        mensagem: `Arquivos de configuração detectados: ${detectados.join(', ')}`,
+        origem: 'detector-estrutura',
+        relPath: '[raiz do projeto]',
+        linha: 1,
+      });
     }
 
     // Múltiplos entrypoints

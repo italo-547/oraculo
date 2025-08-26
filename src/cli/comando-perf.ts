@@ -39,8 +39,11 @@ interface SnapshotPerf {
 
 async function obterCommit(): Promise<string | undefined> {
   try {
-    const { execSync } = await import('node:child_process');
-    return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+    // usar helper seguro
+    const { executarShellSeguro } = await import('../nucleo/util/exec-safe.js');
+    return executarShellSeguro('git rev-parse --short HEAD', {
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
       .toString()
       .trim();
   } catch {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// TODO(lembrar): manter ARQUETIPOS importado visível como lembrete para integração futura
+// Nota: manter ARQUETIPOS importado visível como lembrete para integração futura
 import { ARQUETIPOS, normalizarCaminho } from './arquetipos-defs.js';
 // Referência intencional para evitar remoção/aviso de import mantido como lembrete
 void ARQUETIPOS;
@@ -23,7 +23,7 @@ const PESO_DEPENDENCIA = 10;
 const PESO_PATTERN = 5;
 const PENALIDADE_FORBIDDEN = 20;
 
-// TODO(lembrar): função mantida como referência de pontuação; integração pendente com orquestrador
+// Nota: função mantida como referência de pontuação; integração pendente com orquestrador
 function scoreArquetipo(
   def: ArquetipoEstruturaDef,
   arquivos: string[],
@@ -97,7 +97,7 @@ function scoreArquetipo(
     const temControllers = norm.some((f) => f.includes('src/controllers'));
     const temExpress = hasDependency('express');
     let isHibridoCompleto = temPages && temApi && temPrisma && temControllers && temExpress;
-    // TODO(lembrar): variável mantida para futura heurística (parcial vs completo)
+    // Nota: variável mantida para futura heurística (parcial vs completo)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let isHibridoParcial = temPages && temApi && temPrisma && (temControllers || temExpress);
     if (isHibridoCompleto) {

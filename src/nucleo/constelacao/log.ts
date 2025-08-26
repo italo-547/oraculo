@@ -30,7 +30,8 @@ function shouldSilence(): boolean {
 
 function shouldSuppressParcial(msg?: string): boolean {
   try {
-    if (!config.SUPPRESS_PARCIAL_LOGS) return false;
+    // Permite override rápido via variável de ambiente curta ORACULO_SUPPRESS_PARCIAL=1
+    if (!config.SUPPRESS_PARCIAL_LOGS && process.env.ORACULO_SUPPRESS_PARCIAL !== '1') return false;
     if (!msg || typeof msg !== 'string') return false;
     // Suprime quando substring 'parcial' (case-insensitive) aparece em qualquer lugar.
     // Isso cobre 'parcial' e variações como 'parcialmente'.

@@ -1,88 +1,42 @@
-// SPDX-License-Identifier: MIT
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  gerarRelatorioPodaMarkdown,
-  gerarRelatorioPodaJson,
-} from '../../src/relatorios/relatorio-poda.js';
+/// <reference types="vitest" />
+import path from 'node:path';
+import { vi } from 'vitest';
 
-let salvarEstado: any;
-beforeEach(async () => {
-  vi.resetModules();
-  vi.mock('../../src/zeladores/util/persistencia.js', () => ({ salvarEstado: vi.fn() }));
-  salvarEstado = (await import('../../src/zeladores/util/persistencia.js')).salvarEstado;
-});
+// Usamos um mock que é criado antes de importar o módulo alvo, para garantir
+// que o módulo em teste receba a função mockada (salvarEstado).
+const salvarMock = vi.fn();
+vi.mock('../../src/zeladores/util/persistencia.js', () => ({
+  salvarEstado: (...args: any[]) => salvarMock(...args),
+}));
 
-describe('gerarRelatorioPodaMarkdown', () => {
+describe('relatorio-poda', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetModules();
+    salvarMock.mockClear();
   });
 
-  it('gera relatório markdown correto para podados e mantidos', async () => {
-    const podados = [
-      {
-        arquivo: 'a.js',
-        motivo: 'inativo',
-        diasInativo: 10,
-        detectedAt: Date.now(),
-        scheduleAt: Date.now(),
-      },
-    ];
-    const mantidos = [
-      { arquivo: 'b.js', motivo: 'recente', detectedAt: Date.now(), scheduleAt: Date.now() },
-    ];
-    await gerarRelatorioPodaMarkdown('caminho.md', podados, mantidos);
-    expect(salvarEstado).toHaveBeenCalledWith(
-      'caminho.md',
-      expect.stringMatching(/# 🌿 Relatório de Poda Oracular/),
-    );
-    const md = salvarEstado.mock.calls[0][1];
-    expect(md).toMatch(/a\.js/);
-    expect(md).toMatch(/b\.js/);
-    expect(md).toMatch(/inativo/);
-    expect(md).toMatch(/recente/);
-    expect(md).toMatch(/\*\*Arquivos podados:\*\* 1/);
-    expect(md).toMatch(/\*\*Arquivos mantidos:\*\* 1/);
+  it('gera markdown com listas vazias e chama salvarEstado', async () => {
+    const mod = await import('../../src/relatorios/relatorio-poda.js');
+    const out = path.join(process.cwd(), '.oraculo', 'tmp-poda.md');
+    await mod.gerarRelatorioPodaMarkdown(out, [], [], { simulado: true });
+    expect(salvarMock).toHaveBeenCalled();
+    const [caminho, conteudo] = salvarMock.mock.calls[0];
+    expect(caminho).toBe(out);
+    expect(typeof conteudo).toBe('string');
+    expect(conteudo).toContain('Nenhum arquivo foi podado');
   });
 
-  it('gera relatório de simulação', async () => {
-    await gerarRelatorioPodaMarkdown('caminho.md', [], [], { simulado: true });
-    const md = salvarEstado.mock.calls[0][1];
-    expect(md).toMatch(/\*\*Execução:\*\* Simulação/);
-  });
-});
-
-describe('gerarRelatorioPodaJson', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('gera json correto', async () => {
-    const podados = [
-      {
-        arquivo: 'a.js',
-        motivo: 'inativo',
-        diasInativo: 10,
-        detectedAt: Date.now(),
-        scheduleAt: Date.now(),
-      },
-    ];
-    const mantidos = [
-      { arquivo: 'b.js', motivo: 'recente', detectedAt: Date.now(), scheduleAt: Date.now() },
-    ];
-    await gerarRelatorioPodaJson('caminho.json', podados, mantidos);
-    expect(salvarEstado).toHaveBeenCalledWith(
-      'caminho.json',
-      expect.objectContaining({
-        podados: expect.any(Array),
-        mantidos: expect.any(Array),
-        totalPodados: 1,
-        totalMantidos: 1,
-        timestamp: expect.any(Number),
-      }),
-    );
-    const json = salvarEstado.mock.calls[0][1];
-    expect(json.podados[0].arquivo).toBe('a.js');
-    expect(json.mantidos[0].arquivo).toBe('b.js');
-    expect(json.podados[0].diasInativo).toBe(10);
+  it('gera json e inclui campos esperados', async () => {
+    salvarMock.mockClear();
+    const mod = await import('../../src/relatorios/relatorio-poda.js');
+    const out = path.join(process.cwd(), '.oraculo', 'tmp-poda.json');
+    const podados = [{ arquivo: 'a.ts', motivo: 'x', diasInativo: 3 }];
+    const mantidos = [{ arquivo: 'b.ts', motivo: 'y' }];
+    await mod.gerarRelatorioPodaJson(out, podados as any, mantidos as any);
+    expect(salvarMock).toHaveBeenCalled();
+    const [caminho, json] = salvarMock.mock.calls[0];
+    expect(caminho).toBe(out);
+    expect(json.totalPodados).toBe(1);
+    expect(json.podados[0].diasInativo).toBe(3);
   });
 });

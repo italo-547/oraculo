@@ -7,8 +7,15 @@ import traverseModule from '@babel/traverse';
  */
 type TraverseFn = (...a: unknown[]) => unknown;
 
+let _traverseModule: unknown = traverseModule;
+
+// Setter usado apenas em testes para injetar variações do módulo
+export function __setTraverseModule(modulo: unknown) {
+  _traverseModule = modulo;
+}
+
 export function traverse(...args: unknown[]): unknown {
-  const mod = traverseModule as unknown;
+  const mod = _traverseModule as unknown;
   let fn: TraverseFn | undefined;
   if (typeof mod === 'function') {
     fn = mod as TraverseFn;

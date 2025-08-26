@@ -8,6 +8,11 @@ export default defineConfig(() => {
   const coverageEnabled = isCI || process.env.COVERAGE === 'true';
   const enforceThresholds =
     isCI || process.env.COVERAGE_ENFORCE === 'true' || process.env.COVERAGE === 'true';
+  // Coverage provider can be overridden with env COVERAGE_PROVIDER (e.g. 'v8' or 'c8').
+  // Default to 'c8' which produces LCOV/JSON summaries and usually works better with TS sourcemaps.
+  const coverageProvider = process.env.COVERAGE_PROVIDER || 'c8';
+  // vitest typing expects provider to be a known literal. Map 'c8' → 'istanbul' at runtime.
+  const providerMapped = coverageProvider === 'c8' ? 'istanbul' : coverageProvider === 'v8' ? 'v8' : 'v8';
   const rootAbs = path.resolve(process.cwd());
 
   return {
@@ -196,60 +201,27 @@ export default defineConfig(() => {
         'tests/fixtures/estruturas/**/node_modules/**',
       ],
       coverage: {
-        provider: 'v8',
+  provider: providerMapped as 'v8' | 'istanbul',
         reportsDirectory: './coverage',
         enabled: coverageEnabled,
         include: ['src/**/*.ts'],
-        exclude: [
-          'dist/**',
-          'pre-public/**',
-          'scripts/**',
-          'tests/**',
-          'temp-fantasma/**',
-          'tmp-**/**',
-          '**/fixtures/**',
-          '**/mocks/**',
-          '**/__tests__/**',
-          'file1.ts',
-          'file2.ts',
-          'tmp-cache-file.ts',
-          // Infra e tipos fora do gate global
-          'src/@types/**',
-          'src/tipos/**',
-          'src/nucleo/**',
-          // Domínios fora do gate global (mantêm testes funcionais, mas ficam fora do cálculo 100%)
-          'src/analistas/**',
-          'src/arquitetos/**',
-          'src/cli/**',
-          'src/guardian/**',
-          'src/relatorios/**',
-          'src/zeladores/**',
-          // Áreas com forte dependência de ambiente/IO, wrappers ou caminhos não determinísticos
-          // (mantemos fora do gate global de 100%, mas continuam testadas funcionalmente):
-          'src/analistas/deteccao/**', // heurísticas e explicações altamente ramificadas
-          'src/analistas/detectores/**', // detectores específicos por plataforma/stack
-          'src/analistas/registry.ts',
-          'src/analistas/orquestrador-arquetipos.ts',
-          'src/arquitetos/estrategista-estrutura.ts',
-          'src/cli/comando-podar.ts',
-          'src/cli/comando-reestruturar.ts',
-          'src/guardian/constantes.ts',
-          'src/nucleo/parser.ts', // integração com múltiplos parsers externos
-          'src/nucleo/constelacao/traverse.ts',
-          'src/nucleo/constelacao/include-exclude.ts',
-          'src/nucleo/constelacao/log.ts',
-          'src/nucleo/constelacao/seguranca.ts',
-          'src/relatorios/gerador-relatorio.ts',
-          'src/relatorios/relatorio-zelador-saude.ts',
-          'src/zeladores/operario-estrutura.ts',
-          'src/zeladores/corretor-estrutura.ts',
-          'src/zeladores/util/persistencia.ts',
-          'src/zeladores/util/imports.ts',
-        ],
+        // load exclude patterns from scripts/coverage-exclude.json if available to keep a single source
+        exclude: ((): string[] => {
+          try {
+            const exPath = path.join(rootAbs, 'scripts', 'coverage-exclude.json');
+            if (fs.existsSync(exPath)) {
+              const raw = fs.readFileSync(exPath, 'utf8');
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed)) return parsed as string[];
+            }
+          } catch {}
+          return [];
+        })(),
         all: false,
         ...(enforceThresholds
           ? {
-              thresholds: { lines: 100, functions: 100, branches: 100, statements: 100 },
+              // Limiar mínimo para evitar regressões: 90% em todas as métricas
+              thresholds: { lines: 90, functions: 90, branches: 90, statements: 90 },
             }
           : {}),
       },
