@@ -1,0 +1,14 @@
+{
+  "INCLUDE_EXCLUDE_RULES": {
+    "globalExcludeGlob": [
+      "**/node_modules/**",
+      "dist/**",
+      "coverage/**",
+      "**/.oraculo/**"
+    ]
+  },
+  "ESTRUTURA_ARQUIVOS_RAIZ_MAX": 50,
+  "REPO_ARQUETIPO": "oraculo-self",
+  "STRUCTURE_AUTO_FIX": false,
+  "REPORT_EXPORT_ENABLED": true
+}

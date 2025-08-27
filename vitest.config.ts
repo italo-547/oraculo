@@ -12,7 +12,8 @@ export default defineConfig(() => {
   // Default to 'c8' which produces LCOV/JSON summaries and usually works better with TS sourcemaps.
   const coverageProvider = process.env.COVERAGE_PROVIDER || 'c8';
   // vitest typing expects provider to be a known literal. Map 'c8' → 'istanbul' at runtime.
-  const providerMapped = coverageProvider === 'c8' ? 'istanbul' : coverageProvider === 'v8' ? 'v8' : 'v8';
+  const providerMapped =
+    coverageProvider === 'c8' ? 'istanbul' : coverageProvider === 'v8' ? 'v8' : 'v8';
   const rootAbs = path.resolve(process.cwd());
 
   return {
@@ -201,7 +202,7 @@ export default defineConfig(() => {
         'tests/fixtures/estruturas/**/node_modules/**',
       ],
       coverage: {
-  provider: providerMapped as 'v8' | 'istanbul',
+        provider: providerMapped as 'v8' | 'istanbul',
         reportsDirectory: './coverage',
         enabled: coverageEnabled,
         include: ['src/**/*.ts'],
