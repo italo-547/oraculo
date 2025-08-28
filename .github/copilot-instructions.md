@@ -416,6 +416,6 @@ Se encontrar padrões não documentados ou dúvidas sobre fluxos, registre exemp
 
 ---
 
-**Última atualização das diretrizes: 2025-08-24**
+**Última atualização das diretrizes: 2025-08-28**
 
 ---

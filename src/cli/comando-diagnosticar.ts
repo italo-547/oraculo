@@ -295,7 +295,29 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
             }
           }
         } else {
-          config.CLI_EXCLUDE_PATTERNS = Array.from(new Set(['node_modules', '**/node_modules/**']));
+          // Quando não há excludes explícitos, aplicar padrões de exclusão padrão
+          // Isso garante que node_modules e outros diretórios sejam excluídos por padrão
+          const defaultExcludes = [
+            'node_modules',
+            '**/node_modules/**',
+            'dist/**',
+            '**/dist/**',
+            'coverage/**',
+            '**/coverage/**',
+            'build/**',
+            '**/build/**',
+            '**/*.log',
+            '**/*.lock',
+            'package-lock.json',
+            'yarn.lock',
+            'pnpm-lock.yaml',
+            '**/.git/**',
+            '.pnpm/**',
+            '**/.oraculo/**',
+            'preview-oraculo/**',
+            'tests/fixtures/**',
+          ];
+          config.CLI_EXCLUDE_PATTERNS = Array.from(new Set(defaultExcludes));
           if (typeof config === 'object') {
             if (Array.isArray(config.ZELADOR_IGNORE_PATTERNS)) {
               config.ZELADOR_IGNORE_PATTERNS.length = 0;
