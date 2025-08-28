@@ -33,7 +33,7 @@ export const configDefault = {
   GUARDIAN_ALLOW_CHG: false,
   GUARDIAN_ALLOW_DELS: false,
   // Padrões ignorados somente para o Guardian (não impacta scanner geral / analistas)
-  GUARDIAN_IGNORE_PATTERNS: [], // obsoleto (sincronizado a partir de INCLUDE_EXCLUDE_RULES)
+  GUARDIAN_IGNORE_PATTERNS: [] as string[], // obsoleto (sincronizado a partir de INCLUDE_EXCLUDE_RULES)
 
   // 📄 Relatórios
   REPORT_SILENCE_LOGS: false,
@@ -57,7 +57,7 @@ export const configDefault = {
   ZELADOR_HISTORY_PATH: path.join(ORACULO_STATE, 'historico.json'),
   ZELADOR_REPORT_PATH: path.join(ORACULO_STATE, 'poda-oraculo.md'),
   ZELADOR_GHOST_INACTIVITY_DAYS: 30,
-  ZELADOR_IGNORE_PATTERNS: [], // obsoleto (sincronizado a partir de INCLUDE_EXCLUDE_RULES)
+  ZELADOR_IGNORE_PATTERNS: [] as string[], // obsoleto (sincronizado a partir de INCLUDE_EXCLUDE_RULES)
   // Padrões adicionais controlados via CLI para filtragem dinâmica pontual
   CLI_INCLUDE_PATTERNS: [] as string[], // quando não vazio: somente arquivos que casem algum pattern serão considerados (override dos ignores padrão)
   // Grupos de include: cada ocorrência de --include forma um grupo; padrões separados por vírgula/espaço dentro do mesmo argumento devem ser TODOS casados (AND).

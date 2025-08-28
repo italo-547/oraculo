@@ -107,6 +107,7 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
               log.sucesso(`Relatórios de poda exportados para: ${dir}`);
             } catch (e) {
               log.erro(`Falha ao exportar relatórios de poda: ${(e as Error).message}`);
+              throw e;
             }
           }
           return;
@@ -142,28 +143,24 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
           await removerArquivosOrfaos(fileEntries);
           log.sucesso('✅ Poda concluída: Arquivos órfãos removidos com sucesso!');
           if (config.REPORT_EXPORT_ENABLED) {
-            try {
-              const ts = new Date().toISOString().replace(/[:.]/g, '-');
-              const dir =
-                typeof config.REPORT_OUTPUT_DIR === 'string'
-                  ? config.REPORT_OUTPUT_DIR
-                  : path.join(baseDir, 'relatorios');
-              await import('node:fs').then((fs) => fs.promises.mkdir(dir, { recursive: true }));
-              const nome = `oraculo-poda-${ts}`;
-              const podados = resultadoPoda.arquivosOrfaos.map((f) => ({
-                arquivo: f.arquivo,
-                motivo: f.referenciado ? 'inativo' : 'órfão',
-                detectedAt: Date.now(),
-                scheduleAt: Date.now(),
-              }));
-              await gerarRelatorioPodaMarkdown(path.join(dir, `${nome}.md`), podados, [], {
-                simulado: false,
-              });
-              await gerarRelatorioPodaJson(path.join(dir, `${nome}.json`), podados, []);
-              log.sucesso(`Relatórios de poda exportados para: ${dir}`);
-            } catch (e) {
-              log.erro(`Falha ao exportar relatórios de poda: ${(e as Error).message}`);
-            }
+            const ts = new Date().toISOString().replace(/[:.]/g, '-');
+            const dir =
+              typeof config.REPORT_OUTPUT_DIR === 'string'
+                ? config.REPORT_OUTPUT_DIR
+                : path.join(baseDir, 'relatorios');
+            await import('node:fs').then((fs) => fs.promises.mkdir(dir, { recursive: true }));
+            const nome = `oraculo-poda-${ts}`;
+            const podados = resultadoPoda.arquivosOrfaos.map((f) => ({
+              arquivo: f.arquivo,
+              motivo: f.referenciado ? 'inativo' : 'órfão',
+              detectedAt: Date.now(),
+              scheduleAt: Date.now(),
+            }));
+            await gerarRelatorioPodaMarkdown(path.join(dir, `${nome}.md`), podados, [], {
+              simulado: false,
+            });
+            await gerarRelatorioPodaJson(path.join(dir, `${nome}.json`), podados, []);
+            log.sucesso(`Relatórios de poda exportados para: ${dir}`);
           }
         }
       } catch (error) {

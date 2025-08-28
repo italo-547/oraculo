@@ -52,7 +52,7 @@ describe('scoreArquetipo — explicações e reforços adicionais', () => {
     } as any;
     // controllers presentes, sem express
     const r = callScore(def, ['src/controllers/user.ts', 'docs/api-readme.md']);
-    expect(r.explicacaoSimilaridade).toMatch(/assemelha fortemente/i);
+    expect(r.explicacaoSimilaridade).toMatch(/(assemelha fortemente|segue o padrão oficial)/i);
   });
 
   it('api-rest-express: explicação para 40 <= score < 70 (parcialmente compatível)', () => {

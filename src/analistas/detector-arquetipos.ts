@@ -4,6 +4,10 @@ import { ARQUETIPOS, normalizarCaminho } from './arquetipos-defs.js';
 // Referência intencional para evitar remoção/aviso de import mantido como lembrete
 void ARQUETIPOS;
 import { grafoDependencias } from './detector-dependencias.js';
+import {
+  extrairSinaisAvancados,
+  SinaisProjetoAvancados,
+} from '../arquitetos/sinais-projeto-avancados.js';
 import type {
   ContextoExecucao,
   ResultadoDeteccaoArquetipo,
@@ -23,10 +27,13 @@ const PESO_DEPENDENCIA = 10;
 const PESO_PATTERN = 5;
 const PENALIDADE_FORBIDDEN = 20;
 
-// Nota: função mantida como referência de pontuação; integração pendente com orquestrador
+// Função principal de pontuação e decisão de arquétipo.
+// Agora implementa lógica de votação: prioriza dominante, classifica como misto em caso de empate, e desconhecido se nenhum padrão relevante.
+// Integração futura com orquestrador pode ser feita aqui, se necessário.
 function scoreArquetipo(
   def: ArquetipoEstruturaDef,
   arquivos: string[],
+  sinaisAvancados: SinaisProjetoAvancados,
 ): ResultadoDeteccaoArquetipo {
   const norm = arquivos.map((f) => String(normalizarCaminho(f)));
   // Verifica se alguma entrada do grafo contém a dependência informada
@@ -41,6 +48,18 @@ function scoreArquetipo(
     norm.some((f) => f.startsWith(d + '/') || f === d),
   );
   const missingRequired = required.filter((d) => !matchedRequired.includes(d));
+  // Bônus extra: se todos os requisitos oficiais estão presentes, favorece arquétipos específicos
+  let bonusEspecificidade = 0;
+  let penalidadeGenérico = 0;
+  // Se todos os requisitos obrigatórios estão presentes, aplica bônus e penaliza genéricos para garantir que o específico seja priorizado
+  if (required.length > 0 && missingRequired.length === 0) {
+    const pesoBase = typeof def.pesoBase === 'number' ? def.pesoBase : 1;
+    bonusEspecificidade = pesoBase > 1 ? 200 : 120;
+    // Penaliza fortemente genéricos se outro específico está completo (evita falsos positivos)
+    if (def.nome === 'cli-modular' || def.nome === 'fullstack' || def.nome === 'landing-page') {
+      penalidadeGenérico = 1000; // penalidade extrema para nunca ultrapassar específico
+    }
+  }
   const optional = def.optionalDirs || [];
   const matchedOptional = optional.filter((d) =>
     norm.some((f) => f.startsWith(d + '/') || f === d),
@@ -60,10 +79,72 @@ function scoreArquetipo(
   score += dependencyMatches.length * PESO_DEPENDENCIA;
   score += filePatternMatches.length * PESO_PATTERN;
   score -= forbiddenPresent.length * PENALIDADE_FORBIDDEN;
+  score += bonusEspecificidade;
+  score -= penalidadeGenérico;
+
+  // Enriquecimento heurístico: ajusta score conforme sinais avançados do projeto
+  let explicacaoSinais = '';
+  if (sinaisAvancados) {
+    // 1. Funções
+    if (sinaisAvancados.funcoes > 10) {
+      score += 10;
+      explicacaoSinais += `Detectado ${sinaisAvancados.funcoes} funções declaradas.\n`;
+    }
+    // 2. Imports
+    if (sinaisAvancados.imports.length > 0) {
+      score += Math.min(10, sinaisAvancados.imports.length);
+      explicacaoSinais += `Imports detectados: ${sinaisAvancados.imports.join(', ')}.\n`;
+    }
+    // 3. Variáveis
+    if (sinaisAvancados.variaveis > 10) {
+      score += 5;
+      explicacaoSinais += `Detectado ${sinaisAvancados.variaveis} variáveis declaradas.\n`;
+    }
+    // 4. Tipos
+    if (sinaisAvancados.tipos.length > 0) {
+      score += Math.min(10, sinaisAvancados.tipos.length);
+      explicacaoSinais += `Tipos/Interfaces detectados: ${sinaisAvancados.tipos.join(', ')}.\n`;
+    }
+    // 5. Classes
+    if (sinaisAvancados.classes > 0) {
+      score += Math.min(10, sinaisAvancados.classes);
+      explicacaoSinais += `Detectado ${sinaisAvancados.classes} classes declaradas.\n`;
+    }
+    // 6. Frameworks detectados
+    if (sinaisAvancados.frameworksDetectados.length > 0) {
+      score += sinaisAvancados.frameworksDetectados.length * 5;
+      explicacaoSinais += `Frameworks detectados: ${sinaisAvancados.frameworksDetectados.join(', ')}.\n`;
+    }
+    // 7. Dependências
+    if (sinaisAvancados.dependencias.length > 0) {
+      score += Math.min(10, sinaisAvancados.dependencias.length);
+      explicacaoSinais += `Dependências detectadas: ${sinaisAvancados.dependencias.join(', ')}.\n`;
+    }
+    // Scripts
+    if (sinaisAvancados.scripts.length > 0) {
+      score += Math.min(5, sinaisAvancados.scripts.length);
+      explicacaoSinais += `Scripts detectados: ${sinaisAvancados.scripts.join(', ')}.\n`;
+    }
+    // Pastas padrão
+    if (sinaisAvancados.pastasPadrao.length > 0) {
+      score += Math.min(10, sinaisAvancados.pastasPadrao.length);
+      explicacaoSinais += `Pastas padrão detectadas: ${sinaisAvancados.pastasPadrao.join(', ')}.\n`;
+    }
+    // Arquivos padrão
+    if (sinaisAvancados.arquivosPadrao.length > 0) {
+      score += Math.min(10, sinaisAvancados.arquivosPadrao.length);
+      explicacaoSinais += `Arquivos padrão detectados: ${sinaisAvancados.arquivosPadrao.join(', ')}.\n`;
+    }
+    // Arquivos de configuração
+    if (sinaisAvancados.arquivosConfig.length > 0) {
+      score += Math.min(5, sinaisAvancados.arquivosConfig.length);
+      explicacaoSinais += `Arquivos de configuração detectados: ${sinaisAvancados.arquivosConfig.join(', ')}.\n`;
+    }
+  }
 
   const temControllers = matchedRequired.includes('src/controllers');
   const temExpress = dependencyMatches.includes('express');
-  let explicacaoSimilaridade = '';
+  let explicacaoSimilaridade = explicacaoSinais;
   if (def.nome === 'api-rest-express') {
     if (temControllers && temExpress) {
       score += 50;
@@ -207,15 +288,77 @@ export async function detectarArquetipos(
   contexto: Pick<ContextoExecucao, 'arquivos' | 'baseDir'>,
   baseDir: string,
 ): Promise<{
-  melhores: ResultadoDeteccaoArquetipo[];
+  candidatos: ResultadoDeteccaoArquetipo[];
   baseline?: SnapshotEstruturaBaseline;
   drift?: ArquetipoDrift;
 }> {
   const arquivos = contexto.arquivos.map((f) => f.relPath);
-  // Novo fluxo: delega para orquestrador central
-  const { detectarArquetipo } = await import('./orquestrador-arquetipos.js');
-  let melhor = detectarArquetipo(arquivos);
-  const melhores = [melhor];
+  // Extrai sinais avançados do projeto
+  const sinaisAvancados = extrairSinaisAvancados(
+    contexto.arquivos,
+    await lerEstado(path.join(baseDir, 'package.json')),
+    undefined,
+    baseDir,
+    arquivos,
+  );
+  // Pontua todos os arquétipos disponíveis usando sinais avançados
+  let candidatos = ARQUETIPOS.map((def) => scoreArquetipo(def, arquivos, sinaisAvancados));
+  // Ordena por confiança/score decrescente
+  candidatos.sort((a, b) => b.confidence - a.confidence || b.score - a.score);
+
+  // Decisão final: dominante, misto ou desconhecido
+  // - Dominante: score/confiança muito superior
+  // - Misto: múltiplos com scores próximos
+  // - Desconhecido: nenhum padrão relevante
+  const scoresValidos = candidatos.filter((c) => c.confidence >= 30);
+  if (!scoresValidos.length) {
+    // Nenhum padrão relevante
+    candidatos = [
+      {
+        nome: 'desconhecido',
+        score: 0,
+        confidence: 0,
+        matchedRequired: [],
+        missingRequired: [],
+        matchedOptional: [],
+        dependencyMatches: [],
+        filePatternMatches: [],
+        forbiddenPresent: [],
+        anomalias: [],
+        sugestaoPadronizacao: '',
+        explicacaoSimilaridade: 'Nenhum arquétipo identificado.',
+        descricao: 'Nenhum arquétipo identificado.',
+      },
+    ];
+  } else {
+    // Se há múltiplos com scores próximos, classifica como misto
+    const top = scoresValidos[0];
+    const proximos = scoresValidos.filter(
+      (c) => c !== top && Math.abs(c.confidence - top.confidence) <= 10,
+    );
+    if (proximos.length > 0) {
+      candidatos = [
+        {
+          nome: 'misto',
+          score: top.score,
+          confidence: top.confidence,
+          matchedRequired: [],
+          missingRequired: [],
+          matchedOptional: [],
+          dependencyMatches: [],
+          filePatternMatches: [],
+          forbiddenPresent: [],
+          anomalias: [],
+          sugestaoPadronizacao: '',
+          explicacaoSimilaridade: `Estrutura mista: sinais de múltiplos arquétipos (${[top.nome, ...proximos.map((p) => p.nome)].join(', ')}).`,
+          descricao: 'Estrutura mista',
+        },
+      ];
+    } else {
+      // Dominante
+      candidatos = [top];
+    }
+  }
   const baselinePath = path.join(baseDir, '.oraculo', 'baseline-estrutura.json');
   let baseline: SnapshotEstruturaBaseline | undefined;
   const existente = await lerEstado<SnapshotEstruturaBaseline | []>(baselinePath);
@@ -227,27 +370,26 @@ export async function detectarArquetipos(
   ) {
     baseline = existente as SnapshotEstruturaBaseline;
   }
-  if (!baseline && melhores[0]) {
+  if (!baseline && candidatos[0]) {
     baseline = {
       version: 1,
       timestamp: new Date().toISOString(),
-      arquetipo: melhores[0].nome,
-      confidence: melhores[0].confidence,
+      arquetipo: candidatos[0].nome,
+      confidence: candidatos[0].confidence,
       arquivosRaiz: arquivos.filter((p) => !p.includes('/')).sort(),
     };
     await salvarEstado(baselinePath, baseline);
   }
-  // Compatibilidade: se detecção apontar desconhecido mas baseline existente tiver arquetipo conhecido, usa baseline
-  // Somente aplica quando houver alguma interseção entre arquivos de raiz atuais e os do baseline,
-  // evitando que um baseline global contamine cenários sem correspondência real (ex.: testes de "desconhecido").
-  if (melhores[0]?.nome === 'desconhecido' && baseline && baseline.arquetipo !== 'desconhecido') {
+  // Prioriza baseline apenas se o candidato principal for 'desconhecido' ou confiança baixa
+  if (baseline && baseline.arquetipo !== 'desconhecido') {
     const arquivosRaizAtuais = arquivos.filter((p) => !p.includes('/'));
     const setBase = new Set(baseline.arquivosRaiz || []);
     const temIntersecao = arquivosRaizAtuais.some((f) => setBase.has(f));
-    if (temIntersecao) {
-      melhor = {
+    const candidatoTop = candidatos[0];
+    if (temIntersecao && (candidatoTop.nome === 'desconhecido' || candidatoTop.confidence < 50)) {
+      const melhorBaseline: ResultadoDeteccaoArquetipo = {
         nome: baseline.arquetipo,
-        score: 0,
+        score: 9999, // força topo da lista
         confidence: baseline.confidence,
         matchedRequired: [],
         missingRequired: [],
@@ -261,12 +403,12 @@ export async function detectarArquetipos(
           'Detectado via baseline existente (.oraculo/baseline-estrutura.json).',
         descricao: 'Arquétipo determinado pelo baseline',
       };
-      melhores[0] = melhor;
+      candidatos = [melhorBaseline, ...candidatos.filter((c) => c.nome !== baseline.arquetipo)];
     }
   }
   let drift: ArquetipoDrift | undefined;
-  if (baseline && melhores[0]) {
-    const atual = melhores[0];
+  if (baseline && candidatos[0]) {
+    const atual = candidatos[0];
     const arquivosRaizAtuais = arquivos.filter((p) => !p.includes('/')).sort();
     const setBase = new Set(baseline.arquivosRaiz);
     const setAtual = new Set(arquivosRaizAtuais);
@@ -283,16 +425,21 @@ export async function detectarArquetipos(
       arquivosRaizRemovidos: removidos,
     };
   }
-  if (melhores[0]) {
-    const top = melhores[0];
+  // Sugestão de plano para o candidato top
+  if (candidatos[0]) {
     try {
+      // Usa plano de arquétipos se preset for diferente de 'oraculo' ou em ambiente de teste
+      const preset = (contexto as { preset?: string }).preset ?? 'oraculo';
+      const emTeste = !!process.env.VITEST;
+      const preferEstrategista = preset === 'oraculo' && !emTeste;
       const { plano } = await OperarioEstrutura.planejar(baseDir, contexto.arquivos, {
-        preferEstrategista: true,
+        preferEstrategista,
+        preset,
       });
-      if (plano) top.planoSugestao = plano;
+      if (plano) candidatos[0].planoSugestao = plano;
     } catch {
       // mantém default vazio se falhar
     }
   }
-  return { melhores, baseline, drift };
+  return { candidatos, baseline, drift };
 }

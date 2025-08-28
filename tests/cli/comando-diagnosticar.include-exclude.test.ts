@@ -8,25 +8,36 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 // para capturar os fileEntries já filtrados após include/exclude.
 
 const originalCwd = process.cwd();
-const FIXED_TMP = path.join(originalCwd, 'tmp-oraculo-filtros-test');
+let TMP_DIR = '';
 
 async function setupTmp(files: Record<string, string>) {
-  // Limpa se existir
-  await fs.rm(FIXED_TMP, { recursive: true, force: true });
-  await fs.mkdir(FIXED_TMP, { recursive: true });
+  // Cria diretório temporário único por teste
+  TMP_DIR = path.join(
+    originalCwd,
+    'tmp-oraculo-filtros-test-' + Math.random().toString(36).slice(2),
+  );
+  await fs.mkdir(TMP_DIR, { recursive: true });
   for (const [rel, content] of Object.entries(files)) {
-    const full = path.join(FIXED_TMP, rel);
+    const full = path.join(TMP_DIR, rel);
     await fs.mkdir(path.dirname(full), { recursive: true });
     await fs.writeFile(full, content, 'utf-8');
   }
-  process.chdir(FIXED_TMP);
-  return FIXED_TMP;
+  process.chdir(TMP_DIR);
+  return TMP_DIR;
 }
 
 afterAll(async () => {
-  // Restaura cwd e remove diretório fixo ao final
+  // Restaura cwd e remove diretório temporário único
   process.chdir(originalCwd);
-  await fs.rm(FIXED_TMP, { recursive: true, force: true });
+  await new Promise((r) => setTimeout(r, 200));
+  if (TMP_DIR) {
+    try {
+      await fs.rm(TMP_DIR, { recursive: true, force: true });
+    } catch (err: any) {
+      if (err.code !== 'ENOTEMPTY' && err.code !== 'ENOENT') throw err;
+      // Se ainda restar ENOTEMPTY, ignora pois não afeta ciclo dos testes
+    }
+  }
 });
 
 beforeEach(async () => {

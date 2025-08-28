@@ -5,8 +5,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
   {
     nome: 'cli-modular',
     descricao: 'CLI modular em TypeScript com entrada em src/cli.ts ou cli.ts na raiz',
-    requiredDirs: ['src'],
-    optionalDirs: ['src/cli', 'src/cli/commands'],
+    requiredDirs: ['src/cli'],
+    optionalDirs: ['src/cli/commands'],
     filePresencePatterns: ['cli.ts'],
     dependencyHints: ['commander'],
     rootFilesAllowed: [
@@ -27,8 +27,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
   {
     nome: 'landing-page',
     descricao: 'Aplicação web (frontend) com pages/ e components/',
-    requiredDirs: ['pages'],
-    optionalDirs: ['components', 'public'],
+    requiredDirs: ['pages', 'components'],
+    optionalDirs: ['public'],
     forbiddenDirs: ['prisma'],
     rootFilesAllowed: ['package.json', 'tsconfig.json', 'README.md'],
     pesoBase: 1,
@@ -58,8 +58,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
   {
     nome: 'bot',
     descricao: 'Bot (ex: discord/telegram) com src/bot ou bot.ts',
-    requiredDirs: ['src'],
-    filePresencePatterns: ['bot.ts', 'src/bot'],
+    requiredDirs: ['src/bot'],
+    filePresencePatterns: ['bot.ts'],
     dependencyHints: ['telegraf', 'discord.js'],
     rootFilesAllowed: ['package.json', 'tsconfig.json'],
     // Estruturas típicas de frontend/monorepo não são esperadas em bots
@@ -69,8 +69,8 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
   {
     nome: 'electron',
     descricao: 'Aplicação Electron com main process',
-    requiredDirs: ['src'],
-    filePresencePatterns: ['electron.js', 'main.js', 'electron.ts'],
+    requiredDirs: ['src', 'main.js'],
+    filePresencePatterns: ['electron.js', 'electron.ts'],
     dependencyHints: ['electron'],
     rootFilesAllowed: ['package.json', 'tsconfig.json'],
     // Electron não deve coexistir com pastas típicas de fullstack/monorepo
@@ -80,10 +80,9 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
   {
     nome: 'lib-tsc',
     descricao: 'Biblioteca TypeScript compilada via tsc',
-    requiredDirs: ['src'],
+    requiredDirs: ['src', 'src/index.ts'],
     optionalDirs: ['src/lib', 'src/utils'],
-    // Evita colisão com projeto mínimo contendo apenas index.ts na raiz
-    filePresencePatterns: ['src/index.ts'],
+    filePresencePatterns: [],
     dependencyHints: [],
     rootFilesAllowed: ['package.json', 'tsconfig.json', 'README.md'],
     forbiddenDirs: ['pages', 'api', 'prisma'],

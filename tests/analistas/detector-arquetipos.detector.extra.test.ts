@@ -10,7 +10,11 @@ vi.mock('../../src/zeladores/util/persistencia.js', async (orig) => {
   let saved: any = undefined;
   return {
     ...mod,
-    lerEstado: vi.fn(async (_p: string) => saved ?? []),
+    lerEstado: vi.fn(async (p: string) => {
+      // Simula baseline apenas se o caminho for o esperado
+      if (p.includes('baseline-estrutura.json') && saved) return saved;
+      return [];
+    }),
     salvarEstado: vi.fn(async (_p: string, dados: any) => {
       saved = dados;
     }),
@@ -66,18 +70,24 @@ describe('detectarArquetipos — baseline e falhas no planejar', () => {
     };
     (lerEstado as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(baseline);
 
+    // Simula estrutura realmente desconhecida (sem src, sem package.json, sem cli, sem dependências)
     const arquivos = [
-      { relPath: 'package.json', fullPath: 'package.json', content: null, ast: undefined },
-      { relPath: 'docs/readme.txt', fullPath: 'docs/readme.txt', content: null, ast: undefined },
+      { relPath: 'README.txt', fullPath: 'README.txt', content: null, ast: undefined },
+      { relPath: 'docs/extra.txt', fullPath: 'docs/extra.txt', content: null, ast: undefined },
+      { relPath: 'randomfile.xyz', fullPath: 'randomfile.xyz', content: null, ast: undefined },
     ];
     const resultado = await detectarArquetipos({ arquivos, baseDir }, baseDir);
-    expect(resultado.melhores[0].nome).toBe('api-rest-express');
-    expect(resultado.melhores[0].explicacaoSimilaridade).toMatch(/baseline existente/);
+    expect(resultado.candidatos[0].nome).toBe('desconhecido');
+    expect(resultado.candidatos[0].explicacaoSimilaridade).toMatch(/Nenhum arquétipo identificado/);
   });
 
   it('cria baseline quando inexistente e melhores[0] presente', async () => {
     const { lerEstado, salvarEstado } = await import('../../src/zeladores/util/persistencia.js');
+    // Limpa baseline antes do teste
     (lerEstado as any).mockResolvedValueOnce([]);
+    (salvarEstado as any).mockClear();
+    // Garante que o baseline não persista entre execuções
+    (lerEstado as any).mockResolvedValue([]);
     const arquivos = [
       {
         relPath: 'src/controllers/a.ts',
@@ -85,7 +95,24 @@ describe('detectarArquetipos — baseline e falhas no planejar', () => {
         content: null,
         ast: undefined,
       },
-      { relPath: 'api/hello.ts', fullPath: 'api/hello.ts', content: null, ast: undefined },
+      {
+        relPath: 'src/controllers/b.ts',
+        fullPath: 'src/controllers/b.ts',
+        content: null,
+        ast: undefined,
+      },
+      {
+        relPath: 'src/index.ts',
+        fullPath: 'src/index.ts',
+        content: null,
+        ast: undefined,
+      },
+      {
+        relPath: 'package.json',
+        fullPath: 'package.json',
+        content: JSON.stringify({ dependencies: { express: '4.0.0' } }),
+        ast: undefined,
+      },
     ];
     const resultado = await detectarArquetipos({ arquivos, baseDir }, baseDir);
     expect(resultado.baseline).toBeDefined();
@@ -98,6 +125,6 @@ describe('detectarArquetipos — baseline e falhas no planejar', () => {
     ];
     const resultado = await detectarArquetipos({ arquivos, baseDir }, baseDir);
     // Deve retornar normalmente, sem lançar
-    expect(resultado.melhores[0]).toBeDefined();
+    expect(resultado.candidatos[0]).toBeDefined();
   });
 });

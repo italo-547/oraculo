@@ -47,6 +47,24 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
       },
       [] as string[],
     )
+    .option(
+      '--include <padrao>',
+      'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)',
+      (val: string, prev: string[]) => {
+        prev.push(val);
+        return prev;
+      },
+      [] as string[],
+    )
+    .option(
+      '--exclude <padrao>',
+      'Glob pattern a EXCLUIR adicionalmente (pode repetir a flag ou usar vírgulas / espaços)',
+      (val: string, prev: string[]) => {
+        prev.push(val);
+        return prev;
+      },
+      [] as string[],
+    )
     .action(async function (
       this: Command,
       opts: {
@@ -58,6 +76,8 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
         categoria?: string[];
         preferEstrategista?: boolean;
         preset?: string;
+        include?: string[];
+        exclude?: string[];
       },
     ) {
       aplicarFlagsGlobais(
@@ -72,10 +92,51 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
           baseDir,
           { incluirMetadados: true, skipExec: true },
         );
+        // Parser de padrões globais (igual podar/diagnosticar)
+        const processPatternList = (raw: string[] | undefined) => {
+          if (!raw || !raw.length) return [] as string[];
+          return Array.from(
+            new Set(
+              raw
+                .flatMap((r) => r.split(/[\s,]+/))
+                .map((s) => s.trim())
+                .filter(Boolean),
+            ),
+          );
+        };
+        const expandIncludes = (list: string[]) => {
+          const META = /[\\*\?\{\}\[\]]/;
+          const out = new Set<string>();
+          for (const p of list) {
+            out.add(p);
+            if (!META.test(p)) {
+              out.add(p.replace(/\\+$/, '').replace(/\/+$/, '') + '/**');
+              if (!p.includes('/') && !p.includes('\\')) out.add('**/' + p + '/**');
+            }
+          }
+          return Array.from(out);
+        };
+        const includeListRaw = processPatternList(opts.include);
+        const includeList = includeListRaw.length ? expandIncludes(includeListRaw) : [];
+        const excludeList = processPatternList(opts.exclude);
+        // Filtra fileEntries conforme include/exclude
+        let filteredEntries = fileEntries;
+        if (includeList.length) {
+          const micromatch = (await import('micromatch')).default;
+          filteredEntries = filteredEntries.filter((f) =>
+            micromatch.isMatch(f.relPath, includeList),
+          );
+        }
+        if (excludeList.length) {
+          const micromatch = (await import('micromatch')).default;
+          filteredEntries = filteredEntries.filter(
+            (f) => !micromatch.isMatch(f.relPath, excludeList),
+          );
+        }
         const fileEntriesComAst =
           typeof prepararComAst === 'function'
-            ? await prepararComAst(fileEntries, baseDir)
-            : fileEntries;
+            ? await prepararComAst(filteredEntries, baseDir)
+            : filteredEntries;
         const analiseParaCorrecao = await executarInquisicao(
           fileEntriesComAst,
           tecnicas,
@@ -206,6 +267,11 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
             }
           }
           log.info('Dry-run solicitado (--somente-plano). Nenhuma ação aplicada.');
+          log.info(
+            chalk.yellow(
+              'Para aplicar as movimentações reais, execute novamente com a flag --auto (ou --aplicar).',
+            ),
+          );
           return;
         }
 

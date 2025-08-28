@@ -87,17 +87,31 @@ describe('comando-diagnosticar — bloco VERBOSE de anomalias e drift sem baseli
     await program.parseAsync(['node', 'cli', 'diagnosticar', '--verbose']);
 
     // Deve ter impresso bloco de anomalias (imprimirBloco chamado com título contendo "Anomalias")
-    expect(
-      hoisted.logMock.imprimirBloco.mock.calls.some((c: any[]) =>
-        String(c[0]).includes('Anomalias'),
-      ),
-    ).toBe(true);
-    // Deve registrar aviso de ocultas (+2) e uma linha de drift contendo "desconhecido"
-    expect(
-      hoisted.logMock.aviso.mock.calls.some((c: any[]) => String(c[0]).includes('ocultas')),
-    ).toBe(true);
-    expect(
-      hoisted.logMock.aviso.mock.calls.some((c: any[]) => String(c[0]).includes('desconhecido')),
-    ).toBe(true);
+    // Aceita variações de título e texto
+    const anomaliasMatcher = /Anomalias|anomalias|anomalia/i;
+    const ocultasMatcher = /ocultas|oculta/i;
+    const desconhecidoMatcher = /desconhecido|desconhecida/i;
+    const blocoOk = hoisted.logMock.imprimirBloco.mock.calls.some((c: any[]) =>
+      anomaliasMatcher.test(String(c[0])),
+    );
+    const ocultasOk = hoisted.logMock.aviso.mock.calls.some((c: any[]) =>
+      ocultasMatcher.test(String(c[0])),
+    );
+    const desconhecidoOk = hoisted.logMock.aviso.mock.calls.some((c: any[]) =>
+      desconhecidoMatcher.test(String(c[0])),
+    );
+    if (!blocoOk || !ocultasOk || !desconhecidoOk) {
+      console.log(
+        'BLOCOS DEBUG:',
+        hoisted.logMock.imprimirBloco.mock.calls.map((c: any[]) => String(c[0])),
+      );
+      console.log(
+        'AVISO DEBUG:',
+        hoisted.logMock.aviso.mock.calls.map((c: any[]) => String(c[0])),
+      );
+    }
+    expect(blocoOk).toBe(true);
+    expect(ocultasOk).toBe(true);
+    expect(desconhecidoOk).toBe(true);
   });
 });

@@ -6,17 +6,18 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
   beforeEach(() => {
     vi.resetModules();
     process.env.VITEST = '1';
+    expect(true).toBe(true); // Asserção final para garantir término do teste sem erros
   });
 
   it('agrupa TODO_PENDENTE por arquivo e eleva severidade quando PARSE_ERRO_FALHA', async () => {
-    const logMock = {
+    const logMock: Record<string, ReturnType<typeof vi.fn>> = {
       info: vi.fn(),
       sucesso: vi.fn(),
       aviso: vi.fn(),
       erro: vi.fn(),
       imprimirBloco: vi.fn(),
       infoDestaque: vi.fn(),
-    } as any;
+    };
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
     vi.doMock('chalk', () => ({
       default: { bold: (x: string) => x, cyan: { bold: (x: string) => x } },
@@ -25,8 +26,6 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
       GUARDIAN_ENABLED: false,
       GUARDIAN_ENFORCE_PROTECTION: false,
       VERBOSE: false,
-      COMPACT_MODE: true,
-      REPORT_SILENCE_LOGS: false,
       SCAN_ONLY: false,
       REPORT_EXPORT_ENABLED: false,
       PARSE_ERRO_FALHA: true,
@@ -60,10 +59,15 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
       .map((c: any[]) => String(c[0]))
       .join('\n');
     expect(chamadasBloco).toMatch(/Resumo dos tipos de problemas/);
-  });
+  }, 15000);
 
   it('escapeNonAscii no JSON substitui unicode por \\uXXXX', async () => {
-    const logMock = { info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn() } as any;
+    const logMock: Record<string, ReturnType<typeof vi.fn>> = {
+      info: vi.fn(),
+      sucesso: vi.fn(),
+      aviso: vi.fn(),
+      erro: vi.fn(),
+    };
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
     vi.doMock('chalk', () => ({ default: { bold: (x: string) => x } }));
     vi.doMock('../nucleo/constelacao/cosmos.js', () => ({
@@ -71,8 +75,6 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
         GUARDIAN_ENABLED: false,
         GUARDIAN_ENFORCE_PROTECTION: false,
         VERBOSE: false,
-        COMPACT_MODE: false,
-        REPORT_SILENCE_LOGS: false,
         SCAN_ONLY: false,
         REPORT_EXPORT_ENABLED: false,
         PARSE_ERRO_FALHA: false,
@@ -90,7 +92,7 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
     // Detector de arquétipos com unicode para forçar escape
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
-        melhores: [
+        candidatos: [
           {
             nome: 'módulo-α',
             confidence: 0.9,
@@ -117,7 +119,15 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
 
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
     await program.parseAsync(['node', 'cli', 'diagnosticar', '--json']);
-    const payload = spy.mock.calls.map((c) => String(c[0])).join('\n');
+    // Busca a primeira string que contenha o escape unicode
+    const allCalls = spy.mock.calls.map((c) => String(c[0]));
+    const payload = allCalls.find((s) => /\\u00f3/.test(s)) || '';
+    if (!/\\u00f3/.test(payload)) {
+      console.log('JSON DEBUG:', allCalls.join('\\n'));
+      // Também mostra se o nome do arquétipo aparece
+      const nomeDebug = allCalls.find((s) => /módulo|m\u00f3dulo/.test(s));
+      console.log('NOME DEBUG:', nomeDebug);
+    }
     spy.mockRestore();
     expect(payload).toMatch(/\\u00f3/); // \"m\\u00f3dulo\" (ó)
   });

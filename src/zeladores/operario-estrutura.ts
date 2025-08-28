@@ -35,8 +35,15 @@ export const OperarioEstrutura = {
       !opcoes.preferEstrategista && (opcoes.preset !== 'oraculo' || emTeste);
     if (podeUsarArquetipos) {
       try {
-        const arqs = await detectarArquetipos({ arquivos: fileEntriesComAst, baseDir }, baseDir);
-        const planoArq = arqs.melhores[0]?.planoSugestao as PlanoSugestaoEstrutura | undefined;
+        const arqs = await detectarArquetipos(
+          {
+            arquivos: fileEntriesComAst,
+            baseDir,
+            ...(opcoes.preset ? { preset: opcoes.preset } : {}),
+          } as { arquivos: typeof fileEntriesComAst; baseDir: string; preset?: string },
+          baseDir,
+        );
+        const planoArq = arqs.candidatos[0]?.planoSugestao as PlanoSugestaoEstrutura | undefined;
         if (planoArq && Array.isArray(planoArq.mover)) {
           return { plano: planoArq, origem: 'arquetipos' };
         }

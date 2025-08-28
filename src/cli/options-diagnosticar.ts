@@ -27,6 +27,11 @@ export const optionsDiagnosticar = [
     defaultValue: false,
   },
   {
+    flags: '--detalhado',
+    desc: 'Exporta relatório de arquétipos detalhado (todos os problemas e sinais)',
+    defaultValue: false,
+  },
+  {
     flags: '--include <padrao>',
     desc: 'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)',
     parser: (val: string, prev: string[]) => {

@@ -1,6 +1,0 @@
-# Não exportar pastas históricas e de artefatos em git archive / npm pack
-.abandonados/ export-ignore
-.deprecados/ export-ignore
-coverage/ export-ignore
-relatorios/ export-ignore
-pre-public/ export-ignore

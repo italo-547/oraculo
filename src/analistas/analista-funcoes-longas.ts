@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // ...existing code...
-import type { Ocorrencia, TecnicaAplicarResultado, ContextoExecucao } from '../tipos/tipos.js';
+import type { Ocorrencia } from '../tipos/tipos.js';
 import { criarAnalista } from '../tipos/tipos.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import type {
@@ -15,36 +15,28 @@ const LIMITE_PARAMETROS = config.ANALISE_LIMITES?.FUNCOES_LONGAS?.MAX_PARAMETROS
 const LIMITE_ANINHAMENTO = config.ANALISE_LIMITES?.FUNCOES_LONGAS?.MAX_ANINHAMENTO ?? 3;
 
 export const analistaFuncoesLongas = criarAnalista({
-  nome: 'analista-funcoes-longas',
-  categoria: 'complexidade',
-  descricao:
-    'Detecta funcoes muito longas, com muitos parametros, aninhamento excessivo ou sem comentario',
-  limites: {
-    linhas: LIMITE_LINHAS,
-    params: LIMITE_PARAMETROS,
-    aninhamento: LIMITE_ANINHAMENTO,
-  },
-  test: (relPath: string): boolean => relPath.endsWith('.js') || relPath.endsWith('.ts'),
-  global: false,
-
-  aplicar(
-    src: string,
-    relPath: string,
-    ast: NodePath | null,
-    _fullPath?: string,
-    _contexto?: ContextoExecucao,
-  ): TecnicaAplicarResultado {
+  aplicar: function (src: string, relPath: string, ast: NodePath | null, _fullPath?: string) {
     const ocorrencias: Ocorrencia[] = [];
-
-    if (!ast) return [];
 
     function analisar(
       fn: FunctionDeclaration | FunctionExpression | ArrowFunctionExpression,
       _aninhamento: number = 0,
     ): void {
-      if (!fn.loc) return;
+      if (
+        !fn.loc ||
+        typeof fn.loc.start !== 'object' ||
+        typeof fn.loc.end !== 'object' ||
+        typeof fn.loc.start.line !== 'number' ||
+        typeof fn.loc.end.line !== 'number' ||
+        fn.loc.start.line < 1 ||
+        fn.loc.end.line < fn.loc.start.line
+      ) {
+        return;
+      }
 
-      const linhas = fn.loc.end.line - fn.loc.start.line + 1;
+      const startLine = fn.loc.start.line;
+      const endLine = fn.loc.end.line;
+      const linhas = endLine - startLine + 1;
       if (linhas > LIMITE_LINHAS) {
         ocorrencias.push({
           tipo: 'FUNCAO_LONGA',
@@ -52,20 +44,20 @@ export const analistaFuncoesLongas = criarAnalista({
           nivel: 'aviso',
           relPath,
           arquivo: relPath,
-          linha: fn.loc.start.line,
+          linha: startLine,
           mensagem: `Função com ${linhas} linhas (máx: ${LIMITE_LINHAS})`,
           origem: 'analista-funcoes-longas',
         });
       }
 
-      if (fn.params && fn.params.length > LIMITE_PARAMETROS) {
+      if (fn.params && Array.isArray(fn.params) && fn.params.length > LIMITE_PARAMETROS) {
         ocorrencias.push({
           tipo: 'MUITOS_PARAMETROS',
           severidade: 1,
           nivel: 'aviso',
           relPath,
           arquivo: relPath,
-          linha: fn.loc.start.line,
+          linha: startLine,
           mensagem: `Função com muitos parâmetros (${fn.params.length}, máx: ${LIMITE_PARAMETROS})`,
           origem: 'analista-funcoes-longas',
         });
@@ -79,7 +71,7 @@ export const analistaFuncoesLongas = criarAnalista({
           nivel: 'aviso',
           relPath,
           arquivo: relPath,
-          linha: fn.loc.start.line,
+          linha: startLine,
           mensagem: `Função aninhada em nível ${_aninhamento} (máx: ${LIMITE_ANINHAMENTO})`,
           origem: 'analista-funcoes-longas',
         });
@@ -93,20 +85,14 @@ export const analistaFuncoesLongas = criarAnalista({
           nivel: 'info',
           relPath,
           arquivo: relPath,
-          linha: fn.loc.start.line,
+          linha: startLine,
           mensagem: `Função sem comentário acima.`,
           origem: 'analista-funcoes-longas',
         });
       }
     }
 
-    // Função recursiva para NodePath real
-    function analisarRecursivo(
-      path:
-        | NodePath
-        | { node: unknown; traverse?: (visitors: Record<string, (p: NodePath) => void>) => void },
-      aninhamento: number = 0,
-    ) {
+    function analisarRecursivo(path: import('@babel/traverse').NodePath, aninhamento: number = 0) {
       const node = 'node' in path ? path.node : path;
       const type = (node as { type?: string }).type;
       if (
@@ -177,4 +163,15 @@ export const analistaFuncoesLongas = criarAnalista({
     // Se não for nenhum dos casos acima, retorna vazio
     return ocorrencias;
   },
+  nome: 'analista-funcoes-longas',
+  categoria: 'complexidade',
+  descricao:
+    'Detecta funcoes muito longas, com muitos parametros, aninhamento excessivo ou sem comentario',
+  limites: {
+    linhas: LIMITE_LINHAS,
+    params: LIMITE_PARAMETROS,
+    aninhamento: LIMITE_ANINHAMENTO,
+  },
+  test: (relPath: string): boolean => relPath.endsWith('.js') || relPath.endsWith('.ts'),
+  global: false,
 });

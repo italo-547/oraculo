@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest';
 import { comandoDiagnosticar } from '../../src/cli/comando-diagnosticar.js';
 import { log } from '../../src/nucleo/constelacao/log.js';
+import { config } from '../../src/nucleo/constelacao/cosmos.js';
 
 // Para evitar problemas de hoisting do vi.mock, definimos factories inline nas chamadas de mock.
 let arquetiposMode: 'movimentos' | 'nenhum' = 'movimentos';
@@ -91,7 +92,14 @@ vi.mock('../../src/nucleo/inquisidor.js', () => {
       fileEntries: [{ relPath: 'src/a.ts', content: 'a' }],
     })),
     executarInquisicao: vi.fn(async () => ({
-      ocorrencias: [],
+      ocorrencias: [
+        {
+          tipo: 'ARQUETIPO_TEST',
+          relPath: 'src/a.ts',
+          mensagem: 'Teste de arquétipo',
+          nivel: 'aviso',
+        },
+      ],
       metricas: {
         totalArquivos: 1,
         tempoAnaliseMs: 10,
@@ -107,7 +115,10 @@ vi.mock('../../src/nucleo/inquisidor.js', () => {
   };
 });
 vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
-  detectarArquetipos: () => mockDetectar(),
+  detectarArquetipos: async () => {
+    const base = await mockDetectar();
+    return { ...base, candidatos: base.melhores };
+  },
 }));
 vi.mock('../../src/relatorios/relatorio-estrutura.js', () => ({
   gerarRelatorioEstrutura: () => undefined,
@@ -140,7 +151,14 @@ describe('comandoDiagnosticar arquetipos branches extra', () => {
     captAviso.length = 0;
     (log as any).info = (m: string) => captInfo.push(m);
     (log as any).aviso = (m: string) => captAviso.push(m);
+    (log as any).infoDestaque = (m: string) => captInfo.push(m);
+    (log as any).imprimirBloco = (titulo: string, linhas: string[]) => {
+      captInfo.push(titulo);
+      captInfo.push(...linhas);
+    };
     arquetiposMode = 'movimentos';
+    // Garante logs detalhados para todos os branches
+    config.VERBOSE = true;
   });
   afterAll(() => {
     (log as any).info = origLogInfo;

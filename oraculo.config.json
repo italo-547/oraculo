@@ -1,6 +1,7 @@
 {
   "INCLUDE_EXCLUDE_RULES": {
     "globalExcludeGlob": [
+      "node_modules/**",
       "**/node_modules/**",
       ".pnpm/**",
       "**/.oraculo/**",

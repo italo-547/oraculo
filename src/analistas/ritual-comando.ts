@@ -19,7 +19,8 @@ export interface HandlerInfo {
 export function extractHandlerInfo(node: unknown): HandlerInfo | null {
   if (!node || typeof node !== 'object') return null;
   // Usa any temporário para permitir checagens estruturais antes de delegar ao tipo de @babel/types
-  const n: any = node; // eslint-disable-line @typescript-eslint/no-explicit-any
+  // O tipo exato depende do nó, mas para evitar any, pode-se usar Node do @babel/types
+  const n = node as import('@babel/types').Node;
   if (t.isFunctionDeclaration(n) && n.body && t.isBlockStatement(n.body)) {
     const rawParams = Array.isArray(n.params) ? n.params : [];
     const params: t.Identifier[] = rawParams.filter((p): p is t.Identifier => t.isIdentifier(p));
