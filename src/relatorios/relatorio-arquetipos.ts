@@ -156,6 +156,8 @@ export async function exportarRelatorioArquetiposJson(
   contexto?: { origem?: string },
   detalhado = false,
 ) {
+  const { criarRelatorioComVersao } = await import('../nucleo/schema-versao.js');
+
   const relatorio = {
     origem: contexto?.origem ?? null,
     candidatos: candidatos.map((c) => {
@@ -206,5 +208,13 @@ export async function exportarRelatorioArquetiposJson(
       }
     }),
   };
-  await salvarEstado(destino, relatorio);
+
+  // Criar relatório com versão
+  const relatorioVersionado = criarRelatorioComVersao(
+    relatorio,
+    undefined, // usar versão atual
+    'Relatório de detecção de arquétipos estruturais',
+  );
+
+  await salvarEstado(destino, relatorioVersionado);
 }

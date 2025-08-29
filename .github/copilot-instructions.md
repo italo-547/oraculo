@@ -103,6 +103,16 @@ Estas diretrizes reforçam originalidade, licenças, privacidade e segurança op
 
 Este projeto é uma CLI modular para análise, diagnóstico e manutenção de projetos, organizada em múltiplos domínios (analistas, arquitetos, zeladores, guardian, etc). O código é escrito em TypeScript ESM puro, com tipagem rigorosa e uso extensivo de aliases de importação.
 
+**Versão Atual: 0.2.0** (atualizado em 2025-08-29)
+
+### Novas Funcionalidades v0.2.0
+
+- **⚡ Pool de Workers**: Paralelização automática com Worker Threads para projetos grandes
+- **🏷️ Schema Versioning**: Versionamento automático de relatórios JSON com compatibilidade backward
+- **🧠 Sistema de Pontuação Adaptativa**: Pontuação inteligente baseada no tamanho do projeto
+- **🔧 Correção Crítica**: Exclusão automática otimizada de `node_modules` e outros diretórios
+- **📊 Métricas Expandidas**: Estatísticas detalhadas de performance e processamento
+
 ## Estrutura Principal
 
 - `src/cli.ts`: Entrada principal da CLI.
@@ -148,7 +158,12 @@ console.log(bloco); // impressão direta, sem prefixo
 - **Testes**: Já implementados (Vitest). Durante testes `process.env.VITEST` deve impedir chamadas a `process.exit`.
 - **Persistência**: Sempre utilize os helpers centralizados para leitura/escrita de arquivos de estado, relatórios e snapshots.
 - **Branches**: `develop` é a branch padrão para desenvolvimento; `main` é protegida e recebe merge via PR + checks do CI.
-- **Pré-visualização**: `npm run pre-public` monta a pasta `pre-public/` com artefatos que seriam publicados (sem publicar nada).
+- **Pré-visualização**: `npm run pre-public` monta a pasta `preview-oraculo/` com artefatos que seriam publicados (sem publicar nada). O script inclui automaticamente:
+  - Build compilado (`dist/`)
+  - Documentação completa (`docs/`)
+  - Arquivos de configuração (`oraculo.config.json`, `oraculo.config.safe.json`, `tsconfig.json`, `tsconfig.eslint.json`)
+  - Metadados do projeto (`package.json`, `README.md`, `LICENSE`, etc.)
+  - Avisos de proveniência inseridos automaticamente nos arquivos Markdown
 - **Release manual**: Workflow `release-prepublic` (Actions → workflow_dispatch) cria um Release draft anexando `pre-public.zip` para a tag informada.
 
 ## Cobertura e Testes (Vitest)
@@ -173,6 +188,28 @@ console.log(bloco); // impressão direta, sem prefixo
   - Pares substitutos para caracteres fora do BMP (ex.: emojis) — representados como dois `\uXXXX` válidos.
   - Caminhos de fallback quando o code point não for identificável (ex.: `cp == null`) — sempre retorne escape seguro.
 - Guardian no JSON: quando o Guardian não for executado, retorne status padrão coerente (ex.: `"nao-verificado"`) e mantenha o shape estável para consumidores.
+
+### Novas métricas v0.2.0
+
+A partir da versão 0.2.0, o relatório JSON inclui métricas expandidas:
+
+```json
+{
+  "metricas": {
+    "workerPool": {
+      "workersAtivos": 4,
+      "erros": 0,
+      "duracaoTotalMs": 890
+    },
+    "schemaVersion": "1.0.0",
+    "pontuacaoAdaptativa": {
+      "fatorEscala": 2.5,
+      "modo": "padrao",
+      "bonusFramework": 1.05
+    }
+  }
+}
+```
 
 ## Linguagens / Parsing Suportado
 
@@ -269,7 +306,7 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 - Relatórios, históricos e arquivos de referência devem ser movidos para `docs/`.
 - Documentos obsoletos/duplicados devem ser arquivados em `docs/legado/` e, quando existirem em caminhos antigos, manter apenas um stub que aponta para `docs/legado/`.
 - O pacote de preview segue a mesma política em `preview-oraculo/docs/legado/`.
-- Exemplos: `docs/RELATORIO.md`, `docs/CHECKLIST.md`.
+- Exemplos: `docs/RELATORIO.md`, `docs/CHECKLIST.md`, `docs/NOVAS-FUNCIONALIDADES-v0.2.0.md`.
 
 ## Checklist de Melhorias
 
@@ -300,6 +337,17 @@ docs/
   docs/*.md
 node_modules/
 preview-oraculo/
+  dist/
+  docs/
+  oraculo.config.json
+  oraculo.config.safe.json
+  tsconfig.json
+  tsconfig.eslint.json
+  package.json
+  README.md
+  LICENSE
+  THIRD-PARTY-NOTICES.txt
+  PREVIEW.md
 scripts/
 src/
   src/@types/
@@ -367,6 +415,8 @@ Observação: Nem todas as subpastas foram listadas detalhadamente; a árvore ac
 - Consulte `tsconfig.json` para detalhes de build e aliases.
 - Consulte `src/zeladores/util/persistencia.ts` para padrão de helpers de persistência.
 - Veja `docs/relatorios/RELATORIO.md` para status atual (ex: contagem de testes).
+- Consulte `docs/NOVAS-FUNCIONALIDADES-v0.2.0.md` para detalhes das novas funcionalidades.
+- Veja `preview-oraculo/` para preview da publicação com todos os arquivos de configuração.
 
 ---
 
@@ -400,7 +450,56 @@ Se encontrar padrões não documentados ou dúvidas sobre fluxos, registre exemp
 
 ---
 
-## Novas Diretrizes (2025-08-22)
+## Novas Diretrizes (2025-08-29)
+
+### Versão Dinâmica do CLI
+
+- A versão do CLI é lida dinamicamente do `package.json` em tempo de execução
+- Removida versão hardcoded '1.0.0' do código fonte
+- Implementada função `getVersion()` que lê o arquivo package.json
+- Fallback para '0.0.0' em caso de erro de leitura
+
+### Script Pre-Public Aprimorado
+
+- Atualizado para incluir arquivos de configuração essenciais:
+  - `oraculo.config.json` - Configurações principais
+  - `oraculo.config.safe.json` - Configurações seguras
+  - `tsconfig.json` - Configuração TypeScript principal
+  - `tsconfig.eslint.json` - Configuração TypeScript para ESLint
+- Preview agora totalmente funcional e autônomo
+- Arquivos de configuração permitem execução independente do preview
+
+### Correções Críticas Implementadas
+
+- **Exclusão automática de node_modules**: Correção da análise desnecessária de dependências
+- **Pool de Workers**: Sistema de paralelização automática ativo por padrão
+- **Schema Versioning**: Versionamento automático com compatibilidade backward
+- **Sistema de Pontuação Adaptativa**: Pontuação inteligente baseada no tamanho do projeto
+
+### Detalhes das Novas Funcionalidades v0.2.0
+
+#### Pool de Workers
+
+- Sistema de paralelização automática com Worker Threads
+- Configuração via variáveis de ambiente (WORKER_POOL_MAX_WORKERS, WORKER_POOL_BATCH_SIZE, etc.)
+- Timeout inteligente de 30 segundos por analista
+- Fallback automático para processamento sequencial
+
+#### Schema Versioning
+
+- Versionamento automático de relatórios JSON
+- Compatibilidade backward garantida
+- Metadados de versão em cada relatório
+- Validação automática de integridade
+
+#### Sistema de Pontuação Adaptativa
+
+- Pontuação baseada no tamanho do projeto (1x-5x fatores)
+- 3 modos de configuração: padrão, conservador, permissivo
+- Pesos para frameworks e TypeScript
+- Ajustes contextuais automáticos
+
+---
 
 ### Documentação legada
 
@@ -416,6 +515,6 @@ Se encontrar padrões não documentados ou dúvidas sobre fluxos, registre exemp
 
 ---
 
-**Última atualização das diretrizes: 2025-08-28**
+**Última atualização das diretrizes: 2025-08-29**
 
 ---

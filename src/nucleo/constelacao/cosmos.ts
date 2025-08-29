@@ -107,6 +107,12 @@ export const configDefault = {
   },
   ANALISE_AST_CACHE_ENABLED: true,
   ANALISE_METRICAS_ENABLED: true,
+  // Timeout por analista individual (ms) - 0 desabilita
+  ANALISE_TIMEOUT_POR_ANALISTA_MS: 30000, // 30 segundos por padrão
+  // Pool de workers para processamento paralelo
+  WORKER_POOL_ENABLED: true,
+  WORKER_POOL_MAX_WORKERS: 0, // 0 = usar número de CPUs
+  WORKER_POOL_BATCH_SIZE: 10,
   // Caminho de histórico de métricas (migrado para subdir dedicado; arquivo antigo na raiz ainda lido como fallback em runtime onde aplicável)
   ANALISE_METRICAS_HISTORICO_PATH: path.join(
     ORACULO_STATE,
@@ -144,6 +150,7 @@ export const configDefault = {
   STRUCTURE_AUTO_FIX: false,
   STRUCTURE_CONCURRENCY: 5,
   STRUCTURE_LAYERS: {},
+  STRUCTURE_REVERSE_MAP_PATH: path.join(ORACULO_STATE, 'mapa-reversao.json'),
   // Limite de tamanho (bytes) para considerar mover arquivo em plano de reorganização
   ESTRUTURA_PLANO_MAX_FILE_SIZE: 256 * 1024, // ~250KB
   // Limite de arquivos considerados "muitos arquivos na raiz" (ajustável por repo)

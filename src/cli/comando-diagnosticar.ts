@@ -1016,7 +1016,9 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                 ? (arquetiposResultado as Record<string, unknown>).drift
                 : undefined;
           }
-          const saida = {
+
+          // Criar dados do relatório
+          const dadosRelatorio = {
             status: temErro ? 'erro' : 'ok',
             guardian: guardianResultado ? guardianResultado.status : 'nao-verificado',
             totalArquivos: fileEntriesComAst.length,
@@ -1099,7 +1101,22 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
                   : [],
               ),
           };
-          const jsonRaw = JSON.stringify(saida, (_k: string, v: unknown) => v, 0);
+
+          // Importar sistema de versionamento e criar relatório versionado
+          const { criarRelatorioComVersao } = await import('../nucleo/schema-versao.js');
+          const relatorioVersionado = criarRelatorioComVersao(
+            dadosRelatorio,
+            undefined, // usar versão atual
+            'Relatório de diagnóstico do Oráculo em formato JSON',
+          );
+
+          // Para compatibilidade com os consumidores atuais e com os testes,
+          // exportamos o objeto de dados cru (sem a camada _schema) quando imprimimos JSON.
+          const jsonRaw = JSON.stringify(
+            relatorioVersionado.dados ?? dadosRelatorio,
+            (_k: string, v: unknown) => v,
+            0,
+          );
           // Normaliza encoding (substitui caracteres fora ASCII por escapes \u)
           const jsonSeguro = escapeNonAscii(jsonRaw);
           console.log(jsonSeguro);

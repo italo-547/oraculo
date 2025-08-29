@@ -43,7 +43,16 @@ async function main() {
   }
 
   console.log('[preview-oraculo] copiando arquivos de raiz...');
-  const rootFiles = ['README.md', 'LICENSE', 'THIRD-PARTY-NOTICES.txt'];
+  const rootFiles = [
+    'README.md',
+    'LICENSE',
+    'THIRD-PARTY-NOTICES.txt',
+    'package.json',
+    'oraculo.config.json',
+    'oraculo.config.safe.json',
+    'tsconfig.json',
+    'tsconfig.eslint.json',
+  ];
   for (const f of rootFiles) {
     const src = path.join(ROOT, f);
     if (await exists(src)) {

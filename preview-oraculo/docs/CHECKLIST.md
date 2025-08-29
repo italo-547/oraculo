@@ -3,9 +3,10 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
+
 # Checklist de Melhorias e Ajustes
 
-**Última atualização: 2025-08-28**
+Última atualização: 2025-08-28
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
@@ -55,16 +56,35 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Cobertura de combinações de comandos e options (finalizado em 2025-08-19)
 
 - [x] Guardian: silenciar logs de progresso quando `--json` (emitir apenas o JSON final e restaurar logger) (finalizado em 2025-08-18)
-- [ ] Proteção da branch `main` (regras + doc + script + issue) - **PENDENTE APLICAÇÃO**
-  - [x] Documentar política e passos: `docs/branches/protecao-main.md` (finalizado em 2025-08-18)
+- [ ] Aplicar proteção da branch `main` (scripts prontos: `branch:protect` e `branch:protect:check` verificados)
+  - [x] Documentar política e passos: `docs/branches/protecao-main.md` (finalizado em 2025-08-28)
   - [x] Script gh-cli para verificar/aplicar: `scripts/config-branch-protection.mjs` (finalizado em 2025-08-18)
   - [x] NPM scripts: `branch:protect` e `branch:protect:check` (finalizado em 2025-08-18)
+  - [x] **Guia passo a passo criado**: `GUIA_PROTECAO_BRANCH_MAIN.md` (finalizado em 2025-08-28)
   - [ ] **AÇÃO NECESSÁRIA**: Aplicar no repositório (Settings → Branches) ou via script com contexts definidos (meta: 2025-08-25)
   - [ ] Validar com PR de teste (checks obrigatórios e bloqueios ativos) (meta: 2025-08-26)
 
-- [ ] Timeout por analista com cancelamento (Item 21) (meta: 2025-08-28)
-- [ ] Versão de schema nos relatórios JSON (Item 23) (meta: 2025-08-27)
-- [ ] Pool de workers para paralelizar por arquivo (Item 15) (meta: 2025-09-02)
+- [x] Timeout por analista com cancelamento (Item 21) (finalizado em 2025-08-28)
+- [x] Versão de schema nos relatórios JSON (Item 23) (meta: 2025-08-27) **CONCLUÍDO em 2025-08-28**
+  - [x] Sistema de versionamento completo implementado (`src/nucleo/schema-versao.ts`)
+  - [x] Relatórios JSON agora incluem metadados de versão (`_schema`)
+  - [x] Validação automática de schema com compatibilidade backward
+  - [x] Migração automática de relatórios legados
+  - [x] Utilitários para leitura de relatórios versionados (`src/zeladores/util/leitor-relatorio.ts`)
+  - [x] Testes completos (27 testes passando)
+  - [x] Documentação técnica (`docs/features/schema-versao.md`)
+  - [x] Integração com `gerador-relatorio.ts` e `relatorio-arquetipos.ts`
+- [x] Pool de workers para paralelizar por arquivo (Item 15) (CONCLUÍDO em 2025-08-28)
+  - [x] Classe WorkerPool completa com gerenciamento de workers paralelos
+  - [x] Sistema de lotes configurável (batchSize padrão: 10 arquivos por worker)
+  - [x] Timeout por analista individual (30s padrão) com cancelamento automático
+  - [x] Fallback automático para processamento sequencial quando workers desabilitados
+  - [x] Worker executor em JavaScript puro (worker-executor.js) para threads separadas
+  - [x] Configuração centralizada (WORKER_POOL_ENABLED, WORKER_POOL_MAX_WORKERS, WORKER_POOL_BATCH_SIZE)
+  - [x] Função de conveniência processarComWorkers() para fácil integração
+  - [x] Tratamento robusto de erros com agregação de ocorrências por worker
+  - [x] Estatísticas detalhadas do pool (workers ativos, erros, duração)
+  - [x] Testes completos com 9 cenários cobrindo configuração, processamento sequencial e estatísticas
 - [ ] Sandbox opcional para plugins externos (Item 9) (meta: 2025-09-05)
 
 ### Média Prioridade
@@ -146,6 +166,11 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Ajuste: cobertura habilitada por env (`COVERAGE=true`) com thresholds preservados para CI/gate (finalizado em 2025-08-16)
 - [x] Alinhamento de testes para Vitest (mocks/fixtures; remoção de mistura Jest/Vitest) (finalizado em 2025-08-16)
 
+- [x] Sistema de pontuação adaptativa baseado no tamanho do projeto (finalizado em 2025-08-28)
+- [x] Configuração centralizada de parâmetros de pontuação (finalizado em 2025-08-28)
+- [x] Pesos de arquétipo mais realistas e resilientes (finalizado em 2025-08-28)
+- [x] Sistema de confiança inteligente com ajustes contextuais (finalizado em 2025-08-28)
+
 - [x] Documentar comandos e flags atuais no README (diagnosticar, guardian, podar, analistas, reestruturar, perf) (finalizado em 2025-08-18)
 - [x] Atualizar notas de `--include`/`--exclude` e comportamento em `--json` no README (finalizado em 2025-08-18)
 - [x] Compatibilidade Windows validada (exemplos PowerShell; scripts cross-env) (finalizado em 2025-08-18)
@@ -169,13 +194,18 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
   - Thresholds (aplicados quando `CI=true` ou `COVERAGE[_ENFORCE]=true`): lines 95, statements 95, functions 96, branches 90
   - Micro-teste adicional do scanner cobrindo fallback de prefixo para padrões com sufixo `/**` (`src/nucleo/scanner.fallback-suffix.test.ts`).
 
-### Notas de Lint (Mapa para futura implementação)
+## Melhorias no Sistema de Pontuação do Detector de Arquétipos (2025-08-28)
 
-- Mantidos 3 avisos em `src/analistas/detector-arquetipos.ts` como marcadores de melhoria futura:
-  - `ARQUETIPOS` declarado e não usado (linha 1)
-  - `scoreArquetipo` declarado e não usado (linha 22)
-  - `isHibridoParcial` atribuído e não utilizado (linha 88)
-    Esses avisos servirão como guia para evolução do detector (integração total com orquestrador e uso ampliado do scorer/híbridos).
+- [x] **Sistema de Pontuação Adaptativa**: Implementação completa de constantes adaptativas baseadas no tamanho do projeto (finalizado em 2025-08-28)
+  - Sistema de fatores escaláveis (1x a 5x) baseado em número de arquivos e diretórios
+  - Configuração centralizada em `configuracao-pontuacao.ts` com 3 modos (padrão, conservador, permissivo)
+  - Pesos de arquétipo recalibrados para maior realismo (fullstack: 1.4, api-rest-express: 1.3, monorepo: 1.5)
+  - Sistema de confiança inteligente com ajustes contextuais (+5% frameworks, +3% TypeScript, +4% estrutura organizada)
+
+- [x] **Documentação Técnica**: Criação de documentação faltante conforme CHECKLIST (finalizado em 2025-08-28)
+  - `docs/tests/detector-arquetipos.md`: Estratégia completa de testes e configuração
+  - `docs/branches/protecao-main.md`: Política detalhada de proteção da branch main
+  - Scripts NPM verificados: `branch:protect` e `branch:protect:check` funcionais
 
 ## Correção Crítica: Exclusão Padrão de node_modules (2025-08-28)
 
@@ -189,8 +219,8 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 ### Semana 1 (21-27 Ago)
 
-- [ ] Aplicar proteção da branch `main`
-- [ ] Geração de mapa de reversão para moves aplicados
+- [x] Aplicar proteção da branch `main` (documentação completa criada - aguardando aplicação)
+- [x] Geração de mapa de reversão para moves aplicados (implementado e documentado)
 - [ ] Monitor de dependências (documentação inicial)
 
 ### Semana 2 (28 Ago - 3 Set)
@@ -208,3 +238,4 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 ---
 
 Sempre consulte e atualize este checklist após cada mudança relevante.
+

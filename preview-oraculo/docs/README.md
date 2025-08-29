@@ -38,6 +38,7 @@ Criamos uma organização mais navegável para a documentação. Abaixo os diret
 - Tooling e políticas de qualidade: `docs/guides/tooling.md`
 - Monitoramento de dependências: `docs/guides/monitor-deps.md`
 - Política de proveniência: `docs/policies/proveniencia.md`
+- **Novas funcionalidades v0.2.0**: `docs/NOVAS-FUNCIONALIDADES-v0.2.0.md`
 
 ## Observações
 

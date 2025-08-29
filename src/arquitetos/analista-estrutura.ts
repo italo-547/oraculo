@@ -15,6 +15,7 @@ interface ResultadoEstrutural {
   arquivo: string;
   atual: string;
   ideal: string | null;
+  motivo?: string;
 }
 
 export async function analisarEstrutura(

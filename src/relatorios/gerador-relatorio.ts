@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Import dinâmico para facilitar intercepção por vi.mock em diferentes variações de caminho nos testes
+// Gerador de relatórios: Markdown e JSON
 import { formatMs } from '../nucleo/constelacao/format.js';
 import { ResultadoInquisicaoCompleto, Ocorrencia } from '../tipos/tipos.js';
 
@@ -14,6 +14,7 @@ export async function gerarRelatorioMarkdown(
     timestamp = Date.now(),
     duracaoMs = 0,
   } = (resultado || {}) as ResultadoInquisicaoCompleto;
+
   const dataISO = new Date(timestamp).toISOString();
   const ocorrenciasOrdenadas: Ocorrencia[] = [...ocorrencias].sort((a, b) => {
     const ra = String(a.relPath ?? '');
@@ -29,10 +30,12 @@ export async function gerarRelatorioMarkdown(
     guardian && typeof guardian === 'object' && 'status' in guardian
       ? String((guardian as Record<string, unknown>).status)
       : 'não executada';
+
   const guardianTimestamp =
     guardian && typeof guardian === 'object' && 'timestamp' in guardian
       ? String((guardian as Record<string, unknown>).timestamp)
       : '—';
+
   const guardianTotalArquivos =
     guardian && typeof guardian === 'object' && 'totalArquivos' in guardian
       ? String((guardian as Record<string, unknown>).totalArquivos)
@@ -52,6 +55,14 @@ export async function gerarRelatorioMarkdown(
   - **Status:** ${guardianStatus}
   - **Timestamp:** ${guardianTimestamp}
   - **Total de arquivos protegidos:** ${guardianTotalArquivos}
+
+---
+
+---
+
+## 🛡️ Verificação de Integridade (Guardian)
+
+  - **Status:** ${guardianStatus}
 
 ---
 
@@ -75,7 +86,16 @@ export async function gerarRelatorioJson(
   resultado: ResultadoInquisicaoCompleto,
   outputPath: string,
 ): Promise<void> {
-  // Persistir exatamente o objeto fornecido (tests verificam identidade)
+  // Importar sistema de versionamento
+  const { criarRelatorioComVersao } = await import('../nucleo/schema-versao.js');
+
+  // Criar relatório versionado (mantemos metadados, mas salvamos os dados brutos para compatibilidade)
+  const relatorioVersionado = criarRelatorioComVersao(
+    resultado,
+    undefined,
+    'Relatório completo de diagnóstico do Oráculo',
+  );
+
   const { salvarEstado } = await import('../zeladores/util/persistencia.js');
-  await salvarEstado(outputPath, resultado);
+  await salvarEstado(outputPath, relatorioVersionado.dados ?? resultado);
 }

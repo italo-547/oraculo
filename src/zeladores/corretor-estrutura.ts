@@ -7,12 +7,14 @@ import { resolverPluginSeguro } from '../nucleo/constelacao/seguranca.js';
 import { importarModuloSeguro } from '../nucleo/util/import-safe.js';
 import { config } from '../nucleo/constelacao/cosmos.js';
 import { reescreverImports } from './util/imports.js';
+import { mapaReversao } from './mapa-reversao.js';
 import type { FileEntryWithAst } from '../tipos/tipos.js';
 
 interface ResultadoEstrutural {
   arquivo: string;
   ideal: string | null;
   atual: string;
+  motivo?: string;
 }
 
 export async function corrigirEstrutura(
@@ -79,6 +81,17 @@ export async function corrigirEstrutura(
                 path.posix.normalize(arquivo.replace(/\\/g, '/')),
                 path.posix.normalize(path.relative(baseDir, destino).replace(/\\/g, '/')),
               );
+
+              // Registra o move no mapa de reversão
+              await mapaReversao.registrarMove(
+                arquivo,
+                path.relative(baseDir, destino),
+                entry.motivo || 'Reorganização estrutural',
+                conteudo,
+                novoConteudo,
+                true, // não salvar imediatamente para evitar muitas operações de FS em lote/tests
+              );
+
               await fs.writeFile(destino, novoConteudo, 'utf-8');
               await fs.unlink(origem);
             }
@@ -86,8 +99,18 @@ export async function corrigirEstrutura(
             if (config.SAFE_MODE && !config.ALLOW_MUTATE_FS) {
               // Já simulamos acima — nada a fazer
             } else {
-              // fallback: mover arquivo sem reescrita se algo falhar na leitura/escrita
+              // fallback: mover arquivo sem reescrita de imports
               try {
+                // Registra o move no mapa de reversão sem conteúdo original
+                await mapaReversao.registrarMove(
+                  arquivo,
+                  path.relative(baseDir, destino),
+                  entry.motivo || 'Reorganização estrutural (fallback)',
+                  undefined,
+                  undefined,
+                  true, // não salvar imediatamente
+                );
+
                 await fs.rename(origem, destino);
               } catch (err) {
                 const msg =

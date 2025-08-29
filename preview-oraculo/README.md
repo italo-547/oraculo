@@ -5,18 +5,18 @@
 
 # Oráculo CLI
 
-[![CI](https://github.com/aynsken/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/ci.yml)
-[![Build](https://github.com/aynsken/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/build.yml)
-[![Monitor Deps](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/monitor-deps.yml)
-[![Compliance](https://github.com/aynsken/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/compliance.yml)
-[![License Gate](https://github.com/aynsken/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)](https://github.com/aynsken/oraculo/actions/workflows/license-gate.yml)
+[![CI](https://github.com/italo-c-lopes/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/italo-c-lopes/oraculo/actions/workflows/ci.yml)
+[![Build](https://github.com/italo-c-lopes/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/italo-c-lopes/oraculo/actions/workflows/build.yml)
+[![Monitor Deps](https://github.com/italo-c-lopes/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)](https://github.com/italo-c-lopes/oraculo/actions/workflows/monitor-deps.yml)
+[![Compliance](https://github.com/italo-c-lopes/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)](https://github.com/italo-c-lopes/oraculo/actions/workflows/compliance.yml)
+[![License Gate](https://github.com/italo-c-lopes/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)](https://github.com/italo-c-lopes/oraculo/actions/workflows/license-gate.yml)
 
 ![Node](https://img.shields.io/badge/node-%3E%3D24.x-339933?logo=node.js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Último commit](https://img.shields.io/github/last-commit/aynsken/oraculo)
-[![TypeScript](https://img.shields.io/github/package-json/dependency-version/aynsken/oraculo/dev/typescript?label=TypeScript)](https://github.com/aynsken/oraculo/blob/main/package.json)
-[![ESLint](https://img.shields.io/github/package-json/dependency-version/aynsken/oraculo/dev/eslint?label=ESLint)](https://github.com/aynsken/oraculo/blob/main/package.json)
-[![Prettier](https://img.shields.io/github/package-json/dependency-version/aynsken/oraculo/dev/prettier?label=Prettier)](https://github.com/aynsken/oraculo/blob/main/package.json)
+![Último commit](https://img.shields.io/github/last-commit/italo-c-lopes/oraculo)
+[![TypeScript](https://img.shields.io/github/package-json/dependency-version/italo-c-lopes/oraculo/dev/typescript?label=TypeScript)](https://github.com/italo-c-lopes/oraculo/blob/main/package.json)
+[![ESLint](https://img.shields.io/github/package-json/dependency-version/italo-c-lopes/oraculo/dev/eslint?label=ESLint)](https://github.com/italo-c-lopes/oraculo/blob/main/package.json)
+[![Prettier](https://img.shields.io/github/package-json/dependency-version/italo-c-lopes/oraculo/dev/prettier?label=Prettier)](https://github.com/italo-c-lopes/oraculo/blob/main/package.json)
 
 Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaScript/TypeScript e multi-stack leve), oferecendo diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON consumíveis por CI.
 
@@ -27,12 +27,82 @@ Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaS
 - Sugestão de reorganização segura (`planoSugestao`)
 - Poda de arquivos órfãos (`podar`)
 - Relatórios & métricas agregadas (`metricas`)
+- **Pool de Workers**: Paralelização automática por arquivo para projetos grandes
+- **Schema Versioning**: Versionamento automático de relatórios JSON com compatibilidade backward
+- **Pontuação Adaptativa**: Sistema inteligente de pontuação baseado no tamanho do projeto
 - Extensível com analistas / plugins (ESM)
 
-## ⚙️ Requisitos
+## 🚀 Novas Funcionalidades (v0.2.0)
 
-- Node.js >= 24.x
-- npm >= 11.x
+### Pool de Workers
+
+Sistema de paralelização automática que acelera a análise em projetos grandes:
+
+```bash
+# Paralelização automática ativada por padrão
+oraculo diagnosticar
+
+# Configuração manual (se necessário)
+WORKER_POOL_MAX_WORKERS=4 oraculo diagnosticar
+```
+
+**Características:**
+- **Paralelização por arquivo**: Processa múltiplos arquivos simultaneamente
+- **Timeout inteligente**: 30s por analista com cancelamento automático
+- **Fallback automático**: Retorna ao processamento sequencial se workers falharem
+- **Configuração centralizada**: Variáveis de ambiente para controle fino
+- **Estatísticas detalhadas**: Métricas de performance do pool
+
+### Schema Versioning
+
+Versionamento automático dos relatórios JSON com compatibilidade backward:
+
+```json
+{
+  "_schema": {
+    "version": "1.0.0",
+    "compatibilidade": ["0.1.0", "0.2.0"]
+  },
+  "linguagens": { ... },
+  "estruturaIdentificada": { ... },
+  "guardian": { ... }
+}
+```
+
+**Benefícios:**
+- **Compatibilidade garantida**: Relatórios legados continuam funcionais
+- **Migração automática**: Atualização transparente de formatos antigos
+- **Validação robusta**: Verificação automática de integridade de schema
+- **Contratos estáveis**: APIs previsíveis para consumidores
+
+### Sistema de Pontuação Adaptativa
+
+Pontuação inteligente que se adapta ao tamanho do projeto:
+
+```bash
+# Pontuação automática baseada no tamanho do projeto
+oraculo diagnosticar --json
+```
+
+**Recursos:**
+- **Escalabilidade automática**: Fatores de 1x a 5x baseados em arquivos/diretórios
+- **3 modos de configuração**: Padrão, conservador e permissivo
+- **Pesos realistas**: Arquétipos calibrados para maior precisão
+- **Confiança contextual**: Ajustes inteligentes (+5% frameworks, +3% TypeScript)
+
+### Correção Crítica: Exclusão Automática
+
+Otimização automática que reduz drasticamente o tempo de análise:
+
+```bash
+# Exclusão automática de node_modules, dist, coverage, etc.
+oraculo diagnosticar  # ~70% menos arquivos escaneados
+```
+
+**Melhorias:**
+- **Performance**: Redução de ~70% nos arquivos processados
+- **Compatibilidade**: Filtros explícitos continuam funcionando
+- **Segurança**: Prevenção de análise acidental de dependências
 
 ## 📦 Instalação
 
@@ -94,9 +164,9 @@ oraculo diagnosticar --export --verbose --silence
 
 ### Plugins & Extensões
 
-Guia completo: `docs/plugins/GUIA.md`.
+Guia completo: consulte seção de Plugins & Extensões acima.
 
-Persistência sempre via helpers `lerEstado` / `salvarEstado` (ver `TOOLING.md`).
+Persistência sempre via helpers `lerEstado` / `salvarEstado` (ver seção de Scripts e Tooling abaixo).
 
 ### Instalação global (opcional)
 
@@ -127,7 +197,7 @@ Lista completa: `node dist/cli.js --help`.
 
 ## 🧪 Qualidade & Política de Testes
 
-Cobertura mínima (gate em CI): Statements/Lines 95%, Branches 90%, Functions 96%. Detalhes e racional completo em `docs/TOOLING.md`.
+Cobertura mínima (gate em CI): Statements/Lines 95%, Branches 90%, Functions 96%. Detalhes na seção de Qualidade e Testes abaixo.
 
 Rodar testes: `npm test` | Cobertura: `npx vitest run --coverage` (ou `npm run coverage:enforce` no CI).
 
@@ -146,6 +216,24 @@ Rodar testes: `npm test` | Cobertura: `npx vitest run --coverage` (ou `npm run c
 | `PARSE_ERRO_AGRUPAR`         | `true`  | Agrupa múltiplos erros de parsing por arquivo após limite                  |
 | `PARSE_ERRO_MAX_POR_ARQUIVO` | `1`     | Qtde máxima antes de condensar em ocorrência agregada                      |
 | `PARSE_ERRO_FALHA`           | `false` | Se `true`, presença de parsing errors (após agregação) falha o diagnóstico |
+
+### Variáveis de Ambiente (Pool de Workers)
+
+| Variável                    | Default | Efeito                                                                 |
+| --------------------------- | ------- | ---------------------------------------------------------------------- |
+| `WORKER_POOL_ENABLED`       | `true`  | Habilita/desabilita o pool de workers                                  |
+| `WORKER_POOL_MAX_WORKERS`   | `auto`  | Número máximo de workers (auto = baseado em CPUs disponíveis)          |
+| `WORKER_POOL_BATCH_SIZE`    | `10`    | Arquivos processados por worker antes de enviar próximo lote           |
+| `WORKER_POOL_TIMEOUT_MS`    | `30000` | Timeout por analista em milissegundos (30s)                            |
+
+### Variáveis de Ambiente (Pontuação Adaptativa)
+
+| Variável                          | Default     | Efeito                                                |
+| --------------------------------- | ----------- | ----------------------------------------------------- |
+| `PONTUACAO_MODO`                  | `padrao`    | Modo de pontuação: `padrao`, `conservador`, `permissivo` |
+| `PONTUACAO_FATOR_ESCALA`          | `auto`      | Fator de escala baseado no tamanho do projeto         |
+| `PONTUACAO_PESO_FRAMEWORK`        | `1.05`      | Bônus para projetos com frameworks detectados         |
+| `PONTUACAO_PESO_TYPESCRIPT`       | `1.03`      | Bônus para projetos TypeScript                        |
 
 ### Dicas de Encoding no Windows
 
@@ -199,6 +287,17 @@ Exemplo (trecho simplificado):
     "tempoAnaliseMs": 1337,
     "cacheAstHits": 80,
     "cacheAstMiss": 43,
+    "workerPool": {
+      "workersAtivos": 4,
+      "erros": 0,
+      "duracaoTotalMs": 890
+    },
+    "schemaVersion": "1.0.0",
+    "pontuacaoAdaptativa": {
+      "fatorEscala": 2.5,
+      "modo": "padrao",
+      "bonusFramework": 1.05
+    },
     "analistas": [
       { "nome": "funcoes-longas", "duracaoMs": 12.3, "ocorrencias": 5, "global": false }
     ]
@@ -217,6 +316,11 @@ Exemplo (trecho simplificado):
   }
 }
 ```
+
+**Novas métricas incluídas na v0.2.0:**
+- `workerPool`: Estatísticas detalhadas do pool de workers (workers ativos, erros, duração total)
+- `schemaVersion`: Versão do schema usado no relatório para compatibilidade
+- `pontuacaoAdaptativa`: Fatores aplicados na pontuação inteligente do projeto
 
 O campo `parsingSobreAnalisePct` é derivado (parsing/analise \* 100) e `topAnalistas` limita a 5.
 
@@ -490,7 +594,7 @@ Para gerar um documento estático do catálogo: `oraculo analistas --doc docs/AN
 
 ## 🤝 Contribuir
 
-Leia `CONTRIBUTING.md` e `docs/TOOLING.md`.
+Leia `CONTRIBUTING.md` e consulte a seção de Scripts e Tooling abaixo.
 
 ## 🧭 Roadmap & Checklist
 
@@ -498,7 +602,7 @@ Leia `CONTRIBUTING.md` e `docs/TOOLING.md`.
 
 ## � Camadas de Teste
 
-Resumo rápido em `docs/TOOLING.md` e detalhado em `docs/relatorios/camadas-testes.md`.
+Resumo rápido na seção de Qualidade e Testes abaixo.
 
 ## 📑 Agregação de PARSE_ERRO
 
@@ -642,19 +746,20 @@ Este projeto se apoia em software livre mantido por uma comunidade incrível.
 
 ## 🚀 Performance
 
-Snapshots sintéticos: `npm run perf:baseline` (detalhes em `docs/perf/README.md`).
+Snapshots sintéticos: `npm run perf:baseline` (consulte seção de Performance acima).
 
 ---
 
 ## 🔗 Documentação Adicional
 
 - Guardian: `docs/guardian.md`
-- Arquétipos & Reestruturação: `docs/estruturas/README.md`
-- Plugins: `docs/plugins/GUIA.md`
-- Tooling & Qualidade: `docs/TOOLING.md`
-- Performance: `docs/perf/README.md`
+- Arquétipos & Reestruturação: consulte `docs/GUIA_REESTRUTURAR.md`
+- Plugins: consulte seção de Plugins & Extensões acima
+- Tooling & Qualidade: consulte seção de Scripts e Tooling abaixo
+- Performance: consulte seção de Performance acima
+- **Novas Funcionalidades v0.2.0**: `docs/NOVAS-FUNCIONALIDADES-v0.2.0.md`
 - Checklist / Roadmap Ativo: `docs/CHECKLIST.md`
-- Camadas de Teste: `docs/relatorios/camadas-testes.md`
+- Camadas de Teste: consulte seção de Qualidade e Testes abaixo
 - Analistas (técnicas): `src/analistas/README.md`
 - Catálogo de Analistas (gerado): `docs/ANALISTAS.md`
 - Relatório de Progresso: `docs/relatorios/RELATORIO.md`

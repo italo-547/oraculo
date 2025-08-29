@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 Resumo: Arquitetura "oraculo-self"
 
 Este repositório é o próprio Oráculo. Para evitar ruído na auto-análise, adicionamos uma configuração local que explica a intenção do layout do projeto e ajusta filtros usados pelo detector de estrutura.

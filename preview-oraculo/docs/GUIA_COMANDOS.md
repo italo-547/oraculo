@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Guia Completo dos Comandos do Oráculo
 
 ## Visão Geral
@@ -10,16 +15,16 @@ Executa uma análise completa do repositório, identificando problemas estrutura
 
 ### Flags Disponíveis
 
-| Flag | Alias | Descrição | Padrão |
-|------|-------|-----------|---------|
-| `--compact` | `-c` | Modo compacto de logs (resumos e menos detalhes) | `false` |
-| `--verbose` | `-V` | Modo verboso (mais detalhes nos relatórios) | `false` |
-| `--listar-analistas` | - | Lista técnicas/analistas ativos antes da análise | `false` |
-| `--guardian-check` | `-g` | Executa verificação de integridade (guardian) no diagnóstico | `false` |
-| `--json` | - | Saída JSON estruturada (para CI/integrações) | `false` |
-| `--detalhado` | - | Exporta relatório de arquétipos detalhado | `false` |
-| `--include <padrao>` | - | Glob pattern a INCLUIR | `[]` |
-| `--exclude <padrao>` | - | Glob pattern a EXCLUIR adicionalmente | `[]` |
+| Flag                 | Alias | Descrição                                                    | Padrão  |
+| -------------------- | ----- | ------------------------------------------------------------ | ------- |
+| `--compact`          | `-c`  | Modo compacto de logs (resumos e menos detalhes)             | `false` |
+| `--verbose`          | `-V`  | Modo verboso (mais detalhes nos relatórios)                  | `false` |
+| `--listar-analistas` | -     | Lista técnicas/analistas ativos antes da análise             | `false` |
+| `--guardian-check`   | `-g`  | Executa verificação de integridade (guardian) no diagnóstico | `false` |
+| `--json`             | -     | Saída JSON estruturada (para CI/integrações)                 | `false` |
+| `--detalhado`        | -     | Exporta relatório de arquétipos detalhado                    | `false` |
+| `--include <padrao>` | -     | Glob pattern a INCLUIR                                       | `[]`    |
+| `--exclude <padrao>` | -     | Glob pattern a EXCLUIR adicionalmente                        | `[]`    |
 
 ### Combinações Comuns
 
@@ -110,11 +115,11 @@ Remove arquivos órfãos e lixo do repositório, mantendo apenas arquivos refere
 
 ### Flags do Podar
 
-| Flag | Alias | Descrição | Padrão |
-|------|-------|-----------|---------|
-| `--force` | `-f` | Remove arquivos sem confirmação | `false` |
-| `--include <padrao>` | - | Glob pattern a INCLUIR | `[]` |
-| `--exclude <padrao>` | - | Glob pattern a EXCLUIR adicionalmente | `[]` |
+| Flag                 | Alias | Descrição                             | Padrão  |
+| -------------------- | ----- | ------------------------------------- | ------- |
+| `--force`            | `-f`  | Remove arquivos sem confirmação       | `false` |
+| `--include <padrao>` | -     | Glob pattern a INCLUIR                | `[]`    |
+| `--exclude <padrao>` | -     | Glob pattern a EXCLUIR adicionalmente | `[]`    |
 
 ### Uso Básico do Podar
 
@@ -162,12 +167,12 @@ Gerencia e verifica a integridade do ambiente do Oráculo.
 
 ### Flags do Guardian
 
-| Flag | Alias | Descrição |
-|------|-------|-----------|
-| `--accept-baseline` | `-a` | Aceita o baseline atual como o novo baseline de integridade |
-| `--diff` | `-d` | Mostra as diferenças entre o estado atual e o baseline |
-| `--full-scan` | - | Executa verificação sem aplicar GUARDIAN_IGNORE_PATTERNS |
-| `--json` | - | Saída em JSON estruturado |
+| Flag                | Alias | Descrição                                                   |
+| ------------------- | ----- | ----------------------------------------------------------- |
+| `--accept-baseline` | `-a`  | Aceita o baseline atual como o novo baseline de integridade |
+| `--diff`            | `-d`  | Mostra as diferenças entre o estado atual e o baseline      |
+| `--full-scan`       | -     | Executa verificação sem aplicar GUARDIAN_IGNORE_PATTERNS    |
+| `--json`            | -     | Saída em JSON estruturado                                   |
 
 ### Uso Básico do Guardian
 
@@ -327,35 +332,35 @@ jobs:
 
 ### Flags Mais Usadas
 
-| Comando | Flag | Uso Comum |
-|---------|------|-----------|
-| `diagnosticar` | `--json` | Integração CI/CD |
-| `diagnosticar` | `--verbose` | Análise detalhada |
-| `diagnosticar` | `--include` | Foco em diretórios específicos |
-| `podar` | `--force` | Limpeza automatizada |
-| `podar` | `--include` | Filtros de limpeza |
-| `guardian` | `--diff` | Verificação de mudanças |
-| `guardian` | `--accept-baseline` | Aceitar novo estado |
+| Comando        | Flag                | Uso Comum                      |
+| -------------- | ------------------- | ------------------------------ |
+| `diagnosticar` | `--json`            | Integração CI/CD               |
+| `diagnosticar` | `--verbose`         | Análise detalhada              |
+| `diagnosticar` | `--include`         | Foco em diretórios específicos |
+| `podar`        | `--force`           | Limpeza automatizada           |
+| `podar`        | `--include`         | Filtros de limpeza             |
+| `guardian`     | `--diff`            | Verificação de mudanças        |
+| `guardian`     | `--accept-baseline` | Aceitar novo estado            |
 
 ### Códigos de Saída
 
-| Comando | Código | Significado |
-|---------|--------|-------------|
-| `diagnosticar` | 0 | Sucesso (sem problemas) |
-| `diagnosticar` | 1 | Problemas encontrados |
-| `podar` | 0 | Sucesso |
-| `podar` | 1 | Erro durante execução |
-| `guardian` | 0 | Integridade OK |
-| `guardian` | 1 | Problemas de integridade |
+| Comando        | Código | Significado              |
+| -------------- | ------ | ------------------------ |
+| `diagnosticar` | 0      | Sucesso (sem problemas)  |
+| `diagnosticar` | 1      | Problemas encontrados    |
+| `podar`        | 0      | Sucesso                  |
+| `podar`        | 1      | Erro durante execução    |
+| `guardian`     | 0      | Integridade OK           |
+| `guardian`     | 1      | Problemas de integridade |
 
 ### Variáveis de Ambiente
 
-| Variável | Comando | Efeito |
-|----------|---------|--------|
-| `VITEST` | Todos | Modo de teste (sem exit) |
+| Variável                    | Comando        | Efeito                      |
+| --------------------------- | -------------- | --------------------------- |
+| `VITEST`                    | Todos          | Modo de teste (sem exit)    |
 | `ORACULO_DETECT_TIMEOUT_MS` | `diagnosticar` | Timeout detecção arquétipos |
-| `COMPACT_MODE` | `diagnosticar` | Modo compacto forçado |
-| `VERBOSE` | `diagnosticar` | Modo verboso forçado |
+| `COMPACT_MODE`              | `diagnosticar` | Modo compacto forçado       |
+| `VERBOSE`                   | `diagnosticar` | Modo verboso forçado        |
 
 ---
 

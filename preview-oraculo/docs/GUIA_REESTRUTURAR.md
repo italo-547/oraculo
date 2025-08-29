@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Guia de Flags do Comando Reestruturar
 
 ## Visão Geral
@@ -8,28 +13,28 @@ O comando `reestruturar` do Oráculo permite reorganizar a estrutura de arquivos
 
 ### Flags de Execução
 
-| Flag | Alias | Descrição | Padrão |
-|------|-------|-----------|---------|
-| `--auto` | `-a` | Aplica correções automaticamente sem confirmação | `false` |
-| `--aplicar` | - | Alias de `--auto` (deprecated futuramente) | `false` |
-| `--somente-plano` | - | Exibe apenas o plano sugerido (dry-run) | `false` |
+| Flag              | Alias | Descrição                                        | Padrão  |
+| ----------------- | ----- | ------------------------------------------------ | ------- |
+| `--auto`          | `-a`  | Aplica correções automaticamente sem confirmação | `false` |
+| `--aplicar`       | -     | Alias de `--auto` (deprecated futuramente)       | `false` |
+| `--somente-plano` | -     | Exibe apenas o plano sugerido (dry-run)          | `false` |
 
 ### Flags de Estrutura
 
-| Flag | Descrição | Valores | Padrão |
-|------|-----------|---------|---------|
-| `--domains` | Organiza por `domains/<entidade>/<categoria>s` | `boolean` | `false` |
-| `--flat` | Organiza por `src/<categoria>s` (sem domains) | `boolean` | `false` |
-| `--preset <nome>` | Preset de estrutura | `oraculo`, `node-community`, `ts-lib` | `oraculo` |
-| `--prefer-estrategista` | Força uso do estrategista (ignora plano de arquétipos) | `boolean` | `false` |
-| `--categoria <pair>` | Override de categoria (formato: `chave=valor`) | `string[]` | `[]` |
+| Flag                    | Descrição                                              | Valores                               | Padrão    |
+| ----------------------- | ------------------------------------------------------ | ------------------------------------- | --------- |
+| `--domains`             | Organiza por `domains/<entidade>/<categoria>s`         | `boolean`                             | `false`   |
+| `--flat`                | Organiza por `src/<categoria>s` (sem domains)          | `boolean`                             | `false`   |
+| `--preset <nome>`       | Preset de estrutura                                    | `oraculo`, `node-community`, `ts-lib` | `oraculo` |
+| `--prefer-estrategista` | Força uso do estrategista (ignora plano de arquétipos) | `boolean`                             | `false`   |
+| `--categoria <pair>`    | Override de categoria (formato: `chave=valor`)         | `string[]`                            | `[]`      |
 
 ### Flags de Filtro
 
-| Flag | Descrição | Exemplo |
-|------|-----------|---------|
-| `--include <padrao>` | Glob pattern a INCLUIR | `--include "src/**/*.ts"` |
-| `--exclude <padrao>` | Glob pattern a EXCLUIR adicionalmente | `--exclude "test/**"` |
+| Flag                 | Descrição                             | Exemplo                   |
+| -------------------- | ------------------------------------- | ------------------------- |
+| `--include <padrao>` | Glob pattern a INCLUIR                | `--include "src/**/*.ts"` |
+| `--exclude <padrao>` | Glob pattern a EXCLUIR adicionalmente | `--exclude "test/**"`     |
 
 ## Combinações Comuns
 

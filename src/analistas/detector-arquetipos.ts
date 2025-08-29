@@ -27,6 +27,28 @@ const PESO_DEPENDENCIA = 10;
 const PESO_PATTERN = 5;
 const PENALIDADE_FORBIDDEN = 20;
 
+// Constantes adaptativas baseadas no tamanho do projeto
+function calcularConstantesAdaptativas(totalArquivos: number, totalDirs: number) {
+  // Fator de escala baseado no tamanho do projeto
+  const tamanhoProjeto = Math.min(totalArquivos / 100, 5); // máximo 5x
+  const complexidade = Math.min(totalDirs / 20, 3); // máximo 3x
+
+  return {
+    // Penalidades mais brandas para projetos grandes
+    PENALIDADE_MISSING_REQUIRED_ADAPTADO: Math.max(
+      PENALIDADE_MISSING_REQUIRED * (1 - tamanhoProjeto * 0.1),
+      5,
+    ),
+    // Pesos maiores para projetos complexos
+    PESO_OPTIONAL_ADAPTADO: PESO_OPTIONAL * (1 + complexidade * 0.2),
+    PESO_DEPENDENCIA_ADAPTADO: PESO_DEPENDENCIA * (1 + complexidade * 0.15),
+    // Penalização por arquivos proibidos mais contextual
+    PENALIDADE_FORBIDDEN_ADAPTADO: PENALIDADE_FORBIDDEN * (1 + tamanhoProjeto * 0.05),
+    // Bônus por completude mais significativo em projetos grandes
+    BONUS_COMPLETUDE: 50 + tamanhoProjeto * 20,
+  };
+}
+
 // Função principal de pontuação e decisão de arquétipo.
 // Agora implementa lógica de votação: prioriza dominante, classifica como misto em caso de empate, e desconhecido se nenhum padrão relevante.
 // Integração futura com orquestrador pode ser feita aqui, se necessário.
@@ -43,6 +65,12 @@ function scoreArquetipo(
     }
     return false;
   }
+
+  // Calcular constantes adaptativas baseadas no projeto
+  const totalArquivos = arquivos.length;
+  const totalDirs = new Set(arquivos.map((f) => f.split('/')[0])).size;
+  const constantes = calcularConstantesAdaptativas(totalArquivos, totalDirs);
+
   const required = def.requiredDirs || [];
   const matchedRequired = required.filter((d) =>
     norm.some((f) => f.startsWith(d + '/') || f === d),
@@ -54,7 +82,8 @@ function scoreArquetipo(
   // Se todos os requisitos obrigatórios estão presentes, aplica bônus e penaliza genéricos para garantir que o específico seja priorizado
   if (required.length > 0 && missingRequired.length === 0) {
     const pesoBase = typeof def.pesoBase === 'number' ? def.pesoBase : 1;
-    bonusEspecificidade = pesoBase > 1 ? 200 : 120;
+    bonusEspecificidade =
+      pesoBase > 1 ? constantes.BONUS_COMPLETUDE : constantes.BONUS_COMPLETUDE * 0.6;
     // Penaliza fortemente genéricos se outro específico está completo (evita falsos positivos)
     if (def.nome === 'cli-modular' || def.nome === 'fullstack' || def.nome === 'landing-page') {
       penalidadeGenérico = 1000; // penalidade extrema para nunca ultrapassar específico
@@ -74,71 +103,98 @@ function scoreArquetipo(
 
   let score = (def.pesoBase || 1) * 10;
   score += matchedRequired.length * PESO_REQUIRED;
-  score -= missingRequired.length * PENALIDADE_MISSING_REQUIRED;
-  score += matchedOptional.length * PESO_OPTIONAL;
-  score += dependencyMatches.length * PESO_DEPENDENCIA;
+  score -= missingRequired.length * constantes.PENALIDADE_MISSING_REQUIRED_ADAPTADO;
+  score += matchedOptional.length * constantes.PESO_OPTIONAL_ADAPTADO;
+  score += dependencyMatches.length * constantes.PESO_DEPENDENCIA_ADAPTADO;
   score += filePatternMatches.length * PESO_PATTERN;
-  score -= forbiddenPresent.length * PENALIDADE_FORBIDDEN;
+  score -= forbiddenPresent.length * constantes.PENALIDADE_FORBIDDEN_ADAPTADO;
   score += bonusEspecificidade;
   score -= penalidadeGenérico;
 
   // Enriquecimento heurístico: ajusta score conforme sinais avançados do projeto
   let explicacaoSinais = '';
   if (sinaisAvancados) {
-    // 1. Funções
+    // Sistema de pontuação adaptativo baseado na maturidade do projeto
+    const maturidadeProjeto = Math.min(
+      (sinaisAvancados.funcoes + sinaisAvancados.classes + sinaisAvancados.tipos.length) / 50,
+      3,
+    );
+
+    // 1. Funções - mais peso para projetos maduros
     if (sinaisAvancados.funcoes > 10) {
-      score += 10;
-      explicacaoSinais += `Detectado ${sinaisAvancados.funcoes} funções declaradas.\n`;
+      const bonusFuncoes = Math.min(15, sinaisAvancados.funcoes * 0.1) * maturidadeProjeto;
+      score += bonusFuncoes;
+      explicacaoSinais += `Detectado ${sinaisAvancados.funcoes} funções declaradas (+${bonusFuncoes.toFixed(1)}).\n`;
     }
-    // 2. Imports
+
+    // 2. Imports - contexto importa mais que quantidade
     if (sinaisAvancados.imports.length > 0) {
-      score += Math.min(10, sinaisAvancados.imports.length);
-      explicacaoSinais += `Imports detectados: ${sinaisAvancados.imports.join(', ')}.\n`;
+      const bonusImports = Math.min(12, sinaisAvancados.imports.length * 0.8);
+      score += bonusImports;
+      explicacaoSinais += `Imports detectados: ${sinaisAvancados.imports.slice(0, 3).join(', ')}${sinaisAvancados.imports.length > 3 ? '...' : ''} (+${bonusImports.toFixed(1)}).\n`;
     }
-    // 3. Variáveis
+
+    // 3. Variáveis - menos peso, mas ainda relevante
     if (sinaisAvancados.variaveis > 10) {
-      score += 5;
-      explicacaoSinais += `Detectado ${sinaisAvancados.variaveis} variáveis declaradas.\n`;
+      const bonusVars = Math.min(8, sinaisAvancados.variaveis * 0.05);
+      score += bonusVars;
+      explicacaoSinais += `Detectado ${sinaisAvancados.variaveis} variáveis (+${bonusVars.toFixed(1)}).\n`;
     }
-    // 4. Tipos
+
+    // 4. Tipos - forte indicador de maturidade TypeScript
     if (sinaisAvancados.tipos.length > 0) {
-      score += Math.min(10, sinaisAvancados.tipos.length);
-      explicacaoSinais += `Tipos/Interfaces detectados: ${sinaisAvancados.tipos.join(', ')}.\n`;
+      const bonusTipos = Math.min(15, sinaisAvancados.tipos.length * 0.6) * maturidadeProjeto;
+      score += bonusTipos;
+      explicacaoSinais += `Tipos/Interfaces detectados: ${sinaisAvancados.tipos.slice(0, 2).join(', ')}${sinaisAvancados.tipos.length > 2 ? '...' : ''} (+${bonusTipos.toFixed(1)}).\n`;
     }
-    // 5. Classes
+
+    // 5. Classes - indica arquitetura orientada a objetos
     if (sinaisAvancados.classes > 0) {
-      score += Math.min(10, sinaisAvancados.classes);
-      explicacaoSinais += `Detectado ${sinaisAvancados.classes} classes declaradas.\n`;
+      const bonusClasses = Math.min(12, sinaisAvancados.classes * 2) * maturidadeProjeto;
+      score += bonusClasses;
+      explicacaoSinais += `Detectado ${sinaisAvancados.classes} classes (+${bonusClasses.toFixed(1)}).\n`;
     }
-    // 6. Frameworks detectados
+
+    // 6. Frameworks detectados - alto peso pois indica stack específica
     if (sinaisAvancados.frameworksDetectados.length > 0) {
-      score += sinaisAvancados.frameworksDetectados.length * 5;
-      explicacaoSinais += `Frameworks detectados: ${sinaisAvancados.frameworksDetectados.join(', ')}.\n`;
+      const bonusFrameworks = sinaisAvancados.frameworksDetectados.length * 8;
+      score += bonusFrameworks;
+      explicacaoSinais += `Frameworks detectados: ${sinaisAvancados.frameworksDetectados.join(', ')} (+${bonusFrameworks.toFixed(1)}).\n`;
     }
-    // 7. Dependências
+
+    // 7. Dependências - indica ecossistema
     if (sinaisAvancados.dependencias.length > 0) {
-      score += Math.min(10, sinaisAvancados.dependencias.length);
-      explicacaoSinais += `Dependências detectadas: ${sinaisAvancados.dependencias.join(', ')}.\n`;
+      const bonusDeps = Math.min(10, sinaisAvancados.dependencias.length * 0.3);
+      score += bonusDeps;
+      explicacaoSinais += `Dependências detectadas: ${sinaisAvancados.dependencias.length} (+${bonusDeps.toFixed(1)}).\n`;
     }
-    // Scripts
+
+    // Scripts npm - indica automação
     if (sinaisAvancados.scripts.length > 0) {
-      score += Math.min(5, sinaisAvancados.scripts.length);
-      explicacaoSinais += `Scripts detectados: ${sinaisAvancados.scripts.join(', ')}.\n`;
+      const bonusScripts = Math.min(6, sinaisAvancados.scripts.length * 0.4);
+      score += bonusScripts;
+      explicacaoSinais += `Scripts detectados: ${sinaisAvancados.scripts.length} (+${bonusScripts.toFixed(1)}).\n`;
     }
-    // Pastas padrão
+
+    // Pastas padrão - indica estrutura organizada
     if (sinaisAvancados.pastasPadrao.length > 0) {
-      score += Math.min(10, sinaisAvancados.pastasPadrao.length);
-      explicacaoSinais += `Pastas padrão detectadas: ${sinaisAvancados.pastasPadrao.join(', ')}.\n`;
+      const bonusPastas = Math.min(8, sinaisAvancados.pastasPadrao.length * 0.5);
+      score += bonusPastas;
+      explicacaoSinais += `Pastas padrão detectadas: ${sinaisAvancados.pastasPadrao.length} (+${bonusPastas.toFixed(1)}).\n`;
     }
-    // Arquivos padrão
+
+    // Arquivos padrão - indica pontos de entrada
     if (sinaisAvancados.arquivosPadrao.length > 0) {
-      score += Math.min(10, sinaisAvancados.arquivosPadrao.length);
-      explicacaoSinais += `Arquivos padrão detectados: ${sinaisAvancados.arquivosPadrao.join(', ')}.\n`;
+      const bonusArquivos = Math.min(6, sinaisAvancados.arquivosPadrao.length * 0.8);
+      score += bonusArquivos;
+      explicacaoSinais += `Arquivos padrão detectados: ${sinaisAvancados.arquivosPadrao.length} (+${bonusArquivos.toFixed(1)}).\n`;
     }
-    // Arquivos de configuração
+
+    // Arquivos de configuração - indica setup profissional
     if (sinaisAvancados.arquivosConfig.length > 0) {
-      score += Math.min(5, sinaisAvancados.arquivosConfig.length);
-      explicacaoSinais += `Arquivos de configuração detectados: ${sinaisAvancados.arquivosConfig.join(', ')}.\n`;
+      const bonusConfig = Math.min(5, sinaisAvancados.arquivosConfig.length * 0.6);
+      score += bonusConfig;
+      explicacaoSinais += `Arquivos de configuração detectados: ${sinaisAvancados.arquivosConfig.length} (+${bonusConfig.toFixed(1)}).\n`;
     }
   }
 
@@ -227,11 +283,54 @@ function scoreArquetipo(
   const maxPossible =
     (def.pesoBase || 1) * 10 +
     (def.requiredDirs?.length || 0) * PESO_REQUIRED +
-    (def.optionalDirs?.length || 0) * PESO_OPTIONAL +
-    (def.dependencyHints?.length || 0) * PESO_DEPENDENCIA +
+    (def.optionalDirs?.length || 0) * constantes.PESO_OPTIONAL_ADAPTADO +
+    (def.dependencyHints?.length || 0) * constantes.PESO_DEPENDENCIA_ADAPTADO +
     (def.filePresencePatterns?.length || 0) * PESO_PATTERN +
-    30;
-  const confidence = maxPossible > 0 ? Math.min(100, Math.round((score / maxPossible) * 100)) : 0;
+    constantes.BONUS_COMPLETUDE;
+
+  // Sistema de confiança mais inteligente
+  let confidence = maxPossible > 0 ? Math.min(100, Math.round((score / maxPossible) * 100)) : 0;
+
+  // Ajustes contextuais para confiança
+  if (sinaisAvancados) {
+    // Projetos com frameworks têm confiança maior
+    if (sinaisAvancados.frameworksDetectados.length > 0) {
+      confidence = Math.min(100, confidence + 5);
+    }
+
+    // Projetos com tipos TypeScript têm confiança maior
+    if (sinaisAvancados.tipos.length > 10) {
+      confidence = Math.min(100, confidence + 3);
+    }
+
+    // Projetos com estrutura de pastas organizada têm confiança maior
+    if (sinaisAvancados.pastasPadrao.length > 3) {
+      confidence = Math.min(100, confidence + 4);
+    }
+
+    // Penalizar confiança se há muitos arquivos proibidos
+    if (forbiddenPresent.length > 2) {
+      confidence = Math.max(0, confidence - 10);
+    }
+
+    // Penalizar confiança se muitos requisitos obrigatórios estão faltando
+    if (missingRequired.length > required.length * 0.5) {
+      confidence = Math.max(0, confidence - 15);
+    }
+  }
+
+  // Normalização final baseada no tamanho do projeto
+  if (totalArquivos > 500) {
+    // Projetos muito grandes: reduzir confiança se não há estrutura clara
+    if (confidence < 60) {
+      confidence = Math.max(0, confidence - 5);
+    }
+  } else if (totalArquivos < 20) {
+    // Projetos muito pequenos: aumentar confiança se há estrutura mínima
+    if (matchedRequired.length > 0) {
+      confidence = Math.min(100, confidence + 10);
+    }
+  }
 
   const raizFiles = norm.filter((p) => typeof p === 'string' && !p.includes('/'));
   const allowed = new Set([...(def.rootFilesAllowed || [])]);
@@ -307,17 +406,21 @@ export async function detectarArquetipos(
   candidatos.sort((a, b) => b.confidence - a.confidence || b.score - a.score);
 
   // Decisão final: dominante, misto ou desconhecido
-  // - Dominante: score/confiança muito superior
-  // - Misto: múltiplos com scores próximos
-  // - Desconhecido: nenhum padrão relevante
+  // Agora considera fatores contextuais e thresholds adaptativos
   const scoresValidos = candidatos.filter((c) => c.confidence >= 30);
+
   if (!scoresValidos.length) {
-    // Nenhum padrão relevante
+    // Nenhum padrão relevante - verificar se é um projeto muito pequeno ou não estruturado
+    const temAlgumaEstrutura = arquivos.some(
+      (f) =>
+        f.includes('src/') || f.includes('lib/') || f.includes('app/') || f.includes('packages/'),
+    );
+
     candidatos = [
       {
         nome: 'desconhecido',
         score: 0,
-        confidence: 0,
+        confidence: temAlgumaEstrutura ? 10 : 0, // pequena confiança se há alguma estrutura
         matchedRequired: [],
         missingRequired: [],
         matchedOptional: [],
@@ -325,23 +428,41 @@ export async function detectarArquetipos(
         filePatternMatches: [],
         forbiddenPresent: [],
         anomalias: [],
-        sugestaoPadronizacao: '',
-        explicacaoSimilaridade: 'Nenhum arquétipo identificado.',
+        sugestaoPadronizacao: temAlgumaEstrutura
+          ? 'Projeto tem alguma estrutura, mas não corresponde a arquétipos conhecidos. Considere organizar em src/, lib/ ou app/.'
+          : 'Projeto sem estrutura clara detectada. Considere criar uma organização básica.',
+        explicacaoSimilaridade: temAlgumaEstrutura
+          ? 'Estrutura parcial detectada, mas não suficiente para classificação.'
+          : 'Nenhum arquétipo identificado.',
         descricao: 'Nenhum arquétipo identificado.',
       },
     ];
   } else {
-    // Se há múltiplos com scores próximos, classifica como misto
+    // Análise mais sofisticada para decidir entre dominante e misto
     const top = scoresValidos[0];
     const proximos = scoresValidos.filter(
-      (c) => c !== top && Math.abs(c.confidence - top.confidence) <= 10,
+      (c) => c !== top && Math.abs(c.confidence - top.confidence) <= 15, // threshold aumentado
     );
-    if (proximos.length > 0) {
+
+    // Verificar se é realmente um caso híbrido ou apenas competição próxima
+    const ehHibridoReal = proximos.some(
+      (c) =>
+        // Verificar se há sobreposição significativa de características
+        c.matchedRequired.some((req) => top.matchedRequired.includes(req)) ||
+        c.dependencyMatches.some((dep) => top.dependencyMatches.includes(dep)),
+    );
+
+    if (proximos.length > 0 && ehHibridoReal) {
+      // Sistema de pontuação para casos híbridos
+      const scoreHibrido =
+        top.score * 0.7 + proximos.reduce((acc, c) => acc + (c.score * 0.3) / proximos.length, 0);
+      const confidenceHibrido = Math.max(top.confidence - 10, 40); // reduzir confiança mas manter mínimo
+
       candidatos = [
         {
           nome: 'misto',
-          score: top.score,
-          confidence: top.confidence,
+          score: Math.round(scoreHibrido),
+          confidence: confidenceHibrido,
           matchedRequired: [],
           missingRequired: [],
           matchedOptional: [],
@@ -350,12 +471,12 @@ export async function detectarArquetipos(
           forbiddenPresent: [],
           anomalias: [],
           sugestaoPadronizacao: '',
-          explicacaoSimilaridade: `Estrutura mista: sinais de múltiplos arquétipos (${[top.nome, ...proximos.map((p) => p.nome)].join(', ')}).`,
-          descricao: 'Estrutura mista',
+          explicacaoSimilaridade: `Estrutura híbrida detectada: combina elementos de ${[top.nome, ...proximos.map((p) => p.nome)].join(', ')}. Recomenda-se avaliar se a separação em projetos distintos seria benéfica.`,
+          descricao: 'Estrutura híbrida',
         },
       ];
     } else {
-      // Dominante
+      // Dominante claro
       candidatos = [top];
     }
   }
@@ -389,7 +510,7 @@ export async function detectarArquetipos(
     if (temIntersecao && (candidatoTop.nome === 'desconhecido' || candidatoTop.confidence < 50)) {
       const melhorBaseline: ResultadoDeteccaoArquetipo = {
         nome: baseline.arquetipo,
-        score: 9999, // força topo da lista
+        score: 999, // força topo da lista
         confidence: baseline.confidence,
         matchedRequired: [],
         missingRequired: [],

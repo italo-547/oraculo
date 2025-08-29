@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 Riscos e Operação Segura — Oráculo
 
 Este documento descreve os principais vetores de risco identificados ao executar o Oráculo em repositórios de terceiros e as medidas que o Oráculo aplica por padrão para reduzir danos.

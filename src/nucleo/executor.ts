@@ -86,9 +86,30 @@ export async function executarInquisicao(
   for (const tecnica of tecnicas) {
     if (tecnica.global) {
       // início medido apenas por analista específico (inicioAnalista)
+      const timeoutMs = config.ANALISE_TIMEOUT_POR_ANALISTA_MS;
       try {
         const inicioAnalista = performance.now();
-        const resultado = await tecnica.aplicar('', '', null, undefined, contextoGlobal);
+
+        // Implementa timeout para analistas globais se configurado
+        let resultado: ReturnType<typeof tecnica.aplicar> | undefined;
+
+        if (timeoutMs > 0) {
+          // Promise.race entre execução do analista global e timeout
+          const timeoutPromise = new Promise<never>((_, reject) => {
+            setTimeout(() => {
+              reject(
+                new Error(`Timeout: analista global '${tecnica.nome}' excedeu ${timeoutMs}ms`),
+              );
+            }, timeoutMs);
+          });
+
+          const execPromise = tecnica.aplicar('', '', null, undefined, contextoGlobal);
+          resultado = await Promise.race([execPromise, timeoutPromise]);
+        } else {
+          // Execução sem timeout
+          resultado = await tecnica.aplicar('', '', null, undefined, contextoGlobal);
+        }
+
         if (resultado) {
           ocorrencias.push(...(Array.isArray(resultado) ? resultado : [resultado]));
         }
@@ -117,11 +138,24 @@ export async function executarInquisicao(
         }
       } catch (error) {
         const err = error as Error;
-        log.erro(`❌ Erro na técnica global '${tecnica.nome}': ${err.message}`);
-        if (err.stack && opts?.verbose) log.info(err.stack);
+        const isTimeout = err.message.includes('Timeout: analista global');
+        const nivelLog = isTimeout ? 'aviso' : 'erro';
+        const prefixo = isTimeout ? '⏰' : '❌';
+
+        // Log apropriado baseado no tipo de erro
+        if (nivelLog === 'aviso') {
+          log.aviso(`${prefixo} ${err.message}`);
+        } else {
+          log.erro(`${prefixo} Erro na técnica global '${tecnica.nome}': ${err.message}`);
+          if (err.stack && opts?.verbose) log.info(err.stack);
+        }
+
+        // Registra ocorrência de erro/timeout
         ocorrencias.push(
           ocorrenciaErroAnalista({
-            mensagem: `Falha na técnica global '${tecnica.nome}': ${err.message}`,
+            mensagem: isTimeout
+              ? `Timeout na técnica global '${tecnica.nome}': ${timeoutMs}ms excedido`
+              : `Falha na técnica global '${tecnica.nome}': ${err.message}`,
             relPath: '[execução global]',
             origem: tecnica.nome,
           }),
@@ -216,15 +250,45 @@ export async function executarInquisicao(
       if (tecnica.test && !tecnica.test(entry.relPath)) continue;
 
       // início medido apenas por analista específico (inicioAnalista)
+      const timeoutMs = config.ANALISE_TIMEOUT_POR_ANALISTA_MS;
       try {
         const inicioAnalista = performance.now();
-        const resultado = await tecnica.aplicar(
-          entry.content ?? '',
-          entry.relPath,
-          entry.ast ?? null,
-          entry.fullPath,
-          contextoGlobal,
-        );
+
+        // Implementa timeout por analista se configurado
+        let resultado: ReturnType<typeof tecnica.aplicar> | undefined;
+
+        if (timeoutMs > 0) {
+          // Promise.race entre execução do analista e timeout
+          const timeoutPromise = new Promise<never>((_, reject) => {
+            setTimeout(() => {
+              reject(
+                new Error(
+                  `Timeout: analista '${tecnica.nome}' excedeu ${timeoutMs}ms para ${entry.relPath}`,
+                ),
+              );
+            }, timeoutMs);
+          });
+
+          const execPromise = tecnica.aplicar(
+            entry.content ?? '',
+            entry.relPath,
+            entry.ast ?? null,
+            entry.fullPath,
+            contextoGlobal,
+          );
+
+          resultado = await Promise.race([execPromise, timeoutPromise]);
+        } else {
+          // Execução sem timeout
+          resultado = await tecnica.aplicar(
+            entry.content ?? '',
+            entry.relPath,
+            entry.ast ?? null,
+            entry.fullPath,
+            contextoGlobal,
+          );
+        }
+
         if (resultado) {
           const arr = Array.isArray(resultado) ? resultado : [resultado];
           ocorrencias.push(...arr);
@@ -254,11 +318,24 @@ export async function executarInquisicao(
         }
       } catch (error) {
         const err = error as Error;
-        log.erro(`❌ Erro em '${tecnica.nome}' para ${entry.relPath}: ${err.message}`);
-        if (err.stack && opts?.verbose) log.info(err.stack);
+        const isTimeout = err.message.includes('Timeout: analista');
+        const nivelLog = isTimeout ? 'aviso' : 'erro';
+        const prefixo = isTimeout ? '⏰' : '❌';
+
+        // Log apropriado baseado no tipo de erro
+        if (nivelLog === 'aviso') {
+          log.aviso(`${prefixo} ${err.message}`);
+        } else {
+          log.erro(`${prefixo} Erro em '${tecnica.nome}' para ${entry.relPath}: ${err.message}`);
+          if (err.stack && opts?.verbose) log.info(err.stack);
+        }
+
+        // Registra ocorrência de erro/timeout
         ocorrencias.push(
           ocorrenciaErroAnalista({
-            mensagem: `Falha na técnica '${tecnica.nome}' para ${entry.relPath}: ${err.message}`,
+            mensagem: isTimeout
+              ? `Timeout na técnica '${tecnica.nome}' para ${entry.relPath}: ${timeoutMs}ms excedido`
+              : `Falha na técnica '${tecnica.nome}' para ${entry.relPath}: ${err.message}`,
             relPath: entry.relPath,
             origem: tecnica.nome,
           }),

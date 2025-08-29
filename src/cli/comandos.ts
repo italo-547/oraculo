@@ -7,6 +7,7 @@ import { comandoReestruturar } from './comando-reestruturar.js';
 import { comandoAtualizar } from './comando-atualizar.js';
 import { comandoAnalistas } from './comando-analistas.js';
 import { comandoMetricas } from './comando-metricas.js';
+import { registrarComandoReverter } from './comando-reverter.js';
 
 export function registrarComandos(program: Command, aplicarFlagsGlobais: (opts: unknown) => void) {
   program.addCommand(comandoDiagnosticar(aplicarFlagsGlobais));
@@ -16,6 +17,9 @@ export function registrarComandos(program: Command, aplicarFlagsGlobais: (opts: 
   program.addCommand(comandoAtualizar(aplicarFlagsGlobais));
   program.addCommand(comandoAnalistas());
   program.addCommand(comandoMetricas());
+
+  // Registra comando de reversão
+  registrarComandoReverter(program);
 }
 
 /* istanbul ignore next */

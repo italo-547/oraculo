@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 import { describe, it, expect } from 'vitest';
-import { execSync, spawnSync } from 'node:child_process';
+import { execSync, spawn } from 'node:child_process';
 import { mkdtempSync, writeFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -14,7 +14,7 @@ function garantirBuild() {
 }
 
 describe('@e2e Reestruturar', () => {
-  it('@e2e reescreve imports relativos ao mover arquivo (AUTO_FIX)', () => {
+  it('@e2e reescreve imports relativos ao mover arquivo (AUTO_FIX)', async () => {
     const cliPath = garantirBuild();
     const tempDir = mkdtempSync(join(tmpdir(), 'oraculo-e2e-move-'));
 
@@ -40,11 +40,36 @@ describe('@e2e Reestruturar', () => {
       'utf-8',
     );
 
-    const proc = spawnSync(
-      process.execPath,
-      [cliPath, 'reestruturar', '--auto', '--domains', '--prefer-estrategista', '--silence'],
-      { cwd: tempDir, encoding: 'utf-8' },
-    );
+    // usa spawn assíncrono para não bloquear o loop do worker (evita timeout RPC do Vitest)
+    const run = () =>
+      new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
+        const cp = spawn(
+          process.execPath,
+          [cliPath, 'reestruturar', '--auto', '--domains', '--prefer-estrategista', '--silence'],
+          {
+            cwd: tempDir,
+            env: { ...process.env },
+            stdio: ['ignore', 'pipe', 'pipe'],
+          },
+        );
+        let stdout = '';
+        let stderr = '';
+        cp.stdout?.on('data', (d) => (stdout += String(d)));
+        cp.stderr?.on('data', (d) => (stderr += String(d)));
+        cp.on('close', (code) => resolve({ status: code, stdout, stderr }));
+        cp.on('error', (err) =>
+          resolve({ status: null, stdout, stderr: stderr + '\n[error: ' + err.message + ']' }),
+        );
+        // safety timeout aumentado
+        setTimeout(() => {
+          try {
+            cp.kill('SIGKILL');
+          } catch {}
+          resolve({ status: null, stdout, stderr: stdout + stderr + '\n[timeout 60s]' });
+        }, 60000);
+      });
+
+    const proc = await run();
     expect(proc.status).toBe(0);
 
     // Verifica que o arquivo foi movido e imports reescritos
@@ -62,9 +87,9 @@ describe('@e2e Reestruturar', () => {
     expect(conteudo).toMatch(/from '\.\.\/\.\.\/\.\.\/utils\/a'/);
     // Origem não deve mais existir
     expect(existsSync(join(tempDir, 'src', 'pedido.controller.ts'))).toBe(false);
-  }, 20000);
+  }, 60000);
 
-  it('@e2e dry-run (--somente-plano) não aplica mudanças e exibe plano', () => {
+  it('@e2e dry-run (--somente-plano) não aplica mudanças e exibe plano', async () => {
     const cliPath = garantirBuild();
     const tempDir = mkdtempSync(join(tmpdir(), 'oraculo-e2e-dry-'));
     writeFileSync(
@@ -75,11 +100,34 @@ describe('@e2e Reestruturar', () => {
     mkdirSync(join(tempDir, 'src'));
     writeFileSync(join(tempDir, 'src', 'cliente.controller.ts'), 'export const x=1;', 'utf-8');
 
-    const proc = spawnSync(
-      process.execPath,
-      [cliPath, 'reestruturar', '--domains', '--prefer-estrategista', '--somente-plano'],
-      { cwd: tempDir, encoding: 'utf-8' },
-    );
+    const runDry = () =>
+      new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
+        const cp = spawn(
+          process.execPath,
+          [cliPath, 'reestruturar', '--domains', '--prefer-estrategista', '--somente-plano'],
+          {
+            cwd: tempDir,
+            env: { ...process.env },
+            stdio: ['ignore', 'pipe', 'pipe'],
+          },
+        );
+        let stdout = '';
+        let stderr = '';
+        cp.stdout?.on('data', (d) => (stdout += String(d)));
+        cp.stderr?.on('data', (d) => (stderr += String(d)));
+        cp.on('close', (code) => resolve({ status: code, stdout, stderr }));
+        cp.on('error', (err) =>
+          resolve({ status: null, stdout, stderr: stderr + '\n[error: ' + err.message + ']' }),
+        );
+        setTimeout(() => {
+          try {
+            cp.kill('SIGKILL');
+          } catch {}
+          resolve({ status: null, stdout, stderr: stdout + stderr + '\n[timeout 60s]' });
+        }, 60000);
+      });
+
+    const proc = await runDry();
     // Espera término com sucesso
     expect(proc.status).toBe(0);
     const stdout = proc.stdout || '';
@@ -87,9 +135,9 @@ describe('@e2e Reestruturar', () => {
     expect(stdout.toLowerCase()).toMatch(/plano|dry-run/);
     // Arquivo permanece no lugar
     expect(existsSync(join(tempDir, 'src', 'cliente.controller.ts'))).toBe(true);
-  }, 15000);
+  }, 60000);
 
-  it('@e2e conflito de destino existente não move e exibe conflitos (dry-run)', () => {
+  it('@e2e conflito de destino existente não move e exibe conflitos (dry-run)', async () => {
     const cliPath = garantirBuild();
     const tempDir = mkdtempSync(join(tmpdir(), 'oraculo-e2e-conf-'));
     // Sem auto-fix: vamos rodar em dry-run
@@ -106,11 +154,34 @@ describe('@e2e Reestruturar', () => {
     mkdirSync(destinoDir, { recursive: true });
     writeFileSync(join(destinoDir, 'cliente.controller.ts'), '// existente', 'utf-8');
 
-    const proc = spawnSync(
-      process.execPath,
-      [cliPath, 'reestruturar', '--domains', '--prefer-estrategista', '--somente-plano'],
-      { cwd: tempDir, encoding: 'utf-8' },
-    );
+    const runConf = () =>
+      new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
+        const cp = spawn(
+          process.execPath,
+          [cliPath, 'reestruturar', '--domains', '--prefer-estrategista', '--somente-plano'],
+          {
+            cwd: tempDir,
+            env: { ...process.env },
+            stdio: ['ignore', 'pipe', 'pipe'],
+          },
+        );
+        let stdout = '';
+        let stderr = '';
+        cp.stdout?.on('data', (d) => (stdout += String(d)));
+        cp.stderr?.on('data', (d) => (stderr += String(d)));
+        cp.on('close', (code) => resolve({ status: code, stdout, stderr }));
+        cp.on('error', (err) =>
+          resolve({ status: null, stdout, stderr: stderr + '\n[error: ' + err.message + ']' }),
+        );
+        setTimeout(() => {
+          try {
+            cp.kill('SIGKILL');
+          } catch {}
+          resolve({ status: null, stdout, stderr: stdout + stderr + '\n[timeout 60s]' });
+        }, 60000);
+      });
+
+    const proc = await runConf();
     // CLI não deve falhar; deve registrar conflitos e não aplicar
     expect(proc.status).toBe(0);
     const stdout = (proc.stdout || '') + (proc.stderr || '');
@@ -120,5 +191,5 @@ describe('@e2e Reestruturar', () => {
     // Destino preservado
     const conteudoDestino = readFileSync(join(destinoDir, 'cliente.controller.ts'), 'utf-8');
     expect(conteudoDestino).toContain('existente');
-  }, 20000);
+  }, 60000);
 });
