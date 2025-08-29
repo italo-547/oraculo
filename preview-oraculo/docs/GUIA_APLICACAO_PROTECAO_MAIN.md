@@ -3,7 +3,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Guia: Aplicação da Proteção da Branch Main
 
 ## Status Atual
@@ -161,4 +160,3 @@ Após aplicar a proteção da branch main, as próximas prioridades são:
 
 **Data**: Dezembro de 2025
 **Status**: Aguardando aplicação da proteção
-

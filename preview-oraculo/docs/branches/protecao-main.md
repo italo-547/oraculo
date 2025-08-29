@@ -3,7 +3,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Política de Proteção da Branch Main
 
 Última atualização: 2025-08-28
@@ -222,4 +221,3 @@ git rebase origin/main
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [CHECKLIST.md](../CHECKLIST.md) - Status do projeto
 - [CONTRIBUTING.md](../../CONTRIBUTING.md) - Guia de contribuição
-

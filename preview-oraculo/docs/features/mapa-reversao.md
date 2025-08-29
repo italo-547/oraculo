@@ -3,7 +3,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Mapa de Reversão para Moves Aplicados
 
 ## Visão Geral
@@ -259,4 +258,3 @@ oraculo reverter limpar --force
 
 **Última atualização**: Dezembro de 2025
 **Versão**: 1.0.0
-

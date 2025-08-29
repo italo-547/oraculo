@@ -3,7 +3,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Checklist de Melhorias e Ajustes
 
 Última atualização: 2025-08-28
@@ -238,4 +237,3 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 ---
 
 Sempre consulte e atualize este checklist após cada mudança relevante.
-

@@ -3,7 +3,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Estratégia de Testes - Detector de Arquétipos
 
 Última atualização: 2025-08-28
@@ -179,4 +178,3 @@ ORACULO_MODO_PONTUACAO=padrao
 - [detector-arquetipos.ts](../../src/analistas/detector-arquetipos.ts) - Implementação principal
 - [arquetipos-defs.ts](../../src/analistas/arquetipos-defs.ts) - Definições de arquétipos
 - [configuracao-pontuacao.ts](../../src/analistas/configuracao-pontuacao.ts) - Configuração de pontuação
-

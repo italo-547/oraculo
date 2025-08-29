@@ -47,6 +47,7 @@ WORKER_POOL_MAX_WORKERS=4 oraculo diagnosticar
 ```
 
 **Características:**
+
 - **Paralelização por arquivo**: Processa múltiplos arquivos simultaneamente
 - **Timeout inteligente**: 30s por analista com cancelamento automático
 - **Fallback automático**: Retorna ao processamento sequencial se workers falharem
@@ -70,6 +71,7 @@ Versionamento automático dos relatórios JSON com compatibilidade backward:
 ```
 
 **Benefícios:**
+
 - **Compatibilidade garantida**: Relatórios legados continuam funcionais
 - **Migração automática**: Atualização transparente de formatos antigos
 - **Validação robusta**: Verificação automática de integridade de schema
@@ -85,6 +87,7 @@ oraculo diagnosticar --json
 ```
 
 **Recursos:**
+
 - **Escalabilidade automática**: Fatores de 1x a 5x baseados em arquivos/diretórios
 - **3 modos de configuração**: Padrão, conservador e permissivo
 - **Pesos realistas**: Arquétipos calibrados para maior precisão
@@ -100,6 +103,7 @@ oraculo diagnosticar  # ~70% menos arquivos escaneados
 ```
 
 **Melhorias:**
+
 - **Performance**: Redução de ~70% nos arquivos processados
 - **Compatibilidade**: Filtros explícitos continuam funcionando
 - **Segurança**: Prevenção de análise acidental de dependências
@@ -219,21 +223,21 @@ Rodar testes: `npm test` | Cobertura: `npx vitest run --coverage` (ou `npm run c
 
 ### Variáveis de Ambiente (Pool de Workers)
 
-| Variável                    | Default | Efeito                                                                 |
-| --------------------------- | ------- | ---------------------------------------------------------------------- |
-| `WORKER_POOL_ENABLED`       | `true`  | Habilita/desabilita o pool de workers                                  |
-| `WORKER_POOL_MAX_WORKERS`   | `auto`  | Número máximo de workers (auto = baseado em CPUs disponíveis)          |
-| `WORKER_POOL_BATCH_SIZE`    | `10`    | Arquivos processados por worker antes de enviar próximo lote           |
-| `WORKER_POOL_TIMEOUT_MS`    | `30000` | Timeout por analista em milissegundos (30s)                            |
+| Variável                  | Default | Efeito                                                        |
+| ------------------------- | ------- | ------------------------------------------------------------- |
+| `WORKER_POOL_ENABLED`     | `true`  | Habilita/desabilita o pool de workers                         |
+| `WORKER_POOL_MAX_WORKERS` | `auto`  | Número máximo de workers (auto = baseado em CPUs disponíveis) |
+| `WORKER_POOL_BATCH_SIZE`  | `10`    | Arquivos processados por worker antes de enviar próximo lote  |
+| `WORKER_POOL_TIMEOUT_MS`  | `30000` | Timeout por analista em milissegundos (30s)                   |
 
 ### Variáveis de Ambiente (Pontuação Adaptativa)
 
-| Variável                          | Default     | Efeito                                                |
-| --------------------------------- | ----------- | ----------------------------------------------------- |
-| `PONTUACAO_MODO`                  | `padrao`    | Modo de pontuação: `padrao`, `conservador`, `permissivo` |
-| `PONTUACAO_FATOR_ESCALA`          | `auto`      | Fator de escala baseado no tamanho do projeto         |
-| `PONTUACAO_PESO_FRAMEWORK`        | `1.05`      | Bônus para projetos com frameworks detectados         |
-| `PONTUACAO_PESO_TYPESCRIPT`       | `1.03`      | Bônus para projetos TypeScript                        |
+| Variável                    | Default  | Efeito                                                   |
+| --------------------------- | -------- | -------------------------------------------------------- |
+| `PONTUACAO_MODO`            | `padrao` | Modo de pontuação: `padrao`, `conservador`, `permissivo` |
+| `PONTUACAO_FATOR_ESCALA`    | `auto`   | Fator de escala baseado no tamanho do projeto            |
+| `PONTUACAO_PESO_FRAMEWORK`  | `1.05`   | Bônus para projetos com frameworks detectados            |
+| `PONTUACAO_PESO_TYPESCRIPT` | `1.03`   | Bônus para projetos TypeScript                           |
 
 ### Dicas de Encoding no Windows
 
@@ -318,6 +322,7 @@ Exemplo (trecho simplificado):
 ```
 
 **Novas métricas incluídas na v0.2.0:**
+
 - `workerPool`: Estatísticas detalhadas do pool de workers (workers ativos, erros, duração total)
 - `schemaVersion`: Versão do schema usado no relatório para compatibilidade
 - `pontuacaoAdaptativa`: Fatores aplicados na pontuação inteligente do projeto

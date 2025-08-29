@@ -3,7 +3,6 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-
 # Sistema de Versionamento de Schema
 
 ## Visão Geral
@@ -191,4 +190,3 @@ npm test -- tests/zeladores/leitor-relatorio.test.ts
 - **Migrações complexas** entre versões incompatíveis
 - **Schema registry** para descoberta automática
 - **Validação em tempo real** durante geração de relatórios
-
