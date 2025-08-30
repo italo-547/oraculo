@@ -1,1 +1,0 @@
-{"version":3,"file":"pontuador.d.ts","sourceRoot":"","sources":["../../../src/analistas/deteccao/pontuador.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EACV,0BAA0B,EAC1B,qBAAqB,EAEtB,MAAM,sBAAsB,CAAC;AAS9B,wBAAgB,cAAc,CAC5B,GAAG,EAAE,qBAAqB,EAC1B,QAAQ,EAAE,MAAM,EAAE,GACjB,0BAA0B,CAiL5B;AAED,wBAAgB,YAAY,CAAC,QAAQ,EAAE,MAAM,EAAE,GAAG,0BAA0B,EAAE,CAsB7E"}
