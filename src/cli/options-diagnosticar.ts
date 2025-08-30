@@ -32,6 +32,11 @@ export const optionsDiagnosticar = [
     defaultValue: false,
   },
   {
+    flags: '--salvar-arquetipo',
+    desc: 'Salva o arquétipo personalizado gerado automaticamente (use com --criar-arquetipo)',
+    defaultValue: false,
+  },
+  {
     flags: '--include <padrao>',
     desc: 'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)',
     parser: (val: string, prev: string[]) => {

@@ -38,6 +38,8 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
         exclude?: string[];
         listarAnalistas?: boolean;
         detalhado?: boolean;
+        criarArquetipo?: boolean;
+        salvarArquetipo?: boolean;
       },
       command: Command,
     ) => {
@@ -47,7 +49,10 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
       );
 
       // Delegar todo o processamento para a função modularizada
-      await processarDiagnostico(opts);
+      // Cast seguro: converter para a interface esperada pelo processador
+      await processarDiagnostico(
+        opts as unknown as import('./processamento-diagnostico.js').OpcoesProcessamentoDiagnostico,
+      );
     },
   );
   return cmd;

@@ -491,6 +491,17 @@ export async function processarDiagnostico(opts) {
                 // Perguntar se o usuário quer salvar
                 log.info('\n💾 Para salvar este arquétipo personalizado, execute:');
                 log.info('oraculo diagnostico --criar-arquetipo --salvar-arquetipo');
+                // Se o usuário passou a flag --salvar-arquetipo, persistir automaticamente
+                if (opts.salvarArquetipo) {
+                    try {
+                        const { salvarArquetipoPersonalizado } = await import('../analistas/arquetipos-personalizados.js');
+                        await salvarArquetipoPersonalizado(template, baseDir);
+                        log.sucesso('✅ Arquétipo personalizado salvo automaticamente.');
+                    }
+                    catch (e) {
+                        log.erro(`Falha ao salvar arquétipo: ${e.message}`);
+                    }
+                }
             }
             catch (e) {
                 log.erro(`❌ Falha ao gerar sugestão de arquétipo personalizado: ${e.message}`);

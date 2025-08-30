@@ -46,3 +46,13 @@ Criamos uma organização mais navegável para a documentação. Abaixo os diret
 - Nota: `node_modules` é ignorado por padrão, mas ao incluir explicitamente via `--include` (ex.: `--include node_modules/**`) o scanner passa a considerar esse diretório, inclusive em `--scan-only`.
 
 Adapte e expanda conforme o crescimento do projeto.
+
+## Exemplo: criar e salvar um arquétipo personalizado
+
+Para gerar um template de arquétipo baseado na estrutura atual do repositório e salvá-lo automaticamente execute:
+
+```bash
+oraculo diagnosticar --criar-arquetipo --salvar-arquetipo
+```
+
+Isso criará (ou sobrescreverá) o arquivo `oraculo.repo.arquetipo.json` na raiz do projeto.
