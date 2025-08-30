@@ -83,6 +83,26 @@ Estas diretrizes reforçam originalidade, licenças, privacidade e segurança op
 - Não “vendorize” código de terceiros; use gerenciadores de pacotes.
 - Mantenha o inventário de terceiros atualizado (THIRD-PARTY-NOTICES).
 
+### Política de dependências (obrigatório)
+
+- Objetivo: garantir que o código do repositório e suas dependências sejam compatíveis com a licença MIT e com a política de distribuição do Oráculo.
+- Licenças permitidas por padrão: MIT, Apache-2.0, BSD-family (2-clause/3-clause). Preferir pacotes com SPDX identificável.
+- Licenças proibidas sem aprovação explícita: GPL, AGPL, LGPL, e outras licenças copyleft forte. Qualquer uso dessas dependências exigirá aprovação por escrito de um mantenedor (PR com justificativa clara e alternativa comercial/ jurídica aprovada).
+- Processo para adicionar uma nova dependência:
+  - Abra um PR que inclua: nome/versão da dependência, licença SPDX, razão técnica para escolha, e alternativas avaliadas.
+  - Adicione um trecho em `docs/CHECKLIST.md` (entrada curta) registrando a decisão e a data.
+  - O PR deve acionar o workflow de verificação de licenças (`.github/workflows/license-gate.yml`) e só poderá ser mergeado se a verificação passar ou se houver exceção aprovada por mantenedor.
+- Ferramentas e verificações recomendadas (executadas no CI):
+  - Escaneamento de licença (ex.: license-checker, oss-review-tool, ou a ação de license-gate já configurada).
+  - Atualização automática de `THIRD-PARTY-NOTICES.txt` quando dependências forem adicionadas/atualizadas.
+- Proibição de vendorizar: não copie/cole código de terceiros no tree de `src/`; use dependências via package manager. Exceções documentadas somente após revisão de licença.
+- Política de pinagem: versionamento mínimo (sem ranges amplos) preferencialmente com `package-lock.json` mantido no repositório para reprodutibilidade do Actions.
+
+Notes de compliance:
+
+- O workflow `.github/workflows/license-gate.yml` deve barrar merges que introduzam dependências incompatíveis; mantenedores podem solicitar auditoria adicional.
+- Mantenha `docs/` como fonte autoritativa de políticas; atualize `docs/CHECKLIST.md` sempre que uma exceção ou política nova for tomada.
+
 ### Privacidade, Segredos e Dados
 
 - Nunca inclua tokens/chaves/credenciais em código, exemplos, commits, issues ou PRs.
