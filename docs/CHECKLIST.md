@@ -34,6 +34,19 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 
 ### Alta Prioridade
 
+## Observação franca — Próximo alvo: Guardian (Outubro / Novembro 2025)
+
+- [ ] Próximo alvo de trabalho: melhorar o `guardian` (meta de esforço: Outubro–Novembro 2025).
+  - Estado atual (franco): o Guardian entrega uma verificação de integridade básica e confiável para casos simples, mas é demasiado superficial para ambientes reais de produção/CI: tende a gerar falsos positivos por diferenças de EOL/BOM, não detecta renames (reporta como remoção+adição), usa um algoritmo de hash com fallback não determinístico em alguns runtimes e persiste apenas hashes sem metadata contextual.
+  - Prioridade de melhorias (ordem sugerida):
+    1. Normalização de conteúdo antes do hash (EOL, BOM, trims) e detecção de binários — reduz falsos positivos entre plataformas.
+    2. Persistir snapshot detalhado (hash, linhas, tamanho, amostra) em baseline/registros para contexto humano e heurísticas de similaridade.
+    3. Padronizar algoritmo de hash previsível (ex.: sha256 como fallback documentado; blake3 opcional quando disponível) e logar o algoritmo usado no baseline.
+    4. Implementar detecção de renames/moves por similaridade (threshold configurável) para reduzir ruído em reorganizações.
+    5. Melhorar saída JSON do Guardian (`--json`) com shape estável e campos ricos (detalhes por arquivo) para automações e CI.
+    6. Adicionar testes cross-platform (Windows/Linux) simulando EOL/BOM e renames; adicionar testes de performance para arquivos grandes.
+  - Resultado esperado: menos ruído em CI, diagnósticos mais úteis, baseline rastreável e aptidão para fluxos de produção. Planejar 2–3 PRs pequenos (primeiro: normalização + testes) e medir redução de falsos positivos em runs do CI.
+
 - [x] Comparação automática de baseline e regressões (finalizado em 2025-08-10)
 - [x] Sanitização/validação de entradas da CLI (finalizado em 2025-08-10)
 - [x] Revisar logs DEBUG e consolidar flag (`--debug`) (finalizado em 2025-08-11)
