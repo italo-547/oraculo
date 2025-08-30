@@ -4,6 +4,12 @@
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
+## Revisão de scripts (2025-08-30)
+
+- [x] Em 2025-08-30 foi realizada uma revisão dos scripts em `scripts/` para reduzir duplicação e melhorar portabilidade.
+  - Ação tomada: `scripts/scan-markdown.sh` foi migrado para `scripts/legacy/scan-markdown.sh` e a versão NodeJS cross-platform `scripts/scan-markdown.mjs` foi indicada como a preferida.
+  - Recomendação: remover `scripts/legacy/scan-markdown.sh` após 30 dias se não houver uso detectado. Registrar reclamações/uso no histórico deste CHECKLIST antes da remoção.
+
 ## Estado Atual do Projeto (Agosto 2025)
 
 ### ✅ **Core Funcionalidades - COMPLETAS**
