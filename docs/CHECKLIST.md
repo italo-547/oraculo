@@ -136,7 +136,6 @@ Ações recomendadas imediatas:
 3. Auditar thresholds de cobertura entre `oraculo.config.json` e workflows CI; alinhar e adicionar micro-tests faltantes.
 4. Fazer PR de documentação contendo os pontos acima e atualizações de exemplos de uso (PowerShell/Windows).
 
-
 ### Observações
 
 - Sempre registrar data de finalização ao marcar um item como concluído.
