@@ -10,6 +10,7 @@ export interface OpcoesProcessamentoDiagnostico {
     include?: string[];
     json?: boolean;
     criarArquetipo?: boolean;
+    salvarArquetipo?: boolean;
 }
 export interface ResultadoProcessamentoDiagnostico {
     totalOcorrencias: number;

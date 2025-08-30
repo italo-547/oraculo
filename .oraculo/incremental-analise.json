@@ -1,0 +1,28 @@
+{
+  "arquivos": {
+    "b.js": {
+      "analistas": {
+        "t": {
+          "duracaoMs": 0.06210000000010041,
+          "ocorrencias": 1
+        }
+      },
+      "hash": "ddfc5d5ff6d3e506",
+      "ocorrencias": [
+        {
+          "mensagem": "m",
+          "relPath": "b.js",
+          "tipo": "Y"
+        }
+      ],
+      "reaproveitadoCount": 0,
+      "ultimaExecucaoMs": 1756586307647
+    }
+  },
+  "estatisticas": {
+    "totalArquivosProcessados": 1,
+    "totalReaproveitamentos": 0,
+    "ultimaDuracaoMs": 1
+  },
+  "versao": 1
+}

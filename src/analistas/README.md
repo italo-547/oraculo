@@ -47,7 +47,6 @@ Escopo de arquivos: os analistas respeitam exatamente o conjunto de arquivos for
 - Ao escrever testes com Vitest, evite fábricas de `vi.mock` que façam throws síncronos ou dependam de variáveis de runtime (TDZ). Use fábricas hoisted-safe (retorne exports simples) ou a forma `async (importOriginal) => ({ ... })` quando for necessário usar `importOriginal`.
 - Se encontrar mocks que falham no import, verifique `tests/` para padrões de `vi.mock('../analistas/registry.js', ...)` — alguns testes do projeto foram adaptados para garantir compatibilidade com o runner.
 
-
 ## Executando e listando analistas
 
 - Listar catálogo atual e exportar documentação:

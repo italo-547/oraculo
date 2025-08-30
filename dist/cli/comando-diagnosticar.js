@@ -29,6 +29,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais) {
         // Aplicar flags globais
         aplicarFlagsGlobais(command.parent && typeof command.parent.opts === 'function' ? command.parent.opts() : {});
         // Delegar todo o processamento para a função modularizada
+        // Cast seguro: converter para a interface esperada pelo processador
         await processarDiagnostico(opts);
     });
     return cmd;
