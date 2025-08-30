@@ -92,6 +92,8 @@ export const configDefault = {
     globalInclude: [],
     globalExclude: [],
     dirRules: {},
+    // Campo legado para compatibilidade (será removido em v1.0.0)
+    defaultExcludes: undefined,
   } as IncludeExcludeConfig,
   ZELADOR_LINE_THRESHOLD: 20,
 
@@ -232,7 +234,8 @@ function sincronizarIgnoradosLegado() {
   // Mantém campos legados sincronizados a partir da configuração dinâmica, para compat com consumidores antigos
   const dyn = (config.INCLUDE_EXCLUDE_RULES || {}) as IncludeExcludeConfig;
   const glob = Array.isArray(dyn.globalExcludeGlob) ? dyn.globalExcludeGlob : [];
-  const arr = Array.from(new Set(glob.map((g) => String(g))));
+  const defaultExcl = Array.isArray(dyn.defaultExcludes) ? dyn.defaultExcludes : [];
+  const arr = Array.from(new Set([...glob, ...defaultExcl].map((g) => String(g))));
   (config as unknown as { ZELADOR_IGNORE_PATTERNS: string[] }).ZELADOR_IGNORE_PATTERNS = arr;
   (config as unknown as { GUARDIAN_IGNORE_PATTERNS: string[] }).GUARDIAN_IGNORE_PATTERNS = arr;
 }

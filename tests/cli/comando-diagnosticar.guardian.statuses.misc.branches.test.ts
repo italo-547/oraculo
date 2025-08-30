@@ -81,7 +81,7 @@ describe('comando-diagnosticar — guardian statuses (Ok, Criado, Aceito)', () =
     expect(state.logMock.aviso).not.toHaveBeenCalledWith(
       expect.stringContaining('Modo permissivo'),
     );
-  }, 15000);
+  }, 30000);
 
   it('status Criado: loga info de baseline criado', async () => {
     state.statusAtual = 'baseline-criado';

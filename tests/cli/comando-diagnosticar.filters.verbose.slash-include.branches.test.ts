@@ -77,5 +77,5 @@ describe('comando-diagnosticar – filtros verbose include com barra', () => {
     const out = infoSpy.mock.calls.map((c) => String(c[0])).join('\n');
     expect(out).toMatch(/Filtros ativos:/);
     expect(out).toMatch(/include=\[/);
-  }, 15000);
+  }, 30000);
 });

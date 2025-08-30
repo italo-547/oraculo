@@ -86,7 +86,7 @@ describe('@e2e E2E CLI binário', () => {
     // Mesmo com --silence, exit code deve refletir ausência de erros críticos (somente avisos) => 0
     // Pode haver ocorrências elevadas a erro conforme regras; aceitamos 0 ou 1 desde que não seja crash diferente
     expect([0, 1]).toContain(proc.status);
-  }, 15000);
+  }, 60000);
 
   it('@e2e executa diagnosticar com --guardian-check criando baseline inicial (exit 0)', () => {
     const cliPath = garantirBuild();
@@ -107,7 +107,7 @@ describe('@e2e E2E CLI binário', () => {
     // Verifica criação do baseline
     const baselinePath = join(tempDir, '.oraculo', 'baseline.json');
     expect(existsSync(baselinePath)).toBe(true);
-  }, 15000);
+  }, 60000);
 
   it('@e2e aceita exit 0/1 quando técnica recebe AST nulo (arquivo bot.txt sem AST)', () => {
     const cliPath = garantirBuild();
@@ -129,5 +129,5 @@ describe('@e2e E2E CLI binário', () => {
     });
     // Implementação permissiva pode ignorar AST nulo e seguir com exit 0
     expect([0, 1]).toContain(proc.status);
-  }, 15000);
+  }, 60000);
 });

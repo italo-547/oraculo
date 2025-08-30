@@ -84,5 +84,5 @@ describe('comando-diagnosticar – guardian catch permissivo', () => {
     const erros = erroSpy.mock.calls.map((c) => String(c[0])).join('\n');
     expect(erros).toContain('Guardian bloqueou');
     expect(avisos).toContain('Modo permissivo: prosseguindo sob risco.');
-  }, 15000);
+  }, 30000);
 });

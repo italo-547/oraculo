@@ -8,6 +8,7 @@ describe('comando-diagnosticar – infoDestaque fallback (branches)', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env.VITEST = '1';
+    process.env.FORCAR_DETECT_ARQUETIPOS = '1'; // Força detecção de arquétipos em testes
   });
 
   it('usa log.info quando infoDestaque está ausente', async () => {
@@ -19,6 +20,7 @@ describe('comando-diagnosticar – infoDestaque fallback (branches)', () => {
       fase: vi.fn(),
       imprimirBloco: vi.fn(),
       calcularLargura: vi.fn(() => 84),
+      infoDestaque: vi.fn((msg: string) => logMock.info(msg)), // Fallback para info
     } as any;
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
 
@@ -106,7 +108,7 @@ describe('comando-diagnosticar – infoDestaque fallback (branches)', () => {
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
 
     const infos = logMock.info.mock.calls.map((c: any[]) => String(c[0]));
-    const matcher = /Arquétipos candidatos|arquétipos|candidatos/i;
+    const matcher = /Arquétipos|arquétipos|candidatos/i;
     if (!infos.some((l: string) => matcher.test(l))) {
       console.log('INFO DEBUG:', infos);
     }

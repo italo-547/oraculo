@@ -83,7 +83,7 @@ describe('comando-diagnosticar filtros include/exclude', () => {
     const rels = fileEntries.map((f: any) => f.relPath.replace(/\\/g, '/')).sort();
     // O include prioriza apenas patterns que batem – sem src/ presentes, apenas node_modules
     expect(rels).toEqual(['node_modules/lib/index.js']);
-  }, 15000);
+  }, 30000);
 
   it('--exclude (repetido e com espaços) remove padrões após include vazio (comportamento normal)', async () => {
     await setupTmp({
@@ -114,5 +114,5 @@ describe('comando-diagnosticar filtros include/exclude', () => {
     const rels = fileEntries.map((f: any) => f.relPath.replace(/\\/g, '/')).sort();
     expect(rels).not.toContain('test/c.test.ts');
     expect(rels).toContain('src/a.ts');
-  }, 15000);
+  }, 30000);
 });

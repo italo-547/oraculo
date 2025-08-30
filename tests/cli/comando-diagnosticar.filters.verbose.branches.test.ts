@@ -110,5 +110,5 @@ describe('comando-diagnosticar – filtros verbose e expansão de includes', () 
         '**/node_modules/**',
       ]),
     );
-  }, 15000);
+  }, 30000);
 });

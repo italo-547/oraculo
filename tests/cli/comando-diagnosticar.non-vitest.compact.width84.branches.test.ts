@@ -69,8 +69,10 @@ describe('comandoDiagnosticar molduras runtime com COMPACT_MODE usa largura 84 f
         aviso: vi.fn(),
         erro: vi.fn(),
         infoDestaque: vi.fn(),
-        imprimirBloco: vi.fn((_t: string, _l: string[], _c: any, largura: number) => {
-          larguraUsada = largura;
+        imprimirBloco: vi.fn((titulo: string, linhas: string[], cor: any, largura: number) => {
+          if (titulo === 'Resumo da estrutura') {
+            larguraUsada = largura;
+          }
         }),
       },
     }));
@@ -97,12 +99,10 @@ describe('comandoDiagnosticar molduras runtime com COMPACT_MODE usa largura 84 f
     program.addCommand(cmd);
 
     // Evita que um eventual process.exit encerre o runner
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(((
-      code?: string | number | null | undefined,
-    ) => {
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
       // no-op para não derrubar o teste
       return undefined as never;
-    }) as unknown as (code?: number) => never);
+    }) as any);
 
     await program.parseAsync(['node', 'cli', 'diagnosticar', '--compact']);
     expect(larguraUsada).toBe(84); // fallback esperado

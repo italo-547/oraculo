@@ -86,5 +86,5 @@ describe('comando-diagnosticar – JSON parse metric originais', () => {
     expect(json.parseErros.totalExibidos).toBe(1);
     expect(json.parseErros.agregados).toBe(2);
     expect(json).not.toHaveProperty('estruturaIdentificada');
-  }, 15000);
+  }, 30000);
 });

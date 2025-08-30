@@ -60,6 +60,9 @@ describe('comandoDiagnosticar scan/json branches', () => {
   });
 
   it('modo json inclui campos drift e linguagens com contagem ordenada e escapes unicode', async () => {
+    // Forçar detecção de arquétipos em testes
+    process.env.FORCAR_DETECT_ARQUETIPOS = 'true';
+
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
     const fakeEntries = [
@@ -149,6 +152,9 @@ describe('comandoDiagnosticar scan/json branches', () => {
     expect(parsed?.linguagens?.extensoes?.kt).toBe(1);
     expect(parsed?.linguagens?.extensoes?.java).toBe(1);
     consoleSpy.mockRestore();
+
+    // Limpar variável de ambiente
+    delete process.env.FORCAR_DETECT_ARQUETIPOS;
   });
 
   it('modo json retorna status erro quando apenas PARSE_ERRO e PARSE_ERRO_FALHA=true', async () => {

@@ -1,0 +1,70 @@
+// SPDX-License-Identifier: MIT
+// Gerador de relatórios: Markdown e JSON
+import { formatMs } from '../nucleo/constelacao/format.js';
+export async function gerarRelatorioMarkdown(resultado, outputPath) {
+    const { totalArquivos = 0, ocorrencias = [], guardian, timestamp = Date.now(), duracaoMs = 0, } = (resultado || {});
+    const dataISO = new Date(timestamp).toISOString();
+    const ocorrenciasOrdenadas = [...ocorrencias].sort((a, b) => {
+        const ra = String(a.relPath ?? '');
+        const rb = String(b.relPath ?? '');
+        const cmp = ra.localeCompare(rb);
+        if (cmp !== 0)
+            return cmp;
+        const la = typeof a.linha === 'number' ? a.linha : Number.MAX_SAFE_INTEGER;
+        const lb = typeof b.linha === 'number' ? b.linha : Number.MAX_SAFE_INTEGER;
+        return la - lb;
+    });
+    const guardianStatus = guardian && typeof guardian === 'object' && 'status' in guardian
+        ? String(guardian.status)
+        : 'não executada';
+    const guardianTimestamp = guardian && typeof guardian === 'object' && 'timestamp' in guardian
+        ? String(guardian.timestamp)
+        : '—';
+    const guardianTotalArquivos = guardian && typeof guardian === 'object' && 'totalArquivos' in guardian
+        ? String(guardian.totalArquivos)
+        : '—';
+    const header = `# 🧾 Relatório Oráculo
+
+**Data:** ${dataISO}  
+**Duração:** ${formatMs(duracaoMs)}  
+**Arquivos escaneados:** ${totalArquivos}  
+**Ocorrências encontradas:** ${ocorrencias.length}  
+
+---
+
+## 🛡️ Verificação de Integridade (Guardian)
+
+  - **Status:** ${guardianStatus}
+  - **Timestamp:** ${guardianTimestamp}
+  - **Total de arquivos protegidos:** ${guardianTotalArquivos}
+
+---
+
+---
+
+## 🛡️ Verificação de Integridade (Guardian)
+
+  - **Status:** ${guardianStatus}
+
+---
+
+## 🚨 Ocorrências Detalhadas
+
+| Arquivo | Linha | Nível  | Mensagem |
+| ------- | ----- | ------ | -------- |
+${ocorrenciasOrdenadas
+        .map((o) => `| ${o.relPath} | ${o.linha ?? ''} | ${o.nivel ?? ''} | ${String(o.mensagem || '').replace(/\|/g, '\\|')} |`)
+        .join('\n')}
+`;
+    const { salvarEstado } = await import('../zeladores/util/persistencia.js');
+    await salvarEstado(outputPath, header);
+}
+export async function gerarRelatorioJson(resultado, outputPath) {
+    // Importar sistema de versionamento
+    const { criarRelatorioComVersao } = await import('../nucleo/schema-versao.js');
+    // Criar relatório versionado (mantemos metadados, mas salvamos os dados brutos para compatibilidade)
+    const relatorioVersionado = criarRelatorioComVersao(resultado, undefined, 'Relatório completo de diagnóstico do Oráculo');
+    const { salvarEstado } = await import('../zeladores/util/persistencia.js');
+    await salvarEstado(outputPath, relatorioVersionado.dados ?? resultado);
+}
+//# sourceMappingURL=gerador-relatorio.js.map

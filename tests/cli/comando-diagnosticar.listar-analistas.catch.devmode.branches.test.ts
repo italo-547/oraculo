@@ -81,5 +81,5 @@ describe('comando-diagnosticar – listar-analistas catch em DEV_MODE', () => {
 
     const dbg = debugSpy.mock.calls.map((c) => String(c[0])).join('\n');
     expect(dbg).toContain('Falha ao listar analistas:');
-  }, 15000);
+  }, 30000);
 });

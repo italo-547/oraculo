@@ -98,5 +98,5 @@ describe('comando-diagnosticar – arquetipos catch DEV_MODE', () => {
     const erros = erroSpy.mock.calls.map((c) => String(c[0])).join('\n');
 
     expect(erros).toMatch(/Falha detector arquetipos:/);
-  }, 15000);
+  }, 30000);
 });

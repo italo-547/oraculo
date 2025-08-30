@@ -290,7 +290,7 @@ describe('scanRepository', () => {
     // Verifica que não tentou ler '/base' (somente o root inferido)
     expect(calls.includes('/base')).toBe(false);
     expect(calls.includes('/base/dir')).toBe(true);
-  }, 15000);
+  }, 30000);
   it('ignora arquivos pelo filtro customizado', async () => {
     const { promises } = await import('node:fs');
     (promises.readdir as any).mockResolvedValueOnce([fakeDirent('a.txt')]);

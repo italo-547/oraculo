@@ -1,0 +1,1 @@
+{"version":3,"file":"paths.d.ts","sourceRoot":"","sources":["../../../src/nucleo/constelacao/paths.ts"],"names":[],"mappings":"AAGA,eAAO,MAAM,QAAQ,QAAQ,CAAC;AAC9B,eAAO,MAAM,QAAQ,WAAW,CAAC;AAGjC,eAAO,MAAM,SAAS,UAAqC,CAAC;AAG5D,wBAAgB,OAAO,CAAC,CAAC,EAAE,MAAM,GAAG,MAAM,CAEzC;AAGD,wBAAgB,WAAW,CAAC,OAAO,EAAE,MAAM,GAAG,OAAO,CAIpD;AAGD,wBAAgB,UAAU,CAAC,OAAO,EAAE,MAAM,GAAG,OAAO,CAInD"}

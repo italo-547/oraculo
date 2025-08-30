@@ -27,8 +27,8 @@ export const optionsDiagnosticar = [
     defaultValue: false,
   },
   {
-    flags: '--detalhado',
-    desc: 'Exporta relatório de arquétipos detalhado (todos os problemas e sinais)',
+    flags: '--criar-arquetipo',
+    desc: 'Cria um arquétipo personalizado baseado na estrutura atual do projeto',
     defaultValue: false,
   },
   {

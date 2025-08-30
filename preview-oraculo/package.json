@@ -1,0 +1,124 @@
+{
+  "name": "oraculo",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Oráculo: Análise, limpeza e organização de repositórios",
+  "author": "Italo C Lopes",
+  "license": "MIT",
+  "main": "./dist/cli.js",
+  "bin": {
+    "oraculo": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/cli.js"
+  },
+  "engines": {
+    "node": ">=24.0.4"
+  },
+  "scripts": {
+    "pretest": "npm run build",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "pre-public": "node scripts/pre-public.mjs",
+    "start": "node ./dist/cli.js",
+    "diagnosticar": "node ./dist/cli.js diagnosticar",
+    "lint": "eslint \"{src,tests,temp-fantasma}/**/*.ts\"",
+    "format": "prettier --check \"**/*.{ts,md}\"",
+    "format:fix": "prettier --write \"**/*.{ts,md}\"",
+    "coverage:enforce": "cross-env CI=true npm run coverage:c8 && node scripts/check-coverage-final.js",
+    "coverage:fast": "cross-env COVERAGE=true vitest run --reporter=dot --coverage",
+    "coverage:c8": "cross-env COVERAGE=true npx c8 --reporter=lcov --reporter=json --reporter=text npm run test",
+    "coverage:priority": "node scripts/coverage-priority.js",
+    "check:style": "npm run lint && npm run typecheck && npm run format",
+    "check": "npm run check:style && npm run coverage:gate",
+    "coverage:gate": "npm run coverage:enforce",
+    "test:e2e": "vitest run tests/cli --reporter dot",
+    "test:ci": "cross-env CI=true vitest run --reporter=json --outputFile .oraculo/last-test-report.json",
+    "perf:baseline": "node dist/cli.js perf baseline --dir docs/perf",
+    "perf:compare": "node dist/cli.js perf compare --dir docs/perf --json",
+    "perf:gate": "node dist/cli.js perf compare --dir docs/perf --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);if(j.regressao){console.error('Regressao performance > limite');process.exit(1)}console.log('Perf OK')});\"",
+    "security:deps": "npm audit --production --audit-level=moderate || true",
+    "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
+    "prepare": "npm run build",
+    "test": "vitest run",
+    "test:dev": "vitest run",
+    "test:ui": "vitest",
+    "coverage": "vitest run --coverage",
+    "coverage:dev": "cross-env COVERAGE=true vitest run --coverage",
+    "cleanup:metricas": "node -e \"import('node:fs').then(fs=>fs.promises.rm('.oraculo/historico-metricas',{recursive:true,force:true}).then(()=>console.log('Histórico de métricas limpo.')).catch(e=>console.error('Falha limpeza:',e.message)))\"",
+    "licenses:list": "npx license-checker-rseidelsohn --production --csv",
+    "licenses:json": "npx license-checker-rseidelsohn --production --json > .oraculo/licenses.json",
+    "licenses:notice": "node scripts/generate-notices.mjs",
+    "licenses:notice:pt-br": "node scripts/generate-notices.mjs --pt-br",
+    "test:coverage": "vitest run --coverage",
+    "headers:spdx": "node scripts/add-spdx-headers.mjs",
+    "branch:protect:check": "node scripts/config-branch-protection.mjs check",
+    "branch:protect": "node scripts/config-branch-protection.mjs apply",
+    "md:scan": "node scripts/scan-markdown.mjs",
+    "md:scan:strict": "node scripts/scan-markdown.mjs --strict --strict-readme",
+    "md:add-disclaimer": "node scripts/add-disclaimer-md.js",
+    "md:verify-disclaimer": "node scripts/verificar-disclaimer-md.js",
+    "tests:fix-imports": "node scripts/fix-test-imports.mjs"
+  },
+  "keywords": [
+    "cli",
+    "limpeza",
+    "arquitetura",
+    "análise",
+    "estrutura",
+    "organização"
+  ],
+  "preferGlobal": true,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE*",
+    "THIRD-PARTY-NOTICES.txt"
+  ],
+  "dependencies": {
+    "@babel/parser": "^7.28.3",
+    "@babel/traverse": "^7.28.3",
+    "@babel/types": "^7.28.2",
+    "chalk": "^5.6.0",
+    "commander": "^14.0.0",
+    "css-tree": "^2.3.1",
+    "fast-xml-parser": "^4.5.3",
+    "htmlparser2": "^10.0.0",
+    "java-parser": "^3.0.1",
+    "micromatch": "^4.0.8",
+    "oraculo": "^0.0.1",
+    "p-limit": "^7.1.0",
+    "xxhashjs": "^0.2.2"
+  },
+  "devDependencies": {
+    "@types/babel__traverse": "^7.28.0",
+    "@types/jest": "^30.0.0",
+    "@types/micromatch": "^4.0.9",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.40.0",
+    "@vitest/coverage-istanbul": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4",
+    "cross-env": "^10.0.0",
+    "eslint": "^9.33.0",
+    "husky": "^9.1.7",
+    "license-checker-rseidelsohn": "^4.4.2",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md,mdx}": [
+      "prettier --write"
+    ]
+  }
+}

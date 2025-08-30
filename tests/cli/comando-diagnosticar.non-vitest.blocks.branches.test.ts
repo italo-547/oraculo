@@ -40,6 +40,7 @@ describe('comando-diagnosticar — blocos não-VITEST (resumo estrutura e desped
       infoDestaque: vi.fn(),
       // calcularLargura indefinido para acionar fallback de largura
       imprimirBloco,
+      simbolos: { info: 'i', sucesso: '✅', aviso: '!', erro: '❌' },
     } as any;
 
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
@@ -146,12 +147,7 @@ describe('comando-diagnosticar — blocos não-VITEST (resumo estrutura e desped
     }
     expect(titulos.some((t: string) => resumoMatcher.test(t))).toBe(true);
     expect(titulos.some((t: string) => tiposMatcher.test(t))).toBe(true);
-    // Mensagem final amigável ocorre apenas fora de VITEST
-    expect(logMock.imprimirBloco).toHaveBeenCalledWith(
-      expect.stringMatching(tudoProntoMatcher),
-      expect.any(Array),
-      expect.any(Function),
-      expect.any(Number),
-    );
+    // Mensagem final amigável ocorre apenas fora de VITEST via log.info
+    expect(logMock.info).toHaveBeenCalledWith(expect.stringMatching(tudoProntoMatcher));
   });
 });

@@ -15,10 +15,16 @@ import type {
   SnapshotEstruturaBaseline,
   ArquetipoEstruturaDef,
   ArquetipoDrift,
+  ArquetipoPersonalizado,
 } from '../tipos/tipos.js';
 import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
 import { OperarioEstrutura } from '../zeladores/operario-estrutura.js';
 import path from 'node:path';
+import {
+  carregarArquetipoPersonalizado,
+  obterArquetipoOficial,
+  integrarArquetipos,
+} from './arquetipos-personalizados.js';
 
 const PENALIDADE_MISSING_REQUIRED = 20;
 const PESO_OPTIONAL = 5;
@@ -390,8 +396,26 @@ export async function detectarArquetipos(
   candidatos: ResultadoDeteccaoArquetipo[];
   baseline?: SnapshotEstruturaBaseline;
   drift?: ArquetipoDrift;
+  arquetipoPersonalizado?: ArquetipoPersonalizado | null; // Para compatibilidade futura
 }> {
   const arquivos = contexto.arquivos.map((f) => f.relPath);
+
+  // Carregar arquétipo personalizado se existir
+  const arquetipoPersonalizado = await carregarArquetipoPersonalizado(baseDir);
+  let arquetiposParaAvaliar = ARQUETIPOS;
+
+  // Se há arquétipo personalizado, integrá-lo com o oficial
+  if (arquetipoPersonalizado) {
+    const arquetipoOficial = obterArquetipoOficial(arquetipoPersonalizado);
+    if (arquetipoOficial) {
+      const arquetipoIntegrado = integrarArquetipos(arquetipoPersonalizado, arquetipoOficial);
+      // Substituir o oficial pelo personalizado na lista de avaliação
+      arquetiposParaAvaliar = ARQUETIPOS.map((arq) =>
+        arq.nome === arquetipoPersonalizado.arquetipoOficial ? arquetipoIntegrado : arq,
+      );
+    }
+  }
+
   // Extrai sinais avançados do projeto
   const sinaisAvancados = extrairSinaisAvancados(
     contexto.arquivos,
@@ -400,8 +424,11 @@ export async function detectarArquetipos(
     baseDir,
     arquivos,
   );
+
   // Pontua todos os arquétipos disponíveis usando sinais avançados
-  let candidatos = ARQUETIPOS.map((def) => scoreArquetipo(def, arquivos, sinaisAvancados));
+  let candidatos = arquetiposParaAvaliar.map((def) =>
+    scoreArquetipo(def, arquivos, sinaisAvancados),
+  );
   // Ordena por confiança/score decrescente
   candidatos.sort((a, b) => b.confidence - a.confidence || b.score - a.score);
 
@@ -562,5 +589,10 @@ export async function detectarArquetipos(
       // mantém default vazio se falhar
     }
   }
-  return { candidatos, baseline, drift };
+  return {
+    candidatos,
+    baseline,
+    drift,
+    arquetipoPersonalizado,
+  };
 }

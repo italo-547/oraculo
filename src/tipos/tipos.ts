@@ -241,6 +241,15 @@ export interface MetricaExecucao {
   cacheAstHits: number;
   cacheAstMiss: number;
   analistas: MetricaAnalista[];
+  topAnalistas?: TopAnalista[];
+}
+
+export interface TopAnalista {
+  nome: string;
+  totalMs: number;
+  mediaMs: number;
+  execucoes: number;
+  ocorrencias: number;
 }
 
 export interface ResultadoInquisicaoCompleto extends ResultadoInquisicao {
@@ -260,6 +269,49 @@ export interface ArquetipoEstruturaDef {
   dependencyHints?: string[]; // dependências cujo presence aumenta score
   filePresencePatterns?: string[]; // padrões glob simples (substring match) que aumentam score
   pesoBase?: number; // peso para desempate
+}
+
+// Arquétipo personalizado do usuário
+export interface ArquetipoPersonalizado {
+  /** Nome personalizado do projeto */
+  nome: string;
+  /** Descrição do projeto personalizado */
+  descricao?: string;
+  /** Arquétipo oficial base (ex: 'bot', 'cli', 'api') */
+  arquetipoOficial: string;
+  /** Estrutura personalizada do projeto */
+  estruturaPersonalizada: {
+    /** Diretórios principais do projeto */
+    diretorios: string[];
+    /** Arquivos-chave do projeto */
+    arquivosChave: string[];
+    /** Padrões de nomenclatura personalizados */
+    padroesNomenclatura?: Record<string, string>;
+  };
+  /** Melhores práticas personalizadas */
+  melhoresPraticas?: {
+    /** Estruturas recomendadas */
+    recomendado?: string[];
+    /** Estruturas a evitar */
+    evitar?: string[];
+    /** Notas sobre organização */
+    notas?: string[];
+  };
+  /** Metadados do arquétipo personalizado */
+  metadata?: {
+    /** Quando foi criado */
+    criadoEm: string;
+    /** Versão do formato */
+    versao: string;
+    /** Notas do usuário */
+    notasUsuario?: string;
+  };
+}
+
+export interface ArquetipoDeteccaoAnomalia {
+  path: string;
+  motivo: string;
+  sugerido?: string;
 }
 
 export interface ArquetipoDeteccaoAnomalia {
@@ -419,3 +471,33 @@ export interface FileEntryWithAst extends FileEntry {
 
 export type FileMap = Record<string, FileEntry>;
 export type FileMapWithAst = Record<string, FileEntryWithAst>;
+
+// Interfaces para saída JSON do comando diagnosticar
+export interface ParseErrosJson {
+  totalOriginais: number;
+  totalExibidos: number;
+  agregados: number;
+}
+
+export interface EstruturaIdentificadaJson {
+  melhores: ResultadoDeteccaoArquetipo[];
+  baseline: SnapshotEstruturaBaseline | null;
+  drift: ArquetipoDrift;
+}
+
+export interface LinguagensJson {
+  total: number;
+  extensoes: Record<string, number>;
+}
+
+export interface SaidaJsonDiagnostico {
+  status: 'ok' | 'problemas' | 'erro';
+  totalOcorrencias: number;
+  guardian: 'verificado' | 'nao-verificado';
+  tiposOcorrencias: Record<string, number>;
+  parseErros: ParseErrosJson;
+  ocorrencias: Ocorrencia[];
+  estruturaIdentificada?: EstruturaIdentificadaJson;
+  metricas?: MetricaExecucao;
+  linguagens: LinguagensJson;
+}

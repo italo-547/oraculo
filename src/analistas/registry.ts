@@ -9,14 +9,14 @@ import type { Analista, Tecnica } from '../tipos/tipos.js';
 
 // Registro central de analistas. Futuro: lazy loading, filtros por categoria.
 const detectorDependencias =
-  (detectorDependenciasMod as any).detectorDependencias ??
-  (detectorDependenciasMod as any).default ??
-  (detectorDependenciasMod as any);
+  (detectorDependenciasMod as Record<string, unknown>).detectorDependencias ??
+  (detectorDependenciasMod as Record<string, unknown>).default ??
+  (detectorDependenciasMod as Record<string, unknown>);
 
 const detectorEstrutura =
-  (detectorEstruturaMod as any).detectorEstrutura ??
-  (detectorEstruturaMod as any).default ??
-  (detectorEstruturaMod as any);
+  (detectorEstruturaMod as Record<string, unknown>).detectorEstrutura ??
+  (detectorEstruturaMod as Record<string, unknown>).default ??
+  (detectorEstruturaMod as Record<string, unknown>);
 
 export const registroAnalistas: (Analista | Tecnica)[] = [
   detectorDependencias as unknown as Tecnica,

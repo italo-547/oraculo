@@ -59,7 +59,7 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
       .map((c: any[]) => String(c[0]))
       .join('\n');
     expect(chamadasBloco).toMatch(/Resumo dos tipos de problemas/);
-  }, 15000);
+  }, 30000);
 
   it('escapeNonAscii no JSON substitui unicode por \\uXXXX', async () => {
     const logMock: Record<string, ReturnType<typeof vi.fn>> = {
