@@ -1,6 +1,6 @@
-ï»¿import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-// factory mutÃ¡vel para permitir alterar comportamento por teste
+// factory mutável para permitir alterar comportamento por teste
 let rlFactory: () => { question: (p: any) => Promise<string>; close: () => void } = () => ({
   question: async () => 'n',
   close: () => {},
@@ -32,7 +32,7 @@ vi.mock('../../src/nucleo/constelacao/log.ts', () => {
   };
 });
 
-// mock do readline/promises que delega para rlFactory mutÃ¡vel
+// mock do readline/promises que delega para rlFactory mutável
 vi.mock('node:readline/promises', () => ({
   createInterface: () => rlFactory(),
 }));
@@ -56,7 +56,7 @@ describe('comando-podar branches faltantes', () => {
   it('inclui pattern com node_modules deve remover ignores', async () => {
     const { comandoPodar } = await import('../../src/cli/comando-podar.js');
     const { config } = await import('../../src/nucleo/constelacao/cosmos.js');
-    // garantir presenÃ§a inicial de padrÃµes que contenham node_modules para filtrar
+    // garantir presença inicial de padrões que contenham node_modules para filtrar
     config.ZELADOR_IGNORE_PATTERNS = ['node_modules', 'dist'];
     config.GUARDIAN_IGNORE_PATTERNS = ['node_modules', '.git'];
 
@@ -69,7 +69,7 @@ describe('comando-podar branches faltantes', () => {
     );
   });
 
-  it('resposta interativa nÃ£o Ã© "s" cancela poda', async () => {
+  it('resposta interativa não é "s" cancela poda', async () => {
     // simular resposta 'n'
     rlFactory = () => ({ question: async () => 'n', close: () => {} });
     const { comandoPodar } = await import('../../src/cli/comando-podar.js');
@@ -83,7 +83,7 @@ describe('comando-podar branches faltantes', () => {
     ).toBe(true);
   });
 
-  // AVISO: este teste estÃ¡ instÃ¡vel devido ao fluxo assÃ­ncrono/mocks. Mantido como .skip para revisÃ£o futura.
+  // AVISO: este teste está instável devido ao fluxo assíncrono/mocks. Mantido como .skip para revisão futura.
   it.skip('quando nenhum orfao e relatorio markdown falha, deve logar erro', async () => {
     const ini = await import('../../src/nucleo/inquisidor.js');
     (ini.iniciarInquisicao as unknown as import('vitest').MockInstance).mockResolvedValue({
@@ -150,7 +150,7 @@ describe('comando-podar branches faltantes', () => {
     expect(true).toBe(true);
   });
 
-  it('expandIncludes com pattern sem meta deve adicionar variaÃ§Ãµes', async () => {
+  it('expandIncludes com pattern sem meta deve adicionar variações', async () => {
     const { comandoPodar } = await import('../../src/cli/comando-podar.js');
     const { config } = await import('../../src/nucleo/constelacao/cosmos.js');
     const cmd = comandoPodar(() => {});
@@ -158,7 +158,7 @@ describe('comando-podar branches faltantes', () => {
     expect(config.CLI_INCLUDE_PATTERNS.some((p: string) => p.includes('lib'))).toBe(true);
   });
 
-  it("confirmaÃ§Ã£o interativa 's' nÃ£o cancela a poda", async () => {
+  it("confirmação interativa 's' não cancela a poda", async () => {
     rlFactory = () => ({ question: async () => 'S', close: () => {} });
     const { comandoPodar } = await import('../../src/cli/comando-podar.js');
     const cmd = comandoPodar(() => {});
@@ -171,7 +171,7 @@ describe('comando-podar branches faltantes', () => {
     ).toBe(true);
   });
 
-  // sanity check: garante que o arquivo de testes Ã© reconhecido pelo runner
+  // sanity check: garante que o arquivo de testes é reconhecido pelo runner
   it('sanity: arquivo de teste carregado', () => {
     expect(true).toBe(true);
   });

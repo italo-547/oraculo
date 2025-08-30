@@ -150,6 +150,8 @@ export type ConfigIncluiExclui = {
   globalIncludeGlob?: string[];
   /** Globs micromatch globais para exclusão (mais forte) */
   globalExcludeGlob?: string[];
+  /** Padrões de exclusão padrão para diagnóstico */
+  defaultExcludes?: string[];
   /** Regras por diretório (chave é prefixo, ex.: "src/") */
   dirRules?: Record<string, RegraIncluiExclui>;
 };

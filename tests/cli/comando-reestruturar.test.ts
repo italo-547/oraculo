@@ -22,7 +22,7 @@ vi.mock('../../src/nucleo/inquisidor.js', () => ({
 }));
 vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
   detectarArquetipos: vi.fn(async () => ({
-    melhores: [{ planoSugestao: { mover: [], conflitos: [], resumo: '' } }],
+    candidatos: [{ planoSugestao: { mover: [], conflitos: [], resumo: '' } }],
   })),
 }));
 vi.mock('../../src/zeladores/corretor-estrutura.js', () => ({

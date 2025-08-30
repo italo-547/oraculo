@@ -1,8 +1,0 @@
-{
-  "SAFE_MODE": true,
-  "ALLOW_PLUGINS": false,
-  "ALLOW_EXEC": false,
-  "ALLOW_MUTATE_FS": false,
-  "STRUCTURE_AUTO_FIX": false,
-  "REPORT_EXPORT_ENABLED": false
-}

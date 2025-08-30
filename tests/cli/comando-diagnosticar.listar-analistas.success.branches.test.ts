@@ -42,7 +42,7 @@ describe('comandoDiagnosticar – listar analistas (success branches)', () => {
     vi.doMock('../arquitetos/diagnostico-projeto.js', () => ({
       diagnosticarProjeto: vi.fn(() => ({})),
     }));
-    vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: vi.fn(() => []) }));
+    vi.doMock('../analistas/detector-estrutura.ts', () => ({ sinaisDetectados: vi.fn(() => []) }));
     vi.doMock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
     vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({
       exibirRelatorioZeladorSaude: vi.fn(),
@@ -99,7 +99,7 @@ describe('comandoDiagnosticar – listar analistas (success branches)', () => {
     vi.doMock('../arquitetos/diagnostico-projeto.js', () => ({
       diagnosticarProjeto: vi.fn(() => ({})),
     }));
-    vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: vi.fn(() => []) }));
+    vi.doMock('../analistas/detector-estrutura.ts', () => ({ sinaisDetectados: vi.fn(() => []) }));
     vi.doMock('../relatorios/relatorio-estrutura.js', () => ({ gerarRelatorioEstrutura: vi.fn() }));
     vi.doMock('../relatorios/relatorio-zelador-saude.js', () => ({
       exibirRelatorioZeladorSaude: vi.fn(),

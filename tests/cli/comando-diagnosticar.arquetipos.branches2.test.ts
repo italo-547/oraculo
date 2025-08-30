@@ -10,7 +10,7 @@ let arquetiposMode: 'movimentos' | 'nenhum' = 'movimentos';
 const gerarArquetipoBase = () => {
   if (arquetiposMode === 'movimentos') {
     return {
-      melhores: [
+      candidatos: [
         {
           nome: 'monorepo',
           descricao: 'desc',
@@ -54,7 +54,7 @@ const gerarArquetipoBase = () => {
     };
   }
   return {
-    melhores: [
+    candidatos: [
       {
         nome: 'monorepo',
         descricao: 'desc',
@@ -117,7 +117,7 @@ vi.mock('../../src/nucleo/inquisidor.js', () => {
 vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
   detectarArquetipos: async () => {
     const base = await mockDetectar();
-    return { ...base, candidatos: base.melhores };
+    return base; // Já retorna com candidatos
   },
 }));
 vi.mock('../../src/relatorios/relatorio-estrutura.js', () => ({
@@ -135,7 +135,10 @@ vi.mock('../../src/relatorios/conselheiro-oracular.js', () => ({
 vi.mock('../../src/relatorios/gerador-relatorio.js', () => ({
   gerarRelatorioMarkdown: () => undefined,
 }));
-vi.mock('../../src/analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
+vi.mock('../../src/analistas/detector-estrutura.ts', () => ({
+  sinaisDetectados: [],
+  detectorEstrutura: vi.fn(() => ({})),
+}));
 vi.mock('../../src/arquitetos/analista-estrutura.js', () => ({ alinhamentoEstrutural: () => [] }));
 vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({
   diagnosticarProjeto: () => undefined,
@@ -156,6 +159,8 @@ describe('comandoDiagnosticar arquetipos branches extra', () => {
       captInfo.push(titulo);
       captInfo.push(...linhas);
     };
+    // Força execução da detecção de arquetipos mesmo em ambiente de teste
+    process.env.FORCAR_DETECT_ARQUETIPOS = 'true';
     arquetiposMode = 'movimentos';
     // Garante logs detalhados para todos os branches
     config.VERBOSE = true;
@@ -167,7 +172,7 @@ describe('comandoDiagnosticar arquetipos branches extra', () => {
 
   it('cobre branches: forbidden, anomalias truncadas, planoSugestao preview & conflitos, drift com listas truncadas', async () => {
     const cmd = comandoDiagnosticar(() => {});
-    await cmd.parseAsync(['node', 'oraculo', 'diagnosticar']);
+    await cmd.parseAsync(['node', 'oraculo', 'diagnosticar', '--verbose']);
     const joined = captInfo.concat(captAviso).join('\n');
     expect(joined).toMatch(/arquétipos candidatos/i);
     // forbiddenPresent pode gerar linha de diretórios proibidos apenas em modo verbose; validamos demais sinais
@@ -183,7 +188,7 @@ describe('comandoDiagnosticar arquetipos branches extra', () => {
   it('cobre branch: planoSugestao sem moves', async () => {
     arquetiposMode = 'nenhum';
     const cmd = comandoDiagnosticar(() => {});
-    await cmd.parseAsync(['node', 'oraculo', 'diagnosticar']);
+    await cmd.parseAsync(['node', 'oraculo', 'diagnosticar', '--verbose']);
     const joined = captInfo.join('\n');
     expect(joined).toMatch(/planoSugestao: nenhum move sugerido/);
   });

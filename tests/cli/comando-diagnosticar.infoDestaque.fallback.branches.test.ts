@@ -54,7 +54,7 @@ describe('comando-diagnosticar – infoDestaque fallback (branches)', () => {
     // Força candidatos de arquétipos para exercer __infoDestaque
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
-        melhores: [
+        candidatos: [
           {
             nome: 'cli-modular',
             confidence: 0.73,

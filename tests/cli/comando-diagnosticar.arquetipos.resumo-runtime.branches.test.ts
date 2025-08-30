@@ -6,11 +6,15 @@ const ORIGINAL_VITEST = process.env.VITEST;
 
 describe('comando-diagnosticar arquetipos – resumo moldurado fora de teste', () => {
   beforeEach(() => {
+    // Força execução da detecção de arquetipos mesmo em ambiente de teste
+    process.env.FORCAR_DETECT_ARQUETIPOS = 'true';
     vi.resetModules();
   });
   afterEach(() => {
     if (ORIGINAL_VITEST !== undefined) process.env.VITEST = ORIGINAL_VITEST;
     else delete (process.env as any).VITEST;
+    // Limpa variável de ambiente
+    delete process.env.FORCAR_DETECT_ARQUETIPOS;
     vi.restoreAllMocks();
   });
 

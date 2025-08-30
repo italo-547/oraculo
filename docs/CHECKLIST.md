@@ -1,6 +1,6 @@
 # Checklist de Melhorias e Ajustes
 
-Última atualização: 2025-08-28
+Última atualização: 2025-08-29
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
@@ -112,6 +112,30 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] `--scan-only` + `--include` ignorava `node_modules` em alguns cenários. Harmonização implementada (finalizado em 2025-08-22)
   - Mitigação aplicada: detecção de inclusão explícita de `node_modules` via `--include` (padrões e grupos) e normalização de caminhos no Windows
 - [x] Flakiness no Vitest quando existe `.oraculo/historico-metricas` no workspace de teste. Mitigação implementada (finalizado em 2025-08-18)
+
+### Issue aberta: Revisões adicionais necessárias (Ação requerida)
+
+Última verificação: 2025-08-29
+
+Observações trazidas pelo time:
+
+- Exclude padrão em conflito com `oraculo.config.json` (especialmente `INCLUDE_EXCLUDE_RULES.defaultExcludes`): há casos onde padrões default podem esconder arquivos de configuração ou causar falsos positivos/negativos em varreduras. Requer validação: garantir que `defaultExcludes` nunca remova arquivos de configuração críticos (ex.: `oraculo.config.json`) e que padrões sejam explicitamente documentados.
+
+- Flags `--debug` e `--verbose` aparentam estar sendo ignoradas em alguns comandos (possível silenciamento por camadas de logger ou por modo `--json`). Requer investigação: traçar fluxo de resolução de flags até o logger central (`src/nucleo/constelacao/log`) e garantir que `--debug`/`--verbose` ajustem o nível de saída conforme esperado. Incluir testes que assertem alterações de nível e presença de mensagens esperadas.
+
+- Cobertura de testes: suites localmente verdes, porém cobertura atual pode ser insuficiente para novos workflows CI (`.github/workflows/ci.yml`). Requer auditoria de thresholds usados no CI vs `COVERAGE_GATE_PERCENT` em `oraculo.config.json` e inclusão de micro-tests faltantes para ramos de `diagnosticar` e `scanner` que mudaram com a refatoração.
+
+- Refatoração de `diagnosticar`: foi modularizada mas impacto prático parece pequeno; revisar as mudanças para garantir ganhos reais (testabilidade, redução de complexidade, perf). Se for apenas custo, considerar simplificar/reverter partes que não trouxeram benefício.
+
+- Documentação: `README.md`, `docs/README.md` e `docs/CHECKLIST.md` requerem revisão para refletir o estado atual do projeto (muitos tópicos marcados como concluídos podem ser parcialmente implementados ou ter consequências operacionais não documentadas). Proposta: criar PR separado com "Documentação: alinhar docs ao estado atual" com checklist e responsáveis.
+
+Ações recomendadas imediatas:
+
+1. Confirmar e travar `INCLUDE_EXCLUDE_RULES.defaultExcludes` para proteger arquivos de configuração essenciais.
+2. Adicionar testes que validem comportamento de `--debug`/`--verbose` em comandos críticos (diagnosticar, guardian, reestruturar).
+3. Auditar thresholds de cobertura entre `oraculo.config.json` e workflows CI; alinhar e adicionar micro-tests faltantes.
+4. Fazer PR de documentação contendo os pontos acima e atualizações de exemplos de uso (PowerShell/Windows).
+
 
 ### Observações
 
@@ -232,3 +256,30 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 ---
 
 Sempre consulte e atualize este checklist após cada mudança relevante.
+
+## Nota: Gate de Cobertura (protegendo contra regressões silenciosas)
+
+O Oráculo possui um gate de cobertura que impede regressões de teste em CI. Para evitar alterações silenciosas nos thresholds, o limiar do gate agora pode ser persistido no arquivo `oraculo.config.json` do projeto.
+
+Como o threshold é resolvido (ordem de precedência):
+
+1. Variável de ambiente `COVERAGE_GATE_PERCENT` (maior prioridade)
+2. Campo `COVERAGE_GATE_PERCENT` no `oraculo.config.json`, ou `TESTING.COVERAGE_GATE_PERCENT` (namespace opcional)
+3. Fallback para 85% definido no plugin/script
+
+Recomendações:
+
+- Mantenha o limiar do gate no repositório (via `oraculo.config.json`) para garantir reprodutibilidade entre runs do CI.
+- Use a variável de ambiente para flutuações temporárias (por exemplo, experimentos locais no pipeline), mas evite commitar alterações reduzindo o threshold sem revisão.
+- Atualize este CHECKLIST quando houver alterações deliberadas no threshold.
+
+## Notas rápidas: preview-oraculo & configuração de projeto
+
+- O script `npm run pre-public` gera `preview-oraculo/` com o build (`dist/`), documentação (`docs/`) e arquivos de configuração de exemplo.
+- `preview-oraculo/` inclui `oraculo.config.json` e `oraculo.config.exemplo.json` por padrão para facilitar revisão. Se você tiver alterações locais no `oraculo.config.json`, regenere o preview após salvar.
+- Ordem de prioridade para o threshold de cobertura (resumido):
+  1. Variável de ambiente `COVERAGE_GATE_PERCENT`
+  2. `COVERAGE_GATE_PERCENT` em `oraculo.config.json` ou `TESTING.COVERAGE_GATE_PERCENT`
+  3. Fallback 85% definido no script
+
+Anote mudanças significativas no `oraculo.config.json` no histórico deste CHECKLIST para rastreabilidade.

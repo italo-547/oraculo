@@ -79,7 +79,7 @@ describe('comandoDiagnosticar scan/json branches', () => {
     // Mock detector arquetipos para retornar drift
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
-        melhores: [
+        candidatos: [
           {
             nome: 'cli-modular',
             confidence: 70,

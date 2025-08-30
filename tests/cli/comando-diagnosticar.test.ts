@@ -72,6 +72,7 @@ beforeEach(async () => {
     sucesso: vi.fn(),
     aviso: vi.fn(),
     erro: vi.fn(),
+    fase: vi.fn(),
   };
   vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
   vi.mock('chalk', () => ({ default: { bold: (x: string) => x } }));
@@ -91,8 +92,9 @@ beforeEach(async () => {
   vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({
     diagnosticarProjeto: vi.fn(() => ({ tipo: 'cli', sinais: [], confiabilidade: 1 })),
   }));
-  vi.mock('../../src/analistas/detector-estrutura.js', () => ({
-    sinaisDetectados: vi.fn(() => []),
+  vi.mock('../../src/analistas/detector-estrutura.ts', () => ({
+    detectorEstrutura: { nome: 'detector-estrutura', aplicar: vi.fn(() => []) },
+    sinaisDetectados: {},
   }));
   vi.mock('../../src/relatorios/relatorio-estrutura.js', () => ({
     gerarRelatorioEstrutura: vi.fn(() => 'relatorio estrutura'),
@@ -120,7 +122,7 @@ describe('comandoDiagnosticar', () => {
     const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
     program.addCommand(cmd);
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
-    expect(log.info).toHaveBeenCalledWith(expect.stringMatching(/Iniciando diagnóstico completo/));
+    expect(log.fase).toHaveBeenCalledWith(expect.stringMatching(/Iniciando diagnóstico completo/));
     expect(aplicarFlagsGlobais).toHaveBeenCalled();
   });
 

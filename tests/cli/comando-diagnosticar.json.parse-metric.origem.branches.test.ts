@@ -22,7 +22,9 @@ vi.mock('../../src/relatorios/relatorio-zelador-saude.js', () => ({
 vi.mock('../../src/relatorios/relatorio-padroes-uso.js', () => ({
   exibirRelatorioPadroesUso: vi.fn(),
 }));
-vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
+vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({
+  diagnosticarProjeto: vi.fn(() => undefined),
+}));
 vi.mock('../../src/relatorios/gerador-relatorio.js', () => ({ gerarRelatorioMarkdown: vi.fn() }));
 vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
   detectarArquetipos: vi.fn(async () => undefined),

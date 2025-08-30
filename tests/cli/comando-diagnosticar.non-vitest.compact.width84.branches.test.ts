@@ -32,7 +32,7 @@ describe('comandoDiagnosticar molduras runtime com COMPACT_MODE usa largura 84 f
     // Mock detector de arquetipos com baseline para acionar bloco de resumo runtime
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
-        melhores: [
+        candidatos: [
           {
             nome: 'cli-modular',
             confidence: 80,

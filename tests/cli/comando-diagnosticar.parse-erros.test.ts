@@ -46,7 +46,10 @@ describe('comandoDiagnosticar agregação parse errors', () => {
     vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({
       diagnosticarProjeto: vi.fn(() => ({})),
     }));
-    vi.mock('../../src/analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
+    vi.mock('../../src/analistas/detector-estrutura.ts', () => ({
+      detectorEstrutura: { nome: 'detector-estrutura', aplicar: vi.fn(() => []) },
+      sinaisDetectados: [],
+    }));
     vi.mock('../../src/relatorios/relatorio-estrutura.js', () => ({
       gerarRelatorioEstrutura: vi.fn(),
     }));
@@ -72,8 +75,9 @@ describe('comandoDiagnosticar agregação parse errors', () => {
     const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
     program.addCommand(cmd);
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
+
     expect(
-      logMock.aviso.mock.calls.some((c: any[]) => String(c[0]).includes('Diagnóstico concluído')),
+      logMock.info.mock.calls.some((c: any[]) => String(c[0]).includes('Diagnóstico concluído')),
     ).toBe(true);
   });
 });

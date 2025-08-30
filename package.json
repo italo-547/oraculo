@@ -21,7 +21,6 @@
     "typecheck": "tsc --noEmit",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "prepack": "npm run build",
     "pre-public": "node scripts/pre-public.mjs",
     "start": "node ./dist/cli.js",
     "diagnosticar": "node ./dist/cli.js diagnosticar",

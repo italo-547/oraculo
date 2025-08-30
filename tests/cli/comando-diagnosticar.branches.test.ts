@@ -55,6 +55,7 @@ vi.mock('../../src/relatorios/conselheiro-oracular.js', () => ({
 // registry usado pela flag --listar-analistas
 vi.mock('../../src/analistas/registry.js', () => ({
   listarAnalistas: () => [{ nome: 'foo', categoria: 'demo', descricao: 'analista fake' }],
+  registroAnalistas: [],
 }));
 
 // Mocks para log: só espiamos imprimirBloco
@@ -112,7 +113,7 @@ describe('comando-diagnosticar (branches)', () => {
   });
 
   it('exibe bloco de despedida fora de ambiente de testes (simulado) quando há ocorrências', async () => {
-    config.COMPACT_MODE = true;
+    config.COMPACT_MODE = false; // Desabilita modo compacto para mostrar "Tudo pronto"
     config.REPORT_EXPORT_ENABLED = false;
 
     // Remove flag de ambiente VITEST temporariamente para atravessar guarda
@@ -124,13 +125,12 @@ describe('comando-diagnosticar (branches)', () => {
       .spyOn(process, 'exit')
       .mockImplementation((() => undefined) as unknown as any);
     const spyImprimir = vi.spyOn(log, 'imprimirBloco');
+    const spyInfo = vi.spyOn(log, 'info').mockImplementation(() => undefined as any);
     const cmd = comandoDiagnosticar(() => undefined);
-    await cmd.parseAsync(['node', 'cli', '--compact']);
+    await cmd.parseAsync(['node', 'cli']); // Remove --compact para testar modo normal
 
-    // Despedida tem título "Tudo pronto"
-    const chamouDespedida = spyImprimir.mock.calls.some((c) =>
-      String(c[0]).includes('Tudo pronto'),
-    );
+    // Despedida tem título "Tudo pronto" (via log.info)
+    const chamouDespedida = spyInfo.mock.calls.some((c) => String(c[0]).includes('Tudo pronto'));
     expect(chamouDespedida).toBe(true);
 
     // Restaura VITEST imediatamente

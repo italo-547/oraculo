@@ -4,6 +4,8 @@ import { Command } from 'commander';
 
 describe('comando-diagnosticar — bloco VERBOSE de anomalias e drift sem baseline (usa "desconhecido")', () => {
   beforeEach(() => {
+    // Força execução da detecção de arquetipos mesmo em ambiente de teste
+    process.env.FORCAR_DETECT_ARQUETIPOS = 'true';
     vi.resetModules();
   });
 
@@ -40,7 +42,7 @@ describe('comando-diagnosticar — bloco VERBOSE de anomalias e drift sem baseli
     // detector sem baseline, com drift e candidato com anomalias > 8 para cobrir aviso de ocultas
     vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: async () => ({
-        melhores: [
+        candidatos: [
           {
             nome: 'mono',
             confidence: 0.9,
@@ -113,5 +115,8 @@ describe('comando-diagnosticar — bloco VERBOSE de anomalias e drift sem baseli
     expect(blocoOk).toBe(true);
     expect(ocultasOk).toBe(true);
     expect(desconhecidoOk).toBe(true);
+
+    // Limpa variável de ambiente
+    delete process.env.FORCAR_DETECT_ARQUETIPOS;
   });
 });

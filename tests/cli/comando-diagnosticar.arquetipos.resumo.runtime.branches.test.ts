@@ -8,6 +8,8 @@ beforeEach(() => {
   vi.resetModules();
   saved.VITEST = process.env.VITEST;
   delete (process.env as any).VITEST; // simula runtime
+  // Força execução da detecção de arquetipos mesmo em ambiente de teste
+  process.env.FORCAR_DETECT_ARQUETIPOS = 'true';
   // Evita que chamadas a process.exit derrubem o runner e eliminam interferência entre testes
   vi.spyOn(process, 'exit').mockImplementation(((_code?: number) => {
     return undefined as never;
@@ -17,6 +19,8 @@ beforeEach(() => {
 afterEach(() => {
   if (saved.VITEST === undefined) delete (process.env as any).VITEST;
   else process.env.VITEST = saved.VITEST;
+  // Limpa variável de ambiente
+  delete process.env.FORCAR_DETECT_ARQUETIPOS;
   (process.exit as unknown as { mockRestore?: () => void }).mockRestore?.();
 });
 
@@ -50,17 +54,6 @@ describe('comando-diagnosticar — bloco Resumo da estrutura (fora de VITEST)', 
     }));
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
-        melhores: [
-          {
-            nome: 'mono',
-            confidence: 0.9,
-            score: 10,
-            missingRequired: [],
-            matchedRequired: [],
-            forbiddenPresent: [],
-            anomalias: [],
-          },
-        ],
         candidatos: [
           {
             nome: 'mono',

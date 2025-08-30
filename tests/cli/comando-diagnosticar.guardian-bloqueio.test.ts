@@ -53,7 +53,7 @@ describe('comandoDiagnosticar guardian bloqueio', () => {
         throw erroGuardian;
       }),
     }));
-    vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
+    vi.doMock('../analistas/detector-estrutura.ts', () => ({ sinaisDetectados: [] }));
     vi.doMock('../arquitetos/analista-estrutura.js', () => ({
       alinhamentoEstrutural: vi.fn(() => []),
     }));

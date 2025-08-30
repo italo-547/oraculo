@@ -23,7 +23,7 @@ vi.mock('../../src/relatorios/relatorio-padroes-uso.js', () => ({
 vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
 vi.mock('../../src/relatorios/gerador-relatorio.js', () => ({ gerarRelatorioMarkdown: vi.fn() }));
 vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
-  detectarArquetipos: async () => ({ melhores: [] }),
+  detectarArquetipos: async () => ({ candidatos: [] }),
 }));
 
 // Mock de log para capturar mensagens de filtro

@@ -52,7 +52,7 @@ describe('comandoDiagnosticar – scan-only export erro', () => {
         throw new Error('falha escrever');
       }),
     }));
-    vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
+    vi.doMock('../analistas/detector-estrutura.ts', () => ({ sinaisDetectados: [] }));
 
     const { comandoDiagnosticar } = await import('../../src/cli/comando-diagnosticar.js');
     const program = new Command();

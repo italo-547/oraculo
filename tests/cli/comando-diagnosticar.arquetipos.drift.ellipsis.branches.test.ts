@@ -14,7 +14,14 @@ const avisos: string[] = [];
 beforeEach(() => {
   logs.length = 0;
   avisos.length = 0;
+  // Força execução da detecção de arquetipos mesmo em ambiente de teste
+  process.env.FORCAR_DETECT_ARQUETIPOS = 'true';
   vi.resetModules();
+});
+
+afterEach(() => {
+  // Limpa variável de ambiente
+  delete process.env.FORCAR_DETECT_ARQUETIPOS;
 });
 
 vi.mock('../../src/nucleo/inquisidor.js', () => ({
@@ -35,50 +42,66 @@ vi.mock('../../src/nucleo/inquisidor.js', () => ({
 }));
 
 vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
-  detectarArquetipos: vi.fn(async () => ({
-    candidatos: [
-      {
-        nome: 'cli',
+  detectarArquetipos: vi.fn(async () => {
+    console.log('MOCK detectarArquetipos chamado');
+    const result = {
+      candidatos: [
+        {
+          nome: 'cli',
+          confidence: 60,
+          score: 10,
+          missingRequired: [],
+          matchedRequired: [],
+          forbiddenPresent: [],
+          anomalias: [],
+          planoSugestao: { mover: [], conflitos: [], resumo: '' },
+        },
+      ],
+      baseline: {
+        version: 1,
+        timestamp: new Date().toISOString(),
+        arquetipo: 'cli',
         confidence: 60,
-        score: 10,
-        missingRequired: [],
-        matchedRequired: [],
-        forbiddenPresent: [],
-        anomalias: [],
-        planoSugestao: { mover: [], conflitos: [], resumo: '' },
+        arquivosRaiz: ['README.md'],
       },
-    ],
-    baseline: {
-      version: 1,
-      timestamp: new Date().toISOString(),
-      arquetipo: 'cli',
-      confidence: 60,
-      arquivosRaiz: ['README.md'],
-    },
-    drift: {
-      alterouArquetipo: false,
-      anterior: 'cli',
-      atual: 'cli',
-      deltaConfidence: -5,
-      arquivosRaizNovos: ['N1', 'N2', 'N3', 'N4'],
-      arquivosRaizRemovidos: ['R1', 'R2', 'R3', 'R4'],
-    },
-  })),
+      drift: {
+        alterouArquetipo: false,
+        anterior: 'cli',
+        atual: 'cli',
+        deltaConfidence: -5,
+        arquivosRaizNovos: ['N1', 'N2', 'N3', 'N4'],
+        arquivosRaizRemovidos: ['R1', 'R2', 'R3', 'R4'],
+      },
+    };
+    console.log('MOCK retornar:', JSON.stringify(result, null, 2));
+    return result;
+  }),
 }));
 
 vi.mock('../../src/nucleo/constelacao/log.js', () => ({
   log: {
-    info: (m: string) => logs.push(String(m)),
-    sucesso: (m: string) => logs.push(String(m)),
+    info: (m: string) => {
+      console.log('LOG.INFO chamado:', m);
+      logs.push(String(m));
+    },
+    sucesso: (m: string) => {
+      console.log('LOG.SUCESSO chamado:', m);
+      logs.push(String(m));
+    },
     aviso: (m: string) => {
       const s = String(m);
-      // Depuração: imprime toda chamada de aviso
-      console.log('MOCK log.aviso chamado:', s);
+      console.log('LOG.AVISO chamado:', s);
       logs.push(s);
       avisos.push(s);
     },
-    erro: (m: string) => logs.push(String(m)),
-    infoDestaque: (m: string) => logs.push(String(m)),
+    erro: (m: string) => {
+      console.log('LOG.ERRO chamado:', m);
+      logs.push(String(m));
+    },
+    infoDestaque: (m: string) => {
+      console.log('LOG.INFO_DESTAQUE chamado:', m);
+      logs.push(String(m));
+    },
     calcularLargura: vi.fn(),
     imprimirBloco: vi.fn(),
   },
@@ -109,6 +132,10 @@ vi.mock('../../src/nucleo/constelacao/cosmos.js', () => ({
 
 describe('comandoDiagnosticar arquetipos drift com reticências (…)', () => {
   it('mostra … quando há mais de 3 itens em novos/removidos (modo testes/verbose)', async () => {
+    // Forçar VERBOSE = true diretamente no config global
+    const { config } = await import('../../src/nucleo/constelacao/cosmos.js');
+    config.VERBOSE = true;
+
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
     const { comandoDiagnosticar } = await import('../../src/cli/comando-diagnosticar.js');
@@ -116,16 +143,16 @@ describe('comandoDiagnosticar arquetipos drift com reticências (…)', () => {
     program.addCommand(cmd);
 
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
-    // Debug: imprime avisos para facilitar ajuste do matcher
-    // console.log('AVISOS:', avisos);
+    // Debug: imprime logs para facilitar ajuste do matcher
+    // console.log('LOGS:', logs);
     // Aceita variações de reticências e formato
     const regexNovos = /novos:\[N1, N2, N3(…|\.\.\.|, ...|, …)?\]/;
     const regexRemov = /removidos:\[R1, R2, R3(…|\.\.\.|, ...|, …)?\]/;
-    const temNovos = avisos.some((s) => regexNovos.test(s));
-    const temRemov = avisos.some((s) => regexRemov.test(s));
+    const temNovos = logs.some((s) => regexNovos.test(s));
+    const temRemov = logs.some((s) => regexRemov.test(s));
     if (!temNovos || !temRemov) {
-      // Debug: imprime avisos para facilitar ajuste
-      console.log('AVISOS DEBUG:', avisos);
+      // Debug: imprime logs para facilitar ajuste
+      console.log('LOGS DEBUG:', logs);
     }
     expect(temNovos).toBe(true);
     expect(temRemov).toBe(true);

@@ -2,34 +2,13 @@
 import { Command } from 'commander';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Força falha no detector de arquétipos para entrar no catch
-vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
-  detectarArquetipos: vi.fn(async () => {
-    throw new Error('falha no detector');
-  }),
-}));
+// Mocks na ordem correta (mais específicos primeiro)
+const erroSpy = vi.fn((message) => {
+  console.log('DEBUG: erroSpy called with:', message);
+  return message;
+});
 
-// Mocks mínimos
-vi.mock('../../src/nucleo/inquisidor.js', () => ({
-  iniciarInquisicao: async () => ({ fileEntries: [{ relPath: 'a.ts', conteudo: '' }] }),
-  prepararComAst: async (fe: any[]) => fe,
-  executarInquisicao: async () => ({ ocorrencias: [], metricas: undefined }),
-  registrarUltimasMetricas: vi.fn(),
-  tecnicas: [],
-}));
-vi.mock('../../src/relatorios/relatorio-estrutura.js', () => ({
-  gerarRelatorioEstrutura: vi.fn(),
-}));
-vi.mock('../../src/relatorios/relatorio-zelador-saude.js', () => ({
-  exibirRelatorioZeladorSaude: vi.fn(),
-}));
-vi.mock('../../src/relatorios/relatorio-padroes-uso.js', () => ({
-  exibirRelatorioPadroesUso: vi.fn(),
-}));
-vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
-vi.mock('../../src/relatorios/gerador-relatorio.js', () => ({ gerarRelatorioMarkdown: vi.fn() }));
-
-const erroSpy = vi.fn();
+// Mock do log primeiro
 vi.mock('../../src/nucleo/constelacao/log.js', () => ({
   log: {
     info: vi.fn(),
@@ -52,15 +31,62 @@ vi.mock('../../src/nucleo/constelacao/log.js', () => ({
   },
 }));
 
+// Mock do cosmos - movido para cima e com configuração mais explícita
+vi.mock('../../src/nucleo/constelacao/cosmos.js', () => {
+  const mockConfig = {
+    DEV_MODE: true,
+    VERBOSE: true,
+    COMPACT_MODE: false,
+    SCAN_ONLY: false,
+    REPORT_EXPORT_ENABLED: false,
+    PARSE_ERRO_FALHA: false,
+    GUARDIAN_BASELINE: '.oraculo/baseline.json',
+    ZELADOR_STATE_DIR: '.oraculo',
+  };
+  return {
+    config: mockConfig,
+  };
+});
+
+// Mock do detectarArquetipos (deve ser o último para garantir que seja aplicado)
+vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
+  detectarArquetipos: vi.fn(async () => {
+    console.log('DEBUG: detectarArquetipos mock called, throwing error immediately');
+    throw new Error('falha no detector');
+  }),
+}));
+
+// Mocks restantes
+vi.mock('../../src/nucleo/inquisidor.js', () => ({
+  iniciarInquisicao: async () => ({ fileEntries: [{ relPath: 'a.ts', conteudo: '' }] }),
+  prepararComAst: async (fe: any[]) => fe,
+  executarInquisicao: async () => ({ ocorrencias: [], metricas: undefined }),
+  registrarUltimasMetricas: vi.fn(),
+  tecnicas: [],
+}));
+
+vi.mock('../../src/guardian/sentinela.js', () => ({
+  scanSystemIntegrity: vi.fn(async () => ({ status: 'ok' })),
+}));
+
+vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({
+  diagnosticarProjeto: vi.fn(() => undefined),
+}));
+
 beforeEach(() => {
-  vi.resetModules();
+  // vi.resetModules(); // Temporariamente removido para debug
   erroSpy.mockClear();
 });
 
 describe('comando-diagnosticar – arquetipos catch DEV_MODE', () => {
   it('quando detectarArquetipos lança e DEV_MODE=true, loga erro no catch', async () => {
+    // Forçar execução do detectarArquetipos definindo variável de ambiente
+    process.env.FORCAR_DETECT_ARQUETIPOS = 'true';
+
     const { comandoDiagnosticar } = await import('../../src/cli/comando-diagnosticar.js');
     const { config } = await import('../../src/nucleo/constelacao/cosmos.js');
+
+    // Garante que DEV_MODE está definido
     config.DEV_MODE = true;
 
     const program = new Command();
@@ -70,6 +96,7 @@ describe('comando-diagnosticar – arquetipos catch DEV_MODE', () => {
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
 
     const erros = erroSpy.mock.calls.map((c) => String(c[0])).join('\n');
+
     expect(erros).toMatch(/Falha detector arquetipos:/);
   }, 15000);
 });

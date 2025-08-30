@@ -16,7 +16,7 @@ vi.mock('../../src/nucleo/inquisidor.js', () => ({
 // detector retorna plano grande com conflitos
 vi.mock('../../src/analistas/detector-arquetipos.ts', () => ({
   detectarArquetipos: vi.fn(async () => ({
-    melhores: [
+    candidatos: [
       {
         planoSugestao: {
           mover: Array.from({ length: 12 }, (_, i) => ({

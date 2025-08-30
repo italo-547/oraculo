@@ -60,7 +60,7 @@ describe('comandoDiagnosticar – branches não-JSON (exit 0 quando sem problema
     vi.doMock('../arquitetos/analista-estrutura.js', () => ({
       alinhamentoEstrutural: vi.fn(async () => []),
     }));
-    vi.doMock('../analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
+    vi.doMock('../analistas/detector-estrutura.ts', () => ({ sinaisDetectados: [] }));
     vi.doMock('../arquitetos/diagnostico-projeto.js', () => ({ diagnosticarProjeto: vi.fn() }));
     vi.doMock('../relatorios/conselheiro-oracular.js', () => ({ emitirConselhoOracular: vi.fn() }));
 

@@ -72,7 +72,7 @@ describe('comando-diagnosticar — blocos não-VITEST (resumo estrutura e desped
     // Detector de arquétipos com baseline para acionar bloco de resumo da estrutura (fora de testes)
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
-        melhores: [
+        candidatos: [
           {
             nome: 'cli-modular',
             confidence: 0.7,

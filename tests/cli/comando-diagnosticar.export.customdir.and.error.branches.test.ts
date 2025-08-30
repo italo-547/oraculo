@@ -42,7 +42,7 @@ const H = vi.hoisted(() => ({
     baselineModificado: false,
   })),
   detectarArquetiposImpl: vi.fn(async (..._args: any[]) => ({
-    melhores: [],
+    candidatos: [],
     baseline: undefined,
     drift: undefined,
   })),
@@ -101,7 +101,7 @@ beforeEach(() => {
   });
   H.scanIntegrityImpl.mockResolvedValue({ status: 'ok', baselineModificado: false });
   H.detectarArquetiposImpl.mockResolvedValue({
-    melhores: [],
+    candidatos: [],
     baseline: undefined,
     drift: undefined,
   });
@@ -138,7 +138,7 @@ describe('comando-diagnosticar — exportação (sucesso e erro) com variações
     await program.parseAsync(['node', 'cli', 'diagnosticar', '--guardian-check']);
     // Deve registrar erro (mensagem do catch global)
     expect(H.log.erro).toHaveBeenCalledWith(
-      expect.stringContaining('Erro fatal durante o diagnóstico'),
+      expect.stringContaining('Falha ao exportar relatórios'),
     );
   });
 });

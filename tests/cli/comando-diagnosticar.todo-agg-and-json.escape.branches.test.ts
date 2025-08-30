@@ -53,8 +53,8 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
     await program.parseAsync(['node', 'cli', 'diagnosticar', '--compact']);
 
     // Deve ter agregado TODOs e marcado erro pela regra PARSE_ERRO_FALHA
-    const joinedAviso = logMock.aviso.mock.calls.map((c: any[]) => c[0]).join('\n');
-    expect(joinedAviso).toMatch(/Diagnóstico concluído/);
+    const joinedInfo = logMock.info.mock.calls.map((c: any[]) => c[0]).join('\n');
+    expect(joinedInfo).toMatch(/Diagnóstico concluído/);
     const chamadasBloco = logMock.imprimirBloco.mock.calls
       .map((c: any[]) => String(c[0]))
       .join('\n');
@@ -89,6 +89,8 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
       registrarUltimasMetricas: vi.fn(),
       tecnicas: [],
     }));
+    // Forçar detecção de arquétipos em testes
+    process.env.FORCAR_DETECT_ARQUETIPOS = '1';
     // Detector de arquétipos com unicode para forçar escape
     vi.doMock('../analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
@@ -122,12 +124,6 @@ describe('comandoDiagnosticar – TODO agregação e escape JSON (branches)', ()
     // Busca a primeira string que contenha o escape unicode
     const allCalls = spy.mock.calls.map((c) => String(c[0]));
     const payload = allCalls.find((s) => /\\u00f3/.test(s)) || '';
-    if (!/\\u00f3/.test(payload)) {
-      console.log('JSON DEBUG:', allCalls.join('\\n'));
-      // Também mostra se o nome do arquétipo aparece
-      const nomeDebug = allCalls.find((s) => /módulo|m\u00f3dulo/.test(s));
-      console.log('NOME DEBUG:', nomeDebug);
-    }
     spy.mockRestore();
     expect(payload).toMatch(/\\u00f3/); // \"m\\u00f3dulo\" (ó)
   });

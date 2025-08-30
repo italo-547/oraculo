@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Command } from 'commander';
 
 describe('comandoDiagnosticar arquetipos & drift', () => {
   let logMock: any;
   beforeEach(() => {
+    // Força execução da detecção de arquetipos mesmo em ambiente de teste
+    process.env.FORCAR_DETECT_ARQUETIPOS = 'true';
+
     vi.resetModules();
     logMock = { info: vi.fn(), sucesso: vi.fn(), aviso: vi.fn(), erro: vi.fn() };
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log: logMock }));
@@ -39,7 +42,10 @@ describe('comandoDiagnosticar arquetipos & drift', () => {
     vi.mock('../../src/arquitetos/diagnostico-projeto.js', () => ({
       diagnosticarProjeto: vi.fn(() => ({})),
     }));
-    vi.mock('../../src/analistas/detector-estrutura.js', () => ({ sinaisDetectados: [] }));
+    vi.mock('../../src/analistas/detector-estrutura.ts', () => ({
+      detectorEstrutura: { nome: 'detector-estrutura', aplicar: vi.fn(() => []) },
+      sinaisDetectados: [],
+    }));
     vi.mock('../../src/relatorios/relatorio-estrutura.js', () => ({
       gerarRelatorioEstrutura: vi.fn(),
     }));
@@ -58,7 +64,7 @@ describe('comandoDiagnosticar arquetipos & drift', () => {
     vi.mock('../../src/zeladores/util/persistencia.js', () => ({ salvarEstado: vi.fn() }));
     vi.mock('../../src/analistas/detector-arquetipos.js', () => ({
       detectarArquetipos: vi.fn(async () => ({
-        melhores: [
+        candidatos: [
           {
             nome: 'monorepo',
             confidence: 0.87,
@@ -90,6 +96,11 @@ describe('comandoDiagnosticar arquetipos & drift', () => {
         },
       })),
     }));
+  });
+
+  afterEach(() => {
+    // Limpa variável de ambiente
+    delete process.env.FORCAR_DETECT_ARQUETIPOS;
   });
 
   it('cobre logs detalhados de arquetipos e drift em modo verbose', async () => {

@@ -1,13 +1,23 @@
 // SPDX-License-Identifier: MIT
 import { analistaFuncoesLongas } from './analista-funcoes-longas.js';
 import { analistaPadroesUso } from './analista-padroes-uso.js';
-import { detectorDependencias } from './detector-dependencias.js';
-import { detectorEstrutura } from './detector-estrutura.js';
+import * as detectorDependenciasMod from './detector-dependencias.js';
+import * as detectorEstruturaMod from './detector-estrutura.js';
 import { ritualComando } from './ritual-comando.js';
 import { analistaTodoComments } from './analista-todo-comments.js';
 import type { Analista, Tecnica } from '../tipos/tipos.js';
 
 // Registro central de analistas. Futuro: lazy loading, filtros por categoria.
+const detectorDependencias =
+  (detectorDependenciasMod as any).detectorDependencias ??
+  (detectorDependenciasMod as any).default ??
+  (detectorDependenciasMod as any);
+
+const detectorEstrutura =
+  (detectorEstruturaMod as any).detectorEstrutura ??
+  (detectorEstruturaMod as any).default ??
+  (detectorEstruturaMod as any);
+
 export const registroAnalistas: (Analista | Tecnica)[] = [
   detectorDependencias as unknown as Tecnica,
   detectorEstrutura as unknown as Tecnica,
