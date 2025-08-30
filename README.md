@@ -133,6 +133,37 @@ oraculo diagnosticar
 
 Durante testes (`process.env.VITEST`) a CLI não chama `process.exit`, permitindo inspeção controlada.
 
+## Testes locais
+
+Para rodar a suíte de testes localmente:
+
+- Instale dependências: `npm install`
+- Formate e execute o linter antes de rodar os testes:
+
+  ```powershell
+  npm run format:fix; npm run lint
+  ```
+
+- Execute a suíte completa:
+
+  ```powershell
+  npm test
+  ```
+
+Variáveis úteis:
+
+- `VITEST_TEST_TIMEOUT_MS` — timeout global (ms) para testes; útil para E2E longos.
+- `REPORT_EXPORT_ENABLED` — permita testes que exportam relatórios.
+- `REPORT_OUTPUT_DIR` — diretório de saída de relatórios.
+
+Se a suíte falhar por causa de timeouts em workers, tente reproduzir um arquivo de teste isolado com `npx vitest run <arquivo>` ou reduzir o paralelismo na execução.
+
+## Nota sobre um timeout intermitente
+
+Há um problema intermitente observado durante execuções completas de teste onde o runner emite
+`Error: [vitest-worker]: Timeout calling "onTaskUpdate"` mesmo com testes marcados como passed. Veja
+`docs/TESTING-VITEST-TIMEOUT.md` para o histórico, mitigações adotadas e um script local (`npm run test:sequential`) para contornar.
+
 ### Flags Globais
 
 Você pode usar as flags globais em qualquer comando para controlar o nível de logs e exportação de relatórios:

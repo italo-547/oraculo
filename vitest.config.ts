@@ -195,6 +195,8 @@ export default defineConfig(() => {
     test: {
       globals: true,
       environment: 'node',
+      // Aumentar timeout global para acomodar E2E longos (ms). Permite overrides locais.
+      testTimeout: Number(process.env.VITEST_TEST_TIMEOUT_MS || 120000),
       include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
       exclude: [
         '.deprecados/**',

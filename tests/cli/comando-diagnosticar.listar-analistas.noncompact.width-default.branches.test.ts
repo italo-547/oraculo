@@ -21,8 +21,10 @@ describe('comando-diagnosticar — listar-analistas largura default 96 (não-com
       },
     };
     vi.doMock('../nucleo/constelacao/log.js', () => ({ log }));
+    // hoisted-safe mock: return only needed exports synchronously
     vi.doMock('../analistas/registry.js', () => ({
       listarAnalistas: () => [{ nome: 'X', categoria: 'core', descricao: 'd' }],
+      registroAnalistas: [],
     }));
     vi.doMock('../nucleo/inquisidor.js', () => ({
       iniciarInquisicao: vi.fn(async () => ({ fileEntries: [] })),

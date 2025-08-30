@@ -43,6 +43,7 @@
     "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
     "prepare": "npm run build",
     "test": "vitest run",
+    "test:sequential": "node ./scripts/run-tests-sequential.mjs",
     "test:dev": "vitest run",
     "test:ui": "vitest",
     "coverage": "vitest run --coverage",

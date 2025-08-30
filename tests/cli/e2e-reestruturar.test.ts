@@ -4,6 +4,7 @@ import { execSync, spawn } from 'node:child_process';
 import { mkdtempSync, writeFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 function garantirBuild() {
   const cliPath = resolve('dist/cli.js');
@@ -40,6 +41,7 @@ describe('@e2e Reestruturar', () => {
       'utf-8',
     );
 
+    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
     // usa spawn assíncrono para não bloquear o loop do worker (evita timeout RPC do Vitest)
     const run = () =>
       new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
@@ -100,6 +102,7 @@ describe('@e2e Reestruturar', () => {
     mkdirSync(join(tempDir, 'src'));
     writeFileSync(join(tempDir, 'src', 'cliente.controller.ts'), 'export const x=1;', 'utf-8');
 
+    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
     const runDry = () =>
       new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
         const cp = spawn(
@@ -154,6 +157,7 @@ describe('@e2e Reestruturar', () => {
     mkdirSync(destinoDir, { recursive: true });
     writeFileSync(join(destinoDir, 'cliente.controller.ts'), '// existente', 'utf-8');
 
+    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
     const runConf = () =>
       new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
         const cp = spawn(

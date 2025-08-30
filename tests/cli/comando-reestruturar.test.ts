@@ -37,6 +37,16 @@ vi.mock('../../src/nucleo/constelacao/log.js', () => ({
   },
 }));
 
+// Controle para mock do scanner: evita usar vi.mock dentro de testes (vi.mock é hoisted)
+let scannerShouldThrow = false;
+let scannerErrorMessage: string | undefined = undefined;
+vi.mock('../../src/nucleo/scanner.js', () => ({
+  scanRepository: vi.fn(async () => {
+    if (scannerShouldThrow) throw new Error(scannerErrorMessage ?? 'falha scanner');
+    return {};
+  }),
+}));
+
 let log: any;
 beforeEach(async () => {
   vi.resetModules();
@@ -137,41 +147,39 @@ describe('comandoReestruturar', () => {
     expect(log.sucesso).toHaveBeenCalledWith(expect.stringContaining('correções aplicadas'));
   });
 
-  it.skip('executa reestruturação e lida com erro fatal (catch)', async () => {
+  it('executa reestruturação e lida com erro fatal (catch)', async () => {
+    // Forcing an error in the scanner triggers the outer catch path
+    scannerShouldThrow = true;
+    scannerErrorMessage = 'falha scanner';
     const { comandoReestruturar } = await import('../../src/cli/comando-reestruturar.js');
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
-    const { iniciarInquisicao } = await import('../../src/nucleo/inquisidor.js');
-    vi.mocked(iniciarInquisicao).mockRejectedValueOnce(new Error('falha inquisicao'));
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('exit');
-    });
     const cmd = comandoReestruturar(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    await expect(program.parseAsync(['node', 'cli', 'reestruturar'])).rejects.toThrow('exit');
-    expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('falha inquisicao'));
-    exitSpy.mockRestore();
+    await expect(program.parseAsync(['node', 'cli', 'reestruturar'])).rejects.toBe('exit:1');
+    expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('falha scanner'));
+    scannerShouldThrow = false;
+    scannerErrorMessage = undefined;
   }, 10000); // Aumenta timeout para 10s
 
-  it.skip('executa reestruturação e lida com erro fatal em DEV_MODE', async () => {
+  it('executa reestruturação e lida com erro fatal em DEV_MODE', async () => {
+    // Force scanner error to reach outer catch and trigger DEV_MODE console.error
+    scannerShouldThrow = true;
+    scannerErrorMessage = 'erro dev';
     const { comandoReestruturar } = await import('../../src/cli/comando-reestruturar.js');
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
-    const { iniciarInquisicao } = await import('../../src/nucleo/inquisidor.js');
-    vi.mocked(iniciarInquisicao).mockRejectedValueOnce(new Error('erro dev'));
     const { config } = await import('../../src/nucleo/constelacao/cosmos.js');
     config.DEV_MODE = true;
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('exit');
-    });
     const cmd = comandoReestruturar(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    await expect(program.parseAsync(['node', 'cli', 'reestruturar'])).rejects.toThrow('exit');
+    await expect(program.parseAsync(['node', 'cli', 'reestruturar'])).rejects.toBe('exit:1');
     expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('erro dev'));
     expect(errorSpy).toHaveBeenCalled();
     errorSpy.mockRestore();
-    exitSpy.mockRestore();
     config.DEV_MODE = false;
+    scannerShouldThrow = false;
+    scannerErrorMessage = undefined;
   }, 10000); // Aumenta timeout para 10s
 });

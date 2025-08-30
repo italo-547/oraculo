@@ -2,9 +2,15 @@
 import { Command } from 'commander';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Força falha ao importar registry
-vi.mock('../../src/analistas/registry.js', () => {
-  throw new Error('falha simulada importar registry');
+// Simula falha ao executar registro de analistas — evita lançar durante hoisting da factory
+vi.mock('../../src/analistas/registry.js', async (importOriginal) => {
+  // Retorna um mock parcial com a função que nosso código chama; evita spread em "any"
+  // Caso outros exports sejam necessários, importar o original dinamicamente.
+  return {
+    registroAnalistas: async () => {
+      throw new Error('falha simulada importar registry');
+    },
+  };
 });
 
 // Mocks mínimos para passar pelo fluxo

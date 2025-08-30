@@ -41,11 +41,11 @@ describe('comando-diagnosticar — listar-analistas fallbacks e largura compacta
     }));
     // Registry com campos ausentes para acionar fallbacks de texto
     vi.mock('../../src/analistas/registry.js', () => ({
+      // hoisted-safe: include registroAnalistas used by inquisidor
+      registroAnalistas: [],
       listarAnalistas: () => [
         { nome: undefined, categoria: undefined, descricao: undefined },
-        {
-          /* item vazio para reforçar fallbacks */
-        } as any,
+        {} as any,
       ],
     }));
     // Inquisidor mínimo para deixar o fluxo seguir sem ocorrências

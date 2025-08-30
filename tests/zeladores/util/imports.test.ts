@@ -21,8 +21,12 @@ describe('reescreverImports', () => {
     const conteudo =
       "import fs from 'node:fs';\nimport x from '@/coisa';\nexport * from '@nucleo/parte';";
     const { novoConteudo, reescritos } = reescreverImports(conteudo, 'src/a.ts', 'src/b/a.ts');
-    expect(reescritos.length).toBe(0);
-    expect(novoConteudo).toBe(conteudo);
+    // Agora o reescritor converte aliases '@/...' para relativos quando possível
+    expect(reescritos.length).toBe(1);
+    // O import '@/coisa' deve virar relativo a partir de 'src/b' -> '../coisa'
+    expect(novoConteudo).toContain("from '../coisa'");
+    // Imports de pacotes (ex: @nucleo/parte) permanecem intactos
+    expect(novoConteudo).toContain('@nucleo/parte');
   });
 
   it("gera prefixo './' quando relative não inicia com ponto após o move", () => {

@@ -16,14 +16,20 @@ export function reescreverImports(conteudo, arquivoDe, arquivoPara) {
         const spec = gFrom || gExport || gReq;
         if (!spec)
             return full;
-        // Só reescreve relativos
-        if (!spec.startsWith('./') && !spec.startsWith('../'))
+        // Só reescreve relativos ou aliases iniciando com '@/...' ou caminhos com '/src/'
+        const isAliasSrc = spec.startsWith('@/');
+        if (!isAliasSrc && !spec.includes('/src/') && !spec.startsWith('./') && !spec.startsWith('../'))
             return full;
         let alvoAntigo;
-        if (spec.includes('/src/')) {
-            // Rebase para a raiz src e colapsa src/<top>/(util|utils)/ -> src/utils/
-            const afterSrc = spec.split('/src/')[1];
-            alvoAntigo = norm(path.posix.join('src', afterSrc));
+        if (isAliasSrc || spec.includes('/src/')) {
+            // Normaliza alias '@/...' para 'src/...'
+            const specNormalized = isAliasSrc ? spec.replace(/^@\//, 'src/') : spec;
+            // extrai sempre o segmento após a primeira ocorrência de 'src/'
+            // lida com spec que comece com 'src/...', '/src/...', '@/...' (convertido para 'src/...')
+            let afterSrc = specNormalized.replace(/^.*src\//, '');
+            // remove extensão .js caso presente para evitar preservá-la nos relativos
+            afterSrc = afterSrc.replace(/\.js$/, '');
+            alvoAntigo = norm(path.posix.join('src', afterSrc || ''));
             // Corrige casos onde testes referenciam caminhos improváveis como src/cli/utils/*
             // Padroniza para src/utils/*, evitando inflar profundidade relativa
             alvoAntigo = alvoAntigo
@@ -40,6 +46,8 @@ export function reescreverImports(conteudo, arquivoDe, arquivoPara) {
         let novoRel = path.posix.relative(basePara, alvoAntigo);
         // Normaliza separadores e remove duplicações
         novoRel = path.posix.normalize(novoRel);
+        // Remove extensão .js se ainda existir
+        novoRel = novoRel.replace(/\.js$/, '');
         // Garante relativo com ./ ou ../
         if (!novoRel.startsWith('.'))
             novoRel = './' + novoRel;

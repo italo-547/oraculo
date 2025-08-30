@@ -984,7 +984,9 @@ export async function processarDiagnostico(opts) {
                     const relatorioEstado = {
                         timestamp: new Date().toISOString(),
                         totalOcorrencias,
-                        baselineModificado: Boolean(guardianResultado && guardianResultado.baselineModificado),
+                        baselineModificado: Boolean(guardianResultado &&
+                            guardianResultado
+                                .baselineModificado),
                     };
                     await salvarEstado(path.join(dir, `oraculo-relatorio-${ts}.json`), relatorioEstado);
                     log.sucesso(`Relatórios exportados para ${dir}`);

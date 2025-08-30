@@ -16,11 +16,12 @@ vi.mock('../../src/nucleo/inquisidor.js', () => ({
 
 // Mock de registry exportando listarAnalistas (para o comando) e registroAnalistas (usado em inquisidor)
 vi.mock('../../src/analistas/registry.js', () => ({
+  // hoisted-safe mock: provide both registroAnalistas and listarAnalistas
+  registroAnalistas: [],
   listarAnalistas: () => [
     { nome: 'TecnicaAlpha', categoria: 'analista', descricao: 'A' },
     { nome: 'TecnicaBeta', categoria: 'tecnica', descricao: 'B' },
   ],
-  registroAnalistas: [],
 }));
 
 // Mock de log para capturar impressão de bloco

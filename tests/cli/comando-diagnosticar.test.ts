@@ -56,8 +56,10 @@ it('executa diagnóstico com guardian-check e erro permissivo (GUARDIAN_ENFORCE_
   const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
   program.addCommand(cmd);
   await program.parseAsync(['node', 'cli', 'diagnosticar', '--guardian-check']);
-  expect(logMock.erro).toHaveBeenCalledWith(expect.stringContaining('Guardian bloqueou'));
-  expect(logMock.aviso).toHaveBeenCalledWith(expect.stringContaining('Modo permissivo'));
+  // Usa a instância real mockada do módulo de log para asserções
+  const { log } = await import('../../src/nucleo/constelacao/log.js');
+  expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('Guardian bloqueou'));
+  expect(log.aviso).toHaveBeenCalledWith(expect.stringContaining('Modo permissivo'));
 });
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Command } from 'commander';
@@ -198,11 +200,12 @@ describe('comandoDiagnosticar', () => {
       expect(err).toBeInstanceOf(Error);
       expect(err.message).toBe('exit');
     }
-    // Tolerante: apenas verifica se algum log esperado foi chamado
+    // Tolerante: apenas verifica se algum log esperado foi chamado na instância de log
+    const { log } = await import('../../src/nucleo/constelacao/log.js');
     expect(
-      logMock.sucesso.mock.calls.length > 0 ||
-        logMock.info.mock.calls.length > 0 ||
-        logMock.aviso.mock.calls.length > 0,
+      ((log as any).sucesso?.mock?.calls?.length || 0) > 0 ||
+        ((log as any).info?.mock?.calls?.length || 0) > 0 ||
+        ((log as any).aviso?.mock?.calls?.length || 0) > 0,
     ).toBe(true);
     exitSpy.mockRestore();
   });
@@ -237,7 +240,11 @@ describe('comandoDiagnosticar', () => {
       expect(err.message).toBe('exit');
     }
     // Tolerante: verifica se log.erro ou log.aviso foi chamado
-    expect(logMock.erro.mock.calls.length > 0 || logMock.aviso.mock.calls.length > 0).toBe(true);
+    const { log } = await import('../../src/nucleo/constelacao/log.js');
+    expect(
+      ((log as any).erro?.mock?.calls?.length || 0) > 0 ||
+        ((log as any).aviso?.mock?.calls?.length || 0) > 0,
+    ).toBe(true);
     exitSpy.mockRestore();
   });
 
@@ -256,13 +263,14 @@ describe('comandoDiagnosticar', () => {
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
     expect(gerarRelatorioMarkdown).toHaveBeenCalledTimes(1);
     expect(salvarEstado).toHaveBeenCalledTimes(1);
-    expect(logMock.sucesso).toHaveBeenCalledWith(
+    const { log } = await import('../../src/nucleo/constelacao/log.js');
+    expect((log as any).sucesso).toHaveBeenCalledWith(
       expect.stringContaining('Relatórios exportados para'),
     );
     config.REPORT_EXPORT_ENABLED = false;
   });
 
-  it.skip('executa diagnóstico com ocorrências e registra logs de problemas', async () => {
+  it('executa diagnóstico com ocorrências e registra logs de problemas', async () => {
     vi.clearAllMocks();
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
@@ -279,7 +287,11 @@ describe('comandoDiagnosticar', () => {
     const cmd = comandoDiagnosticar(aplicarFlagsGlobais);
     program.addCommand(cmd);
     await program.parseAsync(['node', 'cli', 'diagnosticar']);
-    expect(logMock.aviso.mock.calls.length > 0 || logMock.sucesso.mock.calls.length > 0).toBe(true);
+    const { log } = await import('../../src/nucleo/constelacao/log.js');
+    expect(
+      ((log as any).aviso?.mock?.calls?.length || 0) > 0 ||
+        ((log as any).sucesso?.mock?.calls?.length || 0) > 0,
+    ).toBe(true);
   });
 
   it('executa diagnóstico e lida com erro fatal (catch)', async () => {
@@ -309,7 +321,8 @@ describe('comandoDiagnosticar', () => {
       expect(err.message).toBe('exit');
     }
     // Tolerante: verifica se log.erro foi chamado
-    expect(logMock.erro.mock.calls.length > 0).toBe(true);
+    const { log } = await import('../../src/nucleo/constelacao/log.js');
+    expect(((log as any).erro?.mock?.calls?.length || 0) > 0).toBe(true);
     exitSpy.mockRestore();
   });
 
@@ -343,7 +356,8 @@ describe('comandoDiagnosticar', () => {
       expect(err.message).toBe('exit');
     }
     // Tolerante: verifica se log.erro foi chamado
-    expect(logMock.erro.mock.calls.length > 0).toBe(true);
+    const { log } = await import('../../src/nucleo/constelacao/log.js');
+    expect(((log as any).erro?.mock?.calls?.length || 0) > 0).toBe(true);
     errorSpy.mockRestore();
     exitSpy.mockRestore();
     config.DEV_MODE = false;

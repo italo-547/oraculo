@@ -42,6 +42,12 @@ Escopo de arquivos: os analistas respeitam exatamente o conjunto de arquivos for
 - Logs: use o `log` central. Para molduras, gere o bloco com `log.bloco`/`imprimirBloco` (não prefixe com `log.info`).
 - Persistência: nunca use `fs.*` direto — utilize `lerEstado`/`salvarEstado` de `src/zeladores/util/persistencia.ts`.
 
+### Nota sobre testes e mocks
+
+- Ao escrever testes com Vitest, evite fábricas de `vi.mock` que façam throws síncronos ou dependam de variáveis de runtime (TDZ). Use fábricas hoisted-safe (retorne exports simples) ou a forma `async (importOriginal) => ({ ... })` quando for necessário usar `importOriginal`.
+- Se encontrar mocks que falham no import, verifique `tests/` para padrões de `vi.mock('../analistas/registry.js', ...)` — alguns testes do projeto foram adaptados para garantir compatibilidade com o runner.
+
+
 ## Executando e listando analistas
 
 - Listar catálogo atual e exportar documentação:

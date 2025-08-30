@@ -1,0 +1,10 @@
+{
+  "tipo": "baseline",
+  "timestamp": "2025-08-30T19:09:41.142Z",
+  "node": "vX",
+  "tempoParsingMs": 5,
+  "tempoAnaliseMs": 10,
+  "cacheAstHits": 1,
+  "cacheAstMiss": 2,
+  "totalArquivos": 3
+}
