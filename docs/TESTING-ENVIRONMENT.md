@@ -147,5 +147,3 @@ Boas práticas
 
 - Sempre rodar `npm run format:fix` e `npm run lint` antes de abrir PRs para evitar erros de estilo e garantir consistência.
 - Ao adicionar testes E2E pesados, prefira rodar isoladamente enquanto desenvolve.
-
-Se precisar, eu posso adicionar um script `scripts/debug-test.ps1` com um wrapper para reproduzir timeouts e coletar logs automaticamente.
