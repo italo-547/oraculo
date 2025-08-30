@@ -40,9 +40,9 @@ tmp*/
 tests/tmp/
 
 # lockfiles (do not commit lockfiles for library modules)
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
+# package-lock.json is intentionally tracked for CI (GitHub Actions) and reproducible installs
 
 # optional: local env
 .env
