@@ -232,15 +232,23 @@ export async function decifrarSintaxe(
   }
 
   if (opts.timeoutMs) {
-    const timeoutPromise = new Promise<null>((resolve) => {
-      setTimeout(() => {
-        log.debug(`⏱️ Parsing timeout após ${opts.timeoutMs}ms para extensão ${ext}`);
-        resolve(null);
-      }, opts.timeoutMs);
-    });
-
-    // Se o parser for síncrono, já temos o resultado imediatamente
-    return Promise.race([Promise.resolve(parseResult), timeoutPromise]);
+    return (async () => {
+      let timer: NodeJS.Timeout | null = null;
+      try {
+        const race = Promise.race([
+          Promise.resolve(parseResult),
+          new Promise<null>((resolve) => {
+            timer = setTimeout(() => {
+              log.debug(`⏱️ Parsing timeout após ${opts.timeoutMs}ms para extensão ${ext}`);
+              resolve(null);
+            }, opts.timeoutMs);
+          }),
+        ]);
+        return await race;
+      } finally {
+        if (timer) clearTimeout(timer);
+      }
+    })();
   }
 
   return Promise.resolve(parseResult);
