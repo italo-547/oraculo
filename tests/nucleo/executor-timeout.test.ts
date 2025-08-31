@@ -1,3 +1,40 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { aplicarConfigParcial } from '../../src/nucleo/constelacao/cosmos.js';
+import { executarInquisicao } from '../../src/nucleo/executor.js';
+
+describe('executor timeout handling', () => {
+  beforeEach(() => {
+    // reduz timeout para teste rápido
+    aplicarConfigParcial({ ANALISE_TIMEOUT_POR_ANALISTA_MS: 50 });
+  });
+
+  afterEach(() => {
+    // restaura para evitar efeitos colaterais
+    aplicarConfigParcial({ ANALISE_TIMEOUT_POR_ANALISTA_MS: 30000 });
+  });
+
+  it('registro de timeout gera ocorrencia apropriada', async () => {
+    const tecnicaLenta = {
+      nome: 'tecnica-lenta',
+      global: false,
+      test: undefined,
+      aplicar: (_content: string) => new Promise((res) => setTimeout(() => res([]), 200)),
+    } as any;
+
+    const files = [{ relPath: 'a.js', content: 'const x = 1;', ast: undefined, fullPath: 'a.js' }];
+
+    const res = await executarInquisicao(files, [tecnicaLenta], process.cwd(), undefined, {
+      verbose: false,
+    });
+    expect(res).toBeDefined();
+    // deve haver uma ocorrencia de timeout para a técnica
+    const hasTimeout = res.ocorrencias.some((o: any) =>
+      String(o.mensagem || o.mensagem || '').includes('Timeout'),
+    );
+    expect(hasTimeout).toBe(true);
+  });
+});
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { executarInquisicao } from '../src/nucleo/executor.js';
 import { Tecnica } from '../src/tipos/tipos.js';

@@ -14,11 +14,13 @@ import {
   inicializarConfigDinamica,
 } from './nucleo/constelacao/cosmos.js';
 
+// caminho do módulo (usado para localizar arquivos de configuração)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 // 📦 Ler versão dinamicamente do package.json
 function getVersion(): string {
   try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
     const packagePath = join(__dirname, '..', 'package.json');
     const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
     return packageJson.version || '0.0.0';
@@ -102,7 +104,23 @@ program.addCommand(comandoPerf());
 // 🚀 Execução do CLI
 // Carrega config de arquivo/env explicitamente no processo do CLI, mesmo sob VITEST (e2e spawn)
 void (async () => {
+  // Aplica defaults de produção (se presentes) antes de inicializar a config dinâmica.
   try {
+    if (process.env.NODE_ENV === 'production') {
+      try {
+        const safeCfgPath = join(__dirname, '..', 'oraculo.config.safe.json');
+        const raw = readFileSync(safeCfgPath, 'utf-8');
+        const safeCfg = JSON.parse(raw);
+        const prod = safeCfg?.productionDefaults;
+        if (prod && typeof prod === 'object') {
+          for (const [k, v] of Object.entries(prod)) {
+            if (process.env[k] === undefined) process.env[k] = String(v);
+          }
+        }
+      } catch {
+        // ignore - arquivo safe pode não existir em todos os ambientes
+      }
+    }
     await inicializarConfigDinamica();
   } catch {
     // ignore: CLI continua com defaults

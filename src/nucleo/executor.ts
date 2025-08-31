@@ -95,16 +95,29 @@ export async function executarInquisicao(
 
         if (timeoutMs > 0) {
           // Promise.race entre execução do analista global e timeout
-          const timeoutPromise = new Promise<never>((_, reject) => {
-            setTimeout(() => {
-              reject(
-                new Error(`Timeout: analista global '${tecnica.nome}' excedeu ${timeoutMs}ms`),
-              );
-            }, timeoutMs);
-          });
-
           const execPromise = tecnica.aplicar('', '', null, undefined, contextoGlobal);
-          resultado = await Promise.race([execPromise, timeoutPromise]);
+          resultado = await (async () => {
+            let timer: NodeJS.Timeout | null = null;
+            try {
+              const race = Promise.race([
+                execPromise,
+                new Promise<never>((_, reject) => {
+                  timer = setTimeout(
+                    () =>
+                      reject(
+                        new Error(
+                          `Timeout: analista global '${tecnica.nome}' excedeu ${timeoutMs}ms`,
+                        ),
+                      ),
+                    timeoutMs,
+                  );
+                }),
+              ]);
+              return await race;
+            } finally {
+              if (timer) clearTimeout(timer);
+            }
+          })();
         } else {
           // Execução sem timeout
           resultado = await tecnica.aplicar('', '', null, undefined, contextoGlobal);
@@ -259,16 +272,6 @@ export async function executarInquisicao(
 
         if (timeoutMs > 0) {
           // Promise.race entre execução do analista e timeout
-          const timeoutPromise = new Promise<never>((_, reject) => {
-            setTimeout(() => {
-              reject(
-                new Error(
-                  `Timeout: analista '${tecnica.nome}' excedeu ${timeoutMs}ms para ${entry.relPath}`,
-                ),
-              );
-            }, timeoutMs);
-          });
-
           const execPromise = tecnica.aplicar(
             entry.content ?? '',
             entry.relPath,
@@ -276,8 +279,28 @@ export async function executarInquisicao(
             entry.fullPath,
             contextoGlobal,
           );
-
-          resultado = await Promise.race([execPromise, timeoutPromise]);
+          resultado = await (async () => {
+            let timer: NodeJS.Timeout | null = null;
+            try {
+              const race = Promise.race([
+                execPromise,
+                new Promise<never>((_, reject) => {
+                  timer = setTimeout(
+                    () =>
+                      reject(
+                        new Error(
+                          `Timeout: analista '${tecnica.nome}' excedeu ${timeoutMs}ms para ${entry.relPath}`,
+                        ),
+                      ),
+                    timeoutMs,
+                  );
+                }),
+              ]);
+              return await race;
+            } finally {
+              if (timer) clearTimeout(timer);
+            }
+          })();
         } else {
           // Execução sem timeout
           resultado = await tecnica.aplicar(
