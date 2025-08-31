@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 import path from 'node:path';
-import type { PlanoSugestaoEstrutura, PlanoMoverItem } from '../tipos/plano-estrutura.js';
-import type { ContextoExecucao } from '../tipos/tipos.js';
+import type { PlanoSugestaoEstrutura, PlanoMoverItem } from '@tipos/plano-estrutura.js';
+import type { ContextoExecucao } from '@tipos/tipos.js';
 import {
   carregarConfigEstrategia,
   destinoPara,
   deveIgnorar,
   normalizarRel,
   OpcoesEstrategista,
-} from '../zeladores/util/estrutura.js';
+} from '@zeladores/util/estrutura.js';
 
 /**
  * Estrategista/Planejador de Estrutura

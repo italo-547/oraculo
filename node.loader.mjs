@@ -5,6 +5,7 @@ import path from 'node:path';
 
 const aliasMap = {
   '@nucleo/': './dist/nucleo/',
+  '@cli/': './dist/cli/',
   '@analistas/': './dist/analistas/',
   '@arquitetos/': './dist/arquitetos/',
   '@zeladores/': './dist/zeladores/',
@@ -16,7 +17,7 @@ const aliasMap = {
 
 export async function resolve(specifier, context, defaultResolve) {
   // Só resolver aliases específicos do projeto Oráculo
-  const projectPrefixes = ['@nucleo/', '@analistas/', '@arquitetos/', '@zeladores/', '@relatorios/', '@guardian/', '@tipos/', '@/'];
+  const projectPrefixes = ['@nucleo/', '@cli/', '@analistas/', '@arquitetos/', '@zeladores/', '@relatorios/', '@guardian/', '@tipos/', '@/'];
   const isProjectAlias = projectPrefixes.some(prefix => specifier.startsWith(prefix));
   
   if (isProjectAlias) {

@@ -3,10 +3,10 @@ import { Command } from 'commander';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { log } from '../nucleo/constelacao/log.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { formatPct } from '../nucleo/constelacao/format.js';
-import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { formatPct } from '@nucleo/constelacao/format.js';
+import { salvarEstado, lerEstado } from '@zeladores/util/persistencia.js';
 
 // Tipagens reutilizadas (espelho parcial de MetricaExecucao para evitar dependência circular leve)
 interface MetricaAnalistaLike {

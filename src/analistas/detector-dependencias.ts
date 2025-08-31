@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 import path from 'node:path';
-import { traverse } from '../nucleo/constelacao/traverse.js';
-import type { TecnicaAplicarResultado, ContextoExecucao, Ocorrencia } from '../tipos/tipos.js';
+import { traverse } from '@nucleo/constelacao/traverse.js';
+import type { TecnicaAplicarResultado, ContextoExecucao, Ocorrencia } from '@tipos/tipos.js';
 import type * as t from '@babel/types';
 import type { NodePath } from '@babel/traverse';
 export const grafoDependencias = new Map<string, Set<string>>();

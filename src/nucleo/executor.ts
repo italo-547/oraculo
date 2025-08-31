@@ -7,12 +7,12 @@ import type {
   Ocorrencia,
   ResultadoInquisicao,
   Tecnica,
-} from '../tipos/tipos.js';
-import { MetricaAnalista, MetricaExecucao, ocorrenciaErroAnalista } from '../tipos/tipos.js';
-import { lerEstado, salvarEstado } from '../zeladores/util/persistencia.js';
-import { config } from './constelacao/cosmos.js';
-import { formatMs } from './constelacao/format.js';
-import { log } from './constelacao/log.js';
+} from '@tipos/tipos.js';
+import { MetricaAnalista, MetricaExecucao, ocorrenciaErroAnalista } from '@tipos/tipos.js';
+import { lerEstado, salvarEstado } from '@zeladores/util/persistencia.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { formatMs } from '@nucleo/constelacao/format.js';
+import { log } from '@nucleo/constelacao/log.js';
 // Fallback para infoDestaque quando mock de log não implementa
 const __infoD = (msg: string) => {
   const l = log as unknown as { infoDestaque?: (m: string) => void; info: (m: string) => void };

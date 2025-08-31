@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
-import { mapaReversao } from '../zeladores/mapa-reversao.js';
-import { log } from '../nucleo/constelacao/log.js';
+import { mapaReversao } from '@zeladores/mapa-reversao.js';
+import { log } from '@nucleo/constelacao/log.js';
 
 export function registrarComandoReverter(program: Command) {
   program

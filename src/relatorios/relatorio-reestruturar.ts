@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import { salvarEstado } from '../zeladores/util/persistencia.js';
+import { salvarEstado } from '@zeladores/util/persistencia.js';
 
 export interface MovimentoEstrutural {
   de: string;

@@ -2,14 +2,14 @@
 // src/analistas/analista-padroes-uso.ts
 import * as t from '@babel/types';
 import type { NodePath } from '@babel/traverse';
-import { traverse } from '../nucleo/constelacao/traverse.js';
-import { incrementar, garantirArray } from '../zeladores/util/helpers-analistas.js';
+import { traverse } from '@nucleo/constelacao/traverse.js';
+import { incrementar, garantirArray } from '@zeladores/util/helpers-analistas.js';
 import type {
   Estatisticas,
   Ocorrencia,
   ContextoExecucao,
   TecnicaAplicarResultado,
-} from '../tipos/tipos.js';
+} from '@tipos/tipos.js';
 
 // Estatísticas globais (mantidas)
 export const estatisticasUsoGlobal: Estatisticas = {

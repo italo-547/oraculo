@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 import micromatch from 'micromatch';
-import { lerEstado, lerArquivoTexto } from '../zeladores/util/persistencia.js';
+import { lerEstado, lerArquivoTexto } from '@zeladores/util/persistencia.js';
 import { promises as fs } from 'node:fs';
 import type { Dirent, Stats } from 'node:fs';
 import path from 'path';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { shouldInclude } from './constelacao/include-exclude.js';
-import type { FileMap, FileEntry } from '../tipos/tipos.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { shouldInclude } from '@nucleo/constelacao/include-exclude.js';
+import type { FileMap, FileEntry } from '@tipos/tipos.js';
 
 interface ScanOptions {
   includeContent?: boolean;

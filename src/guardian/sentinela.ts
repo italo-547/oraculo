@@ -2,9 +2,9 @@
 import micromatch from 'micromatch';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { FileEntry, GuardianError, IntegridadeStatus } from '../tipos/tipos.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { FileEntry, GuardianError, IntegridadeStatus } from '@tipos/tipos.js';
 import { carregarBaseline, salvarBaseline } from './baseline.js';
 import { BASELINE_PATH } from './constantes.js';
 import { diffSnapshots, verificarErros } from './diff.js';

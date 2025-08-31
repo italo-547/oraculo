@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import { config } from '../constelacao/cosmos.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
 import { execSync, type ExecSyncOptions } from 'node:child_process';
 
 export function executarShellSeguro(cmd: string, opts: ExecSyncOptions = {}) {

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
 import path from 'node:path';
-import { lerEstado, salvarEstado } from '../zeladores/util/persistencia.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { formatMs } from '../nucleo/constelacao/format.js';
-import type { MetricaExecucao } from '../tipos/tipos.js';
+import { lerEstado, salvarEstado } from '@zeladores/util/persistencia.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { formatMs } from '@nucleo/constelacao/format.js';
+import type { MetricaExecucao } from '@tipos/tipos.js';
 
 interface RegistroHistorico extends MetricaExecucao {
   timestamp: number;

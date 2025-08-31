@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-import chalk from '../nucleo/constelacao/chalk-safe.js';
-import { estatisticasUsoGlobal } from '../analistas/analista-padroes-uso.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { Ocorrencia } from '../tipos/tipos.js';
+import chalk from '@nucleo/constelacao/chalk-safe.js';
+import { estatisticasUsoGlobal } from '@analistas/analista-padroes-uso.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { Ocorrencia } from '@tipos/tipos.js';
 
 /**
  * Emite um relatório sobre a saúde do código com base nas estatísticas gerais.

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // import { log } from '../nucleo/constelacao/log.js';
 
-import { log } from '../nucleo/constelacao/log.js';
+import { log } from '@nucleo/constelacao/log.js';
 
 export function exibirRelatorioPadroesUso(): void {
   // Cabeçalho compatível com testes

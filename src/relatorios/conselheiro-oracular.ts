@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import { log } from '../nucleo/constelacao/log.js';
+import { log } from '@nucleo/constelacao/log.js';
 
 export interface ConselhoContexto {
   hora?: number;

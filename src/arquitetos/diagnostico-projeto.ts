@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import type { SinaisProjeto, DiagnosticoProjeto } from '../tipos/tipos.js';
+import type { SinaisProjeto, DiagnosticoProjeto } from '@tipos/tipos.js';
 
 /**
  * Recebe sinais coletados e devolve o diagnóstico

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-import { traverse } from '../nucleo/constelacao/traverse.js';
+import { traverse } from '@nucleo/constelacao/traverse.js';
 import * as t from '@babel/types';
 import type { NodePath } from '@babel/traverse';
-import type { ContextoExecucao, Ocorrencia, TecnicaAplicarResultado } from '../tipos/tipos.js';
+import type { ContextoExecucao, Ocorrencia, TecnicaAplicarResultado } from '@tipos/tipos.js';
 import type { Node } from '@babel/types';
 
 /**

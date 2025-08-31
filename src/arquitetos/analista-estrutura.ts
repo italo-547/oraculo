@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 import path from 'node:path';
 import pLimit from 'p-limit';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import type { FileEntryWithAst } from '../tipos/tipos.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import type { FileEntryWithAst } from '@tipos/tipos.js';
 
 /**
  * Exportado apenas para testes. Não usar fora de testes!

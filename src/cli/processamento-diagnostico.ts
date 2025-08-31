@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 import fs from 'node:fs';
-import chalk from '../nucleo/constelacao/chalk-safe.js';
+import chalk from '@nucleo/constelacao/chalk-safe.js';
 import path from 'node:path';
-import { salvarEstado } from '../zeladores/util/persistencia.js';
-import { mesclarConfigExcludes } from '../nucleo/constelacao/excludes-padrao.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
+import { salvarEstado } from '@zeladores/util/persistencia.js';
+import { mesclarConfigExcludes } from '@nucleo/constelacao/excludes-padrao.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
 import type {
   ResultadoGuardian,
   FileEntryWithAst,
@@ -14,20 +14,64 @@ import type {
   FileEntry,
   LinguagensJson,
   ResultadoInquisicaoCompleto,
-} from '../tipos/tipos.js';
-import { IntegridadeStatus } from '../tipos/tipos.js';
-import { detectarArquetipos } from '../analistas/detector-arquetipos.js';
-import { log } from '../nucleo/constelacao/log.js';
+} from '@tipos/tipos.js';
+import { IntegridadeStatus } from '@tipos/tipos.js';
+import { detectarArquetipos } from '@analistas/detector-arquetipos.js';
+import { log } from '@nucleo/constelacao/log.js';
 import {
   executarInquisicao,
   iniciarInquisicao,
   prepararComAst,
   registrarUltimasMetricas,
-} from '../nucleo/inquisidor.js';
-import { emitirConselhoOracular } from '../relatorios/conselheiro-oracular.js';
-import { gerarRelatorioMarkdown } from '../relatorios/gerador-relatorio.js';
-import { scanSystemIntegrity } from '../guardian/sentinela.js';
+} from '@nucleo/inquisidor.js';
+import { emitirConselhoOracular } from '@relatorios/conselheiro-oracular.js';
+import { gerarRelatorioMarkdown } from '@relatorios/gerador-relatorio.js';
+import { scanSystemIntegrity } from '@guardian/sentinela.js';
 // registroAnalistas será importado dinamicamente quando necessário
+
+// Helper: deduplica ocorrências preservando a primeira ocorrência encontrada.
+function dedupeOcorrencias<
+  T extends { relPath?: string; linha?: number; tipo?: string; mensagem?: string },
+>(arr: T[]): T[] {
+  const seen = new Map<string, T>();
+  for (const o of arr || []) {
+    const key = `${o.relPath || ''}|${String(o.linha ?? '')}|${o.tipo || ''}|${o.mensagem || ''}`;
+    if (!seen.has(key)) seen.set(key, o);
+  }
+  return Array.from(seen.values());
+}
+
+// Helper: agrupa analistas por nome, somando duracaoMs e ocorrencias e contando execucoes.
+function agruparAnalistas(analistas?: Array<Record<string, unknown>>) {
+  if (!analistas || !Array.isArray(analistas) || analistas.length === 0) return [];
+  const map = new Map<
+    string,
+    { nome: string; duracaoMs: number; ocorrencias: number; execucoes: number; global: boolean }
+  >();
+  for (const a of analistas) {
+    // Acessa campos via index para evitar casts para `any`
+    const nome = String((a && a['nome']) || 'desconhecido');
+    const dur = Number((a && a['duracaoMs']) || 0);
+    const occ = Number((a && a['ocorrencias']) || 0);
+    const globalFlag = Boolean((a && a['global']) || false);
+    const entry = map.get(nome) || {
+      nome,
+      duracaoMs: 0,
+      ocorrencias: 0,
+      execucoes: 0,
+      global: false,
+    };
+    entry.duracaoMs += dur;
+    entry.ocorrencias += occ;
+    entry.execucoes += 1;
+    entry.global = entry.global || globalFlag;
+    map.set(nome, entry);
+  }
+  // Converter para array e ordenar por ocorrencias desc, depois duracao desc
+  return Array.from(map.values()).sort((x, y) => {
+    return y.ocorrencias - x.ocorrencias || y.duracaoMs - x.duracaoMs;
+  });
+}
 
 // Interface para extensões do módulo de log
 interface LogExtensions {
@@ -948,8 +992,9 @@ export async function processarDiagnostico(
           }
         }
 
-        // Combinar ocorrências agregadas
-        const todasOcorrencias = [...naoTodos, ...todosAgregados];
+        // Combinar ocorrências agregadas e deduplicar para reduzir ruído
+        let todasOcorrencias = [...naoTodos, ...todosAgregados];
+        todasOcorrencias = dedupeOcorrencias(todasOcorrencias);
 
         // Agregar tipos de ocorrências
         const tiposOcorrencias: Record<string, number> = {};
@@ -1090,7 +1135,14 @@ export async function processarDiagnostico(
                 (Number(bItem.duracaoMs) || 0) - (Number(aItem.duracaoMs) || 0)
               );
             });
-            metricasFinal = { ...metricasFinal, analistas: sorted as MetricaExecucao['analistas'] };
+            // Substitui lista bruta por versão agrupada para evitar ruído
+            const analistasAgrupados = agruparAnalistas(
+              sorted as unknown as Record<string, unknown>[],
+            );
+            metricasFinal = {
+              ...(metricasFinal as MetricaExecucao),
+              analistas: analistasAgrupados,
+            };
           }
 
           // Calcula topAnalistas baseado nos analistas ordenados
@@ -1099,30 +1151,17 @@ export async function processarDiagnostico(
             Array.isArray(metricasFinal.analistas) &&
             metricasFinal.analistas.length > 0
           ) {
-            const analistasMap = new Map<
-              string,
-              { totalMs: number; execucoes: number; ocorrencias: number }
-            >();
-            for (const analista of metricasFinal.analistas) {
-              const nome = analista.nome;
-              const dado = analistasMap.get(nome) || { totalMs: 0, execucoes: 0, ocorrencias: 0 };
-              dado.totalMs += analista.duracaoMs;
-              dado.execucoes += 1;
-              dado.ocorrencias += analista.ocorrencias;
-              analistasMap.set(nome, dado);
-            }
-
-            const topAnalistas = [...analistasMap.entries()]
-              .sort((a, b) => b[1].totalMs - a[1].totalMs)
-              .slice(0, 5)
-              .map(([nome, d]) => ({
-                nome,
-                totalMs: d.totalMs,
-                mediaMs: d.totalMs / d.execucoes,
-                execucoes: d.execucoes,
-                ocorrencias: d.ocorrencias,
-              }));
-
+            // Agrupar entradas de analistas repetidas e calcular topAnalistas
+            const agrupados = agruparAnalistas(
+              metricasFinal.analistas as unknown as Record<string, unknown>[],
+            );
+            const topAnalistas = agrupados.slice(0, 5).map((d) => ({
+              nome: d.nome,
+              totalMs: d.duracaoMs,
+              mediaMs: d.execucoes > 0 ? d.duracaoMs / d.execucoes : d.duracaoMs,
+              execucoes: d.execucoes,
+              ocorrencias: d.ocorrencias,
+            }));
             metricasFinal = { ...metricasFinal, topAnalistas };
           }
         } catch {}
@@ -1371,7 +1410,8 @@ export async function processarDiagnostico(
         }
       }
 
-      const todasOcorrencias = [...naoTodos, ...todosAgregados];
+      let todasOcorrencias = [...naoTodos, ...todosAgregados];
+      todasOcorrencias = dedupeOcorrencias(todasOcorrencias);
       const tiposOcorrencias: Record<string, number> = {};
       let parseErros: ParseErrosJson = { totalOriginais: 0, totalExibidos: 0, agregados: 0 };
       for (const ocorrencia of todasOcorrencias) {
@@ -1468,35 +1508,27 @@ export async function processarDiagnostico(
               (Number(bItem.duracaoMs) || 0) - (Number(aItem.duracaoMs) || 0)
             );
           });
-          metricasFinal = { ...metricasFinal, analistas: sorted as MetricaExecucao['analistas'] };
+          // Substitui lista bruta por versão agrupada para evitar ruído
+          const analistasAgrupados = agruparAnalistas(
+            sorted as unknown as Record<string, unknown>[],
+          );
+          metricasFinal = { ...(metricasFinal as MetricaExecucao), analistas: analistasAgrupados };
         }
         if (
           metricasFinal &&
           Array.isArray(metricasFinal.analistas) &&
           metricasFinal.analistas.length > 0
         ) {
-          const analistasMap = new Map<
-            string,
-            { totalMs: number; execucoes: number; ocorrencias: number }
-          >();
-          for (const analista of metricasFinal.analistas) {
-            const nome = analista.nome;
-            const dado = analistasMap.get(nome) || { totalMs: 0, execucoes: 0, ocorrencias: 0 };
-            dado.totalMs += analista.duracaoMs;
-            dado.execucoes += 1;
-            dado.ocorrencias += analista.ocorrencias;
-            analistasMap.set(nome, dado);
-          }
-          const topAnalistas = [...analistasMap.entries()]
-            .sort((a, b) => b[1].totalMs - a[1].totalMs)
-            .slice(0, 5)
-            .map(([nome, d]) => ({
-              nome,
-              totalMs: d.totalMs,
-              mediaMs: d.totalMs / d.execucoes,
-              execucoes: d.execucoes,
-              ocorrencias: d.ocorrencias,
-            }));
+          const agrupados = agruparAnalistas(
+            metricasFinal.analistas as unknown as Record<string, unknown>[],
+          );
+          const topAnalistas = agrupados.slice(0, 5).map((d) => ({
+            nome: d.nome,
+            totalMs: d.duracaoMs,
+            mediaMs: d.execucoes > 0 ? d.duracaoMs / d.execucoes : d.duracaoMs,
+            execucoes: d.execucoes,
+            ocorrencias: d.ocorrencias,
+          }));
           metricasFinal = { ...metricasFinal, topAnalistas };
         }
       } catch {}

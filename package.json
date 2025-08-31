@@ -8,7 +8,7 @@
   "license": "MIT",
   "main": "./dist/cli.js",
   "bin": {
-    "oraculo": "./dist/cli.js"
+    "oraculo": "./bin/oraculo.js"
   },
   "exports": {
     ".": "./dist/cli.js"
@@ -74,6 +74,8 @@
   "preferGlobal": true,
   "files": [
     "dist",
+    "bin",
+    "node.loader.mjs",
     "README.md",
     "LICENSE*",
     "THIRD-PARTY-NOTICES.txt"
@@ -89,7 +91,6 @@
     "htmlparser2": "^10.0.0",
     "java-parser": "^3.0.1",
     "micromatch": "^4.0.8",
-    "oraculo": "^0.0.1",
     "p-limit": "^7.1.0",
     "xxhashjs": "^0.2.2"
   },

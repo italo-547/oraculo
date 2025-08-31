@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 import { gerarSnapshotDoConteudo } from './hash.js';
-import { FileEntry } from '../tipos/tipos.js';
+import { FileEntry } from '@tipos/tipos.js';
 import { RegistroIntegridade } from './registros.js';
 
 export interface ResultadoVerificacao {

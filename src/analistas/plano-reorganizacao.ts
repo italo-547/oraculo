@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 import path from 'node:path';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import type { PlanoSugestaoEstrutura } from '../tipos/tipos.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import type { PlanoSugestaoEstrutura } from '@tipos/tipos.js';
 
 /**
  * @deprecated Fonte legada de plano estrutural.

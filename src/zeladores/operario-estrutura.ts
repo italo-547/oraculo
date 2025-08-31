@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-import type { FileEntryWithAst, Ocorrencia } from '../tipos/tipos.js';
-import type { PlanoSugestaoEstrutura } from '../tipos/plano-estrutura.js';
-import { detectarArquetipos } from '../analistas/detector-arquetipos.js';
-import { diagnosticarProjeto } from '../arquitetos/diagnostico-projeto.js';
-import { gerarPlanoEstrategico } from '../arquitetos/estrategista-estrutura.js';
-import { corrigirEstrutura } from './corretor-estrutura.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { isInsideSrc } from '../nucleo/constelacao/paths.js';
+import type { FileEntryWithAst, Ocorrencia } from '@tipos/tipos.js';
+import type { PlanoSugestaoEstrutura } from '@tipos/plano-estrutura.js';
+import { detectarArquetipos } from '@analistas/detector-arquetipos.js';
+import { diagnosticarProjeto } from '@arquitetos/diagnostico-projeto.js';
+import { gerarPlanoEstrategico } from '@arquitetos/estrategista-estrutura.js';
+import { corrigirEstrutura } from '@zeladores/corretor-estrutura.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { isInsideSrc } from '@nucleo/constelacao/paths.js';
 
 export interface OpcoesPlanejamento {
   preferEstrategista?: boolean;

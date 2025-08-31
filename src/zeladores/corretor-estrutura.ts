@@ -2,13 +2,13 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import pLimit from 'p-limit';
-import { log } from '../nucleo/constelacao/log.js';
-import { resolverPluginSeguro } from '../nucleo/constelacao/seguranca.js';
-import { importarModuloSeguro } from '../nucleo/util/import-safe.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { reescreverImports } from './util/imports.js';
-import { mapaReversao } from './mapa-reversao.js';
-import type { FileEntryWithAst } from '../tipos/tipos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { resolverPluginSeguro } from '@nucleo/constelacao/seguranca.js';
+import { importarModuloSeguro } from '@nucleo/util/import-safe.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { reescreverImports } from '@zeladores/util/imports.js';
+import { mapaReversao } from '@zeladores/mapa-reversao.js';
+import type { FileEntryWithAst } from '@tipos/tipos.js';
 
 interface ResultadoEstrutural {
   arquivo: string;

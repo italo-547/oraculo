@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-import { config } from '../constelacao/cosmos.js';
-import { resolverPluginSeguro } from '../constelacao/seguranca.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { resolverPluginSeguro } from '@nucleo/constelacao/seguranca.js';
 
 export async function importarModuloSeguro(baseDir: string, pluginRel: string) {
   if (config.SAFE_MODE && !config.ALLOW_PLUGINS) {

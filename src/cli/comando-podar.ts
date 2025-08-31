@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: MIT
-import chalk from '../nucleo/constelacao/chalk-safe.js';
 import { Command } from 'commander';
 
-import type { ArquivoFantasma, ResultadoPoda } from '../tipos/tipos.js';
+import type { ArquivoFantasma, ResultadoPoda } from '@tipos/tipos.js';
 
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { iniciarInquisicao } from '../nucleo/inquisidor.js';
-import { removerArquivosOrfaos } from '../zeladores/poda.js';
+import chalk from '@nucleo/constelacao/chalk-safe.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { iniciarInquisicao } from '@nucleo/inquisidor.js';
+import { removerArquivosOrfaos } from '@zeladores/poda.js';
 import path from 'node:path';
-import {
-  gerarRelatorioPodaJson,
-  gerarRelatorioPodaMarkdown,
-} from '../relatorios/relatorio-poda.js';
+import { gerarRelatorioPodaJson, gerarRelatorioPodaMarkdown } from '@relatorios/relatorio-poda.js';
 
 export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('podar')

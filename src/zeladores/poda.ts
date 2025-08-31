@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: MIT
-import { lerEstado, salvarEstado } from './util/persistencia.js';
+import { lerEstado, salvarEstado } from '@zeladores/util/persistencia.js';
 import path from 'node:path';
 import pLimit from 'p-limit';
-import { detectarFantasmas } from './fantasma.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { log } from '../nucleo/constelacao/log.js';
-import {
-  gerarRelatorioPodaMarkdown,
-  gerarRelatorioPodaJson,
-} from '../relatorios/relatorio-poda.js';
-import type { FileEntryWithAst, ResultadoPoda, Pendencia, HistoricoItem } from '../tipos/tipos.js';
+import { detectarFantasmas } from '@zeladores/fantasma.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { gerarRelatorioPodaMarkdown, gerarRelatorioPodaJson } from '@relatorios/relatorio-poda.js';
+import type { FileEntryWithAst, ResultadoPoda, Pendencia, HistoricoItem } from '@tipos/tipos.js';
 
 export async function removerArquivosOrfaos(
   _fileEntries: FileEntryWithAst[] /*executarRealmente = false*/,

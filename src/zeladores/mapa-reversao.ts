@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { log } from '../nucleo/constelacao/log.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import type { MoveReversao, MapaReversao } from '../tipos/tipos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import type { MoveReversao, MapaReversao } from '@tipos/tipos.js';
 
 function getMapaPath(): string {
   return (config && (config.STRUCTURE_REVERSE_MAP_PATH as string)) || '.oraculo/mapa-reversao.json';

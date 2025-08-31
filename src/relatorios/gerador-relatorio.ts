@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Gerador de relatórios: Markdown e JSON
-import { formatMs } from '../nucleo/constelacao/format.js';
-import { ResultadoInquisicaoCompleto, Ocorrencia } from '../tipos/tipos.js';
+import { formatMs } from '@nucleo/constelacao/format.js';
+import { ResultadoInquisicaoCompleto, Ocorrencia } from '@tipos/tipos.js';
 
 export async function gerarRelatorioMarkdown(
   resultado: ResultadoInquisicaoCompleto,

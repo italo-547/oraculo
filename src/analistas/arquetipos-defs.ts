@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import type { ArquetipoEstruturaDef } from '../tipos/tipos.js';
+import type { ArquetipoEstruturaDef } from '@tipos/tipos.js';
 
 export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
   {

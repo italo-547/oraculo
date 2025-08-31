@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
-import { registroAnalistas, listarAnalistas } from '../analistas/registry.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { salvarEstado } from '../zeladores/util/persistencia.js';
+import { registroAnalistas, listarAnalistas } from '@analistas/registry.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { salvarEstado } from '@zeladores/util/persistencia.js';
 import path from 'node:path';
-import { config } from '../nucleo/constelacao/cosmos.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
 
 export function comandoAnalistas() {
   return new Command('analistas')

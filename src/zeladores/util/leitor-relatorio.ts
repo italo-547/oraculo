@@ -4,7 +4,7 @@
  */
 
 import { lerEstado } from './persistencia.js';
-import { validarSchema, migrarParaVersaoAtual } from '../../nucleo/schema-versao.js';
+import { validarSchema, migrarParaVersaoAtual } from '@nucleo/schema-versao.js';
 
 export interface LeitorRelatorioOptions {
   /** Caminho do arquivo do relatório */

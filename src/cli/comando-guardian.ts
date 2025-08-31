@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
-import chalk from '../nucleo/constelacao/chalk-safe.js';
+import chalk from '@nucleo/constelacao/chalk-safe.js';
 import { Command } from 'commander';
 
-import type { FileEntryWithAst } from '../tipos/tipos.js';
-import { IntegridadeStatus } from '../tipos/tipos.js';
+import type { FileEntryWithAst } from '@tipos/tipos.js';
+import { IntegridadeStatus } from '@tipos/tipos.js';
 
-import { acceptNewBaseline, scanSystemIntegrity } from '../guardian/sentinela.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { iniciarInquisicao } from '../nucleo/inquisidor.js';
+import { acceptNewBaseline, scanSystemIntegrity } from '@guardian/sentinela.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { iniciarInquisicao } from '@nucleo/inquisidor.js';
 
 export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return (

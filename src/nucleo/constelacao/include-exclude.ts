@@ -4,7 +4,7 @@
  * Permite ativar/desativar regras, aplicar toggles e customizações programáticas.
  */
 import type { Dirent } from 'node:fs';
-import type { IncludeExcludeConfig } from '../../tipos/tipos.js';
+import type { IncludeExcludeConfig } from '@tipos/tipos.js';
 import micromatch from 'micromatch';
 
 /**

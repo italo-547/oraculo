@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import type { IncludeExcludeConfig } from '../../tipos/tipos.js';
+import type { IncludeExcludeConfig } from '@tipos/tipos.js';
 
 // Diretório atual do usuário (base do projeto)
 const CWD = process.cwd();

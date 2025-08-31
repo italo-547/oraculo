@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-import { salvarEstado } from '../zeladores/util/persistencia.js';
-import type { Pendencia } from '../tipos/tipos.js';
+import { salvarEstado } from '@zeladores/util/persistencia.js';
+import type { Pendencia } from '@tipos/tipos.js';
 
 export async function gerarRelatorioPodaMarkdown(
   caminho: string,

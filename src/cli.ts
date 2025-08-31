@@ -4,15 +4,15 @@ import { Command } from 'commander';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import chalk from './nucleo/constelacao/chalk-safe.js';
+import chalk from '@nucleo/constelacao/chalk-safe.js';
 
-import { registrarComandos } from './cli/comandos.js';
-import { comandoPerf } from './cli/comando-perf.js';
+import { registrarComandos } from '@cli/comandos.js';
+import { comandoPerf } from '@cli/comando-perf.js';
 import {
   config,
   aplicarConfigParcial,
   inicializarConfigDinamica,
-} from './nucleo/constelacao/cosmos.js';
+} from '@nucleo/constelacao/cosmos.js';
 
 // caminho do módulo (usado para localizar arquivos de configuração)
 const __filename = fileURLToPath(import.meta.url);

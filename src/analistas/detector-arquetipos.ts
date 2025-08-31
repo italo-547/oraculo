@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 // Nota: manter ARQUETIPOS importado visível como lembrete para integração futura
-import { ARQUETIPOS, normalizarCaminho } from './arquetipos-defs.js';
+import { ARQUETIPOS, normalizarCaminho } from '@analistas/arquetipos-defs.js';
 // Referência intencional para evitar remoção/aviso de import mantido como lembrete
 void ARQUETIPOS;
-import { grafoDependencias } from './detector-dependencias.js';
+import { grafoDependencias } from '@analistas/detector-dependencias.js';
 import {
   extrairSinaisAvancados,
   SinaisProjetoAvancados,
-} from '../arquitetos/sinais-projeto-avancados.js';
+} from '@arquitetos/sinais-projeto-avancados.js';
 import type {
   ContextoExecucao,
   ResultadoDeteccaoArquetipo,
@@ -16,15 +16,15 @@ import type {
   ArquetipoEstruturaDef,
   ArquetipoDrift,
   ArquetipoPersonalizado,
-} from '../tipos/tipos.js';
-import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
-import { OperarioEstrutura } from '../zeladores/operario-estrutura.js';
+} from '@tipos/tipos.js';
+import { salvarEstado, lerEstado } from '@zeladores/util/persistencia.js';
+import { OperarioEstrutura } from '@zeladores/operario-estrutura.js';
 import path from 'node:path';
 import {
   carregarArquetipoPersonalizado,
   obterArquetipoOficial,
   integrarArquetipos,
-} from './arquetipos-personalizados.js';
+} from '@analistas/arquetipos-personalizados.js';
 
 const PENALIDADE_MISSING_REQUIRED = 20;
 const PESO_OPTIONAL = 5;

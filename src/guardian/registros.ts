@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
+import { salvarEstado, lerEstado } from '@zeladores/util/persistencia.js';
 import path from 'node:path';
-import { log } from '../nucleo/constelacao/log.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
 import { gerarSnapshotDoConteudo } from './hash.js';
-import { FileEntry } from '../tipos/tipos.js';
+import { FileEntry } from '@tipos/tipos.js';
 
 const DESTINO_PADRAO = path.join(config.STATE_DIR, 'integridade.json');
 

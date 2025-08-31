@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 // ...existing code...
-import type { Ocorrencia } from '../tipos/tipos.js';
-import { criarAnalista } from '../tipos/tipos.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
+import type { Ocorrencia } from '@tipos/tipos.js';
+import { criarAnalista } from '@tipos/tipos.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
 import type {
   FunctionDeclaration,
   FunctionExpression,

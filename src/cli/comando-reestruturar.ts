@@ -1,24 +1,19 @@
-import { executarInquisicao, tecnicas, prepararComAst } from '../nucleo/inquisidor.js';
+import { executarInquisicao, tecnicas, prepararComAst } from '@nucleo/inquisidor.js';
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
-import chalk from '../nucleo/constelacao/chalk-safe.js';
+import chalk from '@nucleo/constelacao/chalk-safe.js';
 
-import type {
-  Ocorrencia,
-  FileEntry,
-  FileEntryWithAst,
-  ResultadoInquisicao,
-} from '../tipos/tipos.js';
-import type { PlanoMoverItem } from '../tipos/plano-estrutura.js';
+import type { Ocorrencia, FileEntry, FileEntryWithAst, ResultadoInquisicao } from '@tipos/tipos.js';
+import type { PlanoMoverItem } from '@tipos/plano-estrutura.js';
 
-import { OperarioEstrutura } from '../zeladores/operario-estrutura.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { config } from '../nucleo/constelacao/cosmos.js';
+import { OperarioEstrutura } from '@zeladores/operario-estrutura.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
 import path from 'node:path';
 import {
   gerarRelatorioReestruturarJson,
   gerarRelatorioReestruturarMarkdown,
-} from '../relatorios/relatorio-reestruturar.js';
+} from '@relatorios/relatorio-reestruturar.js';
 
 export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void) {
   return new Command('reestruturar')

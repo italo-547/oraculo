@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-import { scanRepository } from '../nucleo/scanner.js';
+import { scanRepository } from '@nucleo/scanner.js';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { grafoDependencias } from '../analistas/detector-dependencias.js';
-import { isInsideSrc } from '../nucleo/constelacao/paths.js';
+import { grafoDependencias } from '@analistas/detector-dependencias.js';
+import { isInsideSrc } from '@nucleo/constelacao/paths.js';
 
-import type { ArquivoFantasma, FileMap } from '../tipos/tipos.js';
+import type { ArquivoFantasma, FileMap } from '@tipos/tipos.js';
 
 const EXTENSOES_ALVO = ['.js', '.ts', '.jsx', '.tsx'];
 const IGNORAR_PADROES = ['test', 'mock', 'spec', 'stories'];

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 import { promises as fs } from 'node:fs';
 import * as path from 'path';
-import { registroAnalistas } from '../analistas/registry.js';
-import { lerEstado } from '../zeladores/util/persistencia.js';
-import { config } from './constelacao/cosmos.js';
-import { log } from './constelacao/log.js';
+import { registroAnalistas } from '@analistas/registry.js';
+import { lerEstado } from '@zeladores/util/persistencia.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { log } from '@nucleo/constelacao/log.js';
 import { executarInquisicao as executarExecucao, registrarUltimasMetricas } from './executor.js';
 import { decifrarSintaxe } from './parser.js';
 import { scanRepository } from './scanner.js';
-import { isMetaPath } from './constelacao/paths.js';
+import { isMetaPath } from '@nucleo/constelacao/paths.js';
 // Fallback de símbolos para cenários de teste onde o mock de log não inclui `simbolos`.
 interface SimbolosLog {
   info: string;
@@ -52,7 +52,7 @@ import type {
   ResultadoInquisicaoCompleto,
   Tecnica,
 } from '../tipos/tipos.js';
-import { ocorrenciaParseErro, OcorrenciaParseErro } from '../tipos/tipos.js';
+import { ocorrenciaParseErro, OcorrenciaParseErro } from '@tipos/tipos.js';
 
 // Extensões consideradas para tentativa de AST. Observações:
 // - .d.ts é propositalmente excluída pelo parser (retorna null) e aqui não entra.

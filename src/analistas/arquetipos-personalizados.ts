@@ -10,8 +10,8 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { ArquetipoPersonalizado, ArquetipoEstruturaDef } from '../tipos/tipos.js';
-import { ARQUETIPOS } from './arquetipos-defs.js';
-import { log } from '../nucleo/constelacao/log.js';
+import { ARQUETIPOS } from '@analistas/arquetipos-defs.js';
+import { log } from '@nucleo/constelacao/log.js';
 
 const ARQUETIPO_PERSONALIZADO_FILENAME = 'oraculo.repo.arquetipo.json';
 

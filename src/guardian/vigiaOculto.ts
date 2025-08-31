@@ -2,8 +2,8 @@
 import { gerarSnapshotDoConteudo } from './hash.js';
 import { salvarRegistros, carregarRegistros } from './registros.js';
 import { REGISTRO_VIGIA_CAMINHO_PADRAO } from './constantes.js';
-import { log } from '../nucleo/constelacao/log.js';
-import { FileEntry } from '../tipos/tipos.js';
+import { log } from '@nucleo/constelacao/log.js';
+import { FileEntry } from '@tipos/tipos.js';
 
 /**
  * Executa uma verificação silenciosa de integridade de arquivos com base nos registros prévios.

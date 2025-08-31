@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
-import { grafoDependencias } from './detector-dependencias.js';
+import { grafoDependencias } from '@analistas/detector-dependencias.js';
 import micromatch from 'micromatch';
-import { config } from '../nucleo/constelacao/cosmos.js';
-import { isInsideSrc } from '../nucleo/constelacao/paths.js';
+import { config } from '@nucleo/constelacao/cosmos.js';
+import { isInsideSrc } from '@nucleo/constelacao/paths.js';
 import type {
   TecnicaAplicarResultado,
   ContextoExecucao,
   Ocorrencia,
   SinaisProjeto,
-} from '../tipos/tipos.js';
+} from '@tipos/tipos.js';
 
 export const sinaisDetectados: SinaisProjeto = {};
 

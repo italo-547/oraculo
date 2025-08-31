@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
+import { salvarEstado, lerEstado } from '@zeladores/util/persistencia.js';
 import path from 'node:path';
 import { BASELINE_PATH } from './constantes.js';
 

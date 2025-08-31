@@ -7,7 +7,7 @@ import { XMLParser } from 'fast-xml-parser';
 import * as csstree from 'css-tree';
 import { createRequire } from 'module';
 const localRequire = createRequire(import.meta.url);
-import { log } from './constelacao/log.js';
+import { log } from '@nucleo/constelacao/log.js';
 
 // Mantemos a assinatura retornando BabelFile | null para não quebrar tipos externos, mas
 // para linguagens não-Babel geramos um objeto "compat" mínimo com File/Program vazio

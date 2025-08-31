@@ -5,7 +5,7 @@
   "ALLOW_MUTATE_FS": false,
   "STRUCTURE_AUTO_FIX": false,
   "REPORT_EXPORT_ENABLED": false,
-  "RACULO_ALLOW_EXEC": 1,
+  "ORACULO_ALLOW_EXEC": 1,
   "ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS": 10000,
   "productionDefaults": {
     "NODE_ENV": "production",

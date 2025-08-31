@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-import type { ResultadoDeteccaoArquetipo } from '../tipos/tipos.js';
-import { salvarEstado } from '../zeladores/util/persistencia.js';
+import type { ResultadoDeteccaoArquetipo } from '@tipos/tipos.js';
+import { salvarEstado } from '@zeladores/util/persistencia.js';
 import path from 'node:path';
 
 export async function exportarRelatorioArquetiposMarkdown(

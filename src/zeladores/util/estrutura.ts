@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 import path from 'node:path';
-import { lerEstado } from './persistencia.js';
+import { lerEstado } from '@zeladores/util/persistencia.js';
 
 export type NomeacaoEstilo = 'kebab' | 'dots' | 'camel';
 

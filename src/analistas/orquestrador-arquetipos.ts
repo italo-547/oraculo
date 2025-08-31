@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-import type { ResultadoDeteccaoArquetipo } from '../tipos/tipos.js';
-import { detectarArquetipoNode } from './detectores/detector-node.js';
-import { detectarArquetipoJava } from './detectores/detector-java.js';
-import { detectarArquetipoKotlin } from './detectores/detector-kotlin.js';
-import { detectarArquetipoXML } from './detectores/detector-xml.js';
-import { pontuarTodos } from './deteccao/pontuador.js';
+import type { ResultadoDeteccaoArquetipo } from '@tipos/tipos.js';
+import { detectarArquetipoNode } from '@analistas/detectores/detector-node.js';
+import { detectarArquetipoJava } from '@analistas/detectores/detector-java.js';
+import { detectarArquetipoKotlin } from '@analistas/detectores/detector-kotlin.js';
+import { detectarArquetipoXML } from '@analistas/detectores/detector-xml.js';
+import { pontuarTodos } from '@analistas/deteccao/pontuador.js';
 import { ARQUETIPOS } from './arquetipos-defs.js';
 
 /**

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import type { FileEntryWithAst } from '../tipos/tipos.js';
+import type { FileEntryWithAst } from '@tipos/tipos.js';
 // import path from 'node:path'; // Removido: não utilizado
 import type {
   Statement,

@@ -5,7 +5,7 @@ import * as detectorDependenciasMod from './detector-dependencias.js';
 import * as detectorEstruturaMod from './detector-estrutura.js';
 import { ritualComando } from './ritual-comando.js';
 import { analistaTodoComments } from './analista-todo-comments.js';
-import type { Analista, Tecnica } from '../tipos/tipos.js';
+import type { Analista, Tecnica } from '@tipos/tipos.js';
 
 // Registro central de analistas. Futuro: lazy loading, filtros por categoria.
 const detectorDependencias =

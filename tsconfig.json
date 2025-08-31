@@ -20,6 +20,7 @@
     "allowJs": false,
     "baseUrl": ".",
     "paths": {
+      "@constelacao/*": ["src/constelacao/*"],
       "@nucleo/*": ["src/nucleo/*"],
       "@analistas/*": ["src/analistas/*"],
       "@arquitetos/*": ["src/arquitetos/*"],
