@@ -35,7 +35,7 @@ function replaceOnce(content, folder, alias) {
   // We only replace when after the ../ sequences the folder name appears (not when it's part of filename)
   // Build regexp safely
   const pattern =
-    '([\\"\'])\\.{1,2}(?:\\/\\.{1,2})*' + folder.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&') + '\\/';
+    '([\"\'])\.{1,2}(?:\\/\.{1,2})*' + folder.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&') + '\\/';
   const re = new RegExp(pattern, 'g');
   return content.replace(re, (m, quote) => `${quote}${alias}/`);
 }

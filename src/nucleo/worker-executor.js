@@ -159,11 +159,11 @@ async function processarLote(lote, contexto) {
 
 // Handler principal do worker
 async function main() {
+  // Heartbeat period (worker sinaliza ao pai que ainda está vivo)
+  const HEARTBEAT_MS = 5000;
+  let heartbeatInterval = null;
   try {
     const { contexto } = workerData;
-    // Heartbeat period (worker sinaliza ao pai que ainda está vivo)
-    const HEARTBEAT_MS = 5000;
-    let heartbeatInterval = null;
     try {
       if (typeof parentPort?.postMessage === 'function') {
         heartbeatInterval = setInterval(() => {
@@ -196,16 +196,20 @@ async function main() {
       processedFiles,
       duration: Date.now(),
     });
-    if (heartbeatInterval) clearInterval(heartbeatInterval);
   } catch (erro) {
     // Enviar erro de volta
+    try {
+      parentPort.postMessage({
+        sucesso: false,
+        erro: erro.message,
+        stack: erro.stack,
+        workerId: process.pid,
+      });
+    } catch (_) {
+      // ignore
+    }
+  } finally {
     if (heartbeatInterval) clearInterval(heartbeatInterval);
-    parentPort.postMessage({
-      sucesso: false,
-      erro: erro.message,
-      stack: erro.stack,
-      workerId: process.pid,
-    });
   }
 }
 

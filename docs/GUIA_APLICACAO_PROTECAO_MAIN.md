@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Guia: Aplicação da Proteção da Branch Main
 
 ## Status Atual
@@ -15,7 +20,7 @@ Você precisa de um **Personal Access Token (PAT)** com permissões administrati
 
 #### Opção A: GitHub CLI (Recomendado)
 
-```bash
+````bash
 # Instalar GitHub CLI se não tiver
 # Windows: winget install --id GitHub.cli
 # OU baixar de: https://cli.github.com/
@@ -25,7 +30,7 @@ gh auth login
 
 # Verificar autenticação
 gh auth status
-```
+```bash
 
 #### Opção B: Personal Access Token
 
@@ -48,7 +53,7 @@ Exemplo (local, seguro):
 # copiar o exemplo e editar
 cp .env.example .env
 # editar .env e preencher GITHUB_TOKEN/ GH_TOKEN localmente (não versionar)
-```
+````
 
 ## Contexts Obrigatórios Identificados
 
@@ -62,17 +67,17 @@ Baseado nos workflows do GitHub Actions, os contexts que devem ser obrigatórios
 
 ### Passo 1: Verificar Status Atual
 
-```bash
+````bash
 # Verificar se já existe proteção configurada
 npm run branch:protect:check
-```
+```bash
 
 ### Passo 2: Aplicar Proteção
 
 ```bash
 # Aplicar proteção da branch main
 npm run branch:protect
-```
+````
 
 ### Passo 3: Validar Configuração
 
@@ -91,7 +96,7 @@ Após aplicar, verifique no GitHub:
 
 ## Configuração Esperada
 
-```yaml
+````yaml
 # Status checks obrigatórios
 required_status_checks:
   strict: true
@@ -117,7 +122,7 @@ allow_merge_commits: true
 allow_squash_merge: true
 allow_rebase_merge: false
 delete_branch_on_merge: true
-```
+```text
 
 ## Troubleshooting
 
@@ -159,3 +164,5 @@ Após aplicar a proteção da branch main, as próximas prioridades são:
 
 **Data**: Dezembro de 2025
 **Status**: Aguardando aplicação da proteção
+
+````

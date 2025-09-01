@@ -13,7 +13,7 @@ Utilize sempre os helpers `lerEstado` e `salvarEstado` para qualquer leitura ou 
 
 #### Exemplo real:
 
-```ts
+````ts
 // src/zeladores/util/persistencia.ts
 import { promises as fs } from 'node:fs';
 
@@ -29,7 +29,7 @@ export async function lerEstado<T = any>(caminho: string): Promise<T> {
 export async function salvarEstado<T = any>(caminho: string, dados: T): Promise<void> {
   await fs.writeFile(caminho, JSON.stringify(dados, null, 2), 'utf-8');
 }
-```
+```ts
 
 #### Uso correto em outros módulos:
 
@@ -40,15 +40,15 @@ import { salvarEstado, lerEstado } from '../zeladores/util/persistencia.js';
 // ...
 await salvarEstado(destino, registros);
 const registros = await lerEstado<RegistroIntegridade[]>(caminho);
-```
+````
 
-```ts
+````ts
 // src/relatorios/relatorio-poda.ts
 import { salvarEstado } from '../zeladores/util/persistencia.js';
 
 await salvarEstado(caminho, md); // para markdown
 await salvarEstado(caminho, json); // para json
-```
+```ts
 
 ### Dicas e Boas Práticas
 
@@ -168,7 +168,7 @@ const bloco = (log as unknown as { bloco: Function }).bloco(
   linhas,
 );
 console.log(bloco); // impressão direta, sem prefixo
-```
+````
 
 ## Fluxos de Trabalho
 
@@ -213,7 +213,7 @@ console.log(bloco); // impressão direta, sem prefixo
 
 A partir da versão 0.2.0, o relatório JSON inclui métricas expandidas:
 
-```json
+````json
 {
   "metricas": {
     "workerPool": {
@@ -229,7 +229,7 @@ A partir da versão 0.2.0, o relatório JSON inclui métricas expandidas:
     }
   }
 }
-```
+```ts
 
 ## Linguagens / Parsing Suportado
 
@@ -291,7 +291,7 @@ Qualquer novo documento estratégico deve ser referenciado no CHECKLIST para ras
 ```ts
 import { executar } from '@nucleo/executor';
 import { analisarPadroes } from '@analistas/analista-padroes-uso';
-```
+````
 
 ## Decisões Arquiteturais
 
@@ -337,7 +337,7 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 
 Abaixo segue a árvore estrutural que deve ser seguida como referência padrão do projeto Oráculo. Ela serve como mapa para evitar confusão na organização de código, técnicas e testes. Ao criar novos artefatos, siga esta estrutura e as regras adicionais listadas em seguida.
 
-```
+```text
 .github/
 .husky/
 .oraculo/

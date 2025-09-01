@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Sistema de Versionamento de Schema
 
 ## Visão Geral
@@ -6,7 +11,7 @@ O sistema de versionamento de schema garante compatibilidade futura dos relatór
 
 ## Estrutura dos Relatórios Versionados
 
-```json
+````json
 {
   "_schema": {
     "versao": "1.0.0",
@@ -20,7 +25,7 @@ O sistema de versionamento de schema garante compatibilidade futura dos relatór
     // Dados originais do relatório
   }
 }
-```
+```ts
 
 ## Campos do Schema
 
@@ -45,18 +50,18 @@ import { criarRelatorioComVersao } from '@nucleo/schema-versao';
 
 const dados = { totalArquivos: 100, status: 'ok' };
 const relatorio = criarRelatorioComVersao(dados, '1.0.0', 'Relatório de diagnóstico');
-```
+````
 
 ### Validar Schema
 
-```typescript
+````typescript
 import { validarSchema } from '@nucleo/schema-versao';
 
 const validacao = validarSchema(relatorio);
 if (!validacao.valido) {
   console.error('Erros:', validacao.erros);
 }
-```
+```ts
 
 ### Migrar Relatório Legado
 
@@ -64,11 +69,11 @@ if (!validacao.valido) {
 import { migrarParaVersaoAtual } from '@nucleo/schema-versao';
 
 const relatorioMigrado = migrarParaVersaoAtual(relatorioLegado);
-```
+````
 
 ### Ler Relatório Versionado
 
-```typescript
+````typescript
 import { lerRelatorioVersionado } from '@zeladores/util/leitor-relatorio';
 
 const resultado = await lerRelatorioVersionado({
@@ -81,7 +86,7 @@ if (resultado.sucesso) {
   console.log('Dados:', resultado.dados);
   console.log('Versão:', resultado.schema?.versao);
 }
-```
+```bash
 
 ## Histórico de Versões
 
@@ -133,11 +138,11 @@ oraculo diagnosticar --output relatorio.md
 
 # Relatório JSON versionado
 oraculo diagnosticar --json > relatorio.json
-```
+````
 
 ### Ferramenta Consumidora
 
-```typescript
+````typescript
 import { lerRelatorioVersionado } from '@zeladores/util/leitor-relatorio';
 
 async function processarRelatorio(caminho: string) {
@@ -160,7 +165,7 @@ async function processarRelatorio(caminho: string) {
     console.warn('Versão do relatório pode ter incompatibilidades');
   }
 }
-```
+```bash
 
 ## Testes
 
@@ -177,7 +182,7 @@ Execute os testes com:
 ```bash
 npm test -- tests/nucleo/schema-versao.test.ts
 npm test -- tests/zeladores/leitor-relatorio.test.ts
-```
+````
 
 ## Futuras Extensões
 

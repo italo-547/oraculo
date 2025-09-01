@@ -111,13 +111,10 @@ describe('comandoPodar', () => {
     const { log } = await import('../../src/nucleo/constelacao/log.js');
     const program = new Command();
     const aplicarFlagsGlobais = vi.fn();
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('exit');
-    });
     program.addCommand(comandoPodar(aplicarFlagsGlobais));
-    await expect(program.parseAsync(['node', 'cli', 'podar'])).rejects.toThrow('exit');
+    await program.parseAsync(['node', 'cli', 'podar']);
     expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('erro string'));
-    exitSpy.mockRestore();
+    expect(process.exitCode).toBe(1);
   });
 
   it('remove arquivos órfãos com --force sem confirmação', async () => {
@@ -160,14 +157,11 @@ describe('comandoPodar', () => {
     const aplicarFlagsGlobais = vi.fn();
     const { iniciarInquisicao } = await import('../../src/nucleo/inquisidor.js');
     vi.mocked(iniciarInquisicao).mockRejectedValueOnce(new Error('falha inquisicao'));
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('exit');
-    });
     const cmd = comandoPodar(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    await expect(program.parseAsync(['node', 'cli', 'podar'])).rejects.toThrow('exit');
+    await program.parseAsync(['node', 'cli', 'podar']);
     expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('falha inquisicao'));
-    exitSpy.mockRestore();
+    expect(process.exitCode).toBe(1);
   });
 
   it('executa poda e lida com erro fatal em DEV_MODE', async () => {
@@ -179,16 +173,13 @@ describe('comandoPodar', () => {
     const { config } = await import('../../src/nucleo/constelacao/cosmos.js');
     config.DEV_MODE = true;
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('exit');
-    });
     const cmd = comandoPodar(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    await expect(program.parseAsync(['node', 'cli', 'podar'])).rejects.toThrow('exit');
+    await program.parseAsync(['node', 'cli', 'podar']);
     expect(log.erro).toHaveBeenCalledWith(expect.stringContaining('erro dev'));
     expect(errorSpy).toHaveBeenCalled();
+    expect(process.exitCode).toBe(1);
     errorSpy.mockRestore();
-    exitSpy.mockRestore();
     config.DEV_MODE = false;
   });
 });

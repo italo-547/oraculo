@@ -1,5 +1,10 @@
 # Checklist de Melhorias e Ajustes
 
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 Última atualização: 2025-08-29
 
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
@@ -9,6 +14,33 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [x] Em 2025-08-30 foi realizada uma revisão dos scripts em `scripts/` para reduzir duplicação e melhorar portabilidade.
   - Ação tomada: `scripts/scan-markdown.sh` foi migrado para `scripts/legacy/scan-markdown.sh` e a versão NodeJS cross-platform `scripts/scan-markdown.mjs` foi indicada como a preferida.
   - Recomendação: remover `scripts/legacy/scan-markdown.sh` após 30 dias se não houver uso detectado. Registrar reclamações/uso no histórico deste CHECKLIST antes da remoção.
+
+### Conclusão adicional (2025-09-01)
+
+- [x] Racionalização ampliada de scripts concluída.
+  - Movidos para `scripts/legacy/` com wrappers de compatibilidade:
+    - `scripts/convert-to-aliases.mjs` → wrapper; real em `scripts/legacy/convert-to-aliases.mjs`
+    - `scripts/print-low-coverage.cjs` → wrapper; real em `scripts/legacy/print-low-coverage.cjs`
+    - `scripts/test-supressao-parcial.mjs` → wrapper; real em `scripts/legacy/test-supressao-parcial.mjs`
+  - Mantidos (referenciados por npm scripts/CI):
+    - `run-tests-sequential.mjs`, `test-smart.mjs`, `scan-markdown.mjs`, `generate-notices.mjs`, `auditar-licencas.mjs`, `config-branch-protection.mjs`, `update-test-stats.mjs`, `coverage-priority.js`, `check-coverage-final.js`, `pre-public.mjs`, `add-disclaimer-md.js`, `verificar-disclaimer-md.js`, `add-spdx-headers.mjs`, `fix-test-imports.mjs`.
+  - Remoções pendentes: avaliar eliminação dos wrappers legados acima após 30 dias (sem uso em CI/npm scripts) e registrar no CHANGELOG.
+
+#### Utilitários adicionados (2025-09-01)
+
+- [x] `md:fix-fences` para etiquetar cercas de código em Markdown automaticamente.
+- [x] `security:secrets-history` para varrer histórico git por padrões de segredos com streaming (sem maxBuffer).
+
+#### Sugestões registradas (2025-09-01)
+
+- [ ] Considerar agendar `security:secrets-history` no CI (cron semanal) para sinalizar regressões no histórico.
+- [ ] Avaliar ajuste opcional de `git config diff.renameLimit` local/CI para reduzir avisos durante o scan.
+- [ ] Repetir `security:secrets-history` após merges grandes ou reescritas de histórico (ex.: squash/rebase amplos) e anotar o resultado.
+
+### Política de execução de testes no Windows (2025-09-01)
+
+- [x] Definido `npm test` como runner "smart" que escolhe o runner sequencial por padrão no Windows.
+- [x] `npm run test:sequential` permanece disponível e documentado como preferível para evitar timeouts RPC do Vitest.
 
 ## Estado Atual do Projeto (Agosto 2025)
 
@@ -33,6 +65,10 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 ## Para Fazer (Backlog Atual)
 
 ### Alta Prioridade
+
+### Segurança e Compliance (2025-09-01)
+
+- [x] Scan histórico de segredos (últimos 800 commits) executado com resultado: 0 ocorrências. Comando: `npm run security:secrets-history`. Registrar nova execução após mudanças significativas.
 
 ## Observação franca — Próximo alvo: Guardian (Outubro / Novembro 2025)
 

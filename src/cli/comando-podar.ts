@@ -165,7 +165,11 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
           `❌ Erro durante a poda: ${typeof error === 'object' && error && 'message' in error ? (error as { message: string }).message : String(error)}`,
         );
         if (config.DEV_MODE) console.error(error);
-        process.exit(1);
+        if (!process.env.VITEST) process.exit(1);
+        else {
+          process.exitCode = 1;
+          return;
+        }
       }
     });
 }

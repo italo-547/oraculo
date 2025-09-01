@@ -30,7 +30,7 @@ Executa uma análise completa do repositório, identificando problemas estrutura
 
 #### 1. Diagnóstico Básico
 
-```bash
+````bash
 # Diagnóstico completo padrão
 oraculo diagnosticar
 
@@ -39,7 +39,7 @@ oraculo diagnosticar --compact
 
 # Diagnóstico verboso com mais detalhes
 oraculo diagnosticar --verbose
-```
+```bash
 
 #### 2. Com Verificação de Integridade
 
@@ -49,11 +49,11 @@ oraculo diagnosticar --guardian-check
 
 # Diagnóstico completo com Guardian (modo verboso)
 oraculo diagnosticar --guardian-check --verbose
-```
+````
 
 #### 3. Filtros de Arquivos
 
-```bash
+````bash
 # Analisar apenas arquivos TypeScript
 oraculo diagnosticar --include "src/**/*.ts"
 
@@ -62,7 +62,7 @@ oraculo diagnosticar --exclude "**/*.test.*"
 
 # Análise focada em diretórios específicos
 oraculo diagnosticar --include "src/components/**" --include "src/hooks/**"
-```
+```bash
 
 #### 4. Saída Estruturada
 
@@ -72,17 +72,17 @@ oraculo diagnosticar --json
 
 # JSON com filtros específicos
 oraculo diagnosticar --json --include "src/**/*.js" --exclude "node_modules/**"
-```
+````
 
 #### 5. Listagem de Técnicas
 
-```bash
+````bash
 # Ver técnicas ativas antes da análise
 oraculo diagnosticar --listar-analistas
 
 # Listar técnicas em modo compacto
 oraculo diagnosticar --listar-analistas --compact
-```
+```bash
 
 ### Cenários de Uso
 
@@ -91,21 +91,21 @@ oraculo diagnosticar --listar-analistas --compact
 ```bash
 # Verificação rápida durante desenvolvimento
 oraculo diagnosticar --compact --include "src/**/*.ts"
-```
+````
 
 #### Integração CI/CD
 
-```bash
+````bash
 # Diagnóstico estruturado para pipelines
 oraculo diagnosticar --json --guardian-check
-```
+```bash
 
 #### Análise Detalhada
 
 ```bash
 # Análise completa com todos os detalhes
 oraculo diagnosticar --verbose --detalhado --guardian-check
-```
+````
 
 ---
 
@@ -125,13 +125,13 @@ Remove arquivos órfãos e lixo do repositório, mantendo apenas arquivos refere
 
 #### 1. Análise Apenas (Dry-run)
 
-```bash
+````bash
 # Ver arquivos órfãos sem remover
 oraculo podar
 
 # Análise com filtros
 oraculo podar --include "src/**" --exclude "test/**"
-```
+```bash
 
 #### 2. Remoção Automática
 
@@ -141,23 +141,23 @@ oraculo podar --force
 
 # Remoção com filtros específicos
 oraculo podar --force --include "temp/**" --exclude "logs/**"
-```
+````
 
 ### Cenários do Podar
 
 #### Limpeza de Desenvolvimento
 
-```bash
+````bash
 # Limpar arquivos temporários
 oraculo podar --force --include "temp/**" --include "*.tmp"
-```
+```bash
 
 #### Limpeza Segura
 
 ```bash
 # Ver o que será removido antes
 oraculo podar --include "build/**" --exclude "build/index.html"
-```
+````
 
 ---
 
@@ -178,13 +178,13 @@ Gerencia e verifica a integridade do ambiente do Oráculo.
 
 #### 1. Verificação Básica
 
-```bash
+````bash
 # Verificar integridade atual
 oraculo guardian
 
 # Verificação em JSON
 oraculo guardian --json
-```
+```bash
 
 #### 2. Comparação com Baseline
 
@@ -194,17 +194,17 @@ oraculo guardian --diff
 
 # Diferenças em formato JSON
 oraculo guardian --diff --json
-```
+````
 
 #### 3. Aceitação de Baseline
 
-```bash
+````bash
 # Aceitar novo baseline
 oraculo guardian --accept-baseline
 
 # Aceitar baseline em JSON
 oraculo guardian --accept-baseline --json
-```
+```bash
 
 #### 4. Verificação Completa
 
@@ -214,32 +214,32 @@ oraculo guardian --full-scan
 
 # Verificação completa com diferenças
 oraculo guardian --full-scan --diff
-```
+````
 
 ### Cenários do Guardian
 
 #### Setup Inicial
 
-```bash
+````bash
 # Criar baseline inicial
 oraculo guardian
 # Aceitar o baseline criado
 oraculo guardian --accept-baseline
-```
+```bash
 
 #### Verificação de Segurança
 
 ```bash
 # Verificar integridade antes de commits importantes
 oraculo guardian --diff
-```
+````
 
 #### Verificação Estruturada
 
-```bash
+````bash
 # Verificação estruturada para pipelines
 oraculo guardian --json
-```
+```bash
 
 ---
 
@@ -258,11 +258,11 @@ oraculo podar --force
 
 # 3. Verificação de integridade
 oraculo guardian
-```
+````
 
 #### 2. Preparação para Deploy
 
-```bash
+````bash
 # Diagnóstico estruturado para CI
 oraculo diagnosticar --json --guardian-check
 
@@ -271,7 +271,7 @@ oraculo podar --force --include "temp/**" --include "dist/**"
 
 # Verificação final
 oraculo guardian --diff
-```
+```bash
 
 #### 3. Desenvolvimento Ativo
 
@@ -284,13 +284,13 @@ oraculo podar --force --include "*.tmp" --include ".DS_Store"
 
 # Verificação de integridade
 oraculo guardian --diff
-```
+````
 
 ### Scripts de Automação
 
 #### Setup de Projeto
 
-```bash
+````bash
 #!/bin/bash
 # setup.sh - Configuração inicial do projeto
 
@@ -304,7 +304,7 @@ echo "🛡️ Configurando baseline de integridade..."
 oraculo guardian --accept-baseline
 
 echo "✅ Setup concluído!"
-```
+```text
 
 #### Pipeline CI/CD
 
@@ -324,7 +324,7 @@ jobs:
         run: npx oraculo podar --force
       - name: Guardian
         run: npx oraculo guardian --json
-```
+````
 
 ---
 

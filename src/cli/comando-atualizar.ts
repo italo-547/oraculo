@@ -62,7 +62,12 @@ export function comandoAtualizar(aplicarFlagsGlobais: (opts: Record<string, unkn
           });
         }
         if (config.DEV_MODE) console.error(err);
-        process.exit(1);
+        // Em ambiente de teste (Vitest), n\u00e3o encerre o processo para n\u00e3o derrubar o runner
+        if (!process.env.VITEST) process.exit(1);
+        else {
+          process.exitCode = 1;
+          return;
+        }
       }
     });
 }

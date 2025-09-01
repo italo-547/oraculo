@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Sistema de Filtros do Oráculo
 
 ## Visão Geral
@@ -10,7 +15,7 @@ O Oráculo possui um sistema de filtros hierárquico para controlar quais arquiv
 
 As flags de linha de comando têm a **prioridade máxima** e sobrescrevem qualquer outra configuração:
 
-```bash
+````bash
 # Exemplo: incluir apenas arquivos TypeScript
 oraculo diagnosticar --include "src/**/*.ts"
 
@@ -19,7 +24,7 @@ oraculo diagnosticar --exclude "**/*.test.*"
 
 # Exemplo: combinação de include/exclude
 oraculo diagnosticar --include "src/**" --exclude "src/**/*.test.*"
-```
+```text
 
 ### 2. Configuração do Usuário (oraculo.config.json)
 
@@ -38,7 +43,7 @@ A configuração no arquivo `oraculo.config.json` é aplicada quando **não há 
     "defaultExcludes": ["temp/**", "**/*.tmp"]
   }
 }
-```
+````
 
 **Nota**: `defaultExcludes` é um campo legado. Prefira usar `globalExcludeGlob` para novas configurações.
 
@@ -76,13 +81,13 @@ Quando não há configuração do usuário, o Oráculo usa padrões recomendados
 
 Os padrões `--include` suportam grupos com lógica AND/OR:
 
-```bash
+````bash
 # Grupo único: arquivos devem casar src/ E (.ts OU .tsx)
 oraculo diagnosticar --include "src/**/*.ts,src/**/*.tsx"
 
 # Múltiplos grupos: arquivos devem casar (src/ E .ts) OU (tests/ E .test.ts)
 oraculo diagnosticar --include "src/**/*.ts" --include "tests/**/*.test.ts"
-```
+```bash
 
 ### Expansão Automática
 
@@ -92,19 +97,19 @@ Padrões simples de include são automaticamente expandidos:
 # "src" se expande para "src/**"
 # "node_modules" se expande para "node_modules/**"
 oraculo diagnosticar --include "src"
-```
+````
 
 ## Cenários de Uso
 
 ### Análise Focada
 
-```bash
+````bash
 # Analisar apenas código fonte
 oraculo diagnosticar --include "src/**" --exclude "**/*.test.*"
 
 # Analisar apenas um diretório específico
 oraculo diagnosticar --include "packages/api/**"
-```
+```bash
 
 ### Análise com Dependências
 
@@ -114,17 +119,17 @@ oraculo diagnosticar --include "node_modules/**"
 
 # Análise completa incluindo dependências
 oraculo diagnosticar --include "src/**" --include "node_modules/**"
-```
+````
 
 ### Configuração Personalizada
 
-```json
+````json
 {
   "INCLUDE_EXCLUDE_RULES": {
     "globalExcludeGlob": ["**/node_modules/**", "**/dist/**", "**/*.log", "temp/**", ".cache/**"]
   }
 }
-```
+```bash
 
 ## Resolução de Conflitos
 
@@ -156,7 +161,7 @@ Use `--verbose` para ver quais filtros estão sendo aplicados:
 ```bash
 oraculo diagnosticar --verbose --include "src/**"
 # Mostra: "Filtros ativos: include=[src/**] exclude=[node_modules/**, ...]"
-```
+````
 
 ### Verificação de Padrões
 
@@ -177,24 +182,26 @@ Para debugar padrões glob, use ferramentas como:
 
 ### Monorepo com Múltiplos Pacotes
 
-```json
+````json
 {
   "INCLUDE_EXCLUDE_RULES": {
     "globalExcludeGlob": ["**/node_modules/**", "**/dist/**", "**/*.log", "packages/**/temp/**"]
   }
 }
-```
+```bash
 
 ### Projeto com Build Customizado
 
 ```bash
 # Excluir build artifacts customizados
 oraculo diagnosticar --exclude "build/**" --exclude ".tmp/**"
-```
+````
 
 ### Análise de Testes Apenas
 
-```bash
+````bash
 # Analisar apenas arquivos de teste
 oraculo diagnosticar --include "**/*.test.*" --include "**/*.spec.*"
-```
+```text
+
+````

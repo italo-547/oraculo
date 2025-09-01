@@ -63,7 +63,11 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
               (
                 config as unknown as { GUARDIAN_IGNORE_PATTERNS: string[] }
               ).GUARDIAN_IGNORE_PATTERNS = ignoradosOriginais;
-              process.exit(1);
+              if (!process.env.VITEST) process.exit(1);
+              else {
+                process.exitCode = 1;
+                return;
+              }
             }
             log.info(chalk.bold('\n🔄 Aceitando novo baseline de integridade...\n'));
             await acceptNewBaseline(fileEntries);
@@ -102,7 +106,11 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
                   'Execute `oraculo guardian --accept-baseline` para aceitar essas mudanças.',
                 );
               }
-              process.exit(1);
+              if (!process.env.VITEST) process.exit(1);
+              else {
+                process.exitCode = 1;
+                return;
+              }
             } else {
               if (opts.json) {
                 console.log(JSON.stringify({ status: 'ok', detalhes: [] }));
@@ -191,7 +199,11 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
                 } else {
                   log.aviso('🚨 Guardian: alterações suspeitas detectadas!');
                 }
-                process.exit(1);
+                if (!process.env.VITEST) process.exit(1);
+                else {
+                  process.exitCode = 1;
+                  return;
+                }
               }
             }
           }
@@ -205,7 +217,11 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
           if (config.DEV_MODE) console.error(err);
           if (opts.json)
             console.log(JSON.stringify({ status: 'erro', mensagem: (err as Error).message }));
-          process.exit(1);
+          if (!process.env.VITEST) process.exit(1);
+          else {
+            process.exitCode = 1;
+            return;
+          }
         }
       })
   );

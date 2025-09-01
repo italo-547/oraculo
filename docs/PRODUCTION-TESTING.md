@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Testes em modo produção — Oráculo CLI
 
 Este documento explica como reproduzir e validar a execução do Oráculo em um cenário próximo ao de produção, com cap de timeout aplicado aos analistas/workers e recomendações para evitar timeouts do runner (Vitest) em ambientes com recursos limitados.
@@ -40,11 +45,11 @@ Resumo da execução de testes realizada localmente:
 
 - Comando executado (exemplo):
 
-```powershell
+````powershell
 $env:ORACULO_MAX_ANALYST_TIMEOUT_MS='10000';
 $env:NODE_ENV='production';
 npm test
-```
+```powershell
 
 - Resultado observado na minha execução local:
   - Test Files: 262 passed
@@ -87,13 +92,13 @@ Recomendações gerais:
 
 ### Resultado do último teste local (executado)
 
-Resumo rápido do que vi ao rodar `npm run test:sequential` em modo produção com `ORACULO_MAX_ANALYST_TIMEOUT_MS=10000`:
+Resumo com o runner sequencial atualizado (split de E2E por `-t`) e `ORACULO_MAX_ANALYST_TIMEOUT_MS=10000`:
 
-- Test Files: 93 passed
-- Tests: 179 passed
-- Errors: 1 unhandled error — Vitest interno: "Timeout calling \"onTaskUpdate\""
+- Test Files: 262 passed
+- Tests: 745 passed
+- Errors: 0 unhandled errors (sem "Timeout calling \"onTaskUpdate\"")
 
-Esse erro indica que o runner ainda pode ficar suscetível a RPC timeouts em ambientes limitados; as recomendações acima (sequencializar, reduzir workers, shard E2E) são aplicáveis.
+Observação: ao dividir `tests/cli/e2e-bin.test.ts` por casos com `-t`, o relatório mostra “1 passed | 4 skipped” por execução — isso é esperado, pois somente um caso é rodado por vez.
 
 Exemplo PowerShell (executa em modo produção com cap de 10s e sequência de testes):
 
@@ -101,15 +106,15 @@ Exemplo PowerShell (executa em modo produção com cap de 10s e sequência de te
 $env:ORACULO_MAX_ANALYST_TIMEOUT_MS='10000';
 $env:NODE_ENV='production';
 npm run test:sequential
-```
+````
 
 Para executar apenas um teste ou um conjunto específico (smoke/E2E), rode:
 
-```powershell
+````powershell
 $env:ORACULO_MAX_ANALYST_TIMEOUT_MS='10000';
 $env:NODE_ENV='production';
 npx vitest run tests/cli/e2e-bin.test.ts --reporter dot
-```
+```powershell
 
 Ou executar testes unitários de `nucleo` (rápido):
 
@@ -117,17 +122,17 @@ Ou executar testes unitários de `nucleo` (rápido):
 $env:ORACULO_MAX_ANALYST_TIMEOUT_MS='10000';
 $env:NODE_ENV='production';
 npx vitest run tests/nucleo/worker-pool.test.ts --reporter dot
-```
+````
 
 ## 4. Smoke test CLI (modo produção)
 
 Um exemplo prático para validar que o CLI roda e respeita os timeouts:
 
-```powershell
+````powershell
 $env:ORACULO_MAX_ANALYST_TIMEOUT_MS='10000';
 $env:NODE_ENV='production';
 npx vitest run tests/cli/comando-diagnosticar.include-exclude.test.ts --reporter dot
-```
+```bash
 
 Esse teste valida fluxos de varredura/diagnóstico com logs e exportações e é útil como smoke test antes de rodar a suíte completa.
 
@@ -139,7 +144,7 @@ Esse teste valida fluxos de varredura/diagnóstico com logs e exportações e é
     - workers bloqueando o event loop por longos períodos (técnicas demoradas);
     - saturação de IO/CPU.
   - Mitigações imediatas:
-    - use `npm run test:sequential` (roda em séries e reduz pressão RPC);
+    - use `npm run test:sequential` (roda em séries e reduz pressão RPC; trata `tests/cli` por arquivo e divide E2E por `-t`);
     - reduzir `WORKER_POOL_MAX_WORKERS` para 1 ou 2 em CI restrito;
     - reduzir `ORACULO_MAX_ANALYST_TIMEOUT_MS` para forçar falha rápida e evitar bloqueios prolongados;
     - isolar os testes E2E e executá-los em um job separado no CI.
@@ -173,7 +178,7 @@ steps:
       NODE_ENV: production
       ORACULO_MAX_ANALYST_TIMEOUT_MS: '8000'
     run: npx vitest run tests/cli/e2e-*.test.ts
-```
+````
 
 ## 7. Debug e coleta de evidências
 
@@ -221,13 +226,13 @@ Resumo rápido: existem duas formas práticas de executar o Oráculo em um perfi
 
 Preferível (CI): definir as variáveis de ambiente no job do runner. Exemplo PowerShell:
 
-```powershell
+````powershell
 $env:ORACULO_MAX_ANALYST_TIMEOUT_MS='10000';
 $env:NODE_ENV='production';
 $env:WORKER_POOL_MAX_WORKERS='2';
 $env:WORKER_POOL_BATCH_SIZE='10';
 npm run build; node ./dist/cli.js diagnosticar --scan-only
-```
+```text
 
 Alternativa (arquivo de configuração): adicionar o bloco `productionDefaults` em `oraculo.config.safe.json` (já existe suporte de convenção no repositório). Exemplo mínimo:
 
@@ -242,7 +247,7 @@ Alternativa (arquivo de configuração): adicionar o bloco `productionDefaults` 
     "LOG_ESTRUTURADO": false
   }
 }
-```
+````
 
 Observação: editar `oraculo.config.safe.json` facilita a padronização em ambientes locais/servidores, mas o método portátil e imediato é sempre exportar variáveis de ambiente no job do CI.
 

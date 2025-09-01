@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Estratégia de Testes - Detector de Arquétipos
 
 Última atualização: 2025-08-28
@@ -29,7 +34,7 @@ O detector de arquétipos (`detector-arquetipos.ts`) é responsável por identif
 
 Os testes validam o enriquecimento heurístico através de sinais avançados:
 
-```typescript
+````typescript
 interface SinaisProjetoAvancados {
   funcoes: number; // Contagem de funções declaradas
   classes: number; // Contagem de classes
@@ -43,7 +48,7 @@ interface SinaisProjetoAvancados {
   arquivosPadrao: string[]; // Arquivos de configuração
   arquivosConfig: string[]; // Arquivos de configuração
 }
-```
+```text
 
 ### 3. Sistema de Confiança
 
@@ -51,7 +56,7 @@ interface SinaisProjetoAvancados {
 
 ```typescript
 confidence = Math.min(100, Math.round((score / maxPossible) * 100));
-```
+````
 
 #### Ajustes Contextuais
 
@@ -93,14 +98,14 @@ confidence = Math.min(100, Math.round((score / maxPossible) * 100));
 
 #### Padrão (Recomendado)
 
-```typescript
+````typescript
 const CONFIGURACAO_PADRAO = {
   THRESHOLD_CONFIANCA_MINIMA: 30,
   THRESHOLD_DIFERENCA_DOMINANTE: 15,
   PENALIDADE_MISSING_REQUIRED: 20,
   // ... outros parâmetros
 };
-```
+```bash
 
 #### Conservadora
 
@@ -125,7 +130,7 @@ ORACULO_MODO_PONTUACAO=permissivo
 
 # Usar configuração padrão (padrão)
 ORACULO_MODO_PONTUACAO=padrao
-```
+````
 
 ## Métricas de Qualidade
 

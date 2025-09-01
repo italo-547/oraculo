@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Timeout por Analista
 
 ## 📋 **VISÃO GERAL**
@@ -8,13 +13,13 @@ O Oráculo implementa um sistema de timeout por analista individual para preveni
 
 ### **Variável de Ambiente**
 
-```bash
+````bash
 # Timeout em milissegundos (padrão: 30000 = 30 segundos)
 ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS=30000
 
 # Desabilitar timeout (0)
 ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS=0
-```
+```text
 
 ### **Arquivo de Configuração**
 
@@ -22,7 +27,7 @@ ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS=0
 {
   "ANALISE_TIMEOUT_POR_ANALISTA_MS": 30000
 }
-```
+````
 
 ## 🔧 **COMO FUNCIONA**
 
@@ -43,13 +48,13 @@ ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS=0
 
 ### **Com Timeout Ativo**
 
-```
+```text
 ⏰ Timeout: analista 'analista-funcoes-longas' excedeu 30000ms para src/arquivo-grande.ts
 ```
 
 ### **No Relatório JSON**
 
-```json
+````json
 {
   "ocorrencias": [
     {
@@ -61,7 +66,7 @@ ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS=0
     }
   ]
 }
-```
+```text
 
 ## 🎯 **CASOS DE USO**
 
@@ -103,7 +108,7 @@ if (timeoutMs > 0) {
 } else {
   resultado = await tecnica.aplicar(/* ... */);
 }
-```
+````
 
 ### **Cobertura de Testes**
 
@@ -116,7 +121,7 @@ if (timeoutMs > 0) {
 
 ### **Logs Estruturados**
 
-```json
+````json
 {
   "tipo": "analista",
   "arquivo": "src/arquivo.ts",
@@ -124,7 +129,7 @@ if (timeoutMs > 0) {
   "duracaoMs": 25000,
   "timeoutExcedido": true
 }
-```
+```text
 
 ### **Relatórios de Timeout**
 
@@ -150,25 +155,33 @@ if (timeoutMs > 0) {
 
 ### **Timeout Muito Curto**
 
-```
+````
+
 Sintomas: Muitos timeouts em arquivos normais
 Solução: Aumente ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS
-```
+
+```text
 
 ### **Timeout Muito Longo**
 
 ```
+
 Sintomas: Builds travando por analistas lentos
 Solução: Diminua ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS
-```
+
+```text
 
 ### **Analista Sempre com Timeout**
 
 ```
+
 Sintomas: Mesmo analista sempre timeout
 Solução: Verifique implementação do analista ou otimize algoritmo
-```
+
+```text
 
 ---
 
 **Esta funcionalidade garante robustez e previsibilidade na análise, mesmo em cenários adversos!** 🛡️
+
+```

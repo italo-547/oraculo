@@ -82,18 +82,15 @@ describe('comandoGuardian', () => {
     const aplicarFlagsGlobais = vi.fn();
     const cmd = comandoGuardian(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    try {
-      await program.parseAsync(['node', 'cli', 'guardian', '--diff']);
-    } catch (e) {
-      // esperado por causa do process.exit
-    }
+    await program.parseAsync(['node', 'cli', 'guardian', '--diff']);
     // Verifica se pelo menos um log.info contém "Comparando" e os arquivos
     const infoCalls = log.info.mock.calls.flat().join('\n');
     expect(infoCalls).toMatch(/comparando.+integridade/i);
     expect(infoCalls).toMatch(/arquivo1\.ts/);
     expect(infoCalls).toMatch(/arquivo2\.ts/);
     expect(log.aviso.mock.calls.flat().join('\n')).toMatch(/diferenças detectadas/i);
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(process.exitCode).toBe(1);
+    expect(exitSpy).not.toHaveBeenCalled();
   });
 
   it('mostra sucesso quando --diff e não há alterações', async () => {
@@ -178,14 +175,11 @@ describe('comandoGuardian', () => {
     const aplicarFlagsGlobais = vi.fn();
     const cmd = comandoGuardian(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    try {
-      await program.parseAsync(['node', 'cli', 'guardian']);
-    } catch (e) {
-      // esperado por causa do process.exit
-    }
+    await program.parseAsync(['node', 'cli', 'guardian']);
     const avisoCalls = log.aviso.mock.calls.flat().join('\n');
     expect(avisoCalls).toMatch(/alterações suspeitas/i);
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(process.exitCode).toBe(1);
+    expect(exitSpy).not.toHaveBeenCalled();
   });
 
   it('trata erro e mostra mensagem de erro', async () => {
@@ -200,14 +194,11 @@ describe('comandoGuardian', () => {
     const aplicarFlagsGlobais = vi.fn();
     const cmd = comandoGuardian(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    try {
-      await program.parseAsync(['node', 'cli', 'guardian']);
-    } catch (e) {
-      // esperado por causa do process.exit
-    }
+    await program.parseAsync(['node', 'cli', 'guardian']);
     const erroCalls = log.erro.mock.calls.flat().join('\n');
     expect(erroCalls).toMatch(/falha de integridade/i);
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(process.exitCode).toBe(1);
+    expect(exitSpy).not.toHaveBeenCalled();
   });
 
   it('trata erro e mostra mensagem de erro detalhado em DEV_MODE', async () => {
@@ -232,7 +223,8 @@ describe('comandoGuardian', () => {
       // esperado por causa do process.exit
     }
     expect(consoleError).toHaveBeenCalledWith(erro);
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(process.exitCode).toBe(1);
+    expect(exitSpy).not.toHaveBeenCalled();
     consoleError.mockRestore();
   });
 });

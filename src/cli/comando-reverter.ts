@@ -25,7 +25,11 @@ export function registrarComandoReverter(program: Command) {
 
           if (!mapaReversao.podeReverterArquivo(arquivo)) {
             log.erro(`❌ Nenhum move encontrado para o arquivo: ${arquivo}`);
-            process.exit(1);
+            if (!process.env.VITEST) process.exit(1);
+            else {
+              process.exitCode = 1;
+              return;
+            }
           }
 
           log.info(`🔄 Revertendo moves para: ${arquivo}`);
@@ -35,7 +39,11 @@ export function registrarComandoReverter(program: Command) {
             log.sucesso(`✅ Arquivo revertido com sucesso: ${arquivo}`);
           } else {
             log.erro(`❌ Falha ao reverter arquivo: ${arquivo}`);
-            process.exit(1);
+            if (!process.env.VITEST) process.exit(1);
+            else {
+              process.exitCode = 1;
+              return;
+            }
           }
         }),
     )
@@ -53,7 +61,11 @@ export function registrarComandoReverter(program: Command) {
             log.sucesso(`✅ Move revertido com sucesso: ${id}`);
           } else {
             log.erro(`❌ Falha ao reverter move: ${id}`);
-            process.exit(1);
+            if (!process.env.VITEST) process.exit(1);
+            else {
+              process.exitCode = 1;
+              return;
+            }
           }
         }),
     )
@@ -69,7 +81,11 @@ export function registrarComandoReverter(program: Command) {
             console.log('   Não será possível reverter moves futuros sem o histórico.');
             console.log('');
             console.log('Use --force para confirmar ou pressione Ctrl+C para cancelar.');
-            process.exit(1);
+            if (!process.env.VITEST) process.exit(1);
+            else {
+              process.exitCode = 1;
+              return;
+            }
           }
 
           await mapaReversao.limpar();

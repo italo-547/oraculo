@@ -65,8 +65,8 @@ describe('@e2e E2E CLI binário', () => {
     delete envClean2.VITEST;
     const proc = spawnSync(
       process.execPath,
-      [cliPath, 'diagnosticar', '--scan-only', '--export', '--silence'],
-      { cwd: tempDir, encoding: 'utf-8' },
+      ['--loader', loader, cliPath, 'diagnosticar', '--scan-only', '--export', '--silence'],
+      { cwd: tempDir, encoding: 'utf-8', env: envClean2 as NodeJS.ProcessEnv },
     );
     expect(proc.status).toBe(0);
     // Relatórios padrão vão para ./relatorios
@@ -117,10 +117,13 @@ describe('@e2e E2E CLI binário', () => {
     );
     mkdirSync(join(tempDir, 'src'));
     writeFileSync(join(tempDir, 'src', 'index.ts'), 'console.log("guardian")', 'utf-8');
+    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
+    const envClean4 = { ...process.env } as Record<string, string | undefined>;
+    delete envClean4.VITEST;
     const proc = spawnSync(
       process.execPath,
-      [cliPath, 'diagnosticar', '--guardian-check', '--scan-only', '--silence'],
-      { cwd: tempDir, encoding: 'utf-8' },
+      ['--loader', loader, cliPath, 'diagnosticar', '--guardian-check', '--scan-only', '--silence'],
+      { cwd: tempDir, encoding: 'utf-8', env: envClean4 as NodeJS.ProcessEnv },
     );
     expect(proc.status).toBe(0);
     // Verifica criação do baseline
@@ -141,11 +144,16 @@ describe('@e2e E2E CLI binário', () => {
     writeFileSync(join(tempDir, 'src', 'bot.txt'), 'onCommand("cmdX", ()=>{})', 'utf-8');
     const envLimpo = { ...process.env } as Record<string, string | undefined>;
     delete envLimpo.VITEST; // permitir process.exit no filho
-    const proc = spawnSync(process.execPath, [cliPath, 'diagnosticar', '--silence'], {
-      cwd: tempDir,
-      encoding: 'utf-8',
-      env: envLimpo as NodeJS.ProcessEnv,
-    });
+    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
+    const proc = spawnSync(
+      process.execPath,
+      ['--loader', loader, cliPath, 'diagnosticar', '--silence'],
+      {
+        cwd: tempDir,
+        encoding: 'utf-8',
+        env: envLimpo as NodeJS.ProcessEnv,
+      },
+    );
     // Implementação permissiva pode ignorar AST nulo e seguir com exit 0
     expect([0, 1]).toContain(proc.status);
   }, 60000);

@@ -30,14 +30,14 @@ Sistema de paralelização automática que acelera a análise em projetos grande
 
 ### Configuração
 
-```bash
+````bash
 # Configuração automática (recomendado)
 oraculo diagnosticar
 
 # Configuração manual
 WORKER_POOL_MAX_WORKERS=4 oraculo diagnosticar
 WORKER_POOL_BATCH_SIZE=20 oraculo diagnosticar
-```
+```text
 
 ### Variáveis de Ambiente
 
@@ -58,7 +58,7 @@ WORKER_POOL_BATCH_SIZE=20 oraculo diagnosticar
     "duracaoTotalMs": 890
   }
 }
-```
+````
 
 ## 📋 Schema Versioning
 
@@ -81,7 +81,7 @@ Sistema de versionamento automático dos relatórios JSON com compatibilidade ba
 
 ### Exemplo de Relatório Versionado
 
-```json
+````json
 {
   "_schema": {
     "version": "1.0.0",
@@ -91,7 +91,7 @@ Sistema de versionamento automático dos relatórios JSON com compatibilidade ba
   "estruturaIdentificada": { ... },
   "guardian": { ... }
 }
-```
+```bash
 
 ## 🧠 Sistema de Pontuação Adaptativa
 
@@ -123,7 +123,7 @@ PONTUACAO_MODO=conservador oraculo diagnosticar
 
 # Modo permissivo
 PONTUACAO_MODO=permissivo oraculo diagnosticar
-```
+````
 
 ### Variáveis de Ambiente
 
@@ -136,7 +136,7 @@ PONTUACAO_MODO=permissivo oraculo diagnosticar
 
 ### Exemplo de Saída
 
-```json
+````json
 {
   "pontuacaoAdaptativa": {
     "fatorEscala": 2.5,
@@ -144,7 +144,7 @@ PONTUACAO_MODO=permissivo oraculo diagnosticar
     "bonusFramework": 1.05
   }
 }
-```
+```bash
 
 ## ⚡ Correção Crítica: Exclusão Automática
 
@@ -172,7 +172,7 @@ oraculo diagnosticar  # Resultado: 2111 arquivos
 
 # Depois: escaneia apenas código relevante
 oraculo diagnosticar  # Resultado: ~633 arquivos
-```
+````
 
 ## 📊 Métricas Expandidas
 
@@ -180,7 +180,7 @@ oraculo diagnosticar  # Resultado: ~633 arquivos
 
 A v0.2.0 inclui métricas detalhadas sobre o funcionamento interno do sistema:
 
-```json
+````json
 {
   "metricas": {
     "workerPool": {
@@ -196,7 +196,7 @@ A v0.2.0 inclui métricas detalhadas sobre o funcionamento interno do sistema:
     }
   }
 }
-```
+```bash
 
 ### workerPool
 
@@ -236,17 +236,17 @@ PONTUACAO_MODO=conservador oraculo diagnosticar
 
 # Para máxima precisão
 WORKER_POOL_ENABLED=true PONTUACAO_MODO=padrao oraculo diagnosticar
-```
+````
 
 #### Verificação de Compatibilidade
 
-```bash
+````bash
 # Verificar schema version
 oraculo diagnosticar --json | jq '._schema'
 
 # Verificar métricas expandidas
 oraculo diagnosticar --json | jq '.metricas.workerPool'
-```
+```bash
 
 ## 🎯 Casos de Uso
 
@@ -254,19 +254,19 @@ oraculo diagnosticar --json | jq '.metricas.workerPool'
 
 ```bash
 WORKER_POOL_MAX_WORKERS=8 WORKER_POOL_BATCH_SIZE=20 oraculo diagnosticar --verbose
-```
+````
 
 ### Análise Conservadora para CI
 
-```bash
+````bash
 PONTUACAO_MODO=conservador oraculo diagnosticar --json --guardian-check
-```
+```bash
 
 ### Debug com Métricas Detalhadas
 
 ```bash
 WORKER_POOL_MAX_WORKERS=2 oraculo diagnosticar --verbose --export
-```
+````
 
 ## 📈 Performance Esperada
 
@@ -287,7 +287,7 @@ WORKER_POOL_MAX_WORKERS=2 oraculo diagnosticar --verbose --export
 
 ### Logs Expandidos
 
-```bash
+````bash
 # Ver estatísticas do pool
 oraculo diagnosticar --verbose
 
@@ -295,13 +295,13 @@ oraculo diagnosticar --verbose
 # [INFO] Pool de workers desabilitado (Worker Threads não disponível)
 # [INFO] 🔄 Usando processamento sequencial (workers desabilitados)
 # [INFO] Workers ativos: 4, Processados: 150, Erros: 0
-```
+```bash
 
 ### Métricas em JSON
 
 ```bash
 oraculo diagnosticar --json --export
-```
+````
 
 Gera arquivos com métricas completas para análise posterior.
 
@@ -309,13 +309,13 @@ Gera arquivos com métricas completas para análise posterior.
 
 ### Pool de Workers não Funciona
 
-```bash
+````bash
 # Verificar disponibilidade
 node -e "console.log(require('worker_threads').isMainThread)"
 
 # Forçar modo sequencial
 WORKER_POOL_ENABLED=false oraculo diagnosticar
-```
+```bash
 
 ### Problemas de Schema
 
@@ -325,17 +325,17 @@ oraculo diagnosticar --json | jq '._schema.version'
 
 # Forçar compatibilidade
 # (automático na v0.2.0)
-```
+````
 
 ### Pontuação Inconsistente
 
-```bash
+````bash
 # Resetar para modo padrão
 PONTUACAO_MODO=padrao oraculo diagnosticar
 
 # Ver fatores aplicados
 oraculo diagnosticar --json | jq '.metricas.pontuacaoAdaptativa'
-```
+```text
 
 ## 📚 Documentação Relacionada
 
@@ -349,3 +349,4 @@ oraculo diagnosticar --json | jq '.metricas.pontuacaoAdaptativa'
 
 **Última atualização**: 28 de agosto de 2025
 **Versão documentada**: Oráculo CLI v0.2.0
+````

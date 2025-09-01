@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Guia: Configurar o Oráculo no seu ambiente (evitar bloqueios por timeout e adaptação)
 
 Objetivo: passos práticos para desenvolver e rodar o Oráculo em workspaces diversos sem ser travado por timeouts, guardian ou diferenças de plataforma.
@@ -15,9 +20,9 @@ Timeout por analista (padrão):
 
 Variável de ambiente (PowerShell):
 
-```powershell
+````powershell
 $env:ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS = '60000' # 60s para dev
-```
+```text
 
 Alternativa em `oraculo.config.json`:
 
@@ -25,20 +30,20 @@ Alternativa em `oraculo.config.json`:
 {
   "ANALISE_TIMEOUT_POR_ANALISTA_MS": 60000
 }
-```
+````
 
 - Desabilitar o timeout (para debug local pesado):
 
-```powershell
+````powershell
 $env:ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS = '0'
-```
+```powershell
 
 - Worker pool (reduz tempo e evita timeouts locais): ajustar conforme CPU/Core
 
 ```powershell
 $env:WORKER_POOL_MAX_WORKERS = '4'
 $env:WORKER_POOL_BATCH_SIZE = '10'
-```
+````
 
 ## 2) Recomendações por ambiente
 
@@ -60,11 +65,11 @@ Situação comum: ao rodar `guardian` pela primeira vez o processo cria um basel
 
 Aceitar baseline manualmente (se confiar no estado atual):
 
-```powershell
+````powershell
 node ./dist/cli.js guardian --aceitar
 # ou
 oraculo guardian --aceitar
-```
+```text
 
 Tornar o Guardian permissivo temporariamente via config (arquivo `oraculo.config.json`):
 
@@ -75,7 +80,7 @@ Tornar o Guardian permissivo temporariamente via config (arquivo `oraculo.config
   "GUARDIAN_ALLOW_DELS": true,
   "GUARDIAN_ALLOW_CHG": true
 }
-```
+````
 
 Observação: prefira `--aceitar` para workflow humano; alterar enforcement é útil em CI temporariamente.
 
@@ -85,9 +90,9 @@ Estratégia de curto prazo: normalizar EOL e remover BOM quando estiver testando
 
 Exemplo (PowerShell):
 
-```powershell
+````powershell
 $env:ORACULO_ANALISE_NORMALIZAR = 'true'
-```
+```powershell
 
 Se o repositório for usado em Windows e Linux por times diferentes, defina timeout maiores e use `--scan-only` para consistência.
 
@@ -100,21 +105,21 @@ Ajuste `VITEST_TEST_TIMEOUT_MS` quando necessário:
 ```powershell
 $env:VITEST_TEST_TIMEOUT_MS = '300000' # 5 minutos
 npm run test:sequential
-```
+````
 
 ## 6) Limpeza / resets úteis
 
 Limpar histórico que pode causar flakiness:
 
-```powershell
+````powershell
 rm -Force -Recurse .oraculo\historico-metricas
-```
+```powershell
 
 Recriar baseline se o Guardian ficar em estado inconsistente:
 
 ```powershell
 node ./dist/cli.js guardian --aceitar
-```
+````
 
 ## 7) Flags e modos úteis do CLI
 

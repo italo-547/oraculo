@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 <!-- SPDX-License-Identifier: MIT -->
 
 # Vitest: RPC timeout intermitente ("Timeout calling 'onTaskUpdate'")
@@ -23,6 +28,12 @@ Isso aparece mesmo quando todos os testes relatam status "passed" — o runner e
 - Adicionamos `scripts/run-tests-sequential.mjs` e o script de npm `test:sequential` que executa os diretórios de `tests/` um a um com `--maxWorkers=1 --reporter=dot`.
 - Refatoramos mocks problemáticos para serem hoisted-safe (vitest hoist) e corrigimos _module id_ em alguns testes.
 
+Atualizações adicionais (2025-09-01):
+
+- O runner sequencial agora trata a pasta `tests/cli` em modo “por arquivo” e divide o arquivo pesado `tests/cli/e2e-bin.test.ts` em casos individuais usando `-t <nome-do-teste>`. Isso reduz a duração contínua de um único worker e mitiga os timeouts do RPC.
+- Quando um caso E2E específico é executado com `-t`, é normal que o relatório mostre “1 passed | 4 skipped” (os demais casos do arquivo foram pulados). Esse comportamento é esperado e não indica falha.
+- Para ambientes Windows/PowerShell, o runner chama diretamente `node …/vitest.mjs` e passa variáveis de ambiente pelo spawn ao invés de usar atribuições inline (evita erros como “=1 não reconhecido”).
+
 ## Próximos passos recomendados
 
 1. Reproduzir em ambiente limpo com Node 24 e usar flags `--no-file-parallelism --no-isolate` para investigar se o bug é de IPC ou do runner.
@@ -34,5 +45,9 @@ Isso aparece mesmo quando todos os testes relatam status "passed" — o runner e
 - `package.json` → script `test:sequential`
 - `scripts/run-tests-sequential.mjs` → runner sequencial por diretório
 - `vitest.config.ts` → leitura de `VITEST_TEST_TIMEOUT_MS`
+
+Notas de execução atuais (2025-09-01):
+
+- Com o runner sequencial atualizado e a divisão dos E2E por caso, a suíte completa passou localmente sem emitir o erro “Timeout calling "onTaskUpdate"”.
 
 Data da observação: 2025-08-30

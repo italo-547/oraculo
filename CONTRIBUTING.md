@@ -79,13 +79,13 @@ Boas práticas adicionais:
 
 Copie e marque no corpo do PR:
 
-```text
+````text
 - [ ] Passou em `npm run check`
 - [ ] Cobertura preservada / aumentada
 - [ ] Contratos JSON inalterados ou documentados
 - [ ] Sem logs de debug sobrando
 - [ ] Docs atualizados
-```
+```text
 
 ## Licença
 
@@ -94,3 +94,4 @@ Ao contribuir, você concorda que sua contribuição será licenciada sob MIT.
 ---
 
 Obrigado! 💡
+````

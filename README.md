@@ -40,13 +40,13 @@ Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaS
 
 Sistema de paralelização automática que acelera a análise em projetos grandes:
 
-```bash
+````bash
 # Paralelização automática ativada por padrão
 oraculo diagnosticar
 
 # Configuração manual (se necessário)
 WORKER_POOL_MAX_WORKERS=4 oraculo diagnosticar
-```
+```text
 
 **Características:**
 
@@ -70,7 +70,7 @@ Versionamento automático dos relatórios JSON com compatibilidade backward:
   "estruturaIdentificada": { ... },
   "guardian": { ... }
 }
-```
+````
 
 **Benefícios:**
 
@@ -83,10 +83,10 @@ Versionamento automático dos relatórios JSON com compatibilidade backward:
 
 Pontuação inteligente que se adapta ao tamanho do projeto:
 
-```bash
+````bash
 # Pontuação automática baseada no tamanho do projeto
 oraculo diagnosticar --json
-```
+```bash
 
 **Recursos:**
 
@@ -102,7 +102,7 @@ Otimização automática que reduz drasticamente o tempo de análise:
 ```bash
 # Exclusão automática de node_modules, dist, coverage, etc.
 oraculo diagnosticar  # ~70% menos arquivos escaneados
-```
+````
 
 **Melhorias:**
 
@@ -112,11 +112,11 @@ oraculo diagnosticar  # ~70% menos arquivos escaneados
 
 ## 📦 Instalação
 
-```bash
+````bash
 git clone https://github.com/mocoto-dev/oraculo.git
 cd oraculo
 npm install
-```
+```bash
 
 ## 🖥️ Uso Rápido
 
@@ -124,14 +124,14 @@ npm install
 npm run build
 node dist/cli.js diagnosticar --json
 node dist/cli.js guardian --diff --json
-```
+````
 
 Instalação global opcional:
 
-```bash
+````bash
 npm install -g .
 oraculo diagnosticar
-```
+```powershell
 
 Durante testes (`process.env.VITEST`) a CLI não chama `process.exit`, permitindo inspeção controlada.
 
@@ -144,7 +144,7 @@ Para rodar a suíte de testes localmente:
 
   ```powershell
   npm run format:fix; npm run lint
-  ```
+````
 
 - Execute a suíte completa:
 
@@ -209,15 +209,15 @@ Persistência sempre via helpers `lerEstado` / `salvarEstado` (ver seção de Sc
 
 Se quiser rodar o comando `oraculo` diretamente no terminal, instale globalmente:
 
-```bash
+````bash
 npm install -g .
-```
+```bash
 
 Assim, basta rodar:
 
 ```bash
 oraculo <comando>
-```
+````
 
 ### Principais Comandos
 
@@ -316,7 +316,7 @@ Quando `--metricas` (default habilitado) está ativo, o comando `diagnosticar --
 
 Exemplo (trecho simplificado):
 
-```jsonc
+````jsonc
 {
   "metricas": {
     "totalArquivos": 123,
@@ -352,7 +352,7 @@ Exemplo (trecho simplificado):
     ]
   }
 }
-```
+```bash
 
 **Novas métricas incluídas na v0.2.0:**
 
@@ -366,13 +366,13 @@ Use `oraculo metricas --json` para histórico agregado e `--export` para salvar 
 
 ```bash
 rm -rf .oraculo/historico-metricas
-```
+````
 
 Ou no Windows PowerShell:
 
-```powershell
+````powershell
 Remove-Item -Recurse -Force .oraculo/historico-metricas
-```
+```bash
 
 Pode ser adicionado um script npm (`cleanup:metricas`) futuramente se desejado.
 
@@ -391,7 +391,7 @@ Blocos adicionais:
     "extensoes": { "ts": 120, "js": 40, "kt": 5, "java": 3, "xml": 2 },
   },
 }
-```
+````
 
 Isso facilita métricas de adoção multi-stack e priorização de analistas dedicados.
 
@@ -412,7 +412,7 @@ Regras de precedência:
 
 Exemplos:
 
-```bash
+````bash
 # Incluir apenas arquivos TypeScript e package.json
 oraculo diagnosticar --include "src/**/*.ts,package.json"
 
@@ -430,7 +430,7 @@ oraculo diagnosticar --exclude "docs/**,dist/**"
 
 # Combinação: focar em duas pastas específicas e ainda excluir mocks
 oraculo diagnosticar --include "src/core/**,src/guardian/**" --exclude "**/mocks/**"
-```
+```powershell
 
 Boas práticas:
 
@@ -508,7 +508,7 @@ node dist/cli.js diagnosticar --guardian-check --export
 
 # JSON para CI, com filtros pontuais
 node dist/cli.js diagnosticar --json --include "src/**" --exclude "**/*.test.ts"
-```
+````
 
 ### guardian
 
@@ -519,7 +519,7 @@ node dist/cli.js diagnosticar --json --include "src/**" --exclude "**/*.test.ts"
 
 Exemplos:
 
-```powershell
+````powershell
 # Verificar integridade
 node dist/cli.js guardian
 
@@ -528,7 +528,7 @@ node dist/cli.js guardian --diff
 
 # Aceitar baseline (não permitido com --full-scan)
 node dist/cli.js guardian --accept-baseline
-```
+```powershell
 
 ### reestruturar (experimental)
 
@@ -549,7 +549,7 @@ node dist/cli.js reestruturar --somente-plano
 
 # Aplicar automaticamente usando preset padrão (oraculo)
 node dist/cli.js reestruturar --auto
-```
+````
 
 ### podar
 
@@ -559,12 +559,12 @@ node dist/cli.js reestruturar --auto
 
 Exemplos:
 
-```powershell
+````powershell
 node dist/cli.js diagnosticar --export; node dist/cli.js podar
 
 # Remoção direta (cuidado)
 node dist/cli.js podar --force
-```
+```powershell
 
 ### analistas
 
@@ -580,7 +580,7 @@ node dist/cli.js analistas
 
 # Exportar doc
 node dist/cli.js analistas --doc docs/ANALISTAS.md
-```
+````
 
 ### perf
 
@@ -599,12 +599,12 @@ Subcomandos:
 
 Exemplos:
 
-```powershell
+````powershell
 node dist/cli.js perf baseline --dir docs/perf
 
 # Comparar (gate de regressão)
 node dist/cli.js perf compare --dir docs/perf --json
-```
+```text
 
 - Analistas: identificam padrões, estruturas e potenciais problemas (somente leitura)
 - Arquitetos: consolidam diagnósticos de alto nível
@@ -689,7 +689,7 @@ Quando executado com `--json`, o comando `guardian` retorna objeto com:
   "baselinePath": "./.oraculo/baseline.json",
   "fullScan": false
 }
-```
+````
 
 Notas:
 
@@ -721,9 +721,9 @@ Hooks configurados:
 
 Se precisar pular (não recomendado):
 
-```bash
+````bash
 HUSKY=0 git commit -m "chore: bypass hook"
-```
+```bash
 
 ### Scripts Principais
 
@@ -731,7 +731,7 @@ HUSKY=0 git commit -m "chore: bypass hook"
 npm run check:style   # lint + prettier check + typecheck
 npm run check         # estilo + testes de unidade
 npm run test:e2e      # apenas E2E
-```
+````
 
 ### Variáveis Úteis
 
@@ -747,13 +747,13 @@ Avisos de terceiros: este projeto inclui dependências open source cujas licenç
 
 Como atualizar o arquivo de avisos:
 
-```bash
+````bash
 # Gera/atualiza a versão padrão (EN)
 npm run licenses:notice
 
 # Gera/atualiza a versão com cabeçalho em português
 npm run licenses:notice:pt-br
-```
+```bash
 
 Isso gera/atualiza os arquivos com base nas dependências de produção instaladas.
 
@@ -801,3 +801,4 @@ Snapshots sintéticos: `npm run perf:baseline` (consulte seção de Performance 
 ---
 
 Autor: Italo C Lopes — Licença MIT
+````

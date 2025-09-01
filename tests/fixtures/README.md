@@ -9,11 +9,11 @@ Esta pasta contém arquivos sintéticos usados exclusivamente em testes:
 
 Estrutura:
 
-```text
+````text
 fixtures/
   plugins/      # Plugins de exemplo usados em testes de carregamento/corretor
   arquivos/     # Arquivos genéricos (file1.ts, file2.ts) usados em testes de parsing/estado
-```
+```text
 
 Regras:
 
@@ -29,3 +29,4 @@ Adicionando novos fixtures:
 3. Manter nomes autoexplicativos.
 
 Remoção de lixo: fixtures não usados podem ser removidos após verificação de ausência de referências (grep no repositório).
+````

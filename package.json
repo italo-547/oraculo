@@ -42,7 +42,7 @@
     "security:deps": "npm audit --production --audit-level=moderate || true",
     "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
     "prepare": "npm run build",
-    "test": "vitest run",
+    "test": "node ./scripts/test-smart.mjs",
     "test:sequential": "node ./scripts/run-tests-sequential.mjs",
     "test:dev": "vitest run",
     "test:ui": "vitest",
@@ -58,9 +58,11 @@
     "branch:protect:check": "node scripts/config-branch-protection.mjs check",
     "branch:protect": "node scripts/config-branch-protection.mjs apply",
     "md:scan": "node scripts/scan-markdown.mjs",
+    "md:fix-fences": "node scripts/fix-md-fences.mjs",
     "md:scan:strict": "node scripts/scan-markdown.mjs --strict --strict-readme",
     "md:add-disclaimer": "node scripts/add-disclaimer-md.js",
     "md:verify-disclaimer": "node scripts/verificar-disclaimer-md.js",
+    "security:secrets-history": "node scripts/scan-secrets-history.mjs",
     "tests:fix-imports": "node scripts/fix-test-imports.mjs"
   },
   "keywords": [

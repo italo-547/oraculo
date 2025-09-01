@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Mapa de Reversão para Moves Aplicados
 
 ## Visão Geral
@@ -17,7 +22,7 @@ Quando o Oráculo move arquivos durante uma reorganização estrutural:
 
 ### Estrutura do Mapa
 
-```json
+````json
 {
   "versao": "1.0.0",
   "moves": [
@@ -38,7 +43,7 @@ Quando o Oráculo move arquivos durante uma reorganização estrutural:
     "podeReverter": true
   }
 }
-```
+```bash
 
 ## Comandos Disponíveis
 
@@ -47,11 +52,11 @@ Quando o Oráculo move arquivos durante uma reorganização estrutural:
 ```bash
 # Lista todos os moves registrados
 oraculo reverter listar
-```
+````
 
 **Exemplo de saída:**
 
-```text
+````text
 📋 Mapa de Reversão (3 moves):
 
 move_1703123456789_abc123def:
@@ -63,32 +68,32 @@ move_1703123456790_def456ghi:
   📅 20/12/2025 10:31:23
   📁 src/services/auth.ts → app/services/auth.ts
   💬 Reorganização estrutural
-```
+```bash
 
 ### Reverter Arquivo Específico
 
 ```bash
 # Reverte todos os moves de um arquivo
 oraculo reverter arquivo src/controllers/user.ts
-```
+````
 
 ### Reverter Move Específico
 
-```bash
+````bash
 # Reverte um move pelo ID
 oraculo reverter move move_1703123456789_abc123def
-```
+```bash
 
 ### Status do Mapa
 
 ```bash
 # Mostra estatísticas do mapa
 oraculo reverter status
-```
+````
 
 **Exemplo de saída:**
 
-```text
+````text
 📊 Status do Mapa de Reversão
 ==============================
 Total de moves: 3
@@ -101,23 +106,23 @@ Motivo: Reorganização estrutural
   oraculo reverter arquivo <arquivo> - Reverte moves de um arquivo
   oraculo reverter move <id> - Reverte move específico
   oraculo reverter limpar --force - Limpa histórico
-```
+```bash
 
 ### Limpar Histórico
 
 ```bash
 # Remove todo o histórico (cuidado!)
 oraculo reverter limpar --force
-```
+````
 
 ## Cenários de Uso
 
 ### 1. Reverter Move Acidental
 
-```bash
+````bash
 # Moveu arquivo por engano
 oraculo reverter arquivo src/components/button.ts
-```
+```bash
 
 ### 2. Testar Reorganização
 
@@ -129,15 +134,15 @@ oraculo reestruturar --apply
 oraculo reverter listar  # vê IDs
 oraculo reverter move <id1>
 oraculo reverter move <id2>
-```
+````
 
 ### 3. Rollback Parcial
 
-```bash
+````bash
 # Reverte apenas arquivos específicos
 oraculo reverter arquivo src/controllers/user.ts
 oraculo reverter arquivo src/controllers/auth.ts
-```
+```bash
 
 ## Funcionalidades Avançadas
 
@@ -183,18 +188,18 @@ export ORACULO_STRUCTURE_REVERSE_MAP_PATH=".oraculo/custom-reversao.json"
 {
   "STRUCTURE_REVERSE_MAP_PATH": ".oraculo/custom-reversao.json"
 }
-```
+````
 
 ### Limitações de Segurança
 
 O mapa respeita as configurações de segurança:
 
-```json
+````json
 {
   "SAFE_MODE": true,
   "ALLOW_MUTATE_FS": false
 }
-```
+```bash
 
 Quando `SAFE_MODE` ativo, as reversões são simuladas.
 
@@ -234,14 +239,14 @@ oraculo reverter status
 
 # 5. Rollback se necessário
 oraculo reverter arquivo <arquivo-problematico>
-```
+````
 
 ### Limpeza Periódica
 
-```bash
+````bash
 # Remove moves antigos (opcional)
 oraculo reverter limpar --force
-```
+```text
 
 ## Referências
 
@@ -253,3 +258,5 @@ oraculo reverter limpar --force
 
 **Última atualização**: Dezembro de 2025
 **Versão**: 1.0.0
+
+````

@@ -47,12 +47,17 @@ Criamos uma organização mais navegável para a documentação. Abaixo os diret
 
 Adapte e expanda conforme o crescimento do projeto.
 
+## Testes
+
+Consulte `TESTING-ENVIRONMENT.md` para configurar o ambiente local de testes e `TESTING-VITEST-TIMEOUT.md` para mitigações conhecidas de timeouts do Vitest. No Windows, prefira `npm run test:sequential`, que executa diretórios em série, roda `tests/cli` por arquivo e divide `e2e-bin.test.ts` por casos (`-t`).
+
 ## Exemplo: criar e salvar um arquétipo personalizado
 
 Para gerar um template de arquétipo baseado na estrutura atual do repositório e salvá-lo automaticamente execute:
 
-```bash
+````bash
 oraculo diagnosticar --criar-arquetipo --salvar-arquetipo
-```
+```text
 
 Isso criará (ou sobrescreverá) o arquivo `oraculo.repo.arquetipo.json` na raiz do projeto.
+````

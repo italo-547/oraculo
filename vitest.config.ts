@@ -15,9 +15,32 @@ export default defineConfig(() => {
   const providerMapped =
     coverageProvider === 'c8' ? 'istanbul' : coverageProvider === 'v8' ? 'v8' : 'v8';
   const rootAbs = path.resolve(process.cwd());
+  // Ambiente/Execução
+  const onWindows = process.platform === 'win32';
+  const requestedPool = String(process.env.VITEST_POOL || '').toLowerCase();
+  const pool =
+    requestedPool === 'forks' || requestedPool === 'threads'
+      ? (requestedPool as 'forks' | 'threads')
+      : onWindows
+        ? 'forks' // forks tende a ser mais estável no Windows para evitar "Timeout calling onTaskUpdate"
+        : 'threads';
+  const maxWorkersEnv = Number(process.env.VITEST_MAX_WORKERS || (onWindows ? '1' : ''));
+  // Mapear aliases do tsconfig para o Vitest/Vite resolver, sem depender de plugins externos.
+  // Mantém os aliases principais do projeto conforme tsconfig.json.
+  const alias = [
+    { find: '@analistas', replacement: path.join(rootAbs, 'src', 'analistas') },
+    { find: '@arquitetos', replacement: path.join(rootAbs, 'src', 'arquitetos') },
+    { find: '@nucleo', replacement: path.join(rootAbs, 'src', 'nucleo') },
+    { find: '@zeladores', replacement: path.join(rootAbs, 'src', 'zeladores') },
+    { find: '@relatorios', replacement: path.join(rootAbs, 'src', 'relatorios') },
+    { find: '@guardian', replacement: path.join(rootAbs, 'src', 'guardian') },
+    { find: '@tipos', replacement: path.join(rootAbs, 'src', 'tipos') },
+    // Alias genérico '@' para suportar imports do tipo '@/arquivo'
+    { find: '@', replacement: path.join(rootAbs, 'src') },
+  ].map((a) => ({ ...a, replacement: a.replacement.replace(/\\/g, '/') }));
 
   return {
-    resolve: {},
+    resolve: { alias },
     plugins: [
       {
         name: 'oraculo-resolve-src-ts-from-js',
@@ -197,6 +220,21 @@ export default defineConfig(() => {
       environment: 'node',
       // Aumentar timeout global para acomodar E2E longos (ms). Permite overrides locais.
       testTimeout: Number(process.env.VITEST_TEST_TIMEOUT_MS || 120000),
+      // Pool de execução — usa forks por padrão no Windows para evitar RPC timeouts do runner
+      pool,
+      // Limita workers quando necessário (padrão 1 no Windows; pode ser sobrescrito via VITEST_MAX_WORKERS)
+      ...(Number.isFinite(maxWorkersEnv) && maxWorkersEnv > 0 ? { maxWorkers: maxWorkersEnv } : {}),
+      // Em Windows, reduzir paralelismo para evitar timeouts de RPC (onTaskUpdate) em execuções longas.
+      poolOptions: {
+        threads: {
+          singleThread: process.platform === 'win32',
+        },
+      },
+      // Evita paralelismo por arquivo no Windows; pode ser ajustado via flags/env conforme necessidade
+      fileParallelism: !onWindows,
+      sequence: {
+        concurrent: process.platform !== 'win32',
+      },
       include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
       exclude: [
         '.deprecados/**',

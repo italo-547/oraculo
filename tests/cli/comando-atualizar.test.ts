@@ -91,13 +91,10 @@ describe('comandoAtualizar', () => {
     const aplicarFlagsGlobais = vi.fn();
     const cmd = comandoAtualizar(aplicarFlagsGlobais);
     program.addCommand(cmd);
-    try {
-      await program.parseAsync(['node', 'cli', 'atualizar']);
-    } catch (e) {
-      // esperado por causa do process.exit
-    }
+    await program.parseAsync(['node', 'cli', 'atualizar']);
     expect(log.erro).toHaveBeenCalledWith(expect.stringMatching(/Atualização abortada|falhou/));
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(process.exitCode).toBe(1);
+    expect(exitSpy).not.toHaveBeenCalled();
   });
 
   it('trata erro com detalhes e DEV_MODE', async () => {
@@ -113,16 +110,13 @@ describe('comandoAtualizar', () => {
     const cmd = comandoAtualizar(aplicarFlagsGlobais);
     program.addCommand(cmd);
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-    try {
-      await program.parseAsync(['node', 'cli', 'atualizar']);
-    } catch (e) {
-      // esperado por causa do process.exit
-    }
+    await program.parseAsync(['node', 'cli', 'atualizar']);
     expect(log.erro).toHaveBeenCalledWith(expect.stringMatching(/Atualização abortada|falhou/));
     expect(log.aviso).toHaveBeenCalledWith(expect.stringMatching(/detalhe1/));
     expect(log.aviso).toHaveBeenCalledWith(expect.stringMatching(/detalhe2/));
     expect(consoleError).toHaveBeenCalledWith(erro);
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(process.exitCode).toBe(1);
+    expect(exitSpy).not.toHaveBeenCalled();
     consoleError.mockRestore();
   });
 });

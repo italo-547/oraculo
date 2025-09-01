@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 E2E_DEDICADO — Diagnóstico e procedimentos para problemas com E2E (aliases @)
 
 Resumo rápido
@@ -35,13 +40,13 @@ Limpeza segura de temporários (recomendado antes de rodar E2E completas)
 
 Comandos PowerShell (listagem antes de apagar):
 
-```powershell
+````powershell
 # listar candidatos (sem remover ainda)
 Get-ChildItem -Path $env:TEMP -Directory -Filter 'oraculo-e2e-*' | Sort-Object LastWriteTime -Descending | Format-List FullName,LastWriteTime
 
 # se OK, apagar (permanente):
 Get-ChildItem -Path $env:TEMP -Directory -Filter 'oraculo-e2e-*' | Remove-Item -Recurse -Force
-```
+```powershell
 
 Observações sobre o `.oraculo` dentro do temp
 
@@ -70,7 +75,7 @@ Notas específicas para E2E no Windows
 Set-Location 'C:\caminho\para\repo'
 $loader = [node]::Invoke('node -e "console.log(require(\'url\').pathToFileURL(require(\'path\').resolve(\'node.loader.mjs\')).toString())"')
 & node --loader $loader C:\caminho\para\repo\dist\cli.js reestruturar --auto --domains --prefer-estrategista --silence
-```
+````
 
 Notas finais / verificação
 

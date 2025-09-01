@@ -40,13 +40,13 @@ O comando `reestruturar` do Oráculo permite reorganizar a estrutura de arquivos
 
 ### 1. Análise Apenas (Dry-run)
 
-```bash
+````bash
 # Ver apenas o plano sem aplicar mudanças
 oraculo reestruturar --somente-plano
 
 # Ver plano com filtros específicos
 oraculo reestruturar --somente-plano --include "src/**/*.ts" --exclude "test/**"
-```
+```bash
 
 ### 2. Aplicação Automática
 
@@ -56,11 +56,11 @@ oraculo reestruturar --auto
 
 # Aplicar com filtros
 oraculo reestruturar --auto --include "src/**/*.js" --exclude "node_modules/**"
-```
+````
 
 ### 3. Estrutura Personalizada
 
-```bash
+````bash
 # Usar estrutura flat (src/<categoria>s)
 oraculo reestruturar --flat --auto
 
@@ -72,7 +72,7 @@ oraculo reestruturar --preset node-community --auto
 
 # Sobrescrever categorias
 oraculo reestruturar --categoria "controller=handlers" --categoria "model=entities" --auto
-```
+```bash
 
 ### 4. Estratégia de Planejamento
 
@@ -82,13 +82,13 @@ oraculo reestruturar --prefer-estrategista --auto
 
 # Combinar com estrutura específica
 oraculo reestruturar --prefer-estrategista --domains --preset ts-lib --auto
-```
+````
 
 ## Combinações Avançadas
 
 ### Filtros e Estrutura
 
-```bash
+````bash
 # Reestruturar apenas arquivos TypeScript em estrutura flat
 oraculo reestruturar --flat --include "src/**/*.ts" --exclude "test/**" --auto
 
@@ -97,7 +97,7 @@ oraculo reestruturar --domains --include "src/user/**" --include "src/auth/**" -
 
 # Excluir arquivos de configuração durante reestruturação
 oraculo reestruturar --exclude "config/**" --exclude "*.config.js" --auto
-```
+```bash
 
 ### Dry-run com Filtros Avançados
 
@@ -107,11 +107,11 @@ oraculo reestruturar --somente-plano --include "**/*.ts" --exclude "**/node_modu
 
 # Análise focada em diretórios específicos
 oraculo reestruturar --somente-plano --include "src/components/**" --include "src/hooks/**"
-```
+````
 
 ### Personalização Completa
 
-```bash
+````bash
 # Reestruturação completa com todas as personalizações
 oraculo reestruturar \
   --domains \
@@ -123,7 +123,7 @@ oraculo reestruturar \
   --exclude "**/*.test.ts" \
   --prefer-estrategista \
   --auto
-```
+```bash
 
 ## Comportamentos Especiais
 
@@ -151,16 +151,16 @@ oraculo reestruturar --include "src/**" --include "lib/**" --exclude "test/**" -
 
 # Ou usar vírgulas/espaços
 oraculo reestruturar --include "src/**,lib/**" --exclude "test/** docs/**"
-```
+````
 
 ## Cenários de Uso
 
 ### Desenvolvimento Ativo
 
-```bash
+````bash
 # Reestruturação rápida durante desenvolvimento
 oraculo reestruturar --auto --include "src/**/*.ts" --exclude "**/*.test.ts"
-```
+```bash
 
 ### Refatoração Controlada
 
@@ -168,21 +168,21 @@ oraculo reestruturar --auto --include "src/**/*.ts" --exclude "**/*.test.ts"
 # Ver o plano antes de aplicar
 oraculo reestruturar --somente-plano --domains --preset ts-lib
 oraculo reestruturar --domains --preset ts-lib --auto  # Após aprovação
-```
+````
 
 ### Limpeza de Código Legado
 
-```bash
+````bash
 # Reestruturar apenas código novo, ignorando legado
 oraculo reestruturar --auto --exclude "src/legacy/**" --exclude "**/*.old.*"
-```
+```bash
 
 ### Migração de Estrutura
 
 ```bash
 # Migrar de estrutura flat para domains
 oraculo reestruturar --domains --categoria "controller=handlers" --auto
-```
+````
 
 ## Notas Importantes
 
@@ -196,27 +196,28 @@ oraculo reestruturar --domains --categoria "controller=handlers" --auto
 
 ### Projeto React/TypeScript
 
-```bash
+````bash
 # Reestruturar componentes e hooks, ignorando testes
 oraculo reestruturar --domains --include "src/components/**" --include "src/hooks/**" --exclude "**/*.test.*" --auto
-```
+```bash
 
 ### API Node.js
 
 ```bash
 # Reestruturar rotas e middlewares
 oraculo reestruturar --flat --categoria "route=routes" --categoria "middleware=middlewares" --include "src/**/*.js" --auto
-```
+````
 
 ### Biblioteca TypeScript
 
-```bash
+````bash
 # Usar preset específico para bibliotecas
 oraculo reestruturar --preset ts-lib --prefer-estrategista --exclude "examples/**" --auto
-```
+```text
 
 ---
 
 ## Última atualização
 
 28 de agosto de 2025
+````

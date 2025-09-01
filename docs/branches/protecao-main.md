@@ -1,3 +1,8 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 # Política de Proteção da Branch Main
 
 Última atualização: 2025-08-28
@@ -42,7 +47,7 @@ A branch `main` é protegida para garantir qualidade e estabilidade do código. 
 
 ### Parâmetros Ativos
 
-```yaml
+````yaml
 # Configuração aplicada via GitHub Settings
 required_status_checks:
   strict: true # Branch deve estar atualizada
@@ -67,7 +72,7 @@ restrictions:
 allow_merge_commits: true # Permitir merge commits
 allow_squash_merge: true # Permitir squash
 allow_rebase_merge: false # Bloquear rebase
-```
+```bash
 
 ## Fluxo de Trabalho
 
@@ -82,16 +87,16 @@ git pull origin develop
 
 # Criar branch de feature
 git checkout -b feature/nome-da-feature
-```
+````
 
 #### 2. Commits
 
-```bash
+````bash
 # Commits seguindo convenção
 git commit -m "feat: adicionar nova funcionalidade"
 git commit -m "fix: corrigir bug no detector"
 git commit -m "docs: atualizar documentação"
-```
+```bash
 
 #### 3. Pull Request
 
@@ -104,7 +109,7 @@ git push origin feature/nome-da-feature
 # - Compare: feature/nome-da-feature
 # - Descrição detalhada das mudanças
 # - Referência a issues se aplicável
-```
+````
 
 ### Para Revisores
 
@@ -122,21 +127,21 @@ git push origin feature/nome-da-feature
 
 ### Verificação de Status
 
-```bash
+````bash
 # Verificar status da proteção
 npm run branch:protect:check
-```
+```bash
 
 ### Aplicação da Proteção
 
 ```bash
 # Aplicar proteção (requer permissões admin)
 npm run branch:protect
-```
+````
 
 ### Pré-requisitos para Scripts
 
-```bash
+````bash
 # Variáveis de ambiente necessárias
 export GITHUB_TOKEN=your_github_token
 # OU
@@ -144,7 +149,7 @@ export GH_TOKEN=your_github_token
 
 # OU instalar GitHub CLI
 gh auth login
-```
+```bash
 
 ## Cenários de Exceção
 
@@ -188,16 +193,16 @@ gh auth login
 npm run test
 npm run lint
 npm run build
-```
+````
 
 #### 2. Conflitos de Merge
 
-```bash
+````bash
 # Atualizar branch com main
 git checkout feature/sua-branch
 git fetch origin
 git rebase origin/main
-```
+```text
 
 #### 3. Permissões Insuficientes
 
@@ -216,3 +221,5 @@ git rebase origin/main
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [CHECKLIST.md](../CHECKLIST.md) - Status do projeto
 - [CONTRIBUTING.md](../../CONTRIBUTING.md) - Guia de contribuição
+
+````
