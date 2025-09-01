@@ -20,6 +20,8 @@
 
 Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaScript/TypeScript e multi-stack leve), oferecendo diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON consumíveis por CI.
 
+> Observação importante: muitos problemas já foram mapeados no projeto, mas ainda não conseguimos corrigir todos por enquanto — estamos trabalhando nas correções e muitas delas serão aplicadas em breve. Se você puder ajudar a localizar problemas ou fornecer feedback, será ótimo: abra issues, comente nas existentes ou envie um PR com indicações do que encontrou.
+
 ## ✨ Principais Capacidades
 
 - Diagnóstico de padrões & estrutura (`diagnosticar`)
@@ -111,7 +113,7 @@ oraculo diagnosticar  # ~70% menos arquivos escaneados
 ## 📦 Instalação
 
 ```bash
-git clone https://github.com/aynsken/oraculo.git
+git clone https://github.com/mocoto-dev/oraculo.git
 cd oraculo
 npm install
 ```
@@ -542,16 +544,12 @@ node dist/cli.js guardian --accept-baseline
 Exemplos:
 
 ```powershell
-
-```
-
+# Somente gerar o plano (dry-run)
 node dist/cli.js reestruturar --somente-plano
 
 # Aplicar automaticamente usando preset padrão (oraculo)
-
 node dist/cli.js reestruturar --auto
-
-````
+```
 
 ### podar
 
@@ -562,12 +560,11 @@ node dist/cli.js reestruturar --auto
 Exemplos:
 
 ```powershell
-
 node dist/cli.js diagnosticar --export; node dist/cli.js podar
 
 # Remoção direta (cuidado)
 node dist/cli.js podar --force
-````
+```
 
 ### analistas
 
@@ -603,7 +600,6 @@ Subcomandos:
 Exemplos:
 
 ```powershell
-
 node dist/cli.js perf baseline --dir docs/perf
 
 # Comparar (gate de regressão)

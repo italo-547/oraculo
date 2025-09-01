@@ -36,14 +36,18 @@ gh auth status
 
 ### 2. Configurar Variáveis de Ambiente
 
-```bash
-# Definir token como variável de ambiente
-export GITHUB_TOKEN=seu_token_aqui
-# OU
-export GH_TOKEN=seu_token_aqui
+Recomendamos evitar colar tokens diretamente no terminal. Prefira uma destas opções:
 
-# Para Windows PowerShell:
-$env:GITHUB_TOKEN="seu_token_aqui"
+- Usar GitHub CLI e autenticar com `gh auth login` (recomendado para tarefas interativas no dev).
+- Usar Secrets no GitHub Actions para automações (Settings → Secrets) e referenciá-los nos workflows.
+- Para testes locais, crie um arquivo `.env` a partir de `.env.example` e preencha os valores localmente (NUNCA comite `.env`).
+
+Exemplo (local, seguro):
+
+```bash
+# copiar o exemplo e editar
+cp .env.example .env
+# editar .env e preencher GITHUB_TOKEN/ GH_TOKEN localmente (não versionar)
 ```
 
 ## Contexts Obrigatórios Identificados
