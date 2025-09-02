@@ -111,15 +111,15 @@ npm run test:sequential
 
 Limpar histórico que pode causar flakiness:
 
-````powershell
+`````powershell
 rm -Force -Recurse .oraculo\historico-metricas
 ```powershell
 
 Recriar baseline se o Guardian ficar em estado inconsistente:
 
-```powershell
+````powershell
 node ./dist/bin/index.js guardian --aceitar
-````
+`````
 
 ## 7) Flags e modos úteis do CLI
 

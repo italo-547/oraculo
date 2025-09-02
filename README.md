@@ -501,15 +501,15 @@ Esta seção lista as opções implementadas por comando (além das flags globai
 
 Exemplos rápidos:
 
-```powershell
-# Diagnóstico padrão
-node dist/bin/index.js diagnosticar
+  ```powershell
+  # Diagnóstico padrão
+  node dist/bin/index.js diagnosticar
 
-# Diagnóstico com Guardian e export de relatórios
-node dist/bin/index.js diagnosticar --guardian-check --export
+  # Diagnóstico com Guardian e export de relatórios
+  node dist/bin/index.js diagnosticar --guardian-check --export
 
-# JSON para CI, com filtros pontuais
-node dist/bin/index.js diagnosticar --json --include "src/**" --exclude "**/*.test.ts"
+  # JSON para CI, com filtros pontuais
+  node dist/bin/index.js diagnosticar --json --include "src/**" --exclude "**/*.test.ts"
 ````
 
 ### guardian
@@ -521,7 +521,7 @@ node dist/bin/index.js diagnosticar --json --include "src/**" --exclude "**/*.te
 
 Exemplos:
 
-````powershell
+`````powershell
 # Verificar integridade
 node dist/bin/index.js guardian
 
@@ -530,7 +530,7 @@ node dist/bin/index.js guardian --diff
 
 # Aceitar baseline (não permitido com --full-scan)
 node dist/bin/index.js guardian --accept-baseline
-```powershell
+````powershell
 
 ### reestruturar (experimental)
 
@@ -551,7 +551,7 @@ node dist/bin/index.js reestruturar --somente-plano
 
 # Aplicar automaticamente usando preset padrão (oraculo)
 node dist/bin/index.js reestruturar --auto
-````
+`````
 
 ### podar
 
@@ -602,10 +602,17 @@ Subcomandos:
 Exemplos:
 
 ````powershell
+<<<<<<< HEAD
+node dist/cli.js perf baseline --dir docs/perf
+
+# Comparar (gate de regressão)
+node dist/cli.js perf compare --dir docs/perf --json
+=======
 node dist/bin/index.js perf baseline --dir docs/perf
 
 # Comparar (gate de regressão)
 node dist/bin/index.js perf compare --dir docs/perf --json
+>>>>>>> develop
 ```text
 
 - Analistas: identificam padrões, estruturas e potenciais problemas (somente leitura)

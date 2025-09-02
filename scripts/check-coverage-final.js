@@ -77,7 +77,7 @@ async function main() {
       }
     }
 
-  const totals = {
+    const totals = {
       lines: {
         total: totalLines,
         covered: coveredLines,
@@ -126,9 +126,7 @@ async function main() {
       totals.statements.pct >= resolvedThreshold;
 
     if (!ok) {
-      console.error(
-        `Coverage gate failed: thresholds not met (min ${resolvedThreshold}%)`,
-      );
+      console.error(`Coverage gate failed: thresholds not met (min ${resolvedThreshold}%)`);
       console.error(JSON.stringify(totals, null, 2));
       process.exit(1);
     }
@@ -195,8 +193,7 @@ async function resolveThreshold() {
   try {
     const raw = await fs.readFile(CONFIG_PATH, 'utf8');
     const cfg = JSON.parse(raw);
-    const fromCfg =
-      Number(cfg?.COVERAGE_GATE_PERCENT) || Number(cfg?.coverageGatePercent) || null;
+    const fromCfg = Number(cfg?.COVERAGE_GATE_PERCENT) || Number(cfg?.coverageGatePercent) || null;
     if (Number.isFinite(fromCfg) && fromCfg > 0 && fromCfg <= 100) return Math.floor(fromCfg);
   } catch {}
 

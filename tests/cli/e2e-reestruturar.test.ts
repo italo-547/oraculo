@@ -46,7 +46,16 @@ describe('@e2e Reestruturar', () => {
       new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
         const cp = spawn(
           process.execPath,
-          [cliPath, 'reestruturar', '--auto', '--domains', '--prefer-estrategista', '--silence'],
+          [
+            '--loader',
+            loader,
+            cliPath,
+            'reestruturar',
+            '--auto',
+            '--domains',
+            '--prefer-estrategista',
+            '--silence',
+          ],
           {
             cwd: tempDir,
             env: { ...process.env },
@@ -105,7 +114,15 @@ describe('@e2e Reestruturar', () => {
       new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
         const cp = spawn(
           process.execPath,
-          [cliPath, 'reestruturar', '--domains', '--prefer-estrategista', '--somente-plano'],
+          [
+            '--loader',
+            loader,
+            cliPath,
+            'reestruturar',
+            '--domains',
+            '--prefer-estrategista',
+            '--somente-plano',
+          ],
           {
             cwd: tempDir,
             env: { ...process.env },
@@ -159,7 +176,15 @@ describe('@e2e Reestruturar', () => {
       new Promise<{ status: number | null; stdout: string; stderr: string }>((resolve) => {
         const cp = spawn(
           process.execPath,
-          [cliPath, 'reestruturar', '--domains', '--prefer-estrategista', '--somente-plano'],
+          [
+            '--loader',
+            loader,
+            cliPath,
+            'reestruturar',
+            '--domains',
+            '--prefer-estrategista',
+            '--somente-plano',
+          ],
           {
             cwd: tempDir,
             env: { ...process.env },
