@@ -20,13 +20,11 @@ Checklist (o que cobre este documento)
 
 Detalhes técnicos e reprodução
 
-1. Problema 1: resolução de alias `@` quando a CLI compilada (`dist/cli.js`) é spawnada por testes.
+1. Problema 1: resolução de alias `@` quando a CLI compilada é spawnada por testes.
 
-- O CLI usa imports `@/...` no código fonte. Para que o Node execute `dist/cli.js` e resolva esses specifiers, usamos um loader ESM (`node.loader.mjs`) que reescreve specifiers `@` para caminhos reais em `dist/`.
-- No Windows o loader tem de ser passado para o Node como um URL `file://.../node.loader.mjs`. Passar um caminho absoluto sem esquema resulta em `ERR_UNSUPPORTED_ESM_URL_SCHEME`.
-- O loader também deve resolver sua raiz a partir do próprio arquivo (usando `import.meta.url`) — caso contrário, se ele usar `process.cwd()` a resolução pode apontar para o diretório temporário do teste e não encontrar `dist/`.
+- Agora os testes devem invocar `dist/bin/index.js`, que injeta o loader ESM automaticamente e resolve `@` para caminhos reais em `dist/`.
 
-2. Problema 2: reescrita de imports quando um arquivo é movido (`reestruturar --auto`).
+1. Problema 2: reescrita de imports quando um arquivo é movido (`reestruturar --auto`).
 
 - O `OperarioEstrutura.aplicar` chama `reescreverImports` quando `STRUCTURE_AUTO_FIX=true` e `SAFE_MODE`/`ALLOW_MUTATE_FS` permitem gravação.
 - Se o destino já existir (por exemplo, restos de uma execução anterior), o correto comportamento é registrar conflito e NÃO sobrescrever. Nesse caso o arquivo no destino pode conter ainda a import original com alias (test falha esperando import reescrito).
@@ -74,7 +72,7 @@ Notas específicas para E2E no Windows
 # exemplo resumido (PowerShell)
 Set-Location 'C:\caminho\para\repo'
 $loader = [node]::Invoke('node -e "console.log(require(\'url\').pathToFileURL(require(\'path\').resolve(\'node.loader.mjs\')).toString())"')
-& node --loader $loader C:\caminho\para\repo\dist\cli.js reestruturar --auto --domains --prefer-estrategista --silence
+& node C:\caminho\para\repo\dist\bin\index.js reestruturar --auto --domains --prefer-estrategista --silence
 ````
 
 Notas finais / verificação

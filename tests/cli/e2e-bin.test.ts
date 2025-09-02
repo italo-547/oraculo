@@ -6,11 +6,11 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-// Testes ponta-a-ponta executando o binário buildado (dist/cli.js)
+// Testes ponta-a-ponta executando o binário buildado (dist/bin/index.js)
 // Cenários focados: execução básica scan-only e export de relatório.
 
 function garantirBuild() {
-  const cliPath = resolve('dist/cli.js');
+  const cliPath = resolve('dist/bin/index.js');
   // Compila apenas se o binário ainda não existir para evitar overhead e timeouts
   const { existsSync } = require('node:fs');
   if (!existsSync(cliPath)) {
@@ -32,18 +32,13 @@ describe('@e2e E2E CLI binário', () => {
     mkdirSync(join(tempDir, 'src'));
     writeFileSync(join(tempDir, 'src/index.ts'), 'console.log("ok e2e")', 'utf-8');
 
-    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
     const envClean = { ...process.env } as Record<string, string | undefined>;
     delete envClean.VITEST;
-    const proc = spawnSync(
-      process.execPath,
-      ['--loader', loader, cliPath, 'diagnosticar', '--scan-only'],
-      {
-        cwd: tempDir,
-        encoding: 'utf-8',
-        env: envClean as NodeJS.ProcessEnv,
-      },
-    );
+    const proc = spawnSync(process.execPath, [cliPath, 'diagnosticar', '--scan-only'], {
+      cwd: tempDir,
+      encoding: 'utf-8',
+      env: envClean as NodeJS.ProcessEnv,
+    });
     const stdout = proc.stdout || '';
     expect(proc.status).toBe(0);
     expect(stdout.toLowerCase()).toContain('scan-only');
@@ -60,12 +55,11 @@ describe('@e2e E2E CLI binário', () => {
     mkdirSync(join(tempDir, 'src'));
     writeFileSync(join(tempDir, 'src/index.ts'), 'console.log("ok export")', 'utf-8');
 
-    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
     const envClean2 = { ...process.env } as Record<string, string | undefined>;
     delete envClean2.VITEST;
     const proc = spawnSync(
       process.execPath,
-      ['--loader', loader, cliPath, 'diagnosticar', '--scan-only', '--export', '--silence'],
+      [cliPath, 'diagnosticar', '--scan-only', '--export', '--silence'],
       { cwd: tempDir, encoding: 'utf-8', env: envClean2 as NodeJS.ProcessEnv },
     );
     expect(proc.status).toBe(0);
@@ -90,18 +84,13 @@ describe('@e2e E2E CLI binário', () => {
     const envLimpo = { ...process.env } as Record<string, string | undefined>;
     // Remover flag de ambiente de testes para permitir process.exit real
     delete envLimpo.VITEST;
-    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
     const envClean3 = { ...envLimpo } as Record<string, string | undefined>;
     delete envClean3.VITEST;
-    const proc = spawnSync(
-      process.execPath,
-      ['--loader', loader, cliPath, 'diagnosticar', '--silence'],
-      {
-        cwd: tempDir,
-        encoding: 'utf-8',
-        env: envClean3 as NodeJS.ProcessEnv,
-      },
-    );
+    const proc = spawnSync(process.execPath, [cliPath, 'diagnosticar', '--silence'], {
+      cwd: tempDir,
+      encoding: 'utf-8',
+      env: envClean3 as NodeJS.ProcessEnv,
+    });
     // Mesmo com --silence, exit code deve refletir ausência de erros críticos (somente avisos) => 0
     // Pode haver ocorrências elevadas a erro conforme regras; aceitamos 0 ou 1 desde que não seja crash diferente
     expect([0, 1]).toContain(proc.status);
@@ -117,12 +106,11 @@ describe('@e2e E2E CLI binário', () => {
     );
     mkdirSync(join(tempDir, 'src'));
     writeFileSync(join(tempDir, 'src', 'index.ts'), 'console.log("guardian")', 'utf-8');
-    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
     const envClean4 = { ...process.env } as Record<string, string | undefined>;
     delete envClean4.VITEST;
     const proc = spawnSync(
       process.execPath,
-      ['--loader', loader, cliPath, 'diagnosticar', '--guardian-check', '--scan-only', '--silence'],
+      [cliPath, 'diagnosticar', '--guardian-check', '--scan-only', '--silence'],
       { cwd: tempDir, encoding: 'utf-8', env: envClean4 as NodeJS.ProcessEnv },
     );
     expect(proc.status).toBe(0);
@@ -144,16 +132,11 @@ describe('@e2e E2E CLI binário', () => {
     writeFileSync(join(tempDir, 'src', 'bot.txt'), 'onCommand("cmdX", ()=>{})', 'utf-8');
     const envLimpo = { ...process.env } as Record<string, string | undefined>;
     delete envLimpo.VITEST; // permitir process.exit no filho
-    const loader = pathToFileURL(resolve('node.loader.mjs')).toString();
-    const proc = spawnSync(
-      process.execPath,
-      ['--loader', loader, cliPath, 'diagnosticar', '--silence'],
-      {
-        cwd: tempDir,
-        encoding: 'utf-8',
-        env: envLimpo as NodeJS.ProcessEnv,
-      },
-    );
+    const proc = spawnSync(process.execPath, [cliPath, 'diagnosticar', '--silence'], {
+      cwd: tempDir,
+      encoding: 'utf-8',
+      env: envLimpo as NodeJS.ProcessEnv,
+    });
     // Implementação permissiva pode ignorar AST nulo e seguir com exit 0
     expect([0, 1]).toContain(proc.status);
   }, 60000);

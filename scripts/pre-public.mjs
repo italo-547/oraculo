@@ -60,21 +60,14 @@ async function main() {
     }
   }
 
-  // Copiar arquivos e diretórios adicionais úteis para revisão
-  // (loader ESM e wrappers/ scripts de publicação)
+  // Copiar diretórios adicionais úteis para revisão (scripts somente)
   try {
-    const extraFiles = ['node.loader.mjs'];
-    for (const ef of extraFiles) {
-      const src = path.join(ROOT, ef);
-      if (await exists(src)) await copySafe(src, path.join(OUT_DIR, ef));
-    }
-
-    const extraDirs = ['bin', 'scripts'];
+    const extraDirs = ['scripts'];
     for (const ed of extraDirs) {
       const srcDir = path.join(ROOT, ed);
       if (await exists(srcDir)) await copySafe(srcDir, path.join(OUT_DIR, ed));
     }
-    console.log('[preview-oraculo] extras (bin, node.loader.mjs, scripts) copiados.');
+    console.log('[preview-oraculo] extras (scripts) copiados.');
   } catch (e) {
     console.warn('[preview-oraculo] falha ao copiar extras:', e?.message || e);
   }

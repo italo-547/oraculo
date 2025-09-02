@@ -3,16 +3,20 @@
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import path from 'node:path';
 
+// Base dinâmica: se o loader estiver em dist/, usar dist como base; senão, usar <raiz>/dist
+const loaderDir = path.dirname(fileURLToPath(import.meta.url));
+const distBase = path.basename(loaderDir) === 'dist' ? loaderDir : path.resolve(loaderDir, 'dist');
+
 const aliasMap = {
-  '@nucleo/': './dist/nucleo/',
-  '@cli/': './dist/cli/',
-  '@analistas/': './dist/analistas/',
-  '@arquitetos/': './dist/arquitetos/',
-  '@zeladores/': './dist/zeladores/',
-  '@relatorios/': './dist/relatorios/',
-  '@guardian/': './dist/guardian/',
-  '@tipos/': './dist/tipos/',
-  '@/': './dist/',
+  '@nucleo/': 'nucleo/',
+  '@cli/': 'cli/',
+  '@analistas/': 'analistas/',
+  '@arquitetos/': 'arquitetos/',
+  '@zeladores/': 'zeladores/',
+  '@relatorios/': 'relatorios/',
+  '@guardian/': 'guardian/',
+  '@tipos/': 'tipos/',
+  '@/': '',
 };
 
 export async function resolve(specifier, context, defaultResolve) {
@@ -25,11 +29,7 @@ export async function resolve(specifier, context, defaultResolve) {
     for (const [alias, relPath] of Object.entries(aliasMap)) {
       if (specifier.startsWith(alias)) {
         const relativePath = specifier.replace(alias, relPath);
-
-        // Basear resolução no diretório deste loader (normalmente a raiz do repo),
-        // não no process.cwd() que nos testes aponta para um temp dir.
-        const loaderDir = path.dirname(fileURLToPath(import.meta.url));
-        const absolutePath = path.resolve(loaderDir, relativePath);
+        const absolutePath = path.resolve(distBase, relativePath);
 
         // Garantir que seja uma URL válida
         const url = pathToFileURL(absolutePath).href;

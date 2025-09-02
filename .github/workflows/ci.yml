@@ -107,10 +107,10 @@ jobs:
           git commit -m "chore: atualizar badge testes [skip ci]" || true;
           git push origin HEAD:main || true;
 
-      - name: Gerar documentação dos analistas (docs/ANALISTAS.md)
+  - name: Gerar documentação dos analistas (docs/ANALISTAS.md)
         # Passo leve pós-build; não deve quebrar o CI se falhar
         continue-on-error: true
-        run: node dist/cli.js analistas --doc docs/ANALISTAS.md
+  run: node dist/bin/index.js analistas --doc docs/ANALISTAS.md
 
       - name: Commit docs de analistas atualizados
         if: ${{ github.ref == 'refs/heads/main' && always() }}

@@ -1,5 +1,6 @@
 # deixar aqui
 *.local
+.vscode
 
 # Node modules
 node_modules/

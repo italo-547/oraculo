@@ -5,10 +5,15 @@
 // - Fallback: se detectar erro "Timeout calling onTaskUpdate", reexecuta no modo sequencial
 
 import { spawn } from 'node:child_process';
+import path from 'node:path';
 
-function run(cmd, args, env = process.env) {
+function runNode(args, env = process.env) {
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: 'inherit', shell: true, env });
+    const child = spawn(process.execPath, args, {
+      stdio: 'inherit',
+      shell: false,
+      env,
+    });
     child.on('close', (code) => resolve(code ?? 1));
   });
 }
@@ -20,8 +25,9 @@ async function main() {
   const isWin = process.platform === 'win32';
   const forceSequential = /^1|true$/i.test(process.env.VITEST_SEQUENTIAL || '');
 
-  const runSequential = async () => run('node', ['./scripts/run-tests-sequential.mjs']);
-  const runParallel = async () => run('npx', ['vitest', 'run']);
+  const vitestEntry = path.join(process.cwd(), 'node_modules', 'vitest', 'vitest.mjs');
+  const runSequential = async () => runNode(['./scripts/run-tests-sequential.mjs']);
+  const runParallel = async () => runNode([vitestEntry, 'run']);
 
   if (isWin || forceSequential) {
     const code = await runSequential();

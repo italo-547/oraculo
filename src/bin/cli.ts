@@ -21,7 +21,8 @@ const __dirname = dirname(__filename);
 // 📦 Ler versão dinamicamente do package.json
 function getVersion(): string {
   try {
-    const packagePath = join(__dirname, '..', 'package.json');
+    // Ao compilar, este arquivo vai para dist/bin; o package.json fica na raiz (subir dois níveis)
+    const packagePath = join(__dirname, '..', '..', 'package.json');
     const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
     return packageJson.version || '0.0.0';
   } catch {
@@ -70,7 +71,7 @@ async function aplicarFlagsGlobais(opts: unknown) {
   // Sanitização e normalização (pode lançar)
   try {
     // lazy import para não criar ciclo
-    const { sanitizarFlags } = await import('./zeladores/util/validacao.js');
+    const { sanitizarFlags } = await import('../zeladores/util/validacao.js');
     sanitizarFlags(flags as Record<string, unknown>);
   } catch (e) {
     console.error(chalk.red(`❌ Flags inválidas: ${(e as Error).message}`));
@@ -108,7 +109,8 @@ void (async () => {
   try {
     if (process.env.NODE_ENV === 'production') {
       try {
-        const safeCfgPath = join(__dirname, '..', 'oraculo.config.safe.json');
+        // Em dist/bin, o safe config está na raiz do pacote: subir dois níveis
+        const safeCfgPath = join(__dirname, '..', '..', 'oraculo.config.safe.json');
         const raw = readFileSync(safeCfgPath, 'utf-8');
         const safeCfg = JSON.parse(raw);
         const prod = safeCfg?.productionDefaults;

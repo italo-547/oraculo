@@ -231,7 +231,7 @@ $env:ORACULO_MAX_ANALYST_TIMEOUT_MS='10000';
 $env:NODE_ENV='production';
 $env:WORKER_POOL_MAX_WORKERS='2';
 $env:WORKER_POOL_BATCH_SIZE='10';
-npm run build; node ./dist/cli.js diagnosticar --scan-only
+npm run build; node ./dist/bin/index.js diagnosticar --scan-only
 ```text
 
 Alternativa (arquivo de configuração): adicionar o bloco `productionDefaults` em `oraculo.config.safe.json` (já existe suporte de convenção no repositório). Exemplo mínimo:

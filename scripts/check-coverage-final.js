@@ -3,8 +3,9 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 const COVERAGE_PATH = path.resolve(process.cwd(), 'coverage', 'coverage-final.json');
-const THRESHOLD = 90; // porcentagem mínima por métrica
+const DEFAULT_THRESHOLD = 90; // porcentagem mínima por métrica (fallback)
 const EXCLUDE_PATH = path.resolve(process.cwd(), 'scripts', 'coverage-exclude.json');
+const CONFIG_PATH = path.resolve(process.cwd(), 'oraculo.config.json');
 
 function pct(covered, total) {
   if (total === 0) return 100;
@@ -32,10 +33,12 @@ async function main() {
     let totalLines = 0;
     let coveredLines = 0;
 
+    let consideredFiles = 0;
     for (const filePath of Object.keys(data)) {
       const rel = filePath.replace(/\\/g, '/');
       if (matchesAnyPattern(rel, excludePatterns)) continue;
       const entry = data[filePath];
+      consideredFiles++;
 
       // statements
       if (entry.s && typeof entry.s === 'object') {
@@ -74,7 +77,7 @@ async function main() {
       }
     }
 
-    const totals = {
+  const totals = {
       lines: {
         total: totalLines,
         covered: coveredLines,
@@ -97,19 +100,40 @@ async function main() {
       },
     };
 
+    const resolvedThreshold = await resolveThreshold();
+
+    // Se nada foi considerado (totais zero e nenhum arquivo), é um sinal de coleta incorreta.
+    // Falhe com código distinto e mensagem clara para evitar falso positivo de 100%.
+    const nothingCounted =
+      consideredFiles === 0 ||
+      (totals.lines.total === 0 &&
+        totals.functions.total === 0 &&
+        totals.branches.total === 0 &&
+        totals.statements.total === 0);
+    if (nothingCounted) {
+      console.error(
+        'Coverage gate: nenhum arquivo contabilizado. Verifique se a coleta de cobertura foi executada com Vitest e se os padrões include/exclude estão corretos.',
+      );
+      console.error('Arquivos considerados:', consideredFiles);
+      console.error('Padrões de exclusão:', JSON.stringify(excludePatterns));
+      console.error(JSON.stringify(totals, null, 2));
+      process.exit(3);
+    }
     const ok =
-      totals.lines.pct >= THRESHOLD &&
-      totals.functions.pct >= THRESHOLD &&
-      totals.branches.pct >= THRESHOLD &&
-      totals.statements.pct >= THRESHOLD;
+      totals.lines.pct >= resolvedThreshold &&
+      totals.functions.pct >= resolvedThreshold &&
+      totals.branches.pct >= resolvedThreshold &&
+      totals.statements.pct >= resolvedThreshold;
 
     if (!ok) {
-      console.error('Coverage gate failed: thresholds not met');
+      console.error(
+        `Coverage gate failed: thresholds not met (min ${resolvedThreshold}%)`,
+      );
       console.error(JSON.stringify(totals, null, 2));
       process.exit(1);
     }
 
-    console.log('Coverage gate passed');
+    console.log(`Coverage gate passed (min ${resolvedThreshold}%)`);
     console.log(JSON.stringify(totals, null, 2));
     process.exit(0);
   } catch (err) {
@@ -160,4 +184,22 @@ function matchesAnyPattern(filePath, patterns) {
 
 function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\\\]/g, '\\$&');
+}
+
+async function resolveThreshold() {
+  // 1) ENV var
+  const envVal = Number(process.env.COVERAGE_GATE_PERCENT || '');
+  if (Number.isFinite(envVal) && envVal > 0 && envVal <= 100) return Math.floor(envVal);
+
+  // 2) oraculo.config.json (COVERAGE_GATE_PERCENT ou coverageGatePercent)
+  try {
+    const raw = await fs.readFile(CONFIG_PATH, 'utf8');
+    const cfg = JSON.parse(raw);
+    const fromCfg =
+      Number(cfg?.COVERAGE_GATE_PERCENT) || Number(cfg?.coverageGatePercent) || null;
+    if (Number.isFinite(fromCfg) && fromCfg > 0 && fromCfg <= 100) return Math.floor(fromCfg);
+  } catch {}
+
+  // 3) fallback
+  return DEFAULT_THRESHOLD;
 }

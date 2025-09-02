@@ -14,13 +14,13 @@ Exemplo de uso (PowerShell):
 ````powershell
 # usa as configurações do arquivo de exemplo ao executar (copie para oraculo.config.json ou exporte variáveis de ambiente)
 cp oraculo.config.safe.json oraculo.config.json
-node ./dist/cli.js diagnosticar --scan-only
+node ./dist/bin/index.js diagnosticar --scan-only
 ```powershell
 
 Para permitir temporariamente execuções de shell (não recomendado sem revisão):
 
 ```powershell
-$env:ORACULO_ALLOW_EXEC = '1'; node ./dist/cli.js perf baseline
+$env:ORACULO_ALLOW_EXEC = '1'; node ./dist/bin/index.js perf baseline
 ````
 
 Recomenda-se não executar com `ALLOW_PLUGINS` ou `ALLOW_MUTATE_FS` habilitados sem revisão prévia do repositório e/ou execução em container isolado.

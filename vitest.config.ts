@@ -6,8 +6,7 @@ import { fileURLToPath } from 'node:url';
 export default defineConfig(() => {
   const isCI = process.env.CI === 'true';
   const coverageEnabled = isCI || process.env.COVERAGE === 'true';
-  const enforceThresholds =
-    isCI || process.env.COVERAGE_ENFORCE === 'true' || process.env.COVERAGE === 'true';
+  const enforceThresholds = isCI || process.env.COVERAGE_ENFORCE === 'true';
   // Coverage provider can be overridden with env COVERAGE_PROVIDER (e.g. 'v8' or 'c8').
   // Default to 'c8' which produces LCOV/JSON summaries and usually works better with TS sourcemaps.
   const coverageProvider = process.env.COVERAGE_PROVIDER || 'c8';

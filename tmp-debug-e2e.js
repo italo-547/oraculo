@@ -6,9 +6,9 @@ const { join, resolve } = require('node:path');
 const { spawnSync, execSync } = require('child_process');
 
 function garantirBuild() {
-  const cliPath = resolve('dist/cli.js');
+  const cliPath = resolve('dist/bin/index.js');
   if (!existsSync(cliPath)) {
-    console.log('dist/cli.js não encontrado, executando build...');
+    console.log('dist/bin/index.js não encontrado, executando build...');
     execSync('npm run build', { stdio: 'inherit' });
   }
   return cliPath;
@@ -40,7 +40,7 @@ function garantirBuild() {
     );
 
     console.log('Arquivos criados. Executando CLI...');
-    const proc = spawnSync(process.execPath, [cliPath, 'reestruturar', '--auto', '--domains', '--prefer-estrategista', '--silence'], { cwd: tempDir, encoding: 'utf-8', timeout: 30000 });
+  const proc = spawnSync(process.execPath, [cliPath, 'reestruturar', '--auto', '--domains', '--prefer-estrategista', '--silence'], { cwd: tempDir, encoding: 'utf-8', timeout: 30000 });
     console.log('exitCode:', proc.status);
     console.log('stdout:\n', proc.stdout);
     console.log('stderr:\n', proc.stderr);

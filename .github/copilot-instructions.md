@@ -173,7 +173,7 @@ console.log(bloco); // impressão direta, sem prefixo
 ## Fluxos de Trabalho
 
 - **Build**: Use o TypeScript com as opções do `tsconfig.json`. Saída em `dist/`.
-- **Execução CLI**: Rode comandos via `node dist/cli.js <comando>` após build.
+- **Execução CLI**: Rode comandos via `node dist/bin/index.js <comando>` após build.
 - **Aliases**: Sempre importe módulos usando os aliases do `tsconfig.json`.
 - **Testes**: Já implementados (Vitest). Durante testes `process.env.VITEST` deve impedir chamadas a `process.exit`.
 - **Persistência**: Sempre utilize os helpers centralizados para leitura/escrita de arquivos de estado, relatórios e snapshots.

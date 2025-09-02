@@ -36,12 +36,12 @@ jobs:
 
       - name: Testar comandos principais do Oráculo
         run: |
-          node dist/cli.js --help
-          node dist/cli.js diagnosticar --help
-          node dist/cli.js guardian --help
-          node dist/cli.js podar --help
-          node dist/cli.js reestruturar --help
-          node dist/cli.js atualizar --help
+          node dist/bin/index.js --help
+          node dist/bin/index.js diagnosticar --help
+          node dist/bin/index.js guardian --help
+          node dist/bin/index.js podar --help
+          node dist/bin/index.js reestruturar --help
+          node dist/bin/index.js atualizar --help
 
       - name: Rodar testes e cobertura
         run: npm run coverage && npm run coverage:gate

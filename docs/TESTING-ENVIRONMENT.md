@@ -66,10 +66,10 @@ Este documento descreve como configurar um ambiente local para rodar os testes d
 
 ## E2E do CLI (binário)
 
-- Os testes E2E que executam o binário compilado (`dist/cli.js`) usam um loader customizado em alguns cenários para resolver o alias `@`. Ao executar manualmente o binário com Node no Windows, passe o loader como `file://` URL:
+- Os testes E2E que executam o binário compilado agora usam o bootstrap `dist/bin/index.js`, que injeta o loader automaticamente. Para executar manualmente no Windows:
 
   ```powershell
-  node --loader "file://C:/caminho/para/seu/repo/node.loader.mjs" dist/cli.js diagnosticar --scan-only
+  node dist/bin/index.js diagnosticar --scan-only
   ```
 
 ## Dicas para investigar o erro `Timeout calling "onTaskUpdate"`

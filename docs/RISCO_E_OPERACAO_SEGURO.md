@@ -49,11 +49,11 @@ Como permitir ações (exemplo)
 
 # permitir somente plugins
 
-ORACULO_ALLOW_PLUGINS=1 node dist/cli.js diagnosticar
+ORACULO_ALLOW_PLUGINS=1 node dist/bin/index.js diagnosticar
 
 # permitir mutações (dupla confirmação recomendada)
 
-ORACULO_ALLOW_MUTATE_FS=1 ORACULO_ALLOW_PLUGINS=1 node dist/cli.js diagnosticar --auto-fix
+ORACULO_ALLOW_MUTATE_FS=1 ORACULO_ALLOW_PLUGINS=1 node dist/bin/index.js diagnosticar --auto-fix
 
 Notas finais
 

@@ -20,6 +20,8 @@
 
 Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaScript/TypeScript e multi-stack leve), oferecendo diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON consumíveis por CI.
 
+> Nota temporária (set/2025): o gate de cobertura está em ajuste. Execute os testes normalmente e, se quiser checar a cobertura local, rode “npm run coverage:fast” (somente medição) ou “npm run coverage:enforce” (mede e aplica gate). Se o gate falhar, consulte o relatório em “coverage/” para detalhes e siga incrementando testes.
+
 > Observação importante: muitos problemas já foram mapeados no projeto, mas ainda não conseguimos corrigir todos por enquanto — estamos trabalhando nas correções e muitas delas serão aplicadas em breve. Se você puder ajudar a localizar problemas ou fornecer feedback, será ótimo: abra issues, comente nas existentes ou envie um PR com indicações do que encontrou.
 
 ## ✨ Principais Capacidades
@@ -122,8 +124,8 @@ npm install
 
 ```bash
 npm run build
-node dist/cli.js diagnosticar --json
-node dist/cli.js guardian --diff --json
+node dist/bin/index.js diagnosticar --json
+node dist/bin/index.js guardian --diff --json
 ````
 
 Instalação global opcional:
@@ -230,7 +232,7 @@ oraculo <comando>
 | `analistas`    | Lista analistas registrados; suporta `--json`, `--output <arquivo>` e `--doc <arquivo>` para exportar catálogo                               |
 | `reestruturar` | (experimental) Aplicar plano de reorganização                                                                                                |
 
-Lista completa: `node dist/cli.js --help`.
+Lista completa: `node dist/bin/index.js --help`.
 
 ## 🧪 Qualidade & Política de Testes
 
@@ -501,13 +503,13 @@ Exemplos rápidos:
 
 ```powershell
 # Diagnóstico padrão
-node dist/cli.js diagnosticar
+node dist/bin/index.js diagnosticar
 
 # Diagnóstico com Guardian e export de relatórios
-node dist/cli.js diagnosticar --guardian-check --export
+node dist/bin/index.js diagnosticar --guardian-check --export
 
 # JSON para CI, com filtros pontuais
-node dist/cli.js diagnosticar --json --include "src/**" --exclude "**/*.test.ts"
+node dist/bin/index.js diagnosticar --json --include "src/**" --exclude "**/*.test.ts"
 ````
 
 ### guardian
@@ -521,13 +523,13 @@ Exemplos:
 
 ````powershell
 # Verificar integridade
-node dist/cli.js guardian
+node dist/bin/index.js guardian
 
 # Mostrar diferenças
-node dist/cli.js guardian --diff
+node dist/bin/index.js guardian --diff
 
 # Aceitar baseline (não permitido com --full-scan)
-node dist/cli.js guardian --accept-baseline
+node dist/bin/index.js guardian --accept-baseline
 ```powershell
 
 ### reestruturar (experimental)
@@ -545,10 +547,10 @@ Exemplos:
 
 ```powershell
 # Somente gerar o plano (dry-run)
-node dist/cli.js reestruturar --somente-plano
+node dist/bin/index.js reestruturar --somente-plano
 
 # Aplicar automaticamente usando preset padrão (oraculo)
-node dist/cli.js reestruturar --auto
+node dist/bin/index.js reestruturar --auto
 ````
 
 ### podar
@@ -560,10 +562,10 @@ node dist/cli.js reestruturar --auto
 Exemplos:
 
 ````powershell
-node dist/cli.js diagnosticar --export; node dist/cli.js podar
+node dist/bin/index.js diagnosticar --export; node dist/bin/index.js podar
 
 # Remoção direta (cuidado)
-node dist/cli.js podar --force
+node dist/bin/index.js podar --force
 ```powershell
 
 ### analistas
@@ -576,10 +578,10 @@ Exemplos:
 
 ```powershell
 ## 🔌 Domínios
-node dist/cli.js analistas
+node dist/bin/index.js analistas
 
 # Exportar doc
-node dist/cli.js analistas --doc docs/ANALISTAS.md
+node dist/bin/index.js analistas --doc docs/ANALISTAS.md
 ````
 
 ### perf
@@ -600,10 +602,10 @@ Subcomandos:
 Exemplos:
 
 ````powershell
-node dist/cli.js perf baseline --dir docs/perf
+node dist/bin/index.js perf baseline --dir docs/perf
 
 # Comparar (gate de regressão)
-node dist/cli.js perf compare --dir docs/perf --json
+node dist/bin/index.js perf compare --dir docs/perf --json
 ```text
 
 - Analistas: identificam padrões, estruturas e potenciais problemas (somente leitura)

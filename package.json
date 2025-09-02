@@ -6,39 +6,40 @@
   "description": "Oráculo: Análise, limpeza e organização de repositórios",
   "author": "Italo C Lopes",
   "license": "MIT",
-  "main": "./dist/cli.js",
+  "main": "./dist/bin/cli.js",
   "bin": {
-    "oraculo": "./bin/oraculo.js"
+    "oraculo": "./dist/bin/index.js"
   },
   "exports": {
-    ".": "./dist/cli.js"
+    ".": "./dist/bin/cli.js"
   },
   "engines": {
     "node": ">=24.0.4"
   },
   "scripts": {
     "pretest": "npm run build",
-    "typecheck": "tsc --noEmit",
-    "prebuild": "rimraf dist",
-    "build": "tsc",
+  "typecheck": "tsc -p src/tsconfig.json --noEmit",
+  "prebuild": "rimraf dist bin",
+  "build": "tsc -p src/tsconfig.json",
+  "postbuild": "node scripts/copy-artifacts.mjs",
     "pre-public": "node scripts/pre-public.mjs",
-    "start": "node ./dist/cli.js",
-    "diagnosticar": "node ./dist/cli.js diagnosticar",
+  "start": "node ./dist/bin/index.js",
+  "diagnosticar": "node ./dist/bin/index.js diagnosticar",
     "lint": "eslint \"{src,tests,temp-fantasma}/**/*.ts\"",
     "format": "prettier --check \"**/*.{ts,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,md}\"",
-    "coverage:enforce": "cross-env CI=true npm run coverage:c8 && node scripts/check-coverage-final.js",
-    "coverage:fast": "cross-env COVERAGE=true vitest run --reporter=dot --coverage",
-    "coverage:c8": "cross-env COVERAGE=true npx c8 --reporter=lcov --reporter=json --reporter=text npm run test",
+  "coverage:enforce": "npm run coverage:c8 && node scripts/check-coverage-final.js",
+  "coverage:fast": "cross-env COVERAGE=true node ./scripts/test-smart.mjs",
+  "coverage:c8": "cross-env COVERAGE=true node ./scripts/test-smart.mjs",
     "coverage:priority": "node scripts/coverage-priority.js",
     "check:style": "npm run lint && npm run typecheck && npm run format",
     "check": "npm run check:style && npm run coverage:gate",
     "coverage:gate": "npm run coverage:enforce",
     "test:e2e": "vitest run tests/cli --reporter dot",
     "test:ci": "cross-env CI=true vitest run --reporter=json --outputFile .oraculo/last-test-report.json",
-    "perf:baseline": "node dist/cli.js perf baseline --dir docs/perf",
-    "perf:compare": "node dist/cli.js perf compare --dir docs/perf --json",
-    "perf:gate": "node dist/cli.js perf compare --dir docs/perf --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);if(j.regressao){console.error('Regressao performance > limite');process.exit(1)}console.log('Perf OK')});\"",
+  "perf:baseline": "node ./dist/bin/index.js perf baseline --dir docs/perf",
+  "perf:compare": "node ./dist/bin/index.js perf compare --dir docs/perf --json",
+  "perf:gate": "node ./dist/bin/index.js perf compare --dir docs/perf --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d);if(j.regressao){console.error('Regressao performance > limite');process.exit(1)}console.log('Perf OK')});\"",
     "security:deps": "npm audit --production --audit-level=moderate || true",
     "security:lint": "npx eslint --no-error-on-unmatched-pattern \"src/**/*.ts\"",
     "prepare": "npm run build",
@@ -76,8 +77,6 @@
   "preferGlobal": true,
   "files": [
     "dist",
-    "bin",
-    "node.loader.mjs",
     "README.md",
     "LICENSE*",
     "THIRD-PARTY-NOTICES.txt"

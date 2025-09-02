@@ -12,25 +12,25 @@
     "removeComments": false,
   "sourceMap": true,
   "inlineSources": true,
-    "rootDir": "src",
-    "outDir": "dist",
+  "rootDir": ".",
+  "outDir": "../dist",
     "declaration": true,
     "declarationMap": true,
     "resolveJsonModule": true,
     "allowJs": false,
     "baseUrl": ".",
     "paths": {
-      "@constelacao/*": ["src/constelacao/*"],
-      "@nucleo/*": ["src/nucleo/*"],
-      "@analistas/*": ["src/analistas/*"],
-      "@arquitetos/*": ["src/arquitetos/*"],
-      "@zeladores/*": ["src/zeladores/*"],
-      "@relatorios/*": ["src/relatorios/*"],
-      "@*": ["src/*"],
-      "@guardian/*": ["src/guardian/*"],
-      "@tipos/*": ["src/tipos/*"]
+      "@constelacao/*": ["constelacao/*"],
+      "@nucleo/*": ["nucleo/*"],
+      "@analistas/*": ["analistas/*"],
+      "@arquitetos/*": ["arquitetos/*"],
+      "@zeladores/*": ["zeladores/*"],
+      "@relatorios/*": ["relatorios/*"],
+      "@*": ["*"],
+      "@guardian/*": ["guardian/*"],
+      "@tipos/*": ["tipos/*"]
     }
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["dist", ".oraculo", "**/*.test.ts", "**/*.spec.ts", "tests"]
+  "include": ["**/*.ts"],
+  "exclude": ["../dist", "../.oraculo", "**/*.test.ts", "**/*.spec.ts", "../tests"]
 }

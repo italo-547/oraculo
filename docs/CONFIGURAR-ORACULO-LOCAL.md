@@ -66,7 +66,7 @@ Situação comum: ao rodar `guardian` pela primeira vez o processo cria um basel
 Aceitar baseline manualmente (se confiar no estado atual):
 
 ````powershell
-node ./dist/cli.js guardian --aceitar
+node ./dist/bin/index.js guardian --aceitar
 # ou
 oraculo guardian --aceitar
 ```text
@@ -118,7 +118,7 @@ rm -Force -Recurse .oraculo\historico-metricas
 Recriar baseline se o Guardian ficar em estado inconsistente:
 
 ```powershell
-node ./dist/cli.js guardian --aceitar
+node ./dist/bin/index.js guardian --aceitar
 ````
 
 ## 7) Flags e modos úteis do CLI

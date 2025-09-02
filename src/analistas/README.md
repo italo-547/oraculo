@@ -50,10 +50,10 @@ Escopo de arquivos: os analistas respeitam exatamente o conjunto de arquivos for
 ## Executando e listando analistas
 
 - Listar catálogo atual e exportar documentação:
-  - `node dist/cli.js analistas --json`
-  - `node dist/cli.js analistas --doc docs/ANALISTAS.md`
+  - `node dist/bin/index.js analistas --json`
+  - `node dist/bin/index.js analistas --doc docs/ANALISTAS.md`
 - Para depuração rápida durante o diagnóstico:
-  - `node dist/cli.js diagnosticar --listar-analistas`
+  - `node dist/bin/index.js diagnosticar --listar-analistas`
 
 ## Evolução
 
