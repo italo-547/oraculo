@@ -337,7 +337,7 @@ import { analisarPadroes } from '@analistas/analista-padroes-uso';
 
 Abaixo segue a árvore estrutural que deve ser seguida como referência padrão do projeto Oráculo. Ela serve como mapa para evitar confusão na organização de código, técnicas e testes. Ao criar novos artefatos, siga esta estrutura e as regras adicionais listadas em seguida.
 
-```text
+````text
 .github/
 .husky/
 .oraculo/
@@ -416,7 +416,7 @@ temp-cache-file.ts
 tsconfig.eslint.json
 tsconfig.json
 vitest.config.ts
-```
+```text
 
 Regras e orientações adicionais (obrigatórias):
 
@@ -538,3 +538,4 @@ Se encontrar padrões não documentados ou dúvidas sobre fluxos, registre exemp
 **Última atualização das diretrizes: 2025-08-29**
 
 ---
+````

@@ -1,9 +1,9 @@
+# Oráculo CLI
+
 > Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
 > Nada aqui implica cessão de direitos morais/autorais.
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
-
-# Oráculo CLI
 
 [![CI](https://github.com/italo-c-lopes/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/italo-c-lopes/oraculo/actions/workflows/ci.yml)
 [![Build](https://github.com/italo-c-lopes/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/italo-c-lopes/oraculo/actions/workflows/build.yml)
@@ -21,7 +21,6 @@
 Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaScript/TypeScript e multi-stack leve), oferecendo diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON consumíveis por CI.
 
 > Nota temporária (set/2025): o gate de cobertura está em ajuste. Execute os testes normalmente e, se quiser checar a cobertura local, rode “npm run coverage:fast” (somente medição) ou “npm run coverage:enforce” (mede e aplica gate). Se o gate falhar, consulte o relatório em “coverage/” para detalhes e siga incrementando testes.
-
 > Observação importante: muitos problemas já foram mapeados no projeto, mas ainda não conseguimos corrigir todos por enquanto — estamos trabalhando nas correções e muitas delas serão aplicadas em breve. Se você puder ajudar a localizar problemas ou fornecer feedback, será ótimo: abra issues, comente nas existentes ou envie um PR com indicações do que encontrou.
 
 ## ✨ Principais Capacidades
@@ -184,7 +183,7 @@ Você pode usar as flags globais em qualquer comando para controlar o nível de 
 
 #### Exemplos de uso
 
-```bash
+`````bash
 # Diagnóstico limpo (padrão)
 oraculo diagnosticar
 
@@ -199,7 +198,7 @@ oraculo diagnosticar --export
 
 # Combinar flags (silence sempre sobrepõe verbose)
 oraculo diagnosticar --export --verbose --silence
-```
+```powershell
 
 ### Plugins & Extensões
 
@@ -219,7 +218,7 @@ Assim, basta rodar:
 
 ```bash
 oraculo <comando>
-````
+`````
 
 ### Principais Comandos
 

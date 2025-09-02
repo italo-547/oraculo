@@ -48,9 +48,9 @@ ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS=0
 
 ### **Com Timeout Ativo**
 
-```text
+`````text
 ⏰ Timeout: analista 'analista-funcoes-longas' excedeu 30000ms para src/arquivo-grande.ts
-```
+```text
 
 ### **No Relatório JSON**
 
@@ -108,7 +108,7 @@ if (timeoutMs > 0) {
 } else {
   resultado = await tecnica.aplicar(/* ... */);
 }
-````
+`````
 
 ### **Cobertura de Testes**
 
@@ -169,11 +169,11 @@ Solução: Aumente ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS
 Sintomas: Builds travando por analistas lentos
 Solução: Diminua ORACULO_ANALISE_TIMEOUT_POR_ANALISTA_MS
 
-```text
+````text
 
 ### **Analista Sempre com Timeout**
 
-```
+```text
 
 Sintomas: Mesmo analista sempre timeout
 Solução: Verifique implementação do analista ou otimize algoritmo
@@ -184,4 +184,4 @@ Solução: Verifique implementação do analista ou otimize algoritmo
 
 **Esta funcionalidade garante robustez e previsibilidade na análise, mesmo em cenários adversos!** 🛡️
 
-```
+````
