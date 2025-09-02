@@ -14,6 +14,11 @@ const entries = readdirSync(testsDir, { withFileTypes: true })
 
 const VITEST_TIMEOUT = process.env.VITEST_TEST_TIMEOUT_MS || '300000';
 process.env.VITEST_TEST_TIMEOUT_MS = VITEST_TIMEOUT;
+const passArgs = process.argv.slice(2);
+const wantCoverage =
+  /^1|true$/i.test(process.env.COVERAGE || '') && !passArgs.includes('--coverage')
+    ? ['--coverage']
+    : [];
 
 const vitestEntry = path.join(root, 'node_modules', 'vitest', 'vitest.mjs');
 
@@ -36,7 +41,7 @@ async function runDir(dir) {
     const abs = path.join('tests', dir);
     console.log(`
 === running tests for: ${abs} ===\n`);
-    runVitest(['run', abs, '--maxWorkers=1', '--reporter=dot'])
+    runVitest(['run', abs, '--maxWorkers=1', '--reporter=dot', ...passArgs, ...wantCoverage])
       .then(() => resolve())
       .catch((e) => reject(e));
   });
@@ -83,23 +88,45 @@ async function runCliFilesSequential() {
       const txt = fs.readFileSync(file, 'utf-8');
       const names = Array.from(txt.matchAll(/\bit\s*\(\s*(["'`])(.+?)\1/g)).map((m) => m[2]);
       const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      for (const name of names) {
+      // Executa em chunks de 5 casos por rodada para minimizar overhead
+      const chunkSize = 5;
+      for (let i = 0; i < names.length; i += chunkSize) {
+        const group = names.slice(i, i + chunkSize);
+        console.log(
+          `\n=== running e2e chunk: ${i + 1}-${i + group.length} / ${names.length} ===\n`,
+        );
+        // Monta um pattern que combina qualquer um dos títulos do chunk
+        const pattern = group.map((n) => escapeRegex(n)).join('|');
         console.log(`\n=== running e2e test case: ${name} ===\n`);
         // Não ancorar para casar dentro do "full name" (inclui describes):
-        const pattern = `${escapeRegex(name)}`;
-        await runVitest(['run', rel, '-t', pattern, '--maxWorkers=1', '--reporter=dot'], {
-          VITEST: '1',
-          VITEST_MAX_WORKERS: '1',
-          VITEST_POOL: 'forks',
-        });
+        await runVitest(
+          [
+            'run',
+            rel,
+            '-t',
+            pattern,
+            '--maxWorkers=1',
+            '--reporter=dot',
+            ...passArgs,
+            ...wantCoverage,
+          ],
+          {
+            VITEST: '1',
+            VITEST_MAX_WORKERS: '1',
+            VITEST_POOL: 'forks',
+          },
+        );
       }
       continue;
     }
-    await runVitest(['run', rel, '--maxWorkers=1', '--reporter=dot'], {
-      VITEST: '1',
-      VITEST_MAX_WORKERS: '1',
-      VITEST_POOL: 'forks',
-    });
+    await runVitest(
+      ['run', rel, '--maxWorkers=1', '--reporter=dot', ...passArgs, ...wantCoverage],
+      {
+        VITEST: '1',
+        VITEST_MAX_WORKERS: '1',
+        VITEST_POOL: 'forks',
+      },
+    );
   }
 }
 

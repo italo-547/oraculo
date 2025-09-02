@@ -24,23 +24,32 @@ async function main() {
 
   const isWin = process.platform === 'win32';
   const forceSequential = /^1|true$/i.test(process.env.VITEST_SEQUENTIAL || '');
+  const passArgs = process.argv.slice(2);
+  const wantCoverage =
+    /^1|true$/i.test(process.env.COVERAGE || '') && !passArgs.includes('--coverage')
+      ? ['--coverage']
+      : [];
 
   const vitestEntry = path.join(process.cwd(), 'node_modules', 'vitest', 'vitest.mjs');
-  const runSequential = async () => runNode(['./scripts/run-tests-sequential.mjs']);
-  const runParallel = async () => runNode([vitestEntry, 'run']);
+  const runSequential = async () =>
+    runNode(['./scripts/run-tests-sequential.mjs', ...passArgs, ...wantCoverage]);
+  const runParallel = async () => runNode([vitestEntry, 'run', ...passArgs, ...wantCoverage]);
 
   if (isWin || forceSequential) {
+    console.log('[test-smart] Executando no modo sequencial (Windows/forçado).');
     const code = await runSequential();
     process.exit(code);
   }
 
   // Tentativa paralela padrão
+  console.log('[test-smart] Executando no modo paralelo padrão (Vitest run).');
   const code = await runParallel();
   if (code === 0) return process.exit(0);
 
   // Fallback automático quando encontrar erro conhecido de RPC
   // Observação: não interceptamos stdout aqui (herdado), então aplicamos um fallback
   // conservador sempre que falhar para aumentar a chance de verde localmente.
+  console.warn('[test-smart] Falha no modo paralelo. Fazendo fallback para execução sequencial...');
   const retry = await runSequential();
   process.exit(retry);
 }

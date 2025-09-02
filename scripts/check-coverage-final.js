@@ -119,6 +119,9 @@ async function main() {
       console.error(JSON.stringify(totals, null, 2));
       process.exit(3);
     }
+    console.log('Coverage gate | arquivos considerados:', consideredFiles);
+    console.log('Coverage gate | threshold resolvido:', resolvedThreshold + '%');
+
     const ok =
       totals.lines.pct >= resolvedThreshold &&
       totals.functions.pct >= resolvedThreshold &&

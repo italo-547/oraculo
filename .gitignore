@@ -20,7 +20,6 @@ coverage/
 
 # Oráculo runtime / caches / reports
 .oraculo/
-preview-oraculo/
 
 # TypeScript
 *.tsbuildinfo

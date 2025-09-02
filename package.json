@@ -23,6 +23,7 @@
     "build": "tsc -p src/tsconfig.json",
     "postbuild": "node scripts/copy-artifacts.mjs",
     "pre-public": "node scripts/pre-public.mjs",
+    "preview": "node scripts/preview.mjs",
     "start": "node ./dist/bin/index.js",
     "diagnosticar": "node ./dist/bin/index.js diagnosticar",
     "lint": "eslint \"{src,tests,temp-fantasma}/**/*.ts\"",
