@@ -211,7 +211,7 @@ git rebase origin/main
 
 ### Contatos de Suporte
 
-- **Mantenedor Principal**: @italo-c-lopes
+- **Mantenedor Principal**: @comode-547
 - **Issues**: Criar issue com label `branch-protection`
 - **Discussões**: GitHub Discussions
 

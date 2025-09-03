@@ -1,0 +1,73 @@
+{
+  "nome": "oraculo",
+  "descricao": "Projeto personalizado: oraculo",
+  "arquetipoOficial": "desconhecido",
+  "estruturaPersonalizada": {
+    "diretorios": [
+      ".deprecados",
+      ".env.example",
+      ".husky",
+      ".lintstagedrc.mjs",
+      ".prettierrc",
+      ".tsbuildinfo",
+      ".vscode",
+      "CHANGELOG.md",
+      "CODE_OF_CONDUCT.md",
+      "CONTRIBUTING.md",
+      "docs",
+      "eslint.config.js",
+      "LICENSE",
+      "oraculo.config.json",
+      "oraculo.config.safe.json",
+      "oraculo.repo.arquetipo.json",
+      "package.json",
+      "README.md",
+      "scripts",
+      "SECURITY.md",
+      "src",
+      "temp-fantasma",
+      "tests",
+      "THIRD-PARTY-NOTICES.txt",
+      "tmp-check-rewrite.mjs",
+      "tmp-debug-e2e-vitest.cjs",
+      "tmp-debug-e2e.cjs",
+      "tmp-debug-e2e.js",
+      "tsconfig.eslint.json",
+      "vitest-report.json",
+      "vitest.config.ts"
+    ],
+    "arquivosChave": [
+      ".env.example",
+      "eslint.config.js",
+      "package.json",
+      "README.md",
+      "tmp-debug-e2e.js"
+    ],
+    "padroesNomenclatura": {
+      "tests": "*.test.*"
+    }
+  },
+  "melhoresPraticas": {
+    "recomendado": [
+      "src/",
+      "tests/",
+      "docs/",
+      "README.md",
+      ".env.example"
+    ],
+    "evitar": [
+      "temp/",
+      "cache/",
+      "*.log"
+    ],
+    "notas": [
+      "Mantenha código fonte organizado em src/",
+      "Separe testes em pasta dedicada",
+      "Documente APIs e funcionalidades importantes"
+    ]
+  },
+  "metadata": {
+    "criadoEm": "2025-09-02T10:48:47.372Z",
+    "versao": "1.0.0"
+  }
+}
