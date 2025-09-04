@@ -54,7 +54,7 @@ export interface OcorrenciaParseErro extends OcorrenciaBase {
   trecho?: string;
 }
 
-// Tipo genérico (fallback/legado) para ocorrência
+// Tipo genérico (fallback) para ocorrência (compatibilidade com formatos antigos)
 export interface OcorrenciaGenerica extends OcorrenciaBase {
   [k: string]: unknown;
 }
@@ -63,7 +63,7 @@ export type Ocorrencia =
   | OcorrenciaErroAnalista
   | OcorrenciaComplexidadeFuncao
   | OcorrenciaParseErro
-  | OcorrenciaGenerica; // manter por compatibilidade
+  | OcorrenciaGenerica; // manter por compatibilidade com formatos antigos
 
 // Severidade textual padronizada (complementa um campo numérico opcional)
 export type SeveridadeTexto = 'info' | 'aviso' | 'risco' | 'critico';
@@ -150,8 +150,6 @@ export type ConfigIncluiExclui = {
   globalIncludeGlob?: string[];
   /** Globs micromatch globais para exclusão (mais forte) */
   globalExcludeGlob?: string[];
-  /** Padrões de exclusão padrão para diagnóstico */
-  defaultExcludes?: string[];
   /** Regras por diretório (chave é prefixo, ex.: "src/") */
   dirRules?: Record<string, RegraIncluiExclui>;
 };

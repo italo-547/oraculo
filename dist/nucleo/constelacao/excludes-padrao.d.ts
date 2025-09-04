@@ -11,32 +11,32 @@
  * 4. Fallback hardcoded (mais baixa prioridade)
  */
 export interface ConfigExcludesPadrao {
-    /** Padrões de exclusão padrão do sistema */
-    padroesSistema: string[];
-    /** Padrões recomendados para projetos Node.js */
-    nodeJs: string[];
-    /** Padrões recomendados para projetos TypeScript */
-    typeScript: string[];
-    /** Padrões recomendados para projetos Python */
-    python: string[];
-    /** Padrões recomendados para projetos Java */
-    java: string[];
-    /** Padrões recomendados para projetos .NET/C# */
-    dotnet: string[];
-    /** Padrões para ferramentas de desenvolvimento */
-    ferramentasDev: string[];
-    /** Padrões para sistemas de controle de versão */
-    controleVersao: string[];
-    /** Padrões para arquivos temporários e cache */
-    temporarios: string[];
-    /** Padrões para documentação e assets */
-    documentacao: string[];
-    /** Metadados da configuração */
-    metadata: {
-        versao: string;
-        ultimaAtualizacao: string;
-        descricao: string;
-    };
+  /** Padrões de exclusão padrão do sistema */
+  padroesSistema: string[];
+  /** Padrões recomendados para projetos Node.js */
+  nodeJs: string[];
+  /** Padrões recomendados para projetos TypeScript */
+  typeScript: string[];
+  /** Padrões recomendados para projetos Python */
+  python: string[];
+  /** Padrões recomendados para projetos Java */
+  java: string[];
+  /** Padrões recomendados para projetos .NET/C# */
+  dotnet: string[];
+  /** Padrões para ferramentas de desenvolvimento */
+  ferramentasDev: string[];
+  /** Padrões para sistemas de controle de versão */
+  controleVersao: string[];
+  /** Padrões para arquivos temporários e cache */
+  temporarios: string[];
+  /** Padrões para documentação e assets */
+  documentacao: string[];
+  /** Metadados da configuração */
+  metadata: {
+    versao: string;
+    ultimaAtualizacao: string;
+    descricao: string;
+  };
 }
 /**
  * Configuração padrão dos padrões de exclusão
@@ -71,5 +71,8 @@ export declare function isPadraoExclusaoSeguro(padrao: string): boolean;
  * @param tipoProjeto Tipo de projeto para padrões recomendados
  * @returns Array consolidado de padrões de exclusão
  */
-export declare function mesclarConfigExcludes(configUsuario: string[] | null | undefined, tipoProjeto?: string): string[];
+export declare function mesclarConfigExcludes(
+  configUsuario: string[] | null | undefined,
+  tipoProjeto?: string,
+): string[];
 //# sourceMappingURL=excludes-padrao.d.ts.map

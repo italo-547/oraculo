@@ -92,8 +92,7 @@ export const configDefault = {
     globalInclude: [],
     globalExclude: [],
     dirRules: {},
-    // Campo legado para compatibilidade (será removido em v1.0.0)
-    defaultExcludes: undefined,
+    // NOTE: campo `defaultExcludes` removido — use `globalExcludeGlob` em INCLUDE_EXCLUDE_RULES
   } as IncludeExcludeConfig,
   ZELADOR_LINE_THRESHOLD: 20,
 
@@ -230,12 +229,12 @@ async function carregarArquivoConfig(): Promise<Record<string, unknown> | null> 
   return null;
 }
 
-function sincronizarIgnoradosLegado() {
-  // Mantém campos legados sincronizados a partir da configuração dinâmica, para compat com consumidores antigos
+// Atualiza padrões de ignorados a partir de INCLUDE_EXCLUDE_RULES
+function sincronizarIgnorados() {
   const dyn = (config.INCLUDE_EXCLUDE_RULES || {}) as IncludeExcludeConfig;
   const glob = Array.isArray(dyn.globalExcludeGlob) ? dyn.globalExcludeGlob : [];
-  const defaultExcl = Array.isArray(dyn.defaultExcludes) ? dyn.defaultExcludes : [];
-  const arr = Array.from(new Set([...glob, ...defaultExcl].map((g) => String(g))));
+  // A partir de agora, apenas `globalExcludeGlob` é adotado como fonte de verdade.
+  const arr = Array.from(new Set(glob.map((g) => String(g))));
   (config as unknown as { ZELADOR_IGNORE_PATTERNS: string[] }).ZELADOR_IGNORE_PATTERNS = arr;
   (config as unknown as { GUARDIAN_IGNORE_PATTERNS: string[] }).GUARDIAN_IGNORE_PATTERNS = arr;
 }
@@ -306,12 +305,12 @@ export async function inicializarConfigDinamica(overridesCli?: Record<string, un
       'cli',
       diffs,
     );
-  // Removido: fallback de migração para caminho antigo de métricas (código legado não utilizado)
+  // Removido: fallback de migração para caminho antigo de métricas (não utilizado)
   // Sincroniza alias de modo somente varredura
   if (config.ANALISE_SCAN_ONLY && !config.SCAN_ONLY) config.SCAN_ONLY = true;
   else if (config.SCAN_ONLY && !config.ANALISE_SCAN_ONLY) config.ANALISE_SCAN_ONLY = true;
-  // Sincroniza campos legados a partir da configuração dinâmica
-  sincronizarIgnoradosLegado();
+  // Sincroniza padrões de ignorados a partir da configuração dinâmica
+  sincronizarIgnorados();
   config.__OVERRIDES__ = diffs;
   return diffs;
 }
@@ -321,8 +320,8 @@ export function aplicarConfigParcial(partial: Record<string, unknown>) {
   mesclarProfundo(config as unknown as Record<string, unknown>, partial, 'programatico', diffs);
   if (config.ANALISE_SCAN_ONLY && !config.SCAN_ONLY) config.SCAN_ONLY = true;
   else if (config.SCAN_ONLY && !config.ANALISE_SCAN_ONLY) config.ANALISE_SCAN_ONLY = true;
-  // Sincroniza campos legados a partir da configuração dinâmica
-  sincronizarIgnoradosLegado();
+  // Sincroniza padrões de ignorados a partir da configuração dinâmica
+  sincronizarIgnorados();
   config.__OVERRIDES__ = { ...(config.__OVERRIDES__ || {}), ...diffs };
   return diffs;
 }

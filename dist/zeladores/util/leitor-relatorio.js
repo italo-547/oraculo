@@ -8,7 +8,7 @@ import { validarSchema, migrarParaVersaoAtual } from '@nucleo/schema-versao.js';
  * Lê um relatório JSON versionado do disco
  */
 export async function lerRelatorioVersionado(options) {
-    const { caminho, validar = true, migrar = true } = options;
+    const { caminho, validar = true, migrar = false } = options;
     try {
         // Ler arquivo
         const conteudo = await lerEstado(caminho);
@@ -30,13 +30,36 @@ export async function lerRelatorioVersionado(options) {
                 };
             }
         }
-        // Migrar se necessário e solicitado
-        if (migrar && (!conteudo._schema || !conteudo.dados)) {
-            relatorioFinal = migrarParaVersaoAtual(conteudo);
-            migrado = true;
+        // Migrar se necessário e solicitado.
+        // - Se migrar=true: migramos explicitamente.
+        // - Se migrar=false e validar=false: aceitamos o conteúdo legado como está (modo permissivo).
+        // - Se migrar=false e validar=true: rejeitamos (chamador pediu validação estrita).
+        if ((!conteudo._schema || !conteudo.dados)) {
+            if (migrar) {
+                relatorioFinal = migrarParaVersaoAtual(conteudo);
+                migrado = true;
+            }
+            else if (!validar) {
+                // modo permissivo: aceitar o conteúdo legado sem migrar
+                relatorioFinal = conteudo;
+                migrado = false;
+            }
+            else {
+                return {
+                    sucesso: false,
+                    erro: 'Relatório em formato antigo (sem _schema); habilite migrar para atualizá-lo explicitamente.',
+                };
+            }
         }
-        // Extrair dados
-        const dados = (relatorioFinal.dados || relatorioFinal);
+        // Extrair dados: se for relatório versionado, retornamos apenas `dados`.
+        // Se for formato legado (sem _schema), retornamos o objeto inteiro.
+        let dados;
+        if ('_schema' in relatorioFinal && relatorioFinal._schema) {
+            dados = relatorioFinal.dados;
+        }
+        else {
+            dados = relatorioFinal;
+        }
         return {
             sucesso: true,
             dados,
@@ -55,11 +78,8 @@ export async function lerRelatorioVersionado(options) {
  * Lê apenas os dados de um relatório, ignorando metadados de versão
  */
 export async function lerDadosRelatorio(caminho) {
-    const resultado = await lerRelatorioVersionado({
-        caminho,
-        validar: false,
-        migrar: true,
-    });
+    // Para obtenção superficial de dados, permitimos migração automática aqui
+    const resultado = await lerRelatorioVersionado({ caminho, validar: false, migrar: true });
     return {
         sucesso: resultado.sucesso,
         dados: resultado.dados,

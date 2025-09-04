@@ -6,12 +6,18 @@
 import { lerEstado } from './persistencia.js';
 import { validarSchema, migrarParaVersaoAtual } from '@nucleo/schema-versao.js';
 
+type RelatorioGenerico = Record<string, unknown>;
+type RelatorioVersionado<T = unknown> = RelatorioGenerico & {
+  _schema?: Record<string, unknown>;
+  dados?: T;
+};
+
 export interface LeitorRelatorioOptions {
   /** Caminho do arquivo do relatório */
   caminho: string;
   /** Se deve validar o schema (padrão: true) */
   validar?: boolean;
-  /** Se deve migrar para versão atual se necessário (padrão: true) */
+  /** Se deve migrar para versão atual se necessário (padrão: false) */
   migrar?: boolean;
 }
 
@@ -27,7 +33,7 @@ export async function lerRelatorioVersionado<T = unknown>(
   erro?: string;
   migrado?: boolean;
 }> {
-  const { caminho, validar = true, migrar = true } = options;
+  const { caminho, validar = true, migrar = false } = options;
 
   try {
     // Ler arquivo
@@ -54,22 +60,44 @@ export async function lerRelatorioVersionado<T = unknown>(
       }
     }
 
-    // Migrar se necessário e solicitado
-    if (migrar && (!conteudo._schema || !conteudo.dados)) {
-      relatorioFinal = migrarParaVersaoAtual<unknown>(conteudo) as unknown as Record<
-        string,
-        unknown
-      >;
-      migrado = true;
+    // Migrar se necessário e solicitado.
+    // - Se migrar=true: migramos explicitamente.
+    // - Se migrar=false e validar=false: aceitamos o conteúdo legado como está (modo permissivo).
+    // - Se migrar=false e validar=true: rejeitamos (chamador pediu validação estrita).
+    if (!conteudo._schema || !conteudo.dados) {
+      if (migrar) {
+        relatorioFinal = migrarParaVersaoAtual<unknown>(conteudo) as unknown as Record<
+          string,
+          unknown
+        >;
+        migrado = true;
+      } else if (!validar) {
+        // modo permissivo: aceitar o conteúdo legado sem migrar
+        relatorioFinal = conteudo;
+        migrado = false;
+      } else {
+        return {
+          sucesso: false,
+          erro: 'Relatório em formato antigo (sem _schema); habilite migrar para atualizá-lo explicitamente.',
+        };
+      }
     }
 
-    // Extrair dados
-    const dados = (relatorioFinal.dados || relatorioFinal) as T;
+    // Extrair dados: se for relatório versionado, retornamos apenas `dados`.
+    // Se for formato legado (sem _schema), retornamos o objeto inteiro.
+    let dados: T;
+    const relObj = relatorioFinal as RelatorioVersionado<T>;
+
+    if ('_schema' in relObj && relObj._schema) {
+      dados = relObj.dados as T;
+    } else {
+      dados = relatorioFinal as T;
+    }
 
     return {
       sucesso: true,
       dados,
-      schema: relatorioFinal._schema as Record<string, unknown> | undefined,
+      schema: (relObj._schema as Record<string, unknown>) || undefined,
       migrado,
     };
   } catch (error) {
@@ -90,11 +118,8 @@ export async function lerDadosRelatorio<T = unknown>(
   dados?: T;
   erro?: string;
 }> {
-  const resultado = await lerRelatorioVersionado<T>({
-    caminho,
-    validar: false,
-    migrar: true,
-  });
+  // Para obtenção superficial de dados, permitimos migração automática aqui
+  const resultado = await lerRelatorioVersionado<T>({ caminho, validar: false, migrar: true });
 
   return {
     sucesso: resultado.sucesso,

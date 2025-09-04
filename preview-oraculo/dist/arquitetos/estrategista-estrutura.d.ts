@@ -10,9 +10,12 @@ import { OpcoesEstrategista } from '@zeladores/util/estrutura.js';
  *
  * Domínio ideal: arquitetos (diagnóstico/planejamento). A execução fica com zeladores.
  */
-export declare function gerarPlanoEstrategico(contexto: Pick<ContextoExecucao, 'arquivos' | 'baseDir'>, opcoes?: OpcoesEstrategista): Promise<PlanoSugestaoEstrutura>;
+export declare function gerarPlanoEstrategico(
+  contexto: Pick<ContextoExecucao, 'arquivos' | 'baseDir'>,
+  opcoes?: OpcoesEstrategista,
+): Promise<PlanoSugestaoEstrutura>;
 export declare const EstrategistaEstrutura: {
-    nome: string;
-    gerarPlano: typeof gerarPlanoEstrategico;
+  nome: string;
+  gerarPlano: typeof gerarPlanoEstrategico;
 };
 //# sourceMappingURL=estrategista-estrutura.d.ts.map

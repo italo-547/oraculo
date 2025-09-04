@@ -18,7 +18,7 @@ export function detectarArquetipo(arquivos) {
     ];
     let lista = candidatos;
     if (!lista.length) {
-        // Fallback de compatibilidade: usar o pontuador completo para preservar comportamento legado
+        // Fallback: usar o pontuador completo quando detectores especializados não retornarem candidatos
         lista = pontuarTodos(arquivos);
     }
     // Se ainda vazio, é desconhecido
@@ -91,7 +91,7 @@ export function detectarArquetipo(arquivos) {
             return filtrados[0];
         }
     }
-    // Ordenação próxima do legado: menor missingRequired, maior score, maior matchedRequired, maior confidence, nome asc
+    // Ordenação: menor missingRequired, maior score, maior matchedRequired, maior confidence, nome asc
     lista.sort((a, b) => {
         const mm = (a.missingRequired?.length || 0) - (b.missingRequired?.length || 0);
         if (mm !== 0)

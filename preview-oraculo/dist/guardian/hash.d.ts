@@ -1,7 +1,7 @@
 export interface SnapshotDetalhado {
-    hash: string;
-    linhas: number;
-    amostra: string;
+  hash: string;
+  linhas: number;
+  amostra: string;
 }
 /**
  * Gera um hash hexadecimal a partir do conteúdo fornecido.

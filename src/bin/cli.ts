@@ -60,6 +60,7 @@ interface OraculoGlobalFlags {
   verbose?: boolean;
   export?: boolean;
   dev?: boolean; // legado removido da CLI; mantido aqui apenas para compat de parse em tests antigos
+  // NOTE: `dev` permanece como campo único para compatibilidade de parse em testes antigos.
   debug?: boolean;
   logEstruturado?: boolean;
   incremental?: boolean;

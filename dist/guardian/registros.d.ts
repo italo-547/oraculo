@@ -1,7 +1,7 @@
 import { FileEntry } from '@tipos/tipos.js';
 export interface RegistroIntegridade {
-    arquivo: string;
-    hash: string;
+  arquivo: string;
+  hash: string;
 }
 /**
  * Salva os hashes dos arquivos fornecidos em um arquivo de integridade.
