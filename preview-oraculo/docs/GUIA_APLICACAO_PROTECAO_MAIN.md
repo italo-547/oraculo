@@ -83,7 +83,7 @@ npm run branch:protect
 
 Após aplicar, verifique no GitHub:
 
-1. Acesse: <https://github.com/italo-c-lopes/oraculo/settings/branches>
+1. Acesse: <https://github.com/comode-547/oraculo/settings/branches>
 2. Selecione branch `main`
 3. Verifique se as regras estão aplicadas:
    - ✅ Require pull request reviews before merging

@@ -13,6 +13,12 @@ function garantirBuild() {
   }
   return cliPath;
 }
+// Define o loader ESM usado para resolver aliases do projeto. Prefere versão em dist quando disponível.
+import { resolve as _resolve } from 'node:path';
+const distLoader = _resolve('dist', 'node.loader.mjs');
+const srcLoader = _resolve('src', 'node.loader.mjs');
+const loaderPath = existsSync(distLoader) ? distLoader : srcLoader;
+const loader = pathToFileURL(loaderPath).href;
 
 describe('@e2e Reestruturar', () => {
   it('@e2e reescreve imports relativos ao mover arquivo (AUTO_FIX)', async () => {

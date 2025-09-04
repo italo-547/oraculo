@@ -88,8 +88,8 @@ async function runCliFilesSequential() {
       const txt = fs.readFileSync(file, 'utf-8');
       const names = Array.from(txt.matchAll(/\bit\s*\(\s*(["'`])(.+?)\1/g)).map((m) => m[2]);
       const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      // Executa em chunks de 5 casos por rodada para minimizar overhead
-      const chunkSize = 5;
+      // Executa um caso por rodada para minimizar duração contínua e evitar timeouts no RPC
+      const chunkSize = 1;
       for (let i = 0; i < names.length; i += chunkSize) {
         const group = names.slice(i, i + chunkSize);
         console.log(
@@ -97,7 +97,8 @@ async function runCliFilesSequential() {
         );
         // Monta um pattern que combina qualquer um dos títulos do chunk
         const pattern = group.map((n) => escapeRegex(n)).join('|');
-        console.log(`\n=== running e2e test case: ${name} ===\n`);
+        // Imprime os títulos dos casos do chunk atual (evita usar variável indefinida)
+        console.log(`\n=== running e2e test cases: ${group.join(', ')} ===\n`);
         // Não ancorar para casar dentro do "full name" (inclui describes):
         await runVitest(
           [

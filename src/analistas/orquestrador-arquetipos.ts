@@ -22,7 +22,7 @@ export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetip
 
   let lista = candidatos;
   if (!lista.length) {
-    // Fallback de compatibilidade: usar o pontuador completo para preservar comportamento legado
+    // Fallback: usar o pontuador completo quando detectores especializados não retornarem candidatos
     lista = pontuarTodos(arquivos);
   }
 
@@ -94,7 +94,7 @@ export function detectarArquetipo(arquivos: string[]): ResultadoDeteccaoArquetip
     }
   }
 
-  // Ordenação próxima do legado: menor missingRequired, maior score, maior matchedRequired, maior confidence, nome asc
+  // Ordenação: menor missingRequired, maior score, maior matchedRequired, maior confidence, nome asc
   lista.sort((a, b) => {
     const mm = (a.missingRequired?.length || 0) - (b.missingRequired?.length || 0);
     if (mm !== 0) return mm;

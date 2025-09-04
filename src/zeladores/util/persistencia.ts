@@ -43,7 +43,7 @@ function stableStringify(dados: unknown): string {
 
 /**
  * Lê e desserializa um arquivo JSON de estado.
- * Fallback: retorna [] para compat legado ou objeto vazio quando apropriado.
+ * Fallback: retorna [] para compatibilidade com formas antigas ou objeto vazio quando apropriado.
  */
 export async function lerEstado<T = unknown>(caminho: string, padrao?: T): Promise<T> {
   try {
@@ -51,7 +51,7 @@ export async function lerEstado<T = unknown>(caminho: string, padrao?: T): Promi
     try {
       return JSON.parse(conteudo) as T; // sucesso JSON
     } catch {
-      // Compatibilidade com testes / legado: se JSON inválido retorna []
+      // Compatibilidade com testes/versões antigas: se JSON inválido retorna []
       return (padrao as T) ?? ([] as unknown as T);
     }
   } catch {

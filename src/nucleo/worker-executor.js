@@ -92,37 +92,7 @@ async function processarLote(lote, contexto) {
   const resultados = [];
   const timeoutMs = Number(workerData?.timeoutMs) || 0;
 
-  // O lote pode conter elementos no formato atual (files array + techniques), ou tarefas individuais.
-  // Suportamos ambos: se o primeiro item tiver "tecnica" assumimos formato de tarefa antiga.
-  if (Array.isArray(lote) && lote.length > 0 && lote[0] && lote[0].tecnica) {
-    // Formato legado: [{ tecnica, arquivo }, ...]
-    for (const tarefa of lote) {
-      const { tecnica, arquivo } = tarefa;
-      try {
-        const ocorrencias = await executarTecnicaEmArquivo(tecnica, arquivo, contexto, timeoutMs);
-        resultados.push({
-          sucesso: true,
-          arquivo: arquivo.relPath ?? arquivo,
-          tecnica: tecnica.nome,
-          ocorrencias,
-          tempoProcessamento: Date.now(),
-        });
-      } catch (erro) {
-        resultados.push({
-          sucesso: false,
-          arquivo: arquivo.relPath ?? arquivo,
-          tecnica: tecnica.nome,
-          erro: erro.message,
-          tempoProcessamento: Date.now(),
-        });
-      }
-      // Yield ocasional para evitar bloqueio prolongado do event loop
-      await yieldEventLoop();
-    }
-    return resultados;
-  }
-
-  // Novo formato: lote é uma lista de arquivos; aplicamos cada técnica do conjunto passado via workerData.techniques
+  // Novo formato: lote é ignorado, usamos workerData.files e workerData.techniques.
   const techniques = Array.isArray(workerData?.techniques) ? workerData.techniques : [];
   const files = Array.isArray(workerData?.files) ? workerData.files : [];
 

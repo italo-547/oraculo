@@ -11,7 +11,7 @@ describe('Configuração de Filtros', () => {
     vi.doMock('../../src/nucleo/constelacao/cosmos.js', () => ({
       config: {
         INCLUDE_EXCLUDE_RULES: {
-          defaultExcludes: ['custom-exclude-1', 'custom-exclude-2'],
+          globalExcludeGlob: ['custom-exclude-1', 'custom-exclude-2'],
         },
       },
     }));
