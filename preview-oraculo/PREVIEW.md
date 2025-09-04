@@ -10,4 +10,4 @@ Este diretório foi gerado pelo script preview para revisão do que seria public
 Conteúdo adicional incluído:
 - oraculo.repo.arquetipo.json (exemplo de arquétipo de repositório para você editar)
 
-Data/Horário de geração: 2025-09-02T08:19:28.277Z
+Data/Horário de geração: 2025-09-04T12:35:41.864Z
