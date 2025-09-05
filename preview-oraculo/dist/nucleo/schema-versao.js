@@ -86,12 +86,13 @@ export function migrarParaVersaoAtual(relatorio) {
     if (validacao.valido && relatorio._schema) {
         return relatorio;
     }
-    // Se não tem schema, assumir que é um relatório legado e embrulhar
+    // Se não tem schema, rejeitar: relatórios sem `_schema` são considerados formatos antigos
+    // e devem ser migrados explicitamente pelo consumidor antes de chamar esta função.
+    // Se não tem schema, considerar que é um relatório legado e migrar explicitamente
+    // Chamadas a esta função são a migração explícita, então embrulhamos o relatório
+    // antigo com os metadados de versão atuais.
     if (!('_schema' in relatorio) || !relatorio._schema) {
-        return {
-            _schema: criarSchemaMetadata(),
-            dados: relatorio,
-        };
+        return criarRelatorioComVersao(relatorio);
     }
     // Para futuras migrações, implementar lógica aqui
     // Por enquanto, apenas revalidar

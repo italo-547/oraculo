@@ -34,11 +34,7 @@ export async function lerRelatorioVersionado(options) {
         // - Se migrar=true: migramos explicitamente.
         // - Se migrar=false e validar=false: aceitamos o conteúdo legado como está (modo permissivo).
         // - Se migrar=false e validar=true: rejeitamos (chamador pediu validação estrita).
-<<<<<<< HEAD
         if (!conteudo._schema || !conteudo.dados) {
-=======
-        if ((!conteudo._schema || !conteudo.dados)) {
->>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
             if (migrar) {
                 relatorioFinal = migrarParaVersaoAtual(conteudo);
                 migrado = true;
@@ -58,14 +54,9 @@ export async function lerRelatorioVersionado(options) {
         // Extrair dados: se for relatório versionado, retornamos apenas `dados`.
         // Se for formato legado (sem _schema), retornamos o objeto inteiro.
         let dados;
-<<<<<<< HEAD
         const relObj = relatorioFinal;
         if ('_schema' in relObj && relObj._schema) {
             dados = relObj.dados;
-=======
-        if ('_schema' in relatorioFinal && relatorioFinal._schema) {
-            dados = relatorioFinal.dados;
->>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
         }
         else {
             dados = relatorioFinal;
@@ -73,11 +64,7 @@ export async function lerRelatorioVersionado(options) {
         return {
             sucesso: true,
             dados,
-<<<<<<< HEAD
             schema: relObj._schema || undefined,
-=======
-            schema: relatorioFinal._schema,
->>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
             migrado,
         };
     }

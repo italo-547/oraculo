@@ -12,8 +12,4 @@ export declare function carregarBaseline(): Promise<SnapshotBaseline | null>;
  * Salva um novo baseline de integridade em disco, sobrescrevendo qualquer estado anterior.
  */
 export declare function salvarBaseline(snapshot: SnapshotBaseline): Promise<void>;
-<<<<<<< HEAD
 //# sourceMappingURL=baseline.d.ts.map
-=======
-//# sourceMappingURL=baseline.d.ts.map
->>>>>>> 143fdc685b941d444a171bd725a9366d38196e85

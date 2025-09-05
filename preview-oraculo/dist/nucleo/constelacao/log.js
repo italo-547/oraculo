@@ -2,7 +2,7 @@
 import chalk from './chalk-safe.js';
 import { config } from './cosmos.js';
 // Exportamos símbolos/emojis em um único objeto para reutilização centralizada.
-// Caso o terminal não suporte unicode adequadamente (win legados ou CI sem fontes),
+// Caso o terminal não suporte unicode adequadamente (Windows antigos ou CI sem fontes),
 // podemos degradar para alternativas ASCII leves.
 const UNICODE_OK = process.env.ORACULO_NO_UNICODE !== '1';
 export const LOG_SIMBOLOS = {

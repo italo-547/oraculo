@@ -8,8 +8,4 @@ export declare function salvarEstado<T = unknown>(caminho: string, dados: T): Pr
 export declare function lerArquivoTexto(caminho: string): Promise<string>;
 /** Escrita atômica: grava em tmp e renomeia. */
 export declare function salvarEstadoAtomico<T = unknown>(caminho: string, dados: T): Promise<void>;
-<<<<<<< HEAD
 //# sourceMappingURL=persistencia.d.ts.map
-=======
-//# sourceMappingURL=persistencia.d.ts.map
->>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
