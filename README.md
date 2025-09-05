@@ -5,18 +5,18 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-[![CI](https://github.com/comode-547/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/comode-547/oraculo/actions/workflows/ci.yml)
-[![Build](https://github.com/comode-547/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/comode-547/oraculo/actions/workflows/build.yml)
-[![Monitor Deps](https://github.com/comode-547/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)](https://github.com/comode-547/oraculo/actions/workflows/monitor-deps.yml)
-[![Compliance](https://github.com/comode-547/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)](https://github.com/comode-547/oraculo/actions/workflows/compliance.yml)
-[![License Gate](https://github.com/comode-547/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)](https://github.com/comode-547/oraculo/actions/workflows/license-gate.yml)
+[![CI](https://github.com/italo-547/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/italo-547/oraculo/actions/workflows/ci.yml)
+[![Build](https://github.com/italo-547/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/italo-547/oraculo/actions/workflows/build.yml)
+[![Monitor Deps](https://github.com/italo-547/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)](https://github.com/italo-547/oraculo/actions/workflows/monitor-deps.yml)
+[![Compliance](https://github.com/italo-547/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)](https://github.com/italo-547/oraculo/actions/workflows/compliance.yml)
+[![License Gate](https://github.com/italo-547/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)](https://github.com/italo-547/oraculo/actions/workflows/license-gate.yml)
 
 ![Node](https://img.shields.io/badge/node-%3E%3D24.x-339933?logo=node.js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Último commit](https://img.shields.io/github/last-commit/comode-547/oraculo)
-[![TypeScript](https://img.shields.io/github/package-json/dependency-version/comode-547/oraculo/dev/typescript?label=TypeScript)](https://github.com/comode-547/oraculo/blob/main/package.json)
-[![ESLint](https://img.shields.io/github/package-json/dependency-version/comode-547/oraculo/dev/eslint?label=ESLint)](https://github.com/comode-547/oraculo/blob/main/package.json)
-[![Prettier](https://img.shields.io/github/package-json/dependency-version/comode-547/oraculo/dev/prettier?label=Prettier)](https://github.com/comode-547/oraculo/blob/main/package.json)
+![Último commit](https://img.shields.io/github/last-commit/italo-547/oraculo)
+[![TypeScript](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/typescript?label=TypeScript)](https://github.com/italo-547/oraculo/blob/main/package.json)
+[![ESLint](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/eslint?label=ESLint)](https://github.com/italo-547/oraculo/blob/main/package.json)
+[![Prettier](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/prettier?label=Prettier)](https://github.com/italo-547/oraculo/blob/main/package.json)
 
 Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaScript/TypeScript e multi-stack leve), oferecendo diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON consumíveis por CI.
 
@@ -102,8 +102,7 @@ oraculo diagnosticar --json
 ![Monitor Deps](https://github.com/italo-547/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)
 ![Compliance](https://github.com/italo-547/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)
 ![License Gate](https://github.com/italo-547/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)
-# Exclusão automática de node_modules, dist, coverage, etc.
-oraculo diagnosticar  # ~70% menos arquivos escaneados
+oraculo diagnosticar
 ![Último commit](https://img.shields.io/github/last-commit/italo-547/oraculo)
 [![TypeScript](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/typescript?label=TypeScript)](https://github.com/italo-547/oraculo/blob/main/package.json)
 [![ESLint](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/eslint?label=ESLint)](https://github.com/italo-547/oraculo/blob/main/package.json)
@@ -114,8 +113,8 @@ oraculo diagnosticar  # ~70% menos arquivos escaneados
 
 ## 📦 Instalação
 
-````bash
-git clone https://github.com/mocoto-dev/oraculo.git
+```bash
+git clone https://github.com/italo-547/oraculo.git
 cd oraculo
 npm install
 ```bash
@@ -602,17 +601,10 @@ Subcomandos:
 Exemplos:
 
 ````powershell
-<<<<<<< HEAD
-node dist/cli.js perf baseline --dir docs/perf
-
-# Comparar (gate de regressão)
-node dist/cli.js perf compare --dir docs/perf --json
-=======
 node dist/bin/index.js perf baseline --dir docs/perf
 
 # Comparar (gate de regressão)
 node dist/bin/index.js perf compare --dir docs/perf --json
->>>>>>> develop
 ```text
 
 - Analistas: identificam padrões, estruturas e potenciais problemas (somente leitura)
