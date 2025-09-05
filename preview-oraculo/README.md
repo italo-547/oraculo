@@ -43,7 +43,7 @@ Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JavaS
 
 Sistema de paralelização automática que acelera a análise em projetos grandes:
 
-````bash
+```bash
 # Paralelização automática ativada por padrão
 oraculo diagnosticar
 
@@ -73,7 +73,7 @@ Versionamento automático dos relatórios JSON com compatibilidade backward:
   "estruturaIdentificada": { ... },
   "guardian": { ... }
 }
-````
+```
 
 **Benefícios:**
 
@@ -86,7 +86,7 @@ Versionamento automático dos relatórios JSON com compatibilidade backward:
 
 Pontuação inteligente que se adapta ao tamanho do projeto:
 
-````bash
+```bash
 # Pontuação automática baseada no tamanho do projeto
 oraculo diagnosticar --json
 ```bash
@@ -105,7 +105,7 @@ Otimização automática que reduz drasticamente o tempo de análise:
 ```bash
 # Exclusão automática de node_modules, dist, coverage, etc.
 oraculo diagnosticar  # ~70% menos arquivos escaneados
-````
+```
 
 **Melhorias:**
 
@@ -115,7 +115,7 @@ oraculo diagnosticar  # ~70% menos arquivos escaneados
 
 ## 📦 Instalação
 
-````bash
+```bash
 git clone https://github.com/italo-547/oraculo.git
 cd oraculo
 npm install
@@ -127,11 +127,11 @@ npm install
 npm run build
 node dist/bin/index.js diagnosticar --json
 node dist/bin/index.js guardian --diff --json
-````
+```
 
 Instalação global opcional:
 
-````bash
+```bash
 npm install -g .
 oraculo diagnosticar
 ```powershell
@@ -147,7 +147,7 @@ Para rodar a suíte de testes localmente:
 
   ```powershell
   npm run format:fix; npm run lint
-````
+```
 
 - Execute a suíte completa:
 
@@ -185,7 +185,7 @@ Você pode usar as flags globais em qualquer comando para controlar o nível de 
 
 #### Exemplos de uso
 
-`````bash
+```bash
 # Diagnóstico limpo (padrão)
 oraculo diagnosticar
 
@@ -195,18 +195,6 @@ oraculo diagnosticar --verbose
 # Exportar relatórios detalhados
 oraculo diagnosticar --export
 ```
-
-![CI](https://github.com/italo-547/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)
-![Build](https://github.com/italo-547/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)
-![Monitor Deps](https://github.com/italo-547/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)
-![Compliance](https://github.com/italo-547/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)
-![License Gate](https://github.com/italo-547/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)
-
-![Último commit](https://img.shields.io/github/last-commit/italo-547/oraculo)
-[![TypeScript](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/typescript?label=TypeScript)](https://github.com/italo-547/oraculo/blob/main/package.json)
-[![ESLint](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/eslint?label=ESLint)](https://github.com/italo-547/oraculo/blob/main/package.json)
-[![Prettier](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/prettier?label=Prettier)](https://github.com/italo-547/oraculo/blob/main/package.json)
-
 ### Plugins & Extensões
 
 Guia completo: consulte seção de Plugins & Extensões acima.
@@ -217,7 +205,7 @@ Persistência sempre via helpers `lerEstado` / `salvarEstado` (ver seção de Sc
 
 Se quiser rodar o comando `oraculo` diretamente no terminal, instale globalmente:
 
-````bash
+```bash
 npm install -g .
 ```bash
 
@@ -225,7 +213,7 @@ Assim, basta rodar:
 
 ```bash
 oraculo <comando>
-`````
+```
 
 ### Principais Comandos
 
@@ -324,7 +312,7 @@ Quando `--metricas` (default habilitado) está ativo, o comando `diagnosticar --
 
 Exemplo (trecho simplificado):
 
-````jsonc
+```jsonc
 {
   "metricas": {
     "totalArquivos": 123,
@@ -374,11 +362,11 @@ Use `oraculo metricas --json` para histórico agregado e `--export` para salvar 
 
 ```bash
 rm -rf .oraculo/historico-metricas
-````
+```
 
 Ou no Windows PowerShell:
 
-````powershell
+```powershell
 Remove-Item -Recurse -Force .oraculo/historico-metricas
 ```bash
 
@@ -399,7 +387,7 @@ Blocos adicionais:
     "extensoes": { "ts": 120, "js": 40, "kt": 5, "java": 3, "xml": 2 },
   },
 }
-````
+```
 
 Isso facilita métricas de adoção multi-stack e priorização de analistas dedicados.
 
@@ -420,7 +408,7 @@ Regras de precedência:
 
 Exemplos:
 
-````bash
+```bash
 # Incluir apenas arquivos TypeScript e package.json
 oraculo diagnosticar --include "src/**/*.ts,package.json"
 
@@ -516,7 +504,7 @@ Exemplos rápidos:
 
   # JSON para CI, com filtros pontuais
   node dist/bin/index.js diagnosticar --json --include "src/**" --exclude "**/*.test.ts"
-````
+```
 
 ### guardian
 
@@ -527,7 +515,7 @@ Exemplos rápidos:
 
 Exemplos:
 
-`````powershell
+```powershell
 # Verificar integridade
 node dist/bin/index.js guardian
 
@@ -536,7 +524,7 @@ node dist/bin/index.js guardian --diff
 
 # Aceitar baseline (não permitido com --full-scan)
 node dist/bin/index.js guardian --accept-baseline
-````powershell
+```powershell
 
 ### reestruturar (experimental)
 
@@ -557,7 +545,7 @@ node dist/bin/index.js reestruturar --somente-plano
 
 # Aplicar automaticamente usando preset padrão (oraculo)
 node dist/bin/index.js reestruturar --auto
-`````
+```
 
 ### podar
 
@@ -567,7 +555,7 @@ node dist/bin/index.js reestruturar --auto
 
 Exemplos:
 
-````powershell
+```powershell
 node dist/bin/index.js diagnosticar --export; node dist/bin/index.js podar
 
 # Remoção direta (cuidado)
@@ -588,7 +576,7 @@ node dist/bin/index.js analistas
 
 # Exportar doc
 node dist/bin/index.js analistas --doc docs/ANALISTAS.md
-````
+```
 
 ### perf
 
@@ -607,7 +595,7 @@ Subcomandos:
 
 Exemplos:
 
-````powershell
+```powershell
 node dist/bin/index.js perf baseline --dir docs/perf
 
 # Comparar (gate de regressão)
@@ -697,7 +685,7 @@ Quando executado com `--json`, o comando `guardian` retorna objeto com:
   "baselinePath": "./.oraculo/baseline.json",
   "fullScan": false
 }
-````
+```
 
 Notas:
 
@@ -729,7 +717,7 @@ Hooks configurados:
 
 Se precisar pular (não recomendado):
 
-````bash
+```bash
 HUSKY=0 git commit -m "chore: bypass hook"
 ```bash
 
@@ -739,7 +727,7 @@ HUSKY=0 git commit -m "chore: bypass hook"
 npm run check:style   # lint + prettier check + typecheck
 npm run check         # estilo + testes de unidade
 npm run test:e2e      # apenas E2E
-````
+```
 
 ### Variáveis Úteis
 
@@ -755,7 +743,7 @@ Avisos de terceiros: este projeto inclui dependências open source cujas licenç
 
 Como atualizar o arquivo de avisos:
 
-````bash
+```bash
 # Gera/atualiza a versão padrão (EN)
 npm run licenses:notice
 
@@ -809,4 +797,4 @@ Snapshots sintéticos: `npm run perf:baseline` (consulte seção de Performance 
 ---
 
 Autor: Italo C Lopes — Licença MIT
-````
+```
