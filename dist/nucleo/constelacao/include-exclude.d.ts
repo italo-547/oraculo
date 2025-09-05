@@ -9,5 +9,14 @@ import type { IncludeExcludeConfig } from '@tipos/tipos.js';
  * - Aplica regras globais e específicas por diretório.
  * - Permite toggles programáticos.
  */
+<<<<<<< HEAD
 export declare function shouldInclude(relPath: string, entry: Dirent, config: IncludeExcludeConfig): boolean;
 //# sourceMappingURL=include-exclude.d.ts.map
+=======
+export declare function shouldInclude(
+  relPath: string,
+  entry: Dirent,
+  config: IncludeExcludeConfig,
+): boolean;
+//# sourceMappingURL=include-exclude.d.ts.map
+>>>>>>> 143fdc685b941d444a171bd725a9366d38196e85

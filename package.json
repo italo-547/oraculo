@@ -88,7 +88,11 @@
     "chalk": "^5.6.0",
     "commander": "^14.0.0",
     "css-tree": "^2.3.1",
+<<<<<<< HEAD
     "fast-xml-parser": "^4.5.3",
+=======
+    "fast-xml-parser": "^5.2.5",
+>>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
     "htmlparser2": "^10.0.0",
     "java-parser": "^3.0.1",
     "micromatch": "^4.0.8",
@@ -100,16 +104,26 @@
     "@types/jest": "^30.0.0",
     "@types/micromatch": "^4.0.9",
     "@types/mocha": "^10.0.10",
+<<<<<<< HEAD
     "@types/node": "^24.3.0",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.40.0",
+=======
+    "@types/node": "^24.3.1",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.42.0",
+>>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
     "@vitest/coverage-istanbul": "^3.2.4",
     "@vitest/coverage-v8": "^3.2.4",
     "cross-env": "^10.0.0",
     "eslint": "^9.33.0",
     "husky": "^9.1.7",
     "license-checker-rseidelsohn": "^4.4.2",
+<<<<<<< HEAD
     "lint-staged": "^16.1.5",
+=======
+    "lint-staged": "^16.1.6",
+>>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "typescript": "^5.9.2",

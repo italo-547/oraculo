@@ -13,7 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Emitir aviso
+<<<<<<< HEAD
         uses: actions/github-script@v7
+=======
+        uses: actions/github-script@v8
+>>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
         with:
           script: |
             core.warning('Push direto na branch main detectado. Prática não recomendada. Use PRs e squash merge.');

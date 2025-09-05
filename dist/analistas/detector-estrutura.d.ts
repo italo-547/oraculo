@@ -5,9 +5,24 @@ export declare const sinaisDetectados: SinaisProjeto;
  * Retorna ocorrências para cada sinal relevante encontrado.
  */
 export declare const detectorEstrutura: {
+<<<<<<< HEAD
     nome: string;
     global: boolean;
     test(_relPath: string): boolean;
     aplicar(_src: string, _relPath: string, _ast: unknown, _fullPath?: string, contexto?: ContextoExecucao): TecnicaAplicarResultado;
 };
 //# sourceMappingURL=detector-estrutura.d.ts.map
+=======
+  nome: string;
+  global: boolean;
+  test(_relPath: string): boolean;
+  aplicar(
+    _src: string,
+    _relPath: string,
+    _ast: unknown,
+    _fullPath?: string,
+    contexto?: ContextoExecucao,
+  ): TecnicaAplicarResultado;
+};
+//# sourceMappingURL=detector-estrutura.d.ts.map
+>>>>>>> 143fdc685b941d444a171bd725a9366d38196e85

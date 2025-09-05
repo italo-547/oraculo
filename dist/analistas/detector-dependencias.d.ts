@@ -6,8 +6,22 @@ export declare const grafoDependencias: Map<string, Set<string>>;
  * Retorna ocorrências para imports/require suspeitos, mistos, circulares, etc.
  */
 export declare const detectorDependencias: {
+<<<<<<< HEAD
     nome: string;
     test(relPath: string): boolean;
     aplicar(src: string, relPath: string, ast: NodePath | null, _fullPath?: string, contexto?: ContextoExecucao): TecnicaAplicarResultado;
 };
 //# sourceMappingURL=detector-dependencias.d.ts.map
+=======
+  nome: string;
+  test(relPath: string): boolean;
+  aplicar(
+    src: string,
+    relPath: string,
+    ast: NodePath | null,
+    _fullPath?: string,
+    contexto?: ContextoExecucao,
+  ): TecnicaAplicarResultado;
+};
+//# sourceMappingURL=detector-dependencias.d.ts.map
+>>>>>>> 143fdc685b941d444a171bd725a9366d38196e85
