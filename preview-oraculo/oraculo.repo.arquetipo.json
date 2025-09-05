@@ -1,0 +1,40 @@
+{
+  "nome": "meu-repo-exemplo",
+  "descricao": "Arquétipo personalizado de exemplo para um projeto CLI modular",
+  "arquetipoOficial": "cli",
+  "estruturaPersonalizada": {
+    "diretorios": [
+      "src",
+      "tests",
+      "docs",
+      "dist"
+    ],
+    "arquivosChave": [
+      "package.json",
+      "tsconfig.json",
+      "README.md"
+    ],
+    "padroesNomenclatura": {
+      "comandos": "src/cli/comando-*.ts",
+      "analistas": "src/analistas/*.ts"
+    }
+  },
+  "melhoresPraticas": {
+    "recomendado": [
+      "Separar domínios (analistas/arquitetos/zeladores/guardian)",
+      "Usar helpers centralizados de persistência"
+    ],
+    "evitar": [
+      "Código não tipado",
+      "Acesso direto a fs fora dos helpers"
+    ],
+    "notas": [
+      "Ajuste arquetipoOficial conforme o tipo do seu projeto (api, cli, fullstack, etc.)"
+    ]
+  },
+  "metadata": {
+    "criadoEm": "2025-09-04T12:35:41.845Z",
+    "versao": "1.0.0",
+    "notasUsuario": "Edite este arquivo para refletir o arquétipo do seu repositório."
+  }
+}

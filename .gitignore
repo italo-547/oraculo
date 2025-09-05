@@ -1,0 +1,51 @@
+# deixar aqui
+*.local
+.vscode
+
+# Node modules
+node_modules/
+
+# pnpm store / pnp
+.pnpm-store/
+.pnp.cjs
+.pnp.loader.mjs
+
+# build output
+build/
+
+# coverage
+coverage/
+.nyc_output/
+
+# Oráculo runtime / caches / reports
+.oraculo/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# temp / test artifacts
+tmp-
+tmp*/
+tests/tmp/
+
+# lockfiles (do not commit lockfiles for library modules)
+yarn.lock
+pnpm-lock.yaml
+# package-lock.json is intentionally tracked for CI (GitHub Actions) and reproducible installs
+
+# optional: local env
+.env
+.env.*

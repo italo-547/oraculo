@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+# Husky v9 pre-commit: executa lint-staged
+echo "🔍 pre-commit: executando lint-staged"
+# Usa o arquivo de configuração existente (.lintstagedrc.mjs)
+NODE_OPTIONS= npx lint-staged --config ./.lintstagedrc.mjs --cwd . --quiet || { echo "lint-staged falhou; executando verificação completa (npm run check)"; npm run check || exit 1; }
+
+# Varredura rápida de possíveis segredos nos arquivos staged
+echo "🛡️  pre-commit: scan rápido por segredos em arquivos staged"
+if command -v git >/dev/null 2>&1; then
+	# Lista nomes dos arquivos staged de texto
+	files=$(git diff --cached --name-only --diff-filter=ACMRT | tr -d '\r')
+	if [ -n "$files" ]; then
+		hit=0
+		for f in $files; do
+			# só examina arquivos plausivelmente de texto
+			if [ -f "$f" ]; then
+				if grep -E -i 'ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{80,}|AIza[0-9A-Za-z-_]{35}|SECRET_KEY|API_KEY|ACCESS_TOKEN' "$f" >/dev/null 2>&1; then
+					echo "❌ pre-commit: possível segredo encontrado em $f"
+					hit=1
+				fi
+			fi
+		done
+		if [ $hit -eq 1 ]; then
+			echo "Interrompendo commit. Remova/mascare segredos e tente novamente."
+			exit 1
+		fi
+	fi
+fi

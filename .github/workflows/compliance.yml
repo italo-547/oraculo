@@ -1,0 +1,27 @@
+name: compliance
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Testes (com cobertura mínima)
+        run: npm run coverage:gate
+      - name: Scan Markdown (aviso e riscos; estrito + readme)
+        run: npm run md:scan:strict
+      - name: Auditoria de Licenças (falha no copyleft)
+        run: node scripts/auditar-licencas.mjs --fail-on-copyleft

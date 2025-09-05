@@ -1,0 +1,54 @@
+name: release-prepublic
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag para o Release (ex.: v0.1.0-alpha.0)"
+        required: true
+        type: string
+      release_name:
+        description: "Nome do Release (opcional)"
+        required: false
+        type: string
+
+jobs:
+  build-and-attach:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm i
+          fi
+
+      - name: Build pre-public
+        run: npm run pre-public
+
+      - name: Zip pre-public
+        run: |
+          cd pre-public
+          zip -r ../pre-public.zip .
+
+      - name: Create GitHub Release (draft)
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pre-public.zip
+          tag_name: ${{ github.event.inputs.tag_name }}
+          name: ${{ github.event.inputs.release_name }}
+          draft: true
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

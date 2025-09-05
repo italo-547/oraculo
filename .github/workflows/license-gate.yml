@@ -1,0 +1,19 @@
+name: license-gate
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  license-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - name: Fail on copyleft licenses
+        run: node scripts/auditar-licencas.mjs --fail-on-copyleft

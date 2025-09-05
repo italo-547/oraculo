@@ -1,0 +1,41 @@
+name: pr-policy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+  statuses: write
+
+jobs:
+  policy:
+    name: Verificar aprovação e atualização da branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar requisitos
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const { owner, repo } = context.repo;
+            const headSha = pr.head.sha;
+
+            // Listar reviews e filtrar aprovações no commit atual e que não sejam do autor
+            const { data: reviews } = await github.rest.pulls.listReviews({ owner, repo, pull_number: pr.number, per_page: 100 });
+            const approvals = reviews.filter(r => r.state === 'APPROVED' && r.user?.login !== pr.user.login && r.commit_id === headSha);
+
+            // Checar se a branch do PR está atrás da base
+            const { data: compare } = await github.rest.repos.compareCommits({ owner, repo, base: pr.base.ref, head: pr.head.ref });
+            const behind = compare.behind_by ?? 0;
+
+            const reasons = [];
+            if (approvals.length < 1) reasons.push('Falta pelo menos 1 aprovação de revisor (não autor) no commit atual.');
+            if (behind > 0) reasons.push(`Branch está ${behind} commit(s) atrás de ${pr.base.ref}. Atualize a branch.`);
+
+            if (reasons.length) {
+              core.setFailed(reasons.join(' '));
+            } else {
+              core.notice('Política OK: aprovação presente e branch atualizada.');
+            }

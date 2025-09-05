@@ -1,0 +1,138 @@
+name: CI Principal
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: 'npm'
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Verificações de estilo (lint + prettier + types)
+        run: npm run check:style
+
+      - name: Audit rápido de dependências (não falha build)
+        run: npm run security:deps
+
+      - name: Cobertura completa
+        run: npm run coverage
+
+      - name: Gate de cobertura
+        run: npm run coverage:gate
+
+      - name: Testes JSON para métricas
+        run: npm run test:ci || true
+
+      - name: Publicar relatório de testes (JSON)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-json
+          path: .oraculo/last-test-report.json
+          if-no-files-found: ignore
+
+      - name: Build para testes E2E
+        run: npm run build
+
+      - name: Testes E2E (binário)
+        run: npm run test:e2e
+
+      - name: Instalar Oráculo globalmente (a partir do repositório)
+        run: |
+          # Evita scripts como husky durante instalação global
+          npm i -g --ignore-scripts .
+          oraculo --help
+
+      - name: Executar 'oraculo diagnosticar' (global)
+        run: |
+          # Executa um diagnóstico leve para validar o bin global
+          # Preferimos --scan-only para evitar técnicas mutáveis no CI
+          set -e
+          oraculo diagnosticar --scan-only --json > diagnostico-oraculo.json || oraculo diagnosticar --scan-only
+
+      - name: Publicar diagnóstico (artifact)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostico-oraculo
+          path: diagnostico-oraculo.json
+          if-no-files-found: ignore
+
+      - name: Gate de performance (comparação últimos snapshots)
+        if: ${{ always() }}
+        run: |
+          if [ -d docs/perf ]; then
+            npm run perf:compare || echo "Sem baseline suficiente para compare inicial";
+            npm run perf:gate || echo "(Aviso) Regressão de performance detectada";
+          else
+            echo "Pasta docs/perf inexistente - pule perf gate";
+          fi
+
+      - name: Atualizar badge de testes
+        if: ${{ always() }}
+        run: node scripts/update-test-stats.mjs
+
+      - name: Commit badge atualizado
+        if: ${{ github.ref == 'refs/heads/main' && always() }}
+        run: |
+          if git diff --quiet -- .oraculo/test-stats.json .oraculo/badge-test-stats.json; then
+            echo "Sem mudanças em stats"; exit 0; fi
+          git config user.name "github-actions";
+          git config user.email "github-actions@users.noreply.github.com";
+          git add .oraculo/test-stats.json .oraculo/badge-test-stats.json;
+          git commit -m "chore: atualizar badge testes [skip ci]" || true;
+          git push origin HEAD:main || true;
+
+      - name: Gerar documentação dos analistas (docs/ANALISTAS.md)
+        # Passo leve pós-build; não deve quebrar o CI se falhar
+        continue-on-error: true
+        run: node dist/bin/index.js analistas --doc docs/ANALISTAS.md
+
+      - name: Commit docs de analistas atualizados
+        if: ${{ github.ref == 'refs/heads/main' && always() }}
+        run: |
+          git config user.name "github-actions";
+          git config user.email "github-actions@users.noreply.github.com";
+          git add docs/ANALISTAS.md;
+          if git diff --cached --quiet -- docs/ANALISTAS.md; then
+            echo "Sem mudanças em docs/ANALISTAS.md"; exit 0; fi
+          git commit -m "docs: atualizar docs/ANALISTAS.md [skip ci]" || true;
+          git push origin HEAD:main || true;
+
+      - name: Publicar dist como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: oraculo-dist
+          path: dist
+
+      - name: Publicar cobertura
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+          if-no-files-found: ignore
