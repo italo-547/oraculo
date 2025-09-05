@@ -190,17 +190,18 @@ Você pode usar as flags globais em qualquer comando para controlar o nível de 
 oraculo diagnosticar
 
 # Diagnóstico detalhado (verbose)
-oraculo diagnosticar --verbose
-
-# Diagnóstico totalmente silencioso
-oraculo diagnosticar --silence
-
+![CI](https://github.com/italo-547/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)
+![Build](https://github.com/italo-547/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)
+![Monitor Deps](https://github.com/italo-547/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)
+![Compliance](https://github.com/italo-547/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)
+![License Gate](https://github.com/italo-547/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)
 # Exportar relatórios detalhados
 oraculo diagnosticar --export
 
-# Combinar flags (silence sempre sobrepõe verbose)
-oraculo diagnosticar --export --verbose --silence
-```powershell
+![Último commit](https://img.shields.io/github/last-commit/italo-547/oraculo)
+[![TypeScript](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/typescript?label=TypeScript)](https://github.com/italo-547/oraculo/blob/main/package.json)
+[![ESLint](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/eslint?label=ESLint)](https://github.com/italo-547/oraculo/blob/main/package.json)
+[![Prettier](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/prettier?label=Prettier)](https://github.com/italo-547/oraculo/blob/main/package.json)
 
 ### Plugins & Extensões
 

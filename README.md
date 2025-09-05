@@ -98,17 +98,17 @@ oraculo diagnosticar --json
 - **Pesos realistas**: Arquétipos calibrados para maior precisão
 - **Confiança contextual**: Ajustes inteligentes (+5% frameworks, +3% TypeScript)
 
-### Correção Crítica: Exclusão Automática
-
-Otimização automática que reduz drasticamente o tempo de análise:
-
-```bash
+![CI](https://github.com/italo-547/oraculo/actions/workflows/ci.yml/badge.svg?branch=develop)
+![Build](https://github.com/italo-547/oraculo/actions/workflows/build.yml/badge.svg?branch=develop)
+![Monitor Deps](https://github.com/italo-547/oraculo/actions/workflows/monitor-deps.yml/badge.svg?branch=develop)
+![Compliance](https://github.com/italo-547/oraculo/actions/workflows/compliance.yml/badge.svg?branch=develop)
+![License Gate](https://github.com/italo-547/oraculo/actions/workflows/license-gate.yml/badge.svg?branch=develop)
 # Exclusão automática de node_modules, dist, coverage, etc.
 oraculo diagnosticar  # ~70% menos arquivos escaneados
-````
-
-**Melhorias:**
-
+![Último commit](https://img.shields.io/github/last-commit/italo-547/oraculo)
+[![TypeScript](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/typescript?label=TypeScript)](https://github.com/italo-547/oraculo/blob/main/package.json)
+[![ESLint](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/eslint?label=ESLint)](https://github.com/italo-547/oraculo/blob/main/package.json)
+[![Prettier](https://img.shields.io/github/package-json/dependency-version/italo-547/oraculo/dev/prettier?label=Prettier)](https://github.com/italo-547/oraculo/blob/main/package.json)
 - **Performance**: Redução de ~70% nos arquivos processados
 - **Compatibilidade**: Filtros explícitos continuam funcionando
 - **Segurança**: Prevenção de análise acidental de dependências
@@ -120,7 +120,7 @@ git clone https://github.com/mocoto-dev/oraculo.git
 cd oraculo
 npm install
 ```bash
-
+git clone https://github.com/italo-547/oraculo.git
 ## 🖥️ Uso Rápido
 
 ```bash
