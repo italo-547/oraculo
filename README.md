@@ -33,22 +33,72 @@ Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JS/TS
 - Schema Versioning (compatibilidade backward)
 - Pontuação Adaptativa (tamanho do projeto)
 
-## 🆕 Novidades v0.2.0 (resumo)
+## 🚀 Novas Funcionalidades (v0.2.0)
 
-- Pool de Workers com fallback automático e métricas de execução
-- Schema Versioning nos relatórios JSON (compatibilidade backward)
-- Pontuação Adaptativa por tamanho/tecnologias do projeto
-- Exclusão automática de `node_modules` e diretórios ruidosos quando não incluídos explicitamente
-- Métricas expandidas em `metricas.*`
+### Pool de Workers
 
-Detalhes: veja `docs/NOVAS-FUNCIONALIDADES-v0.2.0.md`.
+Sistema de paralelização automática que acelera a análise em projetos grandes:
 
-## ✅ Requisitos
+```bash
+# Paralelização automática ativada por padrão
+oraculo diagnosticar
 
-- Node.js 24.0.4 ou superior
-- Ambiente compatível com TypeScript (build com `tsc`)
+# Configuração manual (se necessário)
+WORKER_POOL_MAX_WORKERS=4 oraculo diagnosticar
+```
 
-## 🚀 Instalação e uso rápido
+**Características:**
+
+- **Paralelização por arquivo**: Processa múltiplos arquivos simultaneamente
+- **Timeout inteligente**: 30s por analista com cancelamento automático
+- **Fallback automático**: Retorna ao processamento sequencial se workers falharem
+- **Configuração centralizada**: Variáveis de ambiente para controle fino
+- **Estatísticas detalhadas**: Métricas de performance do pool
+
+### Schema Versioning
+
+Versionamento automático dos relatórios JSON com compatibilidade backward:
+
+```json
+{
+  "_schema": {
+    "version": "1.0.0",
+    "compatibilidade": ["0.1.0", "0.2.0"]
+  },
+  "linguagens": { ... },
+  "estruturaIdentificada": { ... },
+  "guardian": { ... }
+}
+```
+
+**Benefícios:**
+
+- **Compatibilidade garantida**: Relatórios legados continuam funcionais
+- **Migração automática**: Atualização transparente de formatos antigos
+- **Validação robusta**: Verificação automática de integridade de schema
+- **Contratos estáveis**: APIs previsíveis para consumidores
+
+### Sistema de Pontuação Adaptativa
+
+Pontuação inteligente que se adapta ao tamanho do projeto:
+
+```bash
+# Pontuação automática baseada no tamanho do projeto
+oraculo diagnosticar --json
+```
+
+**Recursos:**
+
+- **Escalabilidade automática**: Fatores de 1x a 5x baseados em arquivos/diretórios
+- **3 modos de configuração**: Padrão, conservador e permissivo
+- **Pesos realistas**: Arquétipos calibrados para maior precisão
+- **Confiança contextual**: Ajustes inteligentes (+5% frameworks, +3% TypeScript)
+
+- **Performance**: Redução de ~70% nos arquivos processados
+- **Compatibilidade**: Filtros explícitos continuam funcionando
+- **Segurança**: Prevenção de análise acidental de dependências
+
+## 📦 Instalação
 
 ```bash
 git clone https://github.com/italo-547/oraculo.git
@@ -142,7 +192,7 @@ Notas: analistas que dependem de nós Babel atuam apenas em linguagens suportada
 { "status": "ok|baseline-criado|baseline-aceito|alteracoes-detectadas|erro" }
 ```
 
-## � Leituras recomendadas
+## 🔗 Leituras recomendadas
 
 - Guia de comandos: `docs/GUIA_COMANDOS.md`
 - Filtros include/exclude: `docs/GUIA_FILTROS_ORACULO.md`
@@ -150,6 +200,6 @@ Notas: analistas que dependem de nós Babel atuam apenas em linguagens suportada
 - Robustez e operação: `docs/ROBUSTEZ_ORACULO.md`, `docs/RISCO_E_OPERACAO_SEGURO.md`
 - Novidades v0.2.0: `docs/NOVAS-FUNCIONALIDADES-v0.2.0.md`
 
-## �📄 Licença
+## 📄 Licença
 
 MIT. Avisos de terceiros: `THIRD-PARTY-NOTICES.txt`.
