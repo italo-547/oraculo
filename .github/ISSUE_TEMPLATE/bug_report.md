@@ -1,40 +1,57 @@
+> Proveniência e Autoria: Este documento integra o projeto Oráculo (licença MIT).
+> Nada aqui implica cessão de direitos morais/autorais.
+> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
+> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
+
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Relatar bug
+about: Descreva um problema para ajudarmos a corrigir
 title: ''
 labels: ''
 assignees: ''
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Descrição do bug
+Explique de forma objetiva o que está acontecendo.
 
-**To Reproduce**
-Steps to reproduce the behavior:
+## Passos para reproduzir
+Descreva o passo a passo mínimo para reproduzir o problema:
+1. Comando executado (inclua flags como `--json`, `--include/--exclude` se usados)
+2. Estrutura/projeto alvo (ex.: monorepo, Next.js app/)
+3. O que você esperava que acontecesse
+4. O que aconteceu de fato
 
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## Comportamento esperado
+O que deveria acontecer em condições normais?
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Logs/erros e artefatos
+Cole mensagens relevantes ou anexe arquivos, removendo segredos:
+- Saída JSON (se usou `--json`), apenas o trecho relevante
+- Erros do terminal
+- Capturas de tela, se ajudar
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## Ambiente
+- SO e versão (ex.: Windows 11, Ubuntu 24.04)
+- Node.js (node -v) e npm (npm -v)
+- Versão do Oráculo CLI (oraculo --version) ou commit
+- Shell/terminal (PowerShell, bash, etc.)
 
-**Desktop (please complete the following information):**
+## Escopo da análise
+- Diretórios/arquivos analisados (ex.: `--include "src/**/*.ts"`)
+- Exclusões aplicadas (ex.: `--exclude "docs/**"`)
+- `node_modules` estava incluído? (por padrão é ignorado)
 
-- OS: [e.g. iOS]
-- Browser [e.g. chrome, safari]
-- Version [e.g. 22]
+## Regressão
+Isso funcionava antes? Desde qual versão/commit começou a falhar?
 
-**Smartphone (please complete the following information):**
+## Workaround conhecido
+Existe alguma forma de contornar o problema temporariamente?
 
-- Device: [e.g. iPhone6]
-- OS: [e.g. iOS8.1]
-- Browser [e.g. stock browser, safari]
-- Version [e.g. 22]
+## Reprodutor mínimo (opcional, recomendado)
+Link de um repositório mínimo ou passos claros que reproduzam o problema.
 
-**Additional context**
-Add any other context about the problem here.
+## Checklist
+- [ ] Procurei por issues abertas/fechadas similares
+- [ ] Li o README e o `docs/GUIA_COMANDOS.md`
+- [ ] Consigo reproduzir em um caso mínimo e previsível
+- [ ] Removi segredos/credenciais de logs e anexos
