@@ -26,13 +26,11 @@ export class GerenciadorMapaReversao {
     async carregar() {
         try {
             const pathMapa = getMapaPath();
-            this.mapa =
-                (await lerEstado(pathMapa, null)) ??
-                    {
-                        versao: '1.0.0',
-                        moves: [],
-                        metadata: { totalMoves: 0, ultimoMove: '', podeReverter: true },
-                    };
+            this.mapa = (await lerEstado(pathMapa, null)) ?? {
+                versao: '1.0.0',
+                moves: [],
+                metadata: { totalMoves: 0, ultimoMove: '', podeReverter: true },
+            };
             // Validação básica
             if (!this.mapa.moves || !Array.isArray(this.mapa.moves)) {
                 throw new Error('Mapa de reversão corrompido');

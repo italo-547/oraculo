@@ -159,8 +159,7 @@ export const detectorEstrutura = {
                     const dir = p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '.';
                     dirCounts.set(dir, (dirCounts.get(dir) || 0) + 1);
                 }
-                const ordenado = [...dirCounts.entries()]
-                    .sort((a, b) => (b[1] - a[1]) || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+                const ordenado = [...dirCounts.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
                 const MAX_DIRS = 10;
                 const top = ordenado.slice(0, MAX_DIRS);
                 const ocultosDir = ordenado.length - top.length;
