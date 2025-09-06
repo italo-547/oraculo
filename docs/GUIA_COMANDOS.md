@@ -82,10 +82,13 @@ oraculo diagnosticar --listar-analistas
 
 # Listar técnicas em modo compacto
 oraculo diagnosticar --listar-analistas --compact
+# Diagnóstico completo padrão
 ```bash
 
+# Diagnóstico compacto
 ### Cenários de Uso
 
+# Diagnóstico verboso com mais detalhes
 #### Desenvolvimento Ativo
 
 ```bash
@@ -102,10 +105,14 @@ oraculo diagnosticar --json --guardian-check
 
 #### Análise Detalhada
 
+# Analisar apenas arquivos TypeScript
 ```bash
 # Análise completa com todos os detalhes
+# Excluir arquivos de teste
 oraculo diagnosticar --verbose --detalhado --guardian-check
 ````
+
+# Análise focada em diretórios específicos
 
 ---
 
@@ -123,7 +130,11 @@ Remove arquivos órfãos e lixo do repositório, mantendo apenas arquivos refere
 
 ### Uso Básico do Podar
 
+# Ver técnicas ativas antes da análise
+
 #### 1. Análise Apenas (Dry-run)
+
+# Listar técnicas em modo compacto
 
 ````bash
 # Ver arquivos órfãos sem remover
@@ -132,18 +143,22 @@ oraculo podar
 # Análise com filtros
 oraculo podar --include "src/**" --exclude "test/**"
 ```bash
+# Verificação rápida durante desenvolvimento
 
 #### 2. Remoção Automática
 
 ```bash
 # Remover arquivos órfãos automaticamente
 oraculo podar --force
+# Diagnóstico estruturado para pipelines
 
 # Remoção com filtros específicos
 oraculo podar --force --include "temp/**" --exclude "logs/**"
 ````
 
 ### Cenários do Podar
+
+# Análise completa com todos os detalhes
 
 #### Limpeza de Desenvolvimento
 
@@ -188,6 +203,7 @@ oraculo guardian --json
 
 #### 2. Comparação com Baseline
 
+# Limpar arquivos temporários
 ```bash
 # Ver diferenças com o baseline
 oraculo guardian --diff
@@ -290,29 +306,39 @@ oraculo guardian --diff
 
 #### Setup de Projeto
 
+# 1. Diagnóstico completo
+
 ````bash
+# 2. Limpeza de arquivos órfãos
 #!/bin/bash
 # setup.sh - Configuração inicial do projeto
+# 3. Verificação de integridade
 
 echo "🔍 Executando diagnóstico inicial..."
 oraculo diagnosticar --verbose
 
 echo "🧹 Limpando arquivos órfãos..."
 oraculo podar --force
+# Diagnóstico estruturado para CI
 
 echo "🛡️ Configurando baseline de integridade..."
+# Limpeza automatizada
 oraculo guardian --accept-baseline
 
+# Verificação final
 echo "✅ Setup concluído!"
 ```text
 
 #### Pipeline CI/CD
 
 ```yaml
+# Verificação rápida durante desenvolvimento
 # .github/workflows/ci.yml
 name: CI
+# Limpeza de arquivos temporários
 on: [push, pull_request]
 
+# Verificação de integridade
 jobs:
   quality:
     runs-on: ubuntu-latest

@@ -53,11 +53,10 @@ Consulte `TESTING-ENVIRONMENT.md` para configurar o ambiente local de testes e `
 
 ## Exemplo: criar e salvar um arquétipo personalizado
 
-Para gerar um template de arquétipo baseado na estrutura atual do repositório e salvá-lo automaticamente execute:
+Para gerar um template de arquétipo baseado na estrutura atual do repositório e salvá-lo automaticamente, execute:
 
-````bash
+```bash
 oraculo diagnosticar --criar-arquetipo --salvar-arquetipo
-```text
+```
 
 Isso criará (ou sobrescreverá) o arquivo `oraculo.repo.arquetipo.json` na raiz do projeto.
-````

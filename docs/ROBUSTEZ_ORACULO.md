@@ -3,7 +3,7 @@
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-Roadmap de Robustez e Arquitetura Oráculo CLI
+Roadmap de Robustez e Arquitetura Oráculo CLI (atualizado v0.2.0)
 
 1. Interface Analista Unificada
 
@@ -135,41 +135,40 @@ Estado Atual:
   - (7) Métricas de performance (tempo por analista, parsing vs análise, cache hits/miss)
   - (8) Incrementalidade persistente (hash de conteúdo + reutilização de ocorrências)
   - (11) Doc automática (--doc)
+  - (15) Pool de Workers (paralelismo por arquivo com timeout)
   - (17) Hash de Conteúdo Eficiente (xxhash64 com fallback sha1)
+  - (21) Timeout por analista (cancelável via worker)
+  - (23) Versão de schema na saída JSON
 
-- Entregas recentes (2025-08-22):
+- Entregas recentes (2025-08-22 → 2025-08-29):
   - Harmonização de filtros: `--include/--exclude` controlam 100% do escopo; analistas não impõem mais limitação rígida a `src/`.
   - `node_modules` pode ser analisado quando incluído explicitamente, inclusive em `--scan-only`.
-  - Modo `--json` estabilizado (logs intermediários silenciados e escape Unicode). Normalização POSIX de paths.
-  - Redução de ruído: `ritual-comando` limita "padrao-ausente" a arquivos com face de comandos; `todo-comments` respeita escopo do scanner.
+  - Modo `--json` estabilizado: logs silenciados até emissão; escape Unicode com pares substitutos; normalização POSIX de paths.
+  - Redução de ruído: dedupe central de ocorrências no orquestrador; `todo-comments` com AST-first e menos falsos positivos.
+  - Detecção de arquétipos com timeout e fluxo de criação/salvamento confiável.
 
 - Em Progresso / Próximos Passos Detalhados:
   - (8) Evolução: granularidade por analista/config, limpeza seletiva e estatísticas de reaproveitamento persistidas.
   - (7) Evolução: persistir histórico de métricas e diffs entre execuções.
   - (13) Config Dinâmico (merge multi-fontes) – próximo alvo recomendado.
-  - (10) Tipagem fortalecida de ocorrências (discriminated unions).
-  - (14) Reclassificação de erros AST em PARSE_ERRO.
+  - (10) Tipagem fortalecida de ocorrências (discriminated unions) e geradores especializados.
+  - (14) Reclassificação de erros AST em PARSE_ERRO com trecho e agregação controlada.
 
 Lacunas/prudência:
 
 - (9) Sandbox de plugins ainda não implementado (risco controlado por whitelist de extensões)
-- (15) Pool de workers ausente (impacto em bases muito grandes)
 - (16) Priorização por mudanças (git diff) não aplicada
-- (21) Timeouts/cancelamentos por analista ausentes
-- (23) Versão de schema JSON ausente (pode afetar consumidores)
 - (19) Linter interno de analistas (testes mínimos) não automatizado
 - (18) Snapshot/diff amplo de relatórios além de métricas ainda pendente
 
-Recomendações priorizadas (próximos 2 semanas):
+Recomendações priorizadas (próximas 2 semanas):
 
-1. (23) Incluir `schemaVersion` na raiz do JSON de saída e versionar campos críticos.
-2. (21) Adicionar timeout cancelável por analista (default conservador) e telemetria de cancelamentos.
-3. (15) Introduzir pool simples de workers (paralelismo por arquivo com limite configurável).
-4. (9) Sandbox opcional para plugins externos (feature flag) com tempo limite por worker.
-5. (10) Reforçar tipagem discriminada e reduzir `OcorrenciaGenerica`.
-6. (19) Linter interno: checar presença de `.test.ts` por analista e falhar no CI se faltar.
-7. (16) Priorizar por git diff quando disponível; fallback por raízes derivadas do include.
-8. (18) Export de snapshot/diff de relatórios (JSON/MD) como primeiro-class output.
+1. (13) Config Dinâmico (merge multi-fontes) e emissão de diff de overrides.
+2. (10) Reforçar tipagem discriminada de ocorrências e fábrica de ocorrências.
+3. (9) Sandbox opcional para plugins externos (feature flag) com tempo limite por worker.
+4. (19) Linter interno: checar presença de `.test.ts` por analista e falhar no CI se faltar.
+5. (16) Priorizar por git diff quando disponível; fallback por raízes derivadas do include.
+6. (18) Export de snapshot/diff de relatórios (JSON/MD) como first-class output.
 
 Histórico recente:
 

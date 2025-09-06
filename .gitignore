@@ -1,7 +1,7 @@
 # deixar aqui
 *.local
 .vscode
-melhorias-analistas/
+
 # Node modules
 node_modules/
 

@@ -17,11 +17,13 @@ Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JS/TS
 
 ---
 
+> nota: os testes estao passando depois desse refactor, porem não foi  aplicado o gate com o limiar em 90%, ja ja arrumo isso... 
+
 ## ✨ Capacidades
 
 - Diagnóstico de padrões & estrutura (`diagnosticar`)
 - Verificação de integridade via hashes (`guardian`)
-- Sugestão de reorganização segura (`planoSugestao`)
+- Sugestão de reorganização segura (plano de reorganização)
 - Poda de arquivos órfãos (`podar`)
 - Relatórios & métricas agregadas (`metricas`)
 - Pool de Workers (paralelização por arquivo)
@@ -32,7 +34,7 @@ Oráculo é uma CLI modular para analisar, diagnosticar e manter projetos (JS/TS
 
 ### 🚀 Novas Funcionalidades (v0.2.0)
 
-### Pool de Workers
+#### Pool de Workers
 
 Sistema de paralelização automática que acelera a análise em projetos grandes:
 
@@ -44,15 +46,14 @@ oraculo diagnosticar
 WORKER_POOL_MAX_WORKERS=4 oraculo diagnosticar
 ```
 
-**Características:**
+Características:
 
-- **Paralelização por arquivo**: Processa múltiplos arquivos simultaneamente
-- **Timeout inteligente**: 30s por analista com cancelamento automático
-- **Fallback automático**: Retorna ao processamento sequencial se workers falharem
-- **Configuração centralizada**: Variáveis de ambiente para controle fino
-- **Estatísticas detalhadas**: Métricas de performance do pool
+- Paralelização por arquivo (múltiplos arquivos simultâneos)
+- Timeout inteligente por analista (30s) com cancelamento automático
+- Fallback para processamento sequencial quando workers não estão disponíveis
+- Configuração centralizada por variáveis de ambiente
 
-### Schema Versioning
+#### Schema Versioning
 
 Versionamento automático dos relatórios JSON com compatibilidade backward:
 
@@ -62,38 +63,27 @@ Versionamento automático dos relatórios JSON com compatibilidade backward:
     "version": "1.0.0",
     "compatibilidade": ["0.1.0", "0.2.0"]
   },
-  "linguagens": { ... },
-  "estruturaIdentificada": { ... },
-  "guardian": { ... }
+  "linguagens": {},
+  "estruturaIdentificada": {},
+  "guardian": {}
 }
 ```
 
-**Benefícios:**
-
-- **Compatibilidade garantida**: Relatórios legados continuam funcionais
-- **Migração automática**: Atualização transparente de formatos antigos
-- **Validação robusta**: Verificação automática de integridade de schema
-- **Contratos estáveis**: APIs previsíveis para consumidores
-
-### Sistema de Pontuação Adaptativa
+#### Sistema de Pontuação Adaptativa
 
 Pontuação inteligente que se adapta ao tamanho do projeto:
 
 ```bash
-# Pontuação automática baseada no tamanho do projeto
 oraculo diagnosticar --json
 ```
 
-**Recursos:**
+Recursos:
 
-- **Escalabilidade automática**: Fatores de 1x a 5x baseados em arquivos/diretórios
-- **3 modos de configuração**: Padrão, conservador e permissivo
-- **Pesos realistas**: Arquétipos calibrados para maior precisão
-- **Confiança contextual**: Ajustes inteligentes (+5% frameworks, +3% TypeScript)
+- Fatores escaláveis (1x a 5x) baseados em arquivos/diretórios
+- Modos: padrão, conservador e permissivo
+- Pesos recalibrados por arquétipo e ajustes contextuais (frameworks/TypeScript)
 
-- **Performance**: Redução de ~70% nos arquivos processados
-- **Compatibilidade**: Filtros explícitos continuam funcionando
-- **Segurança**: Prevenção de análise acidental de dependências
+---
 
 ## 📦 Instalação
 
@@ -131,13 +121,12 @@ Notas e mitigação de timeout (Vitest): `docs/TESTING-VITEST-TIMEOUT.md`.
 
 ## 📊 Métricas internas (exemplo)
 
-```jsonc
+```json
 {
   "metricas": {
     "totalArquivos": 123,
-    "tempoAnaliseMs": 1337,
-    "workerPool": { "workersAtivos": 4, "erros": 0 },
-  },
+    "tempoAnaliseMs": 1337
+  }
 }
 ```
 
@@ -156,7 +145,7 @@ Regras essenciais:
 
 ## 📚 Comandos
 
-- `diagnosticar` — análise completa (suporta `--include`/`--exclude`)
+- `diagnosticar` — análise completa
 - `guardian` — baseline e diff de integridade
 - `podar` — remoção segura de órfãos
 - `metricas` — histórico agregado de métricas
@@ -185,10 +174,10 @@ Notas: analistas que dependem de nós Babel atuam apenas em linguagens suportada
 - Unicode fora do ASCII básico é escapado como `\uXXXX` (inclui pares substitutos para caracteres fora do BMP)
 - Quando o Guardian não é executado, retornos usam status padrão coerente (ex.: `"nao-verificado"`), mantendo o shape estável
 
-## 📜 Saída `guardian --json` (resumo)
+## � Saída `guardian --json` (resumo)
 
 ```json
-{ "status": "ok|baseline-criado|baseline-aceito|alteracoes-detectadas|erro" }
+{ "status": "ok" }
 ```
 
 ## 🔗 Leituras recomendadas
