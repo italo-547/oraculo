@@ -1,1 +1,0 @@
-{"version":3,"file":"gerador-relatorio.d.ts","sourceRoot":"","sources":["../../src/relatorios/gerador-relatorio.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,2BAA2B,EAAc,MAAM,iBAAiB,CAAC;AAE1E,wBAAsB,sBAAsB,CAC1C,SAAS,EAAE,2BAA2B,EACtC,UAAU,EAAE,MAAM,GACjB,OAAO,CAAC,IAAI,CAAC,CA0Ef;AAED,wBAAsB,kBAAkB,CACtC,SAAS,EAAE,2BAA2B,EACtC,UAAU,EAAE,MAAM,GACjB,OAAO,CAAC,IAAI,CAAC,CAaf"}
