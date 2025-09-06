@@ -25,53 +25,13 @@ import {
   registrarUltimasMetricas,
 } from '@nucleo/inquisidor.js';
 import { emitirConselhoOracular } from '@relatorios/conselheiro-oracular.js';
+import { dedupeOcorrencias, agruparAnalistas } from '@zeladores/util/ocorrencias.js';
+import { stringifyJsonEscaped } from '@zeladores/util/json.js';
 import { gerarRelatorioMarkdown } from '@relatorios/gerador-relatorio.js';
 import { scanSystemIntegrity } from '@guardian/sentinela.js';
 // registroAnalistas será importado dinamicamente quando necessário
 
-// Helper: deduplica ocorrências preservando a primeira ocorrência encontrada.
-function dedupeOcorrencias<
-  T extends { relPath?: string; linha?: number; tipo?: string; mensagem?: string },
->(arr: T[]): T[] {
-  const seen = new Map<string, T>();
-  for (const o of arr || []) {
-    const key = `${o.relPath || ''}|${String(o.linha ?? '')}|${o.tipo || ''}|${o.mensagem || ''}`;
-    if (!seen.has(key)) seen.set(key, o);
-  }
-  return Array.from(seen.values());
-}
-
-// Helper: agrupa analistas por nome, somando duracaoMs e ocorrencias e contando execucoes.
-function agruparAnalistas(analistas?: Array<Record<string, unknown>>) {
-  if (!analistas || !Array.isArray(analistas) || analistas.length === 0) return [];
-  const map = new Map<
-    string,
-    { nome: string; duracaoMs: number; ocorrencias: number; execucoes: number; global: boolean }
-  >();
-  for (const a of analistas) {
-    // Acessa campos via index para evitar casts para `any`
-    const nome = String((a && a['nome']) || 'desconhecido');
-    const dur = Number((a && a['duracaoMs']) || 0);
-    const occ = Number((a && a['ocorrencias']) || 0);
-    const globalFlag = Boolean((a && a['global']) || false);
-    const entry = map.get(nome) || {
-      nome,
-      duracaoMs: 0,
-      ocorrencias: 0,
-      execucoes: 0,
-      global: false,
-    };
-    entry.duracaoMs += dur;
-    entry.ocorrencias += occ;
-    entry.execucoes += 1;
-    entry.global = entry.global || globalFlag;
-    map.set(nome, entry);
-  }
-  // Converter para array e ordenar por ocorrencias desc, depois duracao desc
-  return Array.from(map.values()).sort((x, y) => {
-    return y.ocorrencias - x.ocorrencias || y.duracaoMs - x.duracaoMs;
-  });
-}
+// Helpers deduplicação/agrupamento: agora centralizados em @zeladores/util/ocorrencias
 
 // Interface para extensões do módulo de log
 interface LogExtensions {
@@ -89,6 +49,33 @@ interface LogExtensions {
 
 // Constante para timeout de detecção de arquétipos (em milissegundos)
 const DETECT_TIMEOUT_MS = process.env.VITEST ? 1000 : 30000;
+
+// Helper: detecção de arquétipos com timeout e absorção de rejeições
+async function detectarArquetiposComTimeout(
+  ctx: Parameters<typeof detectarArquetipos>[0],
+  baseDir: Parameters<typeof detectarArquetipos>[1],
+): Promise<Awaited<ReturnType<typeof detectarArquetipos>> | undefined> {
+  try {
+    const detectPromise = detectarArquetipos(ctx, baseDir).catch((e) => {
+      // Em DEV_MODE, registra erro explícito
+      try {
+        if (config.DEV_MODE && typeof (log as { erro?: Function }).erro === 'function') {
+          const msg = e instanceof Error ? e.message : String(e);
+          (log as { erro: Function }).erro(`Falha detector arquetipos: ${msg}`);
+        }
+      } catch {}
+      return undefined;
+    });
+    const timeoutPromise = new Promise<undefined>((resolve) =>
+      setTimeout(() => resolve(undefined), DETECT_TIMEOUT_MS),
+    );
+    return (await Promise.race([detectPromise, timeoutPromise])) as
+      | Awaited<ReturnType<typeof detectarArquetipos>>
+      | undefined;
+  } catch {
+    return undefined;
+  }
+}
 // Interface para opções do processamento de diagnóstico
 export interface OpcoesProcessamentoDiagnostico {
   guardianCheck?: boolean;
@@ -474,6 +461,71 @@ export async function processarDiagnostico(
     });
     fileEntries = leituraInicial.fileEntries; // contém conteúdo mas sem AST
 
+    // Criação e/ou salvamento de arquétipo personalizado sob demanda
+    if (opts.criarArquetipo) {
+      try {
+        const norm = (p: string) => p.replace(/\\/g, '/');
+        const dirSet = new Set<string>();
+        const arquivosRaiz: string[] = [];
+        for (const fe of fileEntries) {
+          const rel = norm(fe.relPath || fe.fullPath || '');
+          if (!rel) continue;
+          if (!rel.includes('/')) {
+            arquivosRaiz.push(rel);
+          }
+          const parts = rel.split('/');
+          if (parts.length > 1) {
+            // acumula prefixos de diretórios: ex.: src/a/b -> 'src', 'src/a', 'src/a/b'
+            for (let i = 1; i < parts.length; i++) {
+              const d = parts.slice(0, i).join('/');
+              if (d) dirSet.add(d);
+            }
+          }
+        }
+
+        // Tenta obter nome do projeto a partir do package.json (preferência: fileEntries; fallback: disco)
+        let nomeProjeto = path.basename(baseDir);
+        try {
+          const pkg = fileEntries.find((fe) => /(^|[\\/])package\.json$/.test(fe.relPath || fe.fullPath));
+          if (pkg && typeof pkg.content === 'string' && pkg.content.trim()) {
+            const parsed = JSON.parse(pkg.content);
+            if (parsed && typeof parsed.name === 'string' && parsed.name.trim()) {
+              nomeProjeto = parsed.name.trim();
+            }
+          } else {
+            const pkgPath = path.join(baseDir, 'package.json');
+            try {
+              const raw = await fs.promises.readFile(pkgPath, 'utf-8');
+              const parsed = JSON.parse(raw);
+              if (parsed && typeof parsed.name === 'string' && parsed.name.trim()) {
+                nomeProjeto = parsed.name.trim();
+              }
+            } catch {}
+          }
+        } catch {}
+
+        const estruturaDetectada = Array.from(dirSet);
+        const { criarTemplateArquetipoPersonalizado, salvarArquetipoPersonalizado } = await import(
+          '../analistas/arquetipos-personalizados.js'
+        );
+        const arquetipo = criarTemplateArquetipoPersonalizado(
+          nomeProjeto,
+          estruturaDetectada,
+          arquivosRaiz,
+          'generico',
+        );
+        if (opts.salvarArquetipo) {
+          await salvarArquetipoPersonalizado(arquetipo, baseDir);
+        } else if (config.VERBOSE) {
+          log.info('Template de arquétipo personalizado gerado (pré-visualização)');
+        }
+      } catch (e) {
+        log.aviso(`Falha ao gerar/salvar arquétipo personalizado: ${
+          e instanceof Error ? e.message : String(e)
+        }`);
+      }
+    }
+
     // Executar Guardian se solicitado
     if (config.GUARDIAN_ENABLED) {
       // Usa optional chaining para evitar erro quando o mock não prover `fase`
@@ -569,155 +621,14 @@ export async function processarDiagnostico(
         resultadoFinal: { ocorrencias: [] },
       };
     }
+  // (bloco de criação de arquétipo removido)
 
-    // 2) Preparar AST somente uma vez e executar técnicas
+    // Preparar AST para os arquivos coletados
     const fileEntriesComAst = await prepararComAst(fileEntries, baseDir);
 
-    // Detecção de arquétipos
-    let arquetiposResultado: Awaited<ReturnType<typeof detectarArquetipos>> | undefined;
-    try {
-      // Em testes, pule completamente se não for necessário
-      if (process.env.VITEST && !process.env.FORCAR_DETECT_ARQUETIPOS) {
-        arquetiposResultado = undefined;
-      } else {
-        // Só execute detectarArquetipos se timeout > 0
-        if (DETECT_TIMEOUT_MS > 0) {
-          arquetiposResultado = await Promise.race<
-            Awaited<ReturnType<typeof detectarArquetipos>> | undefined
-          >([
-            detectarArquetipos({ arquivos: fileEntriesComAst, baseDir }, baseDir),
-            new Promise<undefined>((resolve) =>
-              setTimeout(() => resolve(undefined), DETECT_TIMEOUT_MS),
-            ),
-          ]);
-        } else {
-          arquetiposResultado = await detectarArquetipos(
-            { arquivos: fileEntriesComAst, baseDir },
-            baseDir,
-          );
-        }
-      }
-      // Processar resultados de arquétipos (lógica complexa mantida aqui por brevidade)
-      // ... (código de processamento de arquétipos seria movido para cá)
-    } catch (e) {
-      if (config.DEV_MODE) log.erro('Falha detector arquetipos: ' + (e as Error).message);
-    }
-    // (no-op) arquetiposResultado is available in scope; avoid duplicate JSON below
-
-    // Criar arquétipo personalizado se solicitado
-    if (opts.criarArquetipo && !opts.json) {
-      try {
-        // Importar módulo de sistemas de arquivos e arquétipos personalizados
-        const fs = await import('node:fs');
-        const { criarTemplateArquetipoPersonalizado } = await import(
-          '../analistas/arquetipos-personalizados.js'
-        );
-
-        // Extrair informações básicas do projeto
-        const packageJsonPath = path.join(baseDir, 'package.json');
-        let nomeProjeto = path.basename(baseDir);
-
-        try {
-          const packageJsonContent = await fs.promises.readFile(packageJsonPath, 'utf-8');
-          const packageJson = JSON.parse(packageJsonContent);
-          nomeProjeto = packageJson.name || nomeProjeto;
-        } catch {
-          // Se não conseguir ler package.json, usa o nome do diretório
-        }
-
-        // Extrair estrutura de diretórios e arquivos
-        const estruturaDetectada = fileEntriesComAst
-          .map((entry) => entry.relPath?.split('/')[0])
-          .filter((dir): dir is string => dir !== undefined && dir !== '')
-          .filter((dir, index, arr) => arr.indexOf(dir) === index); // Remove duplicatas
-
-        const arquivosRaiz = fileEntriesComAst
-          .filter((entry) => !entry.relPath?.includes('/'))
-          .map((entry) => entry.relPath || '')
-          .filter((file) => file !== '');
-
-        // Determinar arquétipo oficial sugerido baseado nos resultados de detecção
-        let arquetipoSugerido = 'generico';
-        if (arquetiposResultado?.candidatos && arquetiposResultado.candidatos.length > 0) {
-          arquetipoSugerido = arquetiposResultado.candidatos[0].nome;
-        }
-
-        // Criar template do arquétipo personalizado
-        const template = criarTemplateArquetipoPersonalizado(
-          nomeProjeto,
-          estruturaDetectada,
-          arquivosRaiz,
-          arquetipoSugerido,
-        );
-
-        // Exibir sugestão para o usuário
-        log.info('📋 Sugestão de arquétipo personalizado gerada:');
-        log.info(`Nome sugerido: ${template.nome}`);
-        log.info(`Baseado no arquétipo oficial: ${template.arquetipoOficial}`);
-
-        if (
-          template.estruturaPersonalizada.diretorios &&
-          template.estruturaPersonalizada.diretorios.length > 0
-        ) {
-          log.info('Estrutura personalizada detectada:');
-          for (const item of template.estruturaPersonalizada.diretorios.slice(0, 10)) {
-            log.info(`  📁 ${item}`);
-          }
-          if (template.estruturaPersonalizada.diretorios.length > 10) {
-            log.info(
-              `  ... e mais ${template.estruturaPersonalizada.diretorios.length - 10} diretórios`,
-            );
-          }
-        }
-
-        if (
-          template.estruturaPersonalizada.arquivosChave &&
-          template.estruturaPersonalizada.arquivosChave.length > 0
-        ) {
-          log.info('Arquivos-chave detectados:');
-          for (const arquivo of template.estruturaPersonalizada.arquivosChave.slice(0, 5)) {
-            log.info(`  📄 ${arquivo}`);
-          }
-          if (template.estruturaPersonalizada.arquivosChave.length > 5) {
-            log.info(
-              `  ... e mais ${template.estruturaPersonalizada.arquivosChave.length - 5} arquivos`,
-            );
-          }
-        }
-
-        if (
-          template.melhoresPraticas?.recomendado &&
-          template.melhoresPraticas.recomendado.length > 0
-        ) {
-          log.info('💡 Melhores práticas sugeridas:');
-          for (const pratica of template.melhoresPraticas.recomendado.slice(0, 5)) {
-            log.info(`  ✅ ${pratica}`);
-          }
-          if (template.melhoresPraticas.recomendado.length > 5) {
-            log.info(`  ... e mais ${template.melhoresPraticas.recomendado.length - 5} práticas`);
-          }
-        }
-
-        // Perguntar se o usuário quer salvar
-        log.info('\n💾 Para salvar este arquétipo personalizado, execute:');
-        log.info('oraculo diagnostico --criar-arquetipo --salvar-arquetipo');
-
-        // Se o usuário passou a flag --salvar-arquetipo, persistir automaticamente
-        if ((opts as OpcoesProcessamentoDiagnostico).salvarArquetipo) {
-          try {
-            const { salvarArquetipoPersonalizado } = await import(
-              '../analistas/arquetipos-personalizados.js'
-            );
-            await salvarArquetipoPersonalizado(template, baseDir);
-            log.sucesso('✅ Arquétipo personalizado salvo automaticamente.');
-          } catch (e) {
-            log.erro(`Falha ao salvar arquétipo: ${(e as Error).message}`);
-          }
-        }
-      } catch (e) {
-        log.erro(`❌ Falha ao gerar sugestão de arquétipo personalizado: ${(e as Error).message}`);
-      }
-    }
+    // Detectar arquétipos (pode retornar undefined em casos mínimos)
+    const arquetiposResultado: Awaited<ReturnType<typeof detectarArquetipos>> | undefined =
+      await detectarArquetiposComTimeout({ arquivos: fileEntriesComAst, baseDir }, baseDir);
 
     // Continuar com o processamento restante...
     const resultadoExecucao = await executarInquisicao(
@@ -1073,39 +984,7 @@ export async function processarDiagnostico(
           };
         }
 
-        // Escapa caracteres não-ASCII e pares substitutos para compatibilidade
-        // com consumidores que esperam \uXXXX escapes no modo --json.
-        const escapeNonAscii = (s: string) => {
-          let out = '';
-          for (const ch of s) {
-            const cp = ch.codePointAt(0);
-            if (cp === undefined || cp === null || cp <= 0x7f) {
-              out += ch;
-            } else if (cp <= 0xffff) {
-              out += '\\u' + cp.toString(16).padStart(4, '0');
-            } else {
-              // caracteres fora do BMP -> pares substitutos
-              const v = cp - 0x10000;
-              const high = 0xd800 + (v >> 10);
-              const low = 0xdc00 + (v & 0x3ff);
-              out += '\\u' + high.toString(16).padStart(4, '0');
-              out += '\\u' + low.toString(16).padStart(4, '0');
-            }
-          }
-          return out;
-        };
-
-        const replacer = (_key: string, value: unknown) => {
-          if (typeof value === 'string') {
-            try {
-              return escapeNonAscii(value);
-            } catch (e) {
-              console.error('Error in escapeNonAscii:', e);
-              return value;
-            }
-          }
-          return value;
-        };
+  // JSON será emitido usando helper centralizado que aplica escapes Unicode
 
         // Garante métricas quando registrarUltimasMetricas retornou undefined
         const metricasFinalRaw =
@@ -1186,14 +1065,9 @@ export async function processarDiagnostico(
         }
         saidaJson.linguagens = linguagensFinal;
 
-        // Gerar JSON com replacer e normalizar possíveis double-escapes
+        // Gerar JSON usando utilitário comum com escape Unicode
         try {
-          const rawJson = JSON.stringify(saidaJson, replacer, 2);
-          // JSON.stringify pode escapar barras invertidas geradas pelo replacer como "\\uXXXX";
-          // para produzir a sequência esperada "\uXXXX" para os consumidores de teste,
-          // substituímos ocorrências de \\\u por \u.
-          const normalizedJson = rawJson.replace(/\\\\u/g, '\\u');
-          console.log(normalizedJson);
+          console.log(stringifyJsonEscaped(saidaJson, 2));
           _jsonEmitted = true;
         } catch (e) {
           console.error('Error generating JSON:', e);
@@ -1446,39 +1320,8 @@ export async function processarDiagnostico(
         linguagens: { total: 0, extensoes: {} },
       };
 
-      // Quando não há dados de arquetipos, omitimos `estruturaIdentificada` no JSON
-      // (o fluxo principal já trata de incluí-lo quando disponível).
-
-      const escapeNonAscii = (s: string) => {
-        let out = '';
-        for (const ch of s) {
-          const cp = ch.codePointAt(0);
-          if (cp === undefined || cp === null || cp <= 0x7f) {
-            out += ch;
-          } else if (cp <= 0xffff) {
-            out += '\\u' + cp.toString(16).padStart(4, '0');
-          } else {
-            const v = cp - 0x10000;
-            const high = 0xd800 + (v >> 10);
-            const low = 0xdc00 + (v & 0x3ff);
-            out += '\\u' + high.toString(16).padStart(4, '0');
-            out += '\\u' + low.toString(16).padStart(4, '0');
-          }
-        }
-        return out;
-      };
-
-      const replacer = (_key: string, value: unknown) => {
-        if (typeof value === 'string') {
-          try {
-            return escapeNonAscii(value);
-          } catch (e) {
-            console.error('Error in escapeNonAscii:', e);
-            return value;
-          }
-        }
-        return value;
-      };
+  // Quando não há dados de arquetipos, omitimos `estruturaIdentificada` no JSON
+  // (o fluxo principal já trata de incluí-lo quando disponível).
 
       const metricasFinalRaw =
         metricasExecucao ??
@@ -1548,9 +1391,7 @@ export async function processarDiagnostico(
 
       if (!_jsonEmitted) {
         try {
-          const rawJson = JSON.stringify(saidaJson, replacer, 2);
-          const normalizedJson = rawJson.replace(/\\\\u/g, '\\u');
-          console.log(normalizedJson);
+          console.log(stringifyJsonEscaped(saidaJson, 2));
           _jsonEmitted = true;
         } catch (e) {
           console.error('Error generating JSON:', e);

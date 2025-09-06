@@ -1,7 +1,7 @@
 # deixar aqui
 *.local
 .vscode
-
+melhorias-analistas/
 # Node modules
 node_modules/
 
@@ -22,7 +22,7 @@ coverage/
 
 # TypeScript
 *.tsbuildinfo
-melhorias-analistas.zip
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
