@@ -42,7 +42,7 @@ function stableStringify(dados) {
 }
 /**
  * Lê e desserializa um arquivo JSON de estado.
- * Fallback: retorna [] para compat legado ou objeto vazio quando apropriado.
+ * Fallback: retorna [] para compatibilidade com formas antigas ou objeto vazio quando apropriado.
  */
 export async function lerEstado(caminho, padrao) {
     try {
@@ -51,7 +51,7 @@ export async function lerEstado(caminho, padrao) {
             return JSON.parse(conteudo); // sucesso JSON
         }
         catch {
-            // Compatibilidade com testes / legado: se JSON inválido retorna []
+            // Compatibilidade com testes/versões antigas: se JSON inválido retorna []
             return padrao ?? [];
         }
     }

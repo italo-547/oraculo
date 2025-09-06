@@ -1,6 +1,6 @@
 /**
  * Lê e desserializa um arquivo JSON de estado.
- * Fallback: retorna [] para compat legado ou objeto vazio quando apropriado.
+ * Fallback: retorna [] para compatibilidade com formas antigas ou objeto vazio quando apropriado.
  */
 export declare function lerEstado<T = unknown>(caminho: string, padrao?: T): Promise<T>;
 /** Escrita atômica com permissões restritas e fsync. */

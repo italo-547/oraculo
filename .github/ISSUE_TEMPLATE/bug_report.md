@@ -1,43 +1,38 @@
-> Proveniência e Autoria
->
-> Este documento integra o projeto Oráculo (licença MIT).
-> Nada aqui implica cessão de direitos morais/autorais.
-> Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
-> Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
-
 ---
-
-name: Reportar bug
-about: Relatar um problema encontrado
-labels: bug
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: ''
 assignees: ''
 
 ---
 
-## Descrição
+**Describe the bug**
+A clear and concise description of what the bug is.
 
-Descreva o problema e o comportamento esperado.
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
 
-## Reproduzir
+**Expected behavior**
+A clear and concise description of what you expected to happen.
 
-Passos para reproduzir:
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
 
-1. ...
-2. ...
+**Desktop (please complete the following information):**
+ - OS: [e.g. iOS]
+ - Browser [e.g. chrome, safari]
+ - Version [e.g. 22]
 
-## Contexto
+**Smartphone (please complete the following information):**
+ - Device: [e.g. iPhone6]
+ - OS: [e.g. iOS8.1]
+ - Browser [e.g. stock browser, safari]
+ - Version [e.g. 22]
 
-- Versão do Node:
-- SO:
-- Comando executado:
-- Logs/saída relevante:
-
-## Impacto
-
-- [ ] Quebra build/testes
-- [ ] Degradação de funcionalidade
-- [ ] Apenas warning/logs
-
-## Anexos
-
-Cole trechos relevantes (sem segredos) ou anexos (se aplicável).
+**Additional context**
+Add any other context about the problem here.

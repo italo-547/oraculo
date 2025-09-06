@@ -18,7 +18,7 @@ jobs:
         run: rm -rf dist tsconfig.tsbuildinfo
 
       - name: Instalar Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24.x'
 

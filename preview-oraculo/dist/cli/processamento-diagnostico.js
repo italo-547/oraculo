@@ -94,15 +94,13 @@ export function getDefaultExcludes() {
     // Primeiro tenta obter do oraculo.config.json do usuário
     const configIncludeExclude = config.INCLUDE_EXCLUDE_RULES;
     if (configIncludeExclude) {
-        // Prioriza defaultExcludes se definido, senão usa globalExcludeGlob
-        if (Array.isArray(configIncludeExclude.defaultExcludes) &&
-            configIncludeExclude.defaultExcludes.length > 0) {
-            return Array.from(new Set(configIncludeExclude.defaultExcludes));
-        }
+        // Prioriza `globalExcludeGlob` (configuração moderna). Se não existir,
+        // usa `defaultExcludes` para compatibilidade com formas antigas.
         if (Array.isArray(configIncludeExclude.globalExcludeGlob) &&
             configIncludeExclude.globalExcludeGlob.length > 0) {
             return Array.from(new Set(configIncludeExclude.globalExcludeGlob));
         }
+        // Se não houver globalExcludeGlob, cairá no fallback abaixo que mescla padrões do sistema
     }
     // Se não há configuração do usuário, usa os padrões recomendados do sistema
     // Por enquanto usa 'generico', mas poderia detectar o tipo de projeto

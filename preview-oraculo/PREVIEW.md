@@ -8,7 +8,6 @@ Este diretório foi gerado pelo script preview para revisão do que seria public
 - Este arquivo não será incluído em publicação real; serve apenas como aviso/guia de revisão.
 
 Conteúdo adicional incluído:
-
 - oraculo.repo.arquetipo.json (exemplo de arquétipo de repositório para você editar)
 
-Data/Horário de geração: 2025-09-04T12:35:41.864Z
+Data/Horário de geração: 2025-09-06T03:25:25.454Z

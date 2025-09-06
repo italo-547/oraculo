@@ -4,13 +4,10 @@
   "arquetipoOficial": "desconhecido",
   "estruturaPersonalizada": {
     "diretorios": [
-      ".deprecados",
-      ".env.example",
       ".husky",
       ".lintstagedrc.mjs",
       ".prettierrc",
       ".tsbuildinfo",
-      ".vscode",
       "CHANGELOG.md",
       "CODE_OF_CONDUCT.md",
       "CONTRIBUTING.md",
@@ -19,7 +16,6 @@
       "LICENSE",
       "oraculo.config.json",
       "oraculo.config.safe.json",
-      "oraculo.repo.arquetipo.json",
       "package.json",
       "README.md",
       "scripts",
@@ -28,6 +24,7 @@
       "temp-fantasma",
       "tests",
       "THIRD-PARTY-NOTICES.txt",
+      "tmp-cache-file.ts",
       "tmp-check-rewrite.mjs",
       "tmp-debug-e2e-vitest.cjs",
       "tmp-debug-e2e.cjs",
@@ -37,10 +34,10 @@
       "vitest.config.ts"
     ],
     "arquivosChave": [
-      ".env.example",
       "eslint.config.js",
       "package.json",
       "README.md",
+      "tmp-cache-file.ts",
       "tmp-debug-e2e.js"
     ],
     "padroesNomenclatura": {
@@ -67,7 +64,7 @@
     ]
   },
   "metadata": {
-    "criadoEm": "2025-09-02T10:48:47.372Z",
+    "criadoEm": "2025-09-05T21:11:15.385Z",
     "versao": "1.0.0"
   }
 }
