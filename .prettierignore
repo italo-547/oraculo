@@ -1,0 +1,26 @@
+# Dependências e build
+node_modules/
+dist/
+preview-oraculo/
+
+# Artefatos de cobertura/CI
+coverage/
+.oraculo/
+vitest-report.json
+
+# Temporários e caches
+*.log
+*.tmp
+*.cache
+.temp/
+.temp-*/
+
+# Fixtures temporários de testes
+tests/tmp/
+
+# Diretório de trabalho temporário
+temp-fantasma/
+
+# Arquivos grandes/arquivos de pacote
+*.zip
+*.tgz

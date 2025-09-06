@@ -1,0 +1,119 @@
+Ótimo\! Fico feliz em saber que as sugestões foram úteis. E sim, a abordagem de guardar o feedback e aplicá-lo depois, em seu próprio tempo, é a mais sensata.
+
+Vamos analisar o `analista-todo-comments.ts`. Ele é um caso de uso diferente dos dois anteriores, pois não usa a AST (Abstract Syntax Tree) para sua lógica. Em vez disso, ele faz uma análise de texto simples, linha a linha.
+
+A sua implementação é funcional e faz um bom trabalho ao lidar com os diferentes tipos de comentários (linha e bloco) e até com a detecção do próprio arquivo para evitar falsos positivos.
+
+-----
+
+### Análise e Melhorias Sugeridas
+
+Apesar de ser funcional, existem algumas oportunidades para deixar o código mais robusto, legível e eficiente. Minhas sugestões se concentram em simplificar a lógica, melhorar a performance e seguir os padrões de design do seu projeto.
+
+#### 1\. Abordagem de Análise
+
+A sua lógica de percorrimento linha a linha, com a variável de estado `emBloco`, é um algoritmo de análise de texto clássico e funcional. No entanto, é propenso a falhas se o formato do comentário for ligeiramente diferente ou se o código tiver as strings `/*` ou `//` dentro de literais de string (embora o seu `indexOf` seja uma boa defesa para isso).
+
+Uma abordagem alternativa, e mais robusta, é a de **usar a AST**. A AST já tem todos os comentários extraídos e categorizados (linha, bloco, etc.). Isso elimina a necessidade de você mesmo ter que fazer a "análise sintática" do código. Se o seu projeto já tem o Babel ou outra ferramenta de AST integrada, usar a AST para ler os comentários é a forma mais robusta e menos propensa a erros.
+
+**Sugestão:** Mova a responsabilidade de detecção de comentários para a AST. Isso se alinha com o design dos seus outros analistas e elimina a lógica manual de `split` e `indexOf`.
+
+#### 2\. Lógica e Legibilidade
+
+A lógica de verificação de comentários de bloco e linha está em um único loop, o que pode tornar o código mais difícil de ler. A função `isTodoComment` é excelente, mas o fluxo principal poderia ser mais claro.
+
+**Sugestão:** A lógica de detecção de comentários dentro do seu loop é complexa. Você pode simplificá-la drasticamente. Em vez de um loop com um estado `emBloco`, você pode usar uma expressão regular (regex) para encontrar todos os comentários de uma vez no arquivo inteiro.
+
+Por exemplo:
+
+```typescript
+const regex = /\/\*(.*?)\*\/|\/\/(.*)/gs;
+```
+
+Essa regex encontra todos os comentários de bloco e linha e os captura. Você então itera sobre os resultados e verifica se eles contêm um `TODO`. Essa abordagem é mais limpa e, em geral, mais rápida para strings grandes.
+
+#### 3\. Padrões de Design do Oráculo
+
+Você está usando a interface `Analista` e o `criarOcorrencia` de forma correta. No entanto, o `aplicar` dele não utiliza a AST, o que o diferencia dos outros analistas que vimos.
+
+**Sugestão:** Adapte-o para receber a AST. Mude a assinatura para `aplicar(src, relPath, ast)`. Dentro do `aplicar`, você pode acessar os comentários da AST com `ast.node.comments`. Isso não só padroniza a interface dos seus analistas, mas também torna a lógica mais robusta.
+
+-----
+
+### Proposta de Refatoração (Baseado em AST)
+
+Se você já tem a AST disponível, essa é a abordagem mais recomendada. Ela se alinha com o design dos seus outros analistas e torna a lógica mais simples e menos propensa a erros.
+
+```typescript
+// SPDX-License-Identifier: MIT
+import { criarAnalista } from '@tipos/tipos.js';
+import type { NodePath } from '@babel/traverse';
+import type { Comment } from '@babel/types';
+import { criarOcorrencia } from '@tipos/tipos.js';
+import type { Ocorrencia } from '@tipos/tipos.js';
+
+// Heurística de detecção de TODO
+const isTodoComment = (comment: Comment): boolean => {
+  const texto = comment.value.trim();
+  // TODO com ou sem case, seguido de espaço, dois pontos, hífen, ou abre parênteses
+  if (/^TODO\b/i.test(texto)) return true;
+  return /\bTODO\b\s*[:\-(\[]/i.test(texto);
+};
+
+export const analistaTodoComments = criarAnalista({
+  nome: 'todo-comments',
+  categoria: 'qualidade',
+  descricao: 'Detecta comentários TODO deixados no código (apenas em comentários).',
+
+  test(relPath) {
+    if (
+      /(^|\\|\/)tests?(\\|\/)/i.test(relPath) ||
+      /\.(test|spec)\.(ts|js|tsx|jsx)$/i.test(relPath) ||
+      /analistas[\\\/]analista-todo-comments\.(ts|js)$/i.test(relPath)
+    ) {
+      return false;
+    }
+    return /\.(ts|js|tsx|jsx)$/i.test(relPath);
+  },
+
+  aplicar(src: string, relPath: string, ast: NodePath | null): Ocorrencia[] {
+    if (!ast) {
+      return [];
+    }
+    const ocorrencias: Ocorrencia[] = [];
+
+    const fileNode = ast.node;
+    if ('comments' in fileNode && Array.isArray(fileNode.comments)) {
+      for (const comment of fileNode.comments) {
+        if (isTodoComment(comment)) {
+          ocorrencias.push(
+            criarOcorrencia({
+              tipo: 'TODO_PENDENTE',
+              mensagem: 'Comentário TODO encontrado',
+              nivel: 'aviso',
+              relPath,
+              linha: comment.loc?.start.line,
+              origem: 'todo-comments',
+            }),
+          );
+        }
+      }
+    }
+    return ocorrencias;
+  },
+});
+```
+
+-----
+
+### O que mudou:
+
+1.  **Dependência da AST**: A função `aplicar` agora recebe `ast: NodePath | null`.
+2.  **Lógica Simplificada**: O código manual de análise de string e gerenciamento de estado (`emBloco`) foi totalmente removido.
+3.  **Acesso Direto a Comentários**: A lógica agora itera diretamente sobre a lista de comentários que o Babel já extraiu para você (`ast.node.comments`).
+4.  **Melhoria na Detecção**: A lógica da função `isTodoComment` foi ligeiramente otimizada e agora opera sobre um objeto `Comment` do Babel.
+5.  **Padronização**: A função `aplicar` agora está no mesmo padrão de todos os outros analistas, recebendo e usando a AST.
+
+Essa refatoração torna o `analista-todo-comments` mais robusto, mais fácil de manter e mais alinhado com a arquitetura geral do seu projeto. A detecção de comentários por AST é o padrão da indústria e evita os falsos positivos que a análise de string manual poderia causar (ex: `//` ou `/*` dentro de strings ou expressões regulares).
+
+Você quer que a gente continue analisando outro analista ou você já tem um bom material para trabalhar?

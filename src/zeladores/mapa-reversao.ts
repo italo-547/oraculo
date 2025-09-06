@@ -4,6 +4,7 @@ import path from 'node:path';
 import { log } from '@nucleo/constelacao/log.js';
 import { config } from '@nucleo/constelacao/cosmos.js';
 import type { MoveReversao, MapaReversao } from '@tipos/tipos.js';
+import { lerEstado, salvarEstado } from '@zeladores/util/persistencia.js';
 
 function getMapaPath(): string {
   return (config && (config.STRUCTURE_REVERSE_MAP_PATH as string)) || '.oraculo/mapa-reversao.json';
@@ -30,8 +31,13 @@ export class GerenciadorMapaReversao {
   async carregar(): Promise<void> {
     try {
       const pathMapa = getMapaPath();
-      const conteudo = await fs.readFile(pathMapa, 'utf-8');
-      this.mapa = JSON.parse(conteudo);
+      this.mapa =
+        (await lerEstado<MapaReversao | null>(pathMapa, null)) ??
+        {
+          versao: '1.0.0',
+          moves: [],
+          metadata: { totalMoves: 0, ultimoMove: '', podeReverter: true },
+        };
 
       // Validação básica
       if (!this.mapa.moves || !Array.isArray(this.mapa.moves)) {
@@ -66,8 +72,8 @@ export class GerenciadorMapaReversao {
   async salvar(): Promise<void> {
     try {
       const pathMapa = getMapaPath();
-      await fs.mkdir(path.dirname(pathMapa), { recursive: true });
-      await fs.writeFile(pathMapa, JSON.stringify(this.mapa, null, 2), 'utf-8');
+  await fs.mkdir(path.dirname(pathMapa), { recursive: true });
+  await salvarEstado(pathMapa, this.mapa);
       log.info(`💾 Mapa de reversão salvo: ${this.mapa.moves.length} moves`);
     } catch (error) {
       log.erro(`❌ Erro ao salvar mapa de reversão: ${(error as Error).message}`);

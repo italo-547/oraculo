@@ -25,8 +25,13 @@ describe('analistaPadroesUso (extra)', () => {
       },
     }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
-    const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'classe.ts' }] };
-    const ocorrencias = analistaPadroesUso.aplicar('', 'classe.ts', undefined, '', contexto as any);
+    const ocorrencias = analistaPadroesUso.aplicar(
+      '',
+      'classe.ts',
+      { type: 'File' } as any,
+      '',
+      undefined as any,
+    );
     expect(
       Array.isArray(ocorrencias) &&
         ocorrencias.some((o: any) =>
@@ -52,8 +57,13 @@ describe('analistaPadroesUso (extra)', () => {
       },
     }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
-    const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'mod.ts' }] };
-    const ocorrencias = analistaPadroesUso.aplicar('', 'mod.ts', undefined, '', contexto as any);
+    const ocorrencias = analistaPadroesUso.aplicar(
+      '',
+      'mod.ts',
+      { type: 'File' } as any,
+      '',
+      undefined as any,
+    );
     expect(Array.isArray(ocorrencias) && ocorrencias.length === 0).toBe(true);
   });
 
@@ -75,8 +85,13 @@ describe('analistaPadroesUso (extra)', () => {
       },
     }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
-    const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'mod.ts' }] };
-    const ocorrencias = analistaPadroesUso.aplicar('', 'mod.ts', undefined, '', contexto as any);
+    const ocorrencias = analistaPadroesUso.aplicar(
+      '',
+      'mod.ts',
+      { type: 'File' } as any,
+      '',
+      undefined as any,
+    );
     expect(
       Array.isArray(ocorrencias) &&
         ocorrencias.some(
@@ -98,8 +113,13 @@ describe('analistaPadroesUso (extra)', () => {
       },
     }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
-    const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'classe.ts' }] };
-    const ocorrencias = analistaPadroesUso.aplicar('', 'classe.ts', undefined, '', contexto as any);
+    const ocorrencias = analistaPadroesUso.aplicar(
+      '',
+      'classe.ts',
+      { type: 'File' } as any,
+      '',
+      undefined as any,
+    );
     expect(Array.isArray(ocorrencias) && ocorrencias.length === 0).toBe(true);
   });
 
@@ -116,16 +136,30 @@ describe('analistaPadroesUso (extra)', () => {
       },
     }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
-    const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'anon.js' }] };
-    const ocorrencias = analistaPadroesUso.aplicar('', 'anon.js', undefined, '', contexto as any);
+    const ocorrencias = analistaPadroesUso.aplicar(
+      '',
+      'anon.js',
+      { type: 'File' } as any,
+      '',
+      undefined as any,
+    );
     expect(Array.isArray(ocorrencias) && ocorrencias.length === 0).toBe(true);
   });
 
-  it('retorna vazio para contexto inválido', async () => {
+  it('per-file permite ausência de contexto (retorna lista, possivelmente vazia)', async () => {
+    // no-op traverse, não deve gerar ocorrências
+    await vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+      traverse: (_ast: any, _visitors: any) => {},
+    }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
-    const ocorrencias = analistaPadroesUso.aplicar('', 'anon.js', undefined, '', null as any);
-    // Implementação retorna null quando contexto é inválido
-    expect(ocorrencias).toBeNull();
+    const ocorrencias = analistaPadroesUso.aplicar(
+      '',
+      'anon.js',
+      { type: 'File' } as any,
+      '',
+      null as any,
+    );
+    expect(Array.isArray(ocorrencias) && ocorrencias.length === 0).toBe(true);
   });
 
   it('detecta uso de exports.* em TS', async () => {
@@ -145,8 +179,13 @@ describe('analistaPadroesUso (extra)', () => {
       },
     }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
-    const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'mod.ts' }] };
-    const ocorrencias = analistaPadroesUso.aplicar('', 'mod.ts', undefined, '', contexto as any);
+    const ocorrencias = analistaPadroesUso.aplicar(
+      '',
+      'mod.ts',
+      { type: 'File' } as any,
+      '',
+      undefined as any,
+    );
     expect(
       Array.isArray(ocorrencias) &&
         ocorrencias.some(
@@ -168,8 +207,13 @@ describe('analistaPadroesUso (extra)', () => {
       },
     }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
-    const contexto = { arquivos: [{ ast: { type: 'File' }, relPath: 'anon.js' }] };
-    const ocorrencias = analistaPadroesUso.aplicar('', 'anon.js', undefined, '', contexto as any);
+    const ocorrencias = analistaPadroesUso.aplicar(
+      '',
+      'anon.js',
+      { type: 'File' } as any,
+      '',
+      undefined as any,
+    );
     expect(
       Array.isArray(ocorrencias) &&
         ocorrencias.some((o: any) => o.tipo === 'info' && o.mensagem?.includes('Função anônima')),

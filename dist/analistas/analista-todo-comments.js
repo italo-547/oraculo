@@ -17,12 +17,33 @@ export const analistaTodoComments = {
             return false;
         return /\.(ts|js|tsx|jsx)$/i.test(relPath);
     },
-    aplicar(src, relPath) {
+    aplicar(src, relPath, ast) {
         if (!src || typeof src !== 'string')
             return null;
         // Evita auto-detecção neste próprio arquivo (defesa dupla)
         if (/analistas[\\\/]analista-todo-comments\.(ts|js)$/i.test(relPath))
             return null;
+        // Caminho preferencial: usar comentários da AST quando disponível
+        if (ast && ast.node) {
+            const maybeWithComments = ast.node;
+            if (Array.isArray(maybeWithComments.comments)) {
+                const comments = maybeWithComments.comments;
+                const ocorrencias = comments
+                    .filter((c) => {
+                    const texto = String(c.value ?? '').trim();
+                    return /^TODO\b/i.test(texto) || /\bTODO\b\s*[:\-(\[]/i.test(texto);
+                })
+                    .map((c) => criarOcorrencia({
+                    tipo: 'TODO_PENDENTE',
+                    mensagem: 'Comentário TODO encontrado',
+                    nivel: 'aviso',
+                    relPath,
+                    linha: c.loc?.start.line,
+                    origem: 'todo-comments',
+                }));
+                return ocorrencias.length ? ocorrencias : null;
+            }
+        }
         // Heurística: considera TODO apenas quando presente em comentários
         const linhas = src.split(/\r?\n/);
         const ocorrenciasLinhas = [];

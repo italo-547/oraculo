@@ -1,0 +1,15 @@
+{
+  "arquivos": {
+    "src/a.ts": {
+      "analistas": {
+        "x": {
+          "duracaoMs": 5,
+          "ocorrencias": 2
+        }
+      },
+      "hash": "h",
+      "ocorrencias": [],
+      "reaproveitadoCount": 1
+    }
+  }
+}

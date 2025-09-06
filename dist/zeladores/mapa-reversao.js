@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { log } from '@nucleo/constelacao/log.js';
 import { config } from '@nucleo/constelacao/cosmos.js';
+import { lerEstado, salvarEstado } from '@zeladores/util/persistencia.js';
 function getMapaPath() {
     return (config && config.STRUCTURE_REVERSE_MAP_PATH) || '.oraculo/mapa-reversao.json';
 }
@@ -25,8 +26,13 @@ export class GerenciadorMapaReversao {
     async carregar() {
         try {
             const pathMapa = getMapaPath();
-            const conteudo = await fs.readFile(pathMapa, 'utf-8');
-            this.mapa = JSON.parse(conteudo);
+            this.mapa =
+                (await lerEstado(pathMapa, null)) ??
+                    {
+                        versao: '1.0.0',
+                        moves: [],
+                        metadata: { totalMoves: 0, ultimoMove: '', podeReverter: true },
+                    };
             // Validação básica
             if (!this.mapa.moves || !Array.isArray(this.mapa.moves)) {
                 throw new Error('Mapa de reversão corrompido');
@@ -61,7 +67,7 @@ export class GerenciadorMapaReversao {
         try {
             const pathMapa = getMapaPath();
             await fs.mkdir(path.dirname(pathMapa), { recursive: true });
-            await fs.writeFile(pathMapa, JSON.stringify(this.mapa, null, 2), 'utf-8');
+            await salvarEstado(pathMapa, this.mapa);
             log.info(`💾 Mapa de reversão salvo: ${this.mapa.moves.length} moves`);
         }
         catch (error) {

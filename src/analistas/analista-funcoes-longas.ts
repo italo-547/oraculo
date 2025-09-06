@@ -18,6 +18,23 @@ export const analistaFuncoesLongas = criarAnalista({
   aplicar: function (src: string, relPath: string, ast: NodePath | null, _fullPath?: string) {
     const ocorrencias: Ocorrencia[] = [];
 
+    const pushOcorrencia = (
+      tipo: Ocorrencia['tipo'],
+      nivel: NonNullable<Ocorrencia['nivel']>,
+      linha: number,
+      mensagem: string,
+    ) => {
+      ocorrencias.push({
+        tipo,
+        nivel,
+        relPath,
+        arquivo: relPath,
+        linha,
+        mensagem,
+        origem: 'analista-funcoes-longas',
+      });
+    };
+
     function analisar(
       fn: FunctionDeclaration | FunctionExpression | ArrowFunctionExpression,
       _aninhamento: number = 0,
@@ -38,57 +55,36 @@ export const analistaFuncoesLongas = criarAnalista({
       const endLine = fn.loc.end.line;
       const linhas = endLine - startLine + 1;
       if (linhas > LIMITE_LINHAS) {
-        ocorrencias.push({
-          tipo: 'FUNCAO_LONGA',
-          severidade: 2,
-          nivel: 'aviso',
-          relPath,
-          arquivo: relPath,
-          linha: startLine,
-          mensagem: `Função com ${linhas} linhas (máx: ${LIMITE_LINHAS})`,
-          origem: 'analista-funcoes-longas',
-        });
+        pushOcorrencia(
+          'FUNCAO_LONGA',
+          'aviso',
+          startLine,
+          `Função com ${linhas} linhas (máx: ${LIMITE_LINHAS})`,
+        );
       }
 
       if (fn.params && Array.isArray(fn.params) && fn.params.length > LIMITE_PARAMETROS) {
-        ocorrencias.push({
-          tipo: 'MUITOS_PARAMETROS',
-          severidade: 1,
-          nivel: 'aviso',
-          relPath,
-          arquivo: relPath,
-          linha: startLine,
-          mensagem: `Função com muitos parâmetros (${fn.params.length}, máx: ${LIMITE_PARAMETROS})`,
-          origem: 'analista-funcoes-longas',
-        });
+        pushOcorrencia(
+          'MUITOS_PARAMETROS',
+          'aviso',
+          startLine,
+          `Função com muitos parâmetros (${fn.params.length}, máx: ${LIMITE_PARAMETROS})`,
+        );
       }
 
       // Verifica se a função está aninhada demais
       if (_aninhamento > LIMITE_ANINHAMENTO) {
-        ocorrencias.push({
-          tipo: 'FUNCAO_ANINHADA',
-          severidade: 1,
-          nivel: 'aviso',
-          relPath,
-          arquivo: relPath,
-          linha: startLine,
-          mensagem: `Função aninhada em nível ${_aninhamento} (máx: ${LIMITE_ANINHAMENTO})`,
-          origem: 'analista-funcoes-longas',
-        });
+        pushOcorrencia(
+          'FUNCAO_ANINHADA',
+          'aviso',
+          startLine,
+          `Função aninhada em nível ${_aninhamento} (máx: ${LIMITE_ANINHAMENTO})`,
+        );
       }
 
       // Verifica se a função não tem comentário imediatamente acima
       if (fn.leadingComments == null || fn.leadingComments.length === 0) {
-        ocorrencias.push({
-          tipo: 'FUNCAO_SEM_COMENTARIO',
-          severidade: 1,
-          nivel: 'info',
-          relPath,
-          arquivo: relPath,
-          linha: startLine,
-          mensagem: `Função sem comentário acima.`,
-          origem: 'analista-funcoes-longas',
-        });
+        pushOcorrencia('FUNCAO_SEM_COMENTARIO', 'info', startLine, `Função sem comentário acima.`);
       }
     }
 

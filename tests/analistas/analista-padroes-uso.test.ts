@@ -169,13 +169,19 @@ describe('analista-padroes-uso', () => {
     ).toBe(true);
   });
 
-  it('test aceita .js/.ts e rejeita outros; aplicar retorna null sem contexto', async () => {
+  it('test aceita .js/.ts e rejeita outros; per-file funciona sem contexto (retorna lista vazia)', async () => {
+    // Garante que traverse não lance nem gere ocorrências neste caso
+    vi.doMock('../nucleo/constelacao/traverse.js', () => ({
+      traverse: (_node: any, _visitors: any) => {
+        // no-op
+      },
+    }));
     const { analistaPadroesUso } = await import('../../src/analistas/analista-padroes-uso.js');
     expect(analistaPadroesUso.test('file.ts')).toBe(true);
     expect(analistaPadroesUso.test('file.js')).toBe(true);
     expect(analistaPadroesUso.test('file.md')).toBe(false);
     const fakeAst = { type: 'File' };
     const res = analistaPadroesUso.aplicar('', 'a.ts', fakeAst as any, undefined, undefined as any);
-    expect(res).toBeNull();
+    expect(Array.isArray(res) && res.length === 0).toBe(true);
   });
 });

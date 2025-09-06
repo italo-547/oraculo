@@ -1,5 +1,6 @@
 import { salvarEstado } from '@zeladores/util/persistencia.js';
 import path from 'node:path';
+import { lerArquivoTexto } from '@zeladores/util/persistencia.js';
 export async function exportarRelatorioArquetiposMarkdown(destino, candidatos, contexto, detalhado = false) {
     const linhas = [];
     linhas.push(`# Relatório de Detecção de Arquétipos`);
@@ -97,10 +98,12 @@ export async function exportarRelatorioArquetiposMarkdown(destino, candidatos, c
             }
             // Dependências desatualizadas/vulneráveis (simples)
             try {
-                const fs = await import('node:fs');
                 const pkgPath = path.resolve(process.cwd(), 'package.json');
-                if (fs.existsSync(pkgPath)) {
-                    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+                try {
+                    const raw = await lerArquivoTexto(pkgPath);
+                    const pkg = raw ? JSON.parse(raw) : null;
+                    if (!pkg)
+                        throw new Error('sem pkg');
                     if (pkg.dependencies) {
                         for (const dep in pkg.dependencies) {
                             // Simulação: destaca dependências com versão "0." ou "^0." como desatualizadas/vulneráveis
@@ -111,6 +114,7 @@ export async function exportarRelatorioArquetiposMarkdown(destino, candidatos, c
                         }
                     }
                 }
+                catch { }
             }
             catch { }
             // Status do npm audit

@@ -10,6 +10,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { ARQUETIPOS } from '@analistas/arquetipos-defs.js';
 import { log } from '@nucleo/constelacao/log.js';
+import { lerEstado, salvarEstado } from '@zeladores/util/persistencia.js';
 const ARQUETIPO_PERSONALIZADO_FILENAME = 'oraculo.repo.arquetipo.json';
 /**
  * Carrega o arquétipo personalizado do projeto atual
@@ -17,10 +18,9 @@ const ARQUETIPO_PERSONALIZADO_FILENAME = 'oraculo.repo.arquetipo.json';
 export async function carregarArquetipoPersonalizado(baseDir = process.cwd()) {
     const arquivoArquetipo = path.join(baseDir, ARQUETIPO_PERSONALIZADO_FILENAME);
     try {
-        const conteudo = await fs.readFile(arquivoArquetipo, 'utf-8');
-        const arquetipo = JSON.parse(conteudo);
+        const arquetipo = await lerEstado(arquivoArquetipo, null);
         // Validação básica
-        if (!arquetipo.nome || !arquetipo.arquetipoOficial) {
+        if (!arquetipo || !arquetipo.nome || !arquetipo.arquetipoOficial) {
             log.aviso(`⚠️ Arquétipo personalizado inválido em ${arquivoArquetipo}: nome ou arquetipoOficial ausente`);
             return null;
         }
@@ -44,7 +44,7 @@ export async function salvarArquetipoPersonalizado(arquetipo, baseDir = process.
         },
     };
     const arquivoArquetipo = path.join(baseDir, ARQUETIPO_PERSONALIZADO_FILENAME);
-    await fs.writeFile(arquivoArquetipo, JSON.stringify(arquetipoCompleto, null, 2), 'utf-8');
+    await salvarEstado(arquivoArquetipo, arquetipoCompleto);
     log.sucesso(`✅ Arquétipo personalizado salvo em ${arquivoArquetipo}`);
 }
 /**

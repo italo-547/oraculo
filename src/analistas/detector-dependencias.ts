@@ -18,31 +18,6 @@ function normalizarModulo(mod: string, relPath: string): string {
 }
 
 /**
- * Extrai referências de import/require do AST.
- */
-function extrairReferencias(ast: NodePath): string[] {
-  const refs: string[] = [];
-
-  traverse(ast.node, {
-    ImportDeclaration(path: NodePath<t.ImportDeclaration>) {
-      refs.push(path.node.source.value);
-    },
-    CallExpression(path: NodePath<t.CallExpression>) {
-      const { callee, arguments: args } = path.node;
-      if (
-        callee.type === 'Identifier' &&
-        callee.name === 'require' &&
-        args[0]?.type === 'StringLiteral'
-      ) {
-        refs.push(args[0].value);
-      }
-    },
-  });
-
-  return refs;
-}
-
-/**
  * Analisa dependências do arquivo (import/require), detecta padrões problemáticos e atualiza grafo global.
  * Retorna ocorrências para imports/require suspeitos, mistos, circulares, etc.
  */
@@ -62,14 +37,24 @@ export const detectorDependencias = {
     if (!ast) return [];
 
     const ocorrencias: Ocorrencia[] = [];
-    const refs = extrairReferencias(ast);
     const tiposImport: Set<'import' | 'require'> = new Set();
+    const arquivosExistentes = contexto
+      ? new Set(contexto.arquivos.map((f) => f.relPath))
+      : undefined;
+    // Conjunto de dependências (criado sob demanda quando houver refs)
+    let depsSet: Set<string> | undefined = grafoDependencias.get(relPath);
 
     // Detecta padrões problemáticos
     traverse(ast.node, {
       ImportDeclaration(p: NodePath<t.ImportDeclaration>) {
         tiposImport.add('import');
         const val = p.node.source.value;
+        // Alimenta grafo
+        if (!depsSet) {
+          depsSet = new Set<string>();
+          grafoDependencias.set(relPath, depsSet);
+        }
+        depsSet.add(normalizarModulo(val, relPath));
         // Import externo
         if (!val.startsWith('.') && !val.startsWith('/')) {
           ocorrencias.push({
@@ -104,12 +89,11 @@ export const detectorDependencias = {
         if (val.startsWith('.')) {
           const importPath = path.join(path.dirname(relPath), val);
           if (
-            contexto &&
-            !contexto.arquivos.some(
-              (f) =>
-                f.relPath === importPath ||
-                f.relPath === importPath + '.ts' ||
-                f.relPath === importPath + '.js',
+            arquivosExistentes &&
+            !(
+              arquivosExistentes.has(importPath) ||
+              arquivosExistentes.has(importPath + '.ts') ||
+              arquivosExistentes.has(importPath + '.js')
             )
           ) {
             ocorrencias.push({
@@ -131,6 +115,12 @@ export const detectorDependencias = {
         ) {
           tiposImport.add('require');
           const val = args[0].value;
+          // Alimenta grafo
+          if (!depsSet) {
+            depsSet = new Set<string>();
+            grafoDependencias.set(relPath, depsSet);
+          }
+          depsSet.add(normalizarModulo(val, relPath));
           // Require externo
           if (!val.startsWith('.') && !val.startsWith('/')) {
             ocorrencias.push({
@@ -165,12 +155,11 @@ export const detectorDependencias = {
           if (val.startsWith('.')) {
             const importPath = path.join(path.dirname(relPath), val);
             if (
-              contexto &&
-              !contexto.arquivos.some(
-                (f) =>
-                  f.relPath === importPath ||
-                  f.relPath === importPath + '.ts' ||
-                  f.relPath === importPath + '.js',
+              arquivosExistentes &&
+              !(
+                arquivosExistentes.has(importPath) ||
+                arquivosExistentes.has(importPath + '.ts') ||
+                arquivosExistentes.has(importPath + '.js')
               )
             ) {
               ocorrencias.push({
@@ -193,17 +182,6 @@ export const detectorDependencias = {
         mensagem: `Uso misto de require e import no mesmo arquivo. Padronize para um só estilo.`,
         arquivo: relPath,
       });
-    }
-
-    // Grafo de dependências (mantido)
-    for (const ref of refs) {
-      const dep = normalizarModulo(ref, relPath);
-      let set = grafoDependencias.get(relPath);
-      if (!set) {
-        set = new Set<string>();
-        grafoDependencias.set(relPath, set);
-      }
-      set.add(dep);
     }
 
     // Detecta import circular simples (arquivo importa a si mesmo)

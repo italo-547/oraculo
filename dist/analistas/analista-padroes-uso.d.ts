@@ -4,6 +4,6 @@ export declare const analistaPadroesUso: {
     nome: string;
     global: boolean;
     test: (relPath: string) => boolean;
-    aplicar: (_src: string, _relPath: string, _ast: unknown, _fullPath?: string, contexto?: ContextoExecucao) => TecnicaAplicarResultado;
+    aplicar: (_src: string, relPath: string, astInput: unknown, _fullPath?: string, contexto?: ContextoExecucao) => TecnicaAplicarResultado;
 };
 //# sourceMappingURL=analista-padroes-uso.d.ts.map
