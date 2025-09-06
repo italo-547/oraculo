@@ -4,6 +4,8 @@ export const analistaTodoComments = {
     nome: 'todo-comments',
     categoria: 'qualidade',
     descricao: 'Detecta comentários TODO deixados no código (apenas em comentários).',
+    // Per-file (não global): executa por arquivo
+    global: false,
     test(relPath) {
         // Ignora arquivos de teste/spec e pastas comuns de teste
         if (/(^|\\|\/)tests?(\\|\/)/i.test(relPath) ||
@@ -18,6 +20,41 @@ export const analistaTodoComments = {
         return /\.(ts|js|tsx|jsx)$/i.test(relPath);
     },
     aplicar(src, relPath, ast) {
+        const RE_TODO_START = /^TODO\b/i;
+        const RE_TODO_ANY = /\bTODO\b\s*[:\-(\[]/i;
+        const isTodoComment = (texto) => {
+            const t = String(texto ?? '').trim();
+            return RE_TODO_START.test(t) || RE_TODO_ANY.test(t);
+        };
+        // Localiza marcadores de comentário ignorando ocorrências dentro de strings (', ", `)
+        const localizarMarcadores = (linha) => {
+            let inS = false;
+            let inD = false;
+            let inB = false;
+            let prev = '';
+            for (let i = 0; i < linha.length; i++) {
+                const ch = linha[i];
+                const pair = prev + ch;
+                // alterna estados de string considerando escapes simples
+                if (!inD && !inB && ch === "'" && prev !== '\\')
+                    inS = !inS;
+                else if (!inS && !inB && ch === '"' && prev !== '\\')
+                    inD = !inD;
+                else if (!inS && !inD && ch === '`' && prev !== '\\')
+                    inB = !inB;
+                // apenas quando não dentro de strings detectar comentários
+                if (!inS && !inD && !inB) {
+                    if (pair === '//') {
+                        return { lineIdx: i - 1, blockIdx: -1 };
+                    }
+                    if (pair === '/*') {
+                        return { lineIdx: -1, blockIdx: i - 1 };
+                    }
+                }
+                prev = ch;
+            }
+            return { lineIdx: -1, blockIdx: -1 };
+        };
         if (!src || typeof src !== 'string')
             return null;
         // Evita auto-detecção neste próprio arquivo (defesa dupla)
@@ -31,7 +68,7 @@ export const analistaTodoComments = {
                 const ocorrencias = comments
                     .filter((c) => {
                     const texto = String(c.value ?? '').trim();
-                    return /^TODO\b/i.test(texto) || /\bTODO\b\s*[:\-(\[]/i.test(texto);
+                    return isTodoComment(texto);
                 })
                     .map((c) => criarOcorrencia({
                     tipo: 'TODO_PENDENTE',
@@ -48,12 +85,6 @@ export const analistaTodoComments = {
         const linhas = src.split(/\r?\n/);
         const ocorrenciasLinhas = [];
         let emBloco = false;
-        const isTodoComment = (texto) => {
-            const t = texto.trim();
-            if (/^TODO\b/i.test(t))
-                return true; // começa com TODO (ex: "// TODO ajustar")
-            return /\bTODO\b\s*[:\-(\[]/i.test(t); // TODO: ou TODO - ou TODO(
-        };
         for (let i = 0; i < linhas.length; i++) {
             const linha = linhas[i];
             let analisada = false;
@@ -68,9 +99,8 @@ export const analistaTodoComments = {
                 }
             }
             if (!analisada) {
-                // Procura início de bloco e comentário de linha
-                const idxBlockStart = linha.indexOf('/*');
-                const idxLine = linha.indexOf('//');
+                // Procura início de bloco e comentário de linha ignorando strings
+                const { blockIdx: idxBlockStart, lineIdx: idxLine } = localizarMarcadores(linha);
                 // Caso comentário de linha
                 if (idxLine >= 0 && (idxBlockStart === -1 || idxLine < idxBlockStart)) {
                     const trechoComentario = linha.slice(idxLine + 2);

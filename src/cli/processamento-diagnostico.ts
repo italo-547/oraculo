@@ -730,11 +730,13 @@ export async function processarDiagnostico(
     );
 
     // Processar métricas e ocorrências
-    const metricasExecucao = registrarUltimasMetricas(resultadoExecucao.metricas);
-    const totalOcorrenciasProcessadas = resultadoExecucao.ocorrencias?.length || 0;
+  const metricasExecucao = registrarUltimasMetricas(resultadoExecucao.metricas);
+  // Deduplica ocorrências repetidas para reduzir ruído no orquestrador
+  const ocorrenciasFiltradas = dedupeOcorrencias(resultadoExecucao.ocorrencias || []);
+  const totalOcorrenciasProcessadas = ocorrenciasFiltradas.length;
 
-    // Atualizar totalOcorrencias com base no resultado real
-    totalOcorrencias = totalOcorrenciasProcessadas;
+  // Atualizar totalOcorrencias com base no resultado deduplicado
+  totalOcorrencias = totalOcorrenciasProcessadas;
     // Emite aviso/sucesso imediatamente usando o import estático `log`.
     // Isso garante que, quando testes aplicarem mocks ao módulo de log,
     // as chamadas sejam contabilizadas corretamente.
@@ -947,7 +949,7 @@ export async function processarDiagnostico(
       }
       if (opts.json) {
         // Agregar ocorrências de TODO_PENDENTE por arquivo
-        const ocorrenciasOriginais = resultadoExecucao.ocorrencias || [];
+        const ocorrenciasOriginais = ocorrenciasFiltradas;
         const todosPorArquivo = new Map<string, typeof ocorrenciasOriginais>();
 
         // Separar TODOs dos outros tipos de ocorrência
@@ -1212,9 +1214,9 @@ export async function processarDiagnostico(
 
         // Imprimir bloco de resumo de tipos se houver ocorrências
         // Imprimir bloco de resumo de tipos se houver ocorrências
-        if (totalOcorrencias > 0 && resultadoExecucao.ocorrencias) {
+        if (totalOcorrencias > 0 && ocorrenciasFiltradas) {
           const tiposResumo: Record<string, number> = {};
-          for (const ocorrencia of resultadoExecucao.ocorrencias) {
+          for (const ocorrencia of ocorrenciasFiltradas) {
             const tipo = ocorrencia.tipo || 'desconhecido';
             tiposResumo[tipo] = (tiposResumo[tipo] || 0) + 1;
           }
@@ -1232,7 +1234,7 @@ export async function processarDiagnostico(
 
           // Ecoar avisos quando existirem ocorrências de nível 'aviso'
           try {
-            const existeAviso = (resultadoExecucao.ocorrencias || []).some(
+            const existeAviso = (ocorrenciasFiltradas || []).some(
               (o: unknown) => !!o && (o as Record<string, unknown>).nivel === 'aviso',
             );
             if (existeAviso) {
@@ -1305,9 +1307,9 @@ export async function processarDiagnostico(
     if (!opts.json && !config.SCAN_ONLY) {
       try {
         // Se houver ocorrências, exibe resumo de tipos (mesma lógica usada acima)
-        if (totalOcorrencias > 0 && resultadoExecucao && resultadoExecucao.ocorrencias) {
+        if (totalOcorrencias > 0 && resultadoExecucao && ocorrenciasFiltradas) {
           const tiposResumo: Record<string, number> = {};
-          for (const ocorrencia of resultadoExecucao.ocorrencias) {
+          for (const ocorrencia of ocorrenciasFiltradas) {
             const tipo = ocorrencia.tipo || 'desconhecido';
             tiposResumo[tipo] = (tiposResumo[tipo] || 0) + 1;
           }
@@ -1320,11 +1322,9 @@ export async function processarDiagnostico(
             log.imprimirBloco(tituloResumo, [...cabecalho, ...linhasResumo]);
           }
           try {
-            const existeAviso = (
-              resultadoExecucao && resultadoExecucao.ocorrencias
-                ? resultadoExecucao.ocorrencias
-                : []
-            ).some((o: unknown) => !!o && (o as Record<string, unknown>).nivel === 'aviso');
+            const existeAviso = (ocorrenciasFiltradas || []).some(
+              (o: unknown) => !!o && (o as Record<string, unknown>).nivel === 'aviso',
+            );
             if (existeAviso)
               log.aviso(`${log.simbolos?.aviso || '!'} Há ocorrências de nível aviso`);
           } catch {}
@@ -1339,7 +1339,7 @@ export async function processarDiagnostico(
     if (opts.json) {
       // Reproduz o mesmo comportamento de geração de JSON usado acima,
       // mas tolera arquetiposResultado undefined.
-      const ocorrenciasOriginais = resultadoExecucao.ocorrencias || [];
+  const ocorrenciasOriginais = dedupeOcorrencias(resultadoExecucao.ocorrencias || []);
       const todosPorArquivo = new Map<string, typeof ocorrenciasOriginais>();
       const naoTodos: typeof ocorrenciasOriginais = [];
       for (const ocorrencia of ocorrenciasOriginais) {

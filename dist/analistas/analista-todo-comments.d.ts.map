@@ -1,1 +1,1 @@
-{"version":3,"file":"analista-todo-comments.d.ts","sourceRoot":"","sources":["../../src/analistas/analista-todo-comments.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,QAAQ,EAA2B,MAAM,iBAAiB,CAAC;AAMzE,eAAO,MAAM,oBAAoB,EAAE,QAgHlC,CAAC;AAEF,eAAe,oBAAoB,CAAC"}
+{"version":3,"file":"analista-todo-comments.d.ts","sourceRoot":"","sources":["../../src/analistas/analista-todo-comments.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,QAAQ,EAA2B,MAAM,iBAAiB,CAAC;AAMzE,eAAO,MAAM,oBAAoB,EAAE,QA8IlC,CAAC;AAEF,eAAe,oBAAoB,CAAC"}

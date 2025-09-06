@@ -550,8 +550,10 @@ export async function processarDiagnostico(opts) {
         (await import('../analistas/registry.js')).registroAnalistas, baseDir, guardianResultado, { verbose: config.VERBOSE, compact: config.COMPACT_MODE });
         // Processar métricas e ocorrências
         const metricasExecucao = registrarUltimasMetricas(resultadoExecucao.metricas);
-        const totalOcorrenciasProcessadas = resultadoExecucao.ocorrencias?.length || 0;
-        // Atualizar totalOcorrencias com base no resultado real
+        // Deduplica ocorrências repetidas para reduzir ruído no orquestrador
+        const ocorrenciasFiltradas = dedupeOcorrencias(resultadoExecucao.ocorrencias || []);
+        const totalOcorrenciasProcessadas = ocorrenciasFiltradas.length;
+        // Atualizar totalOcorrencias com base no resultado deduplicado
         totalOcorrencias = totalOcorrenciasProcessadas;
         // Emite aviso/sucesso imediatamente usando o import estático `log`.
         // Isso garante que, quando testes aplicarem mocks ao módulo de log,
@@ -733,7 +735,7 @@ export async function processarDiagnostico(opts) {
             }
             if (opts.json) {
                 // Agregar ocorrências de TODO_PENDENTE por arquivo
-                const ocorrenciasOriginais = resultadoExecucao.ocorrencias || [];
+                const ocorrenciasOriginais = ocorrenciasFiltradas;
                 const todosPorArquivo = new Map();
                 // Separar TODOs dos outros tipos de ocorrência
                 const naoTodos = [];
@@ -969,9 +971,9 @@ export async function processarDiagnostico(opts) {
                 }
                 // Imprimir bloco de resumo de tipos se houver ocorrências
                 // Imprimir bloco de resumo de tipos se houver ocorrências
-                if (totalOcorrencias > 0 && resultadoExecucao.ocorrencias) {
+                if (totalOcorrencias > 0 && ocorrenciasFiltradas) {
                     const tiposResumo = {};
-                    for (const ocorrencia of resultadoExecucao.ocorrencias) {
+                    for (const ocorrencia of ocorrenciasFiltradas) {
                         const tipo = ocorrencia.tipo || 'desconhecido';
                         tiposResumo[tipo] = (tiposResumo[tipo] || 0) + 1;
                     }
@@ -983,7 +985,7 @@ export async function processarDiagnostico(opts) {
                     }
                     // Ecoar avisos quando existirem ocorrências de nível 'aviso'
                     try {
-                        const existeAviso = (resultadoExecucao.ocorrencias || []).some((o) => !!o && o.nivel === 'aviso');
+                        const existeAviso = (ocorrenciasFiltradas || []).some((o) => !!o && o.nivel === 'aviso');
                         if (existeAviso) {
                             log.aviso(`${log.simbolos?.aviso || '!'} Há ocorrências de nível aviso`);
                         }
@@ -1044,9 +1046,9 @@ export async function processarDiagnostico(opts) {
         if (!opts.json && !config.SCAN_ONLY) {
             try {
                 // Se houver ocorrências, exibe resumo de tipos (mesma lógica usada acima)
-                if (totalOcorrencias > 0 && resultadoExecucao && resultadoExecucao.ocorrencias) {
+                if (totalOcorrencias > 0 && resultadoExecucao && ocorrenciasFiltradas) {
                     const tiposResumo = {};
-                    for (const ocorrencia of resultadoExecucao.ocorrencias) {
+                    for (const ocorrencia of ocorrenciasFiltradas) {
                         const tipo = ocorrencia.tipo || 'desconhecido';
                         tiposResumo[tipo] = (tiposResumo[tipo] || 0) + 1;
                     }
@@ -1057,9 +1059,7 @@ export async function processarDiagnostico(opts) {
                         log.imprimirBloco(tituloResumo, [...cabecalho, ...linhasResumo]);
                     }
                     try {
-                        const existeAviso = (resultadoExecucao && resultadoExecucao.ocorrencias
-                            ? resultadoExecucao.ocorrencias
-                            : []).some((o) => !!o && o.nivel === 'aviso');
+                        const existeAviso = (ocorrenciasFiltradas || []).some((o) => !!o && o.nivel === 'aviso');
                         if (existeAviso)
                             log.aviso(`${log.simbolos?.aviso || '!'} Há ocorrências de nível aviso`);
                     }
@@ -1075,7 +1075,7 @@ export async function processarDiagnostico(opts) {
         if (opts.json) {
             // Reproduz o mesmo comportamento de geração de JSON usado acima,
             // mas tolera arquetiposResultado undefined.
-            const ocorrenciasOriginais = resultadoExecucao.ocorrencias || [];
+            const ocorrenciasOriginais = dedupeOcorrencias(resultadoExecucao.ocorrencias || []);
             const todosPorArquivo = new Map();
             const naoTodos = [];
             for (const ocorrencia of ocorrenciasOriginais) {
