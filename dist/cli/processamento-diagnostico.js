@@ -113,11 +113,10 @@ function detectarTipoProjeto() {
         // Detecção básica baseada em arquivos presentes
         const cwd = process.cwd();
         if (fs.existsSync(path.join(cwd, 'package.json'))) {
-            const packageJson = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf-8'));
-            if (packageJson.devDependencies?.typescript ||
-                fs.existsSync(path.join(cwd, 'tsconfig.json'))) {
+            // Evita leitura de JSON aqui (função síncrona); usar heurística por arquivos
+            // Heurística: presença de tsconfig.json indica TypeScript; caso contrário, Node.js
+            if (fs.existsSync(path.join(cwd, 'tsconfig.json')))
                 return 'typescript';
-            }
             return 'nodejs';
         }
         if (fs.existsSync(path.join(cwd, 'requirements.txt')) ||

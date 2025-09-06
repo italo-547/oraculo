@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { lerArquivoTexto } from '@zeladores/util/persistencia.js';
 // Diretório atual do usuário (base do projeto)
 const CWD = process.cwd();
 // Diretórios internos do Oráculo
@@ -184,8 +184,8 @@ async function carregarArquivoConfig() {
     const candidatos = ['oraculo.config.json', 'src/config.json'];
     for (const nome of candidatos) {
         try {
-            const conteudo = await fs.readFile(path.join(process.cwd(), nome), 'utf-8');
-            const json = conteudo.trim() ? JSON.parse(conteudo) : null;
+            const conteudo = await lerArquivoTexto(path.join(process.cwd(), nome));
+            const json = conteudo && conteudo.trim() ? JSON.parse(conteudo) : null;
             if (json)
                 return json;
         }

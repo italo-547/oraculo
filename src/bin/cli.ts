@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // SPDX-License-Identifier: MIT
 import { Command } from 'commander';
-import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import chalk from '@nucleo/constelacao/chalk-safe.js';
+import { lerArquivoTexto } from '@zeladores/util/persistencia.js';
 
 import { registrarComandos } from '@cli/comandos.js';
 import { comandoPerf } from '@cli/comando-perf.js';
@@ -19,12 +19,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // 📦 Ler versão dinamicamente do package.json
-function getVersion(): string {
+async function getVersion(): Promise<string> {
   try {
     // Ao compilar, este arquivo vai para dist/bin; o package.json fica na raiz (subir dois níveis)
     const packagePath = join(__dirname, '..', '..', 'package.json');
-    const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
-    return packageJson.version || '0.0.0';
+    const raw = await lerArquivoTexto(packagePath);
+    const pkg = raw ? JSON.parse(raw) : {};
+    return (pkg && (pkg as { version?: string }).version) || '0.0.0';
   } catch {
     return '0.0.0'; // fallback
   }
@@ -35,7 +36,8 @@ const program = new Command();
 
 program
   .name(chalk.magenta('oraculo'))
-  .version(getVersion())
+  // Commander aceita string; como getVersion agora é async, resolvemos antes do parse
+  .version('0.0.0')
   .description('A ferramenta Oráculo: análise, reestruturação e proteção de repositórios.')
   .option('-s, --silence', 'silencia todos os logs de informação e aviso (sobrepõe --verbose)')
   .option(
@@ -112,8 +114,8 @@ void (async () => {
       try {
         // Em dist/bin, o safe config está na raiz do pacote: subir dois níveis
         const safeCfgPath = join(__dirname, '..', '..', 'oraculo.config.safe.json');
-        const raw = readFileSync(safeCfgPath, 'utf-8');
-        const safeCfg = JSON.parse(raw);
+        const raw = await lerArquivoTexto(safeCfgPath);
+        const safeCfg = raw ? JSON.parse(raw) : {};
         const prod = safeCfg?.productionDefaults;
         if (prod && typeof prod === 'object') {
           for (const [k, v] of Object.entries(prod)) {
@@ -124,6 +126,17 @@ void (async () => {
         // ignore - arquivo safe pode não existir em todos os ambientes
       }
     }
+    // Atualiza a versão do programa de forma assíncrona antes do parse
+    try {
+      const v = await getVersion();
+      // commander expõe private API ._version; usar método público quando disponível
+      if (typeof (program as unknown as { version: (v: string) => void }).version === 'function') {
+        (program as unknown as { version: (v: string) => void }).version(v);
+      } else {
+        // fallback defensivo
+        (program as unknown as { _version?: string })._version = v;
+      }
+    } catch {}
     await inicializarConfigDinamica();
   } catch {
     // ignore: CLI continua com defaults
