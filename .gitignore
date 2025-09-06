@@ -22,7 +22,7 @@ coverage/
 
 # TypeScript
 *.tsbuildinfo
-
+melhorias-analistas.zip
 # Logs
 npm-debug.log*
 yarn-debug.log*

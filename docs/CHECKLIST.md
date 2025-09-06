@@ -43,6 +43,12 @@ Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use 
 - [ ] Avaliar ajuste opcional de `git config diff.renameLimit` local/CI para reduzir avisos durante o scan.
 - [ ] Repetir `security:secrets-history` após merges grandes ou reescritas de histórico (ex.: squash/rebase amplos) e anotar o resultado.
 
+#### Sugestões registradas (2025-09-06)
+
+- [ ] Redução de ruído no orquestrador (saída não-JSON): avaliar colapso de ocorrências repetidas com contadores por mensagem/arquivo quando apropriado.
+  - Requisitos: manter o shape JSON inalterado; realizar em PR separado; alinhar testes de CLI; documentar comportamento e, se necessário, oferecer flag de opt-in.
+  - Status: postergado. Hoje o dedupe é usado para contagens e para a agregação de TODOs no JSON; a saída humana permanece não colapsada.
+
 ### Política de execução de testes no Windows (2025-09-01)
 
 - [x] Definido `npm test` como runner "smart" que escolhe o runner sequencial por padrão no Windows.
