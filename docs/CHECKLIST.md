@@ -10,12 +10,12 @@
 Este arquivo deve ser atualizado a cada modificação relevante no projeto. Use como referência para revisões, pendências e histórico de melhorias.
 
 ## Revisão de scripts (2025-08-30)
+
 ## Detector de Estrutura — Notas de comportamento (2025-09-06)
 
 - [x] Ordenação estável aplicada para listagem de entrypoints, garantindo mensagens determinísticas.
 - [x] Suporte ampliado a Next.js: `temPages` considera `pages/` e `app/`; fullstack reconhece `api/` e `prisma/` como antes.
 - [x] Quando houver muitos entrypoints, a mensagem passa a agregar por diretório (ex.: `src/apps (12), packages/pkg-a (8) … (+N dirs, +M entrypoints ocultos)`), reduzindo ruído sem perder sinal.
-
 
 - [x] Em 2025-08-30 foi realizada uma revisão dos scripts em `scripts/` para reduzir duplicação e melhorar portabilidade.
   - Ação tomada: `scripts/scan-markdown.sh` foi migrado para `scripts/legacy/scan-markdown.sh` e a versão NodeJS cross-platform `scripts/scan-markdown.mjs` foi indicada como a preferida.

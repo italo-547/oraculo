@@ -9,12 +9,14 @@
  * Deduplica ocorrências preservando a primeira ocorrência encontrada.
  * A chave de deduplicação é composta por: relPath|linha|tipo|mensagem.
  */
-export function dedupeOcorrencias<T extends {
-  relPath?: string;
-  linha?: number;
-  tipo?: string;
-  mensagem?: string;
-}>(arr: T[]): T[] {
+export function dedupeOcorrencias<
+  T extends {
+    relPath?: string;
+    linha?: number;
+    tipo?: string;
+    mensagem?: string;
+  },
+>(arr: T[]): T[] {
   const seen = new Map<string, T>();
   for (const o of arr || []) {
     const key = `${o.relPath || ''}|${String(o.linha ?? '')}|${o.tipo || ''}|${o.mensagem || ''}`;
@@ -27,9 +29,7 @@ export function dedupeOcorrencias<T extends {
  * Agrupa métricas de analistas por nome, somando duração e ocorrências e contando execuções.
  * Retorna array ordenado por ocorrências desc, depois duração desc.
  */
-export function agruparAnalistas(
-  analistas?: Array<Record<string, unknown>>,
-): Array<{
+export function agruparAnalistas(analistas?: Array<Record<string, unknown>>): Array<{
   nome: string;
   duracaoMs: number;
   ocorrencias: number;

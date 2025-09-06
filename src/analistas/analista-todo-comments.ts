@@ -65,14 +65,14 @@ export const analistaTodoComments: Analista = {
     if (/analistas[\\\/]analista-todo-comments\.(ts|js)$/i.test(relPath)) return null;
 
     // Caminho preferencial: usar comentários da AST quando disponível
-  if (ast && ast.node) {
+    if (ast && ast.node) {
       const maybeWithComments = ast.node as unknown as { comments?: Comment[] };
       if (Array.isArray(maybeWithComments.comments)) {
         const comments = maybeWithComments.comments;
         const ocorrencias = comments
           .filter((c) => {
-      const texto = String(c.value ?? '').trim();
-      return isTodoComment(texto);
+            const texto = String(c.value ?? '').trim();
+            return isTodoComment(texto);
           })
           .map((c) =>
             criarOcorrencia({
@@ -89,7 +89,7 @@ export const analistaTodoComments: Analista = {
     }
 
     // Heurística: considera TODO apenas quando presente em comentários
-  const linhas = src.split(/\r?\n/);
+    const linhas = src.split(/\r?\n/);
     const ocorrenciasLinhas: number[] = [];
     let emBloco = false;
     for (let i = 0; i < linhas.length; i++) {
@@ -99,7 +99,7 @@ export const analistaTodoComments: Analista = {
       // Verifica comentários de bloco (/* ... */)
       if (emBloco) {
         analisada = true;
-    if (isTodoComment(linha)) {
+        if (isTodoComment(linha)) {
           ocorrenciasLinhas.push(i + 1);
         }
         if (linha.includes('*/')) {
@@ -108,8 +108,8 @@ export const analistaTodoComments: Analista = {
       }
 
       if (!analisada) {
-    // Procura início de bloco e comentário de linha ignorando strings
-    const { blockIdx: idxBlockStart, lineIdx: idxLine } = localizarMarcadores(linha);
+        // Procura início de bloco e comentário de linha ignorando strings
+        const { blockIdx: idxBlockStart, lineIdx: idxLine } = localizarMarcadores(linha);
 
         // Caso comentário de linha
         if (idxLine >= 0 && (idxBlockStart === -1 || idxLine < idxBlockStart)) {

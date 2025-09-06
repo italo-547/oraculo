@@ -25,10 +25,7 @@ export async function carregarArquetipoPersonalizado(
   const arquivoArquetipo = path.join(baseDir, ARQUETIPO_PERSONALIZADO_FILENAME);
 
   try {
-    const arquetipo = await lerEstado<ArquetipoPersonalizado | null>(
-      arquivoArquetipo,
-      null,
-    );
+    const arquetipo = await lerEstado<ArquetipoPersonalizado | null>(arquivoArquetipo, null);
 
     // Validação básica
     if (!arquetipo || !arquetipo.nome || !arquetipo.arquetipoOficial) {

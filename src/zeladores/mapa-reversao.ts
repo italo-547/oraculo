@@ -31,13 +31,11 @@ export class GerenciadorMapaReversao {
   async carregar(): Promise<void> {
     try {
       const pathMapa = getMapaPath();
-      this.mapa =
-        (await lerEstado<MapaReversao | null>(pathMapa, null)) ??
-        {
-          versao: '1.0.0',
-          moves: [],
-          metadata: { totalMoves: 0, ultimoMove: '', podeReverter: true },
-        };
+      this.mapa = (await lerEstado<MapaReversao | null>(pathMapa, null)) ?? {
+        versao: '1.0.0',
+        moves: [],
+        metadata: { totalMoves: 0, ultimoMove: '', podeReverter: true },
+      };
 
       // Validação básica
       if (!this.mapa.moves || !Array.isArray(this.mapa.moves)) {
@@ -72,8 +70,8 @@ export class GerenciadorMapaReversao {
   async salvar(): Promise<void> {
     try {
       const pathMapa = getMapaPath();
-  await fs.mkdir(path.dirname(pathMapa), { recursive: true });
-  await salvarEstado(pathMapa, this.mapa);
+      await fs.mkdir(path.dirname(pathMapa), { recursive: true });
+      await salvarEstado(pathMapa, this.mapa);
       log.info(`💾 Mapa de reversão salvo: ${this.mapa.moves.length} moves`);
     } catch (error) {
       log.erro(`❌ Erro ao salvar mapa de reversão: ${(error as Error).message}`);

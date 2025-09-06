@@ -32,11 +32,11 @@ export const detectorEstrutura = {
   ): TecnicaAplicarResultado {
     if (!contexto) return [];
 
-  const caminhos = contexto.arquivos.map((f) => f.relPath);
-  // Normaliza separadores para evitar falsos negativos em Windows (\\ vs /)
-  const caminhosNorm = caminhos.map((p) => (p ? p.replace(/\\/g, '/') : ''));
-  // Conjuntos para buscas O(1) e deduplicação implícita
-  const setCaminhos = new Set(caminhos);
+    const caminhos = contexto.arquivos.map((f) => f.relPath);
+    // Normaliza separadores para evitar falsos negativos em Windows (\\ vs /)
+    const caminhosNorm = caminhos.map((p) => (p ? p.replace(/\\/g, '/') : ''));
+    // Conjuntos para buscas O(1) e deduplicação implícita
+    const setCaminhos = new Set(caminhos);
 
     const sinais: SinaisProjeto & {
       ehFullstack?: boolean;
@@ -119,7 +119,7 @@ export const detectorEstrutura = {
     }
 
     // Muitos arquivos na raiz (considera apenas nível imediato sem subpastas)
-  const arquivosRaiz = caminhosNorm.filter((p) => !p.includes('/') && p.trim() !== '');
+    const arquivosRaiz = caminhosNorm.filter((p) => !p.includes('/') && p.trim() !== '');
     const LIMITE_RAIZ = Number(config.ESTRUTURA_ARQUIVOS_RAIZ_MAX || 10);
     if (arquivosRaiz.length > LIMITE_RAIZ) {
       ocorrencias.push({
@@ -158,7 +158,7 @@ export const detectorEstrutura = {
 
     // Arquivos de configuração conhecidos — agrupa em uma única ocorrência para reduzir ruído
     const arquivosConfig = ['package.json', 'tsconfig.json', 'turbo.json', 'pnpm-workspace.yaml'];
-  const detectados = arquivosConfig.filter((cfg) => setCaminhos.has(cfg));
+    const detectados = arquivosConfig.filter((cfg) => setCaminhos.has(cfg));
     if (detectados.length > 0) {
       ocorrencias.push({
         tipo: 'estrutura-config',
@@ -192,8 +192,9 @@ export const detectorEstrutura = {
           const dir = p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '.';
           dirCounts.set(dir, (dirCounts.get(dir) || 0) + 1);
         }
-        const ordenado = [...dirCounts.entries()]
-          .sort((a, b) => (b[1] - a[1]) || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+        const ordenado = [...dirCounts.entries()].sort(
+          (a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0),
+        );
         const MAX_DIRS = 10;
         const top = ordenado.slice(0, MAX_DIRS);
         const ocultosDir = ordenado.length - top.length;

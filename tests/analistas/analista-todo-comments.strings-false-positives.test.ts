@@ -30,7 +30,7 @@ describe('analista-todo-comments — falsos positivos em strings (fallback sem A
     const src = [
       'const s1 = "\\"TODO\\" entre aspas escapadas";',
       "const s2 = '\\'// TODO\\' ainda string';",
-      'const templ = `texto com crase \` e marcador TODO dentro do template`;'
+      'const templ = `texto com crase \` e marcador TODO dentro do template`;',
     ].join('\n');
     const res = analistaTodoComments.aplicar(src, 'src/w.ts', null as any);
     expect(res).toBeNull();
@@ -38,10 +38,7 @@ describe('analista-todo-comments — falsos positivos em strings (fallback sem A
 
   it('ainda reporta quando TODO está em comentário real (linha e bloco)', async () => {
     const { analistaTodoComments } = await import('../../src/analistas/analista-todo-comments.js');
-    const src = [
-      'const a = 1; // TODO ajustar',
-      '/* TODO: implementar depois */',
-    ].join('\n');
+    const src = ['const a = 1; // TODO ajustar', '/* TODO: implementar depois */'].join('\n');
     const res = analistaTodoComments.aplicar(src, 'src/z.ts', null as any);
     expect(Array.isArray(res)).toBe(true);
     if (Array.isArray(res)) {

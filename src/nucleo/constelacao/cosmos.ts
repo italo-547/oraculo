@@ -219,8 +219,8 @@ async function carregarArquivoConfig(): Promise<Record<string, unknown> | null> 
   const candidatos = ['oraculo.config.json', 'src/config.json'];
   for (const nome of candidatos) {
     try {
-  const conteudo = await lerArquivoTexto(path.join(process.cwd(), nome));
-  const json = conteudo && conteudo.trim() ? JSON.parse(conteudo) : null;
+      const conteudo = await lerArquivoTexto(path.join(process.cwd(), nome));
+      const json = conteudo && conteudo.trim() ? JSON.parse(conteudo) : null;
       if (json) return json;
     } catch {
       /* ignore */

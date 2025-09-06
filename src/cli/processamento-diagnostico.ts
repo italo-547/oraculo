@@ -178,10 +178,10 @@ function detectarTipoProjeto(): string {
     const cwd = process.cwd();
 
     if (fs.existsSync(path.join(cwd, 'package.json'))) {
-  // Evita leitura de JSON aqui (função síncrona); usar heurística por arquivos
-  // Heurística: presença de tsconfig.json indica TypeScript; caso contrário, Node.js
-  if (fs.existsSync(path.join(cwd, 'tsconfig.json'))) return 'typescript';
-  return 'nodejs';
+      // Evita leitura de JSON aqui (função síncrona); usar heurística por arquivos
+      // Heurística: presença de tsconfig.json indica TypeScript; caso contrário, Node.js
+      if (fs.existsSync(path.join(cwd, 'tsconfig.json'))) return 'typescript';
+      return 'nodejs';
     }
 
     if (
@@ -486,7 +486,9 @@ export async function processarDiagnostico(
         // Tenta obter nome do projeto a partir do package.json (preferência: fileEntries; fallback: disco)
         let nomeProjeto = path.basename(baseDir);
         try {
-          const pkg = fileEntries.find((fe) => /(^|[\\/])package\.json$/.test(fe.relPath || fe.fullPath));
+          const pkg = fileEntries.find((fe) =>
+            /(^|[\\/])package\.json$/.test(fe.relPath || fe.fullPath),
+          );
           if (pkg && typeof pkg.content === 'string' && pkg.content.trim()) {
             const parsed = JSON.parse(pkg.content);
             if (parsed && typeof parsed.name === 'string' && parsed.name.trim()) {
@@ -520,9 +522,11 @@ export async function processarDiagnostico(
           log.info('Template de arquétipo personalizado gerado (pré-visualização)');
         }
       } catch (e) {
-        log.aviso(`Falha ao gerar/salvar arquétipo personalizado: ${
-          e instanceof Error ? e.message : String(e)
-        }`);
+        log.aviso(
+          `Falha ao gerar/salvar arquétipo personalizado: ${
+            e instanceof Error ? e.message : String(e)
+          }`,
+        );
       }
     }
 
@@ -621,7 +625,7 @@ export async function processarDiagnostico(
         resultadoFinal: { ocorrencias: [] },
       };
     }
-  // (bloco de criação de arquétipo removido)
+    // (bloco de criação de arquétipo removido)
 
     // Preparar AST para os arquivos coletados
     const fileEntriesComAst = await prepararComAst(fileEntries, baseDir);
@@ -641,13 +645,13 @@ export async function processarDiagnostico(
     );
 
     // Processar métricas e ocorrências
-  const metricasExecucao = registrarUltimasMetricas(resultadoExecucao.metricas);
-  // Deduplica ocorrências repetidas para reduzir ruído no orquestrador
-  const ocorrenciasFiltradas = dedupeOcorrencias(resultadoExecucao.ocorrencias || []);
-  const totalOcorrenciasProcessadas = ocorrenciasFiltradas.length;
+    const metricasExecucao = registrarUltimasMetricas(resultadoExecucao.metricas);
+    // Deduplica ocorrências repetidas para reduzir ruído no orquestrador
+    const ocorrenciasFiltradas = dedupeOcorrencias(resultadoExecucao.ocorrencias || []);
+    const totalOcorrenciasProcessadas = ocorrenciasFiltradas.length;
 
-  // Atualizar totalOcorrencias com base no resultado deduplicado
-  totalOcorrencias = totalOcorrenciasProcessadas;
+    // Atualizar totalOcorrencias com base no resultado deduplicado
+    totalOcorrencias = totalOcorrenciasProcessadas;
     // Emite aviso/sucesso imediatamente usando o import estático `log`.
     // Isso garante que, quando testes aplicarem mocks ao módulo de log,
     // as chamadas sejam contabilizadas corretamente.
@@ -984,7 +988,7 @@ export async function processarDiagnostico(
           };
         }
 
-  // JSON será emitido usando helper centralizado que aplica escapes Unicode
+        // JSON será emitido usando helper centralizado que aplica escapes Unicode
 
         // Garante métricas quando registrarUltimasMetricas retornou undefined
         const metricasFinalRaw =
@@ -1213,7 +1217,7 @@ export async function processarDiagnostico(
     if (opts.json) {
       // Reproduz o mesmo comportamento de geração de JSON usado acima,
       // mas tolera arquetiposResultado undefined.
-  const ocorrenciasOriginais = dedupeOcorrencias(resultadoExecucao.ocorrencias || []);
+      const ocorrenciasOriginais = dedupeOcorrencias(resultadoExecucao.ocorrencias || []);
       const todosPorArquivo = new Map<string, typeof ocorrenciasOriginais>();
       const naoTodos: typeof ocorrenciasOriginais = [];
       for (const ocorrencia of ocorrenciasOriginais) {
@@ -1320,8 +1324,8 @@ export async function processarDiagnostico(
         linguagens: { total: 0, extensoes: {} },
       };
 
-  // Quando não há dados de arquetipos, omitimos `estruturaIdentificada` no JSON
-  // (o fluxo principal já trata de incluí-lo quando disponível).
+      // Quando não há dados de arquetipos, omitimos `estruturaIdentificada` no JSON
+      // (o fluxo principal já trata de incluí-lo quando disponível).
 
       const metricasFinalRaw =
         metricasExecucao ??
